@@ -1,0 +1,273 @@
+datasource db {
+    provider = "sqlite"
+    url      = env("DATABASE_URL")
+}
+
+generator client {
+    provider = "prisma-client-js"
+}
+
+model User {
+    id            String          @id @default(cuid())
+    fname         String
+    lname         String
+    username      String
+    email         String?         @unique
+    phone         String          @unique
+    emailVerified DateTime?
+    image         String?
+    role          String          @default("user") // user, admin, host. Sqlite doesn't do enums
+    accounts      Account[]
+    sessions      Session[]
+    // Optional for WebAuthn support
+    Authenticator Authenticator[]
+
+    createdAt        DateTime       @default(now())
+    updatedAt        DateTime       @updatedAt
+    Bookings         Booking[]
+    Reviews          Review[]
+    Notifications    Notification[]
+    sentMessages     Message[]      @relation("sentMessages")
+    receivedMessages Message[]      @relation("receivedMessages")
+    HostUser         HostUser[]
+    Image            Image[]
+}
+
+model Account {
+    id                String  @id @default(cuid())
+    userId            String
+    type              String
+    provider          String
+    providerAccountId String
+    refresh_token     String?
+    access_token      String?
+    expires_at        Int?
+    token_type        String?
+    scope             String?
+    id_token          String?
+    session_state     String?
+
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+    user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+    @@unique([provider, providerAccountId])
+}
+
+model Session {
+    id           String   @id @default(cuid())
+    sessionToken String   @unique
+    userId       String
+    expires      DateTime
+    user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+}
+
+model VerificationToken {
+    identifier String
+    token      String
+    expires    DateTime
+
+    @@unique([identifier, token])
+}
+
+// Optional for WebAuthn support
+model Authenticator {
+    credentialID         String  @unique
+    userId               String
+    providerAccountId    String
+    credentialPublicKey  String
+    counter              Int
+    credentialDeviceType String
+    credentialBackedUp   Boolean
+    transports           String?
+
+    user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+    @@id([userId, credentialID])
+}
+
+//  https://medium.com/towards-data-engineering/data-modelling-design-a-data-model-for-a-hotel-booking-system-like-airbnb-2110a6d079c6
+
+model Property {
+    id             String    @id @default(cuid())
+    email          String
+    phone          String
+    name           String
+    description    String
+    address        String
+    closestAirport String
+    location       String
+    type           String // Resort || Hotel
+    amenities      String // Property/Hotel/Resort amenities, not room amenities
+    rating         String // sum of all ratings / reviewer count, ex: "187 / 842". When displayed, convert to numbers and do expression, when updated, convert to number and increment numerator by rating and denom by 1 (this would be a condensed rating system, real system would track all reviews)
+    host           Host      @relation(fields: [hostId], references: [id])
+    hostId         String    @unique
+    Review         Review?
+    Image          Image[]
+    Retreat        Retreat[]
+    Room           Room[]
+}
+
+// The profile for a room type offered by Host, not a record of the room itself
+model Room {
+    id           String   @id @default(cuid())
+    type         String // Single, Double, Suite
+    roomCount    String
+    amenities    String // Air Conditioning and Heating, Wi-Fi Access, Flat-Screen TV, Mini Fridge, Coffee Maker and Tea Station, In-Room Safe, Wardrobe and Hangers, Desk and Chair, Alarm Clock, Hairdryer, Complimentary Toiletries, Bathrobe and Slippers, Iron and Ironing Board, Telephone, Room Service, Balcony or Patio (if applicable), Blackout Curtains, Extra Pillows and Blankets
+    bedType      String // Twin Bed: 39” x 75” (sleeps 1), Twin XL Bed: 39” x 80” (sleeps 1), Full Bed (Double Bed): 54” x 75” (sleeps 1-2), Queen Bed: 60” x 80” (sleeps 2), King Bed: 76” x 80” (sleeps 2), California King Bed: 72” x 84” (sleeps 2)
+    maxOccupancy String
+    property     Property @relation(fields: [propertyId], references: [id])
+    propertyId   String
+}
+
+// Hosts would be entities like Hilton, Marriot, or Susy's B&B
+model Host {
+    id          String     @id @default(cuid())
+    name        String
+    type        String // Corporate, Independant, ...Something else?
+    description String
+    email       String
+    phone       String
+    profilePic  String
+    userId      String?
+    HostUser    HostUser[]
+    Image       Image[]
+    Retreat     Retreat[]
+    Property    Property[]
+}
+
+// Account managers for Hosts, defaults to the user who creates host
+model HostUser {
+    user       User     @relation(fields: [userId], references: [id])
+    userId     String // relation scalar field (used in the `@relation` attribute above)
+    host       Host     @relation(fields: [hostId], references: [id])
+    hostId     String // relation scalar field (used in the `@relation` attribute above)
+    assignedAt DateTime @default(now())
+    assignedBy String
+
+    @@id([userId, hostId])
+}
+
+model Retreat {
+    id          String   @id @default(cuid())
+    name        String
+    description String
+    duration    String
+    date        DateTime
+    price       String
+    images      Image[]
+    host        Host     @relation(fields: [hostId], references: [id])
+    hostId      String
+    property    Property @relation(fields: [propertyId], references: [id])
+    propertyId  String
+}
+
+model Booking {
+    id           String   @id @default(cuid())
+    propertyId   String
+    checkInDate  DateTime
+    checkOutDate DateTime
+    guestCount   Int
+    totalPrice   String
+    status       String
+
+    user         User          @relation(fields: [userId], references: [id])
+    userId       String        @unique
+    Message      Message[]
+    Notification Notification?
+}
+
+// TODO: add discounts & tax rate info (setup stripe first)
+model Payment {
+    id          String   @id @default(cuid())
+    bookingId   String
+    paymentDate DateTime
+    amount      String
+    status      String
+}
+
+model Review {
+    id     String @id @default(cuid())
+    user   User   @relation(fields: [userId], references: [id])
+    userId String @unique
+    rating Float
+
+    property   Property @relation(fields: [propertyId], references: [id])
+    propertyId String   @unique
+}
+
+model Message {
+    id        String   @id @default(cuid())
+    timestamp DateTime
+
+    booking   Booking @relation(fields: [bookingId], references: [id])
+    bookingId String
+
+    sender     User   @relation(name: "sentMessages", fields: [senderId], references: [id])
+    senderId   String
+    receiver   User   @relation(name: "receivedMessages", fields: [receiverId], references: [id])
+    receiverId String
+}
+
+model Notification {
+    id        String   @id @default(cuid())
+    timestamp DateTime
+    status    String
+    user      User     @relation(fields: [userId], references: [id])
+    userId    String   @unique
+    booking   Booking  @relation(fields: [bookingId], references: [id])
+    bookingId String   @unique
+}
+
+model Image {
+    id         String    @id @default(cuid())
+    filePath   String    @unique
+    uploadDate DateTime  @default(now())
+    user       User?     @relation(fields: [userId], references: [id])
+    userId     String?
+    property   Property? @relation(fields: [propertyId], references: [id])
+    propertyId String?
+    host       Host?     @relation(fields: [hostId], references: [id])
+    hostId     String?
+    retreat    Retreat?  @relation(fields: [retreatId], references: [id])
+    retreatId  String?
+
+    @@index([userId])
+    @@index([propertyId])
+    @@index([hostId])
+    @@index([retreatId])
+}
+
+// Fact Tables
+// TODO: Add these later for better stat management
+
+// User Fact:
+// Number of Bookings made by the User
+// Total amount spent by the User on Bookings
+
+// Property Fact:
+// Number of Bookings made for the Property
+// Total amount earned from Bookings for the Property
+// The average rating for the Property
+
+// Booking Fact:
+// The total price of the Booking
+// Number of Nights booked
+// Booking Status
+
+// Payment Fact:
+// Amount of payment made for the Booking
+// Payment Status
+
+// Review Fact:
+// Rating given in the review
+
+// Message Fact:
+// Number of messages exchanged
+
+// Notification Fact:
+// Number of unread notifications
