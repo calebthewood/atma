@@ -1,8 +1,10 @@
 import { Metadata } from "next";
 import Image from "next/image";
-
+import { auth } from "@/auth";
 import { Separator } from "@/components/ui/separator";
 import { SidebarNav } from "./sidebar-nav";
+import { redirect } from 'next/navigation';
+import { getUser } from "@/actions/user-actions";
 
 export const metadata: Metadata = {
     title: "Forms",
@@ -44,10 +46,16 @@ interface SettingsLayoutProps {
     children: React.ReactNode;
 }
 
-export default function SettingsLayout({ children }: SettingsLayoutProps) {
+export default async function SettingsLayout({ children }: SettingsLayoutProps) {
+    const session = await auth();
+    if (!session || !session.user || !session.user.email) return redirect('/authentication');
+    const email = session.user.email;
+    const fullUser = await getUser({ email });
+    if (!fullUser || fullUser.role !== 'admin') return redirect('/');
+
     return (
         <>
-            <div className="hidden space-y-6 p-10 pb-16 md:block">
+            <div className="hidden p-10 pb-16 md:block">
                 <div className="space-y-0.5">
                     <h2 className="text-2xl font-bold tracking-tight">Admin Dashboard</h2>
                     <p className="text-muted-foreground">

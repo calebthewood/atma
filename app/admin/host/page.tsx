@@ -5,7 +5,7 @@ import { HostList } from "./host-list";
 
 export default function Page() {
     return (
-        <div className="space-y-6">
+        <div className="">
             <h3 className="text-lg font-medium">Create New Host</h3>
             <p className="text-sm text-muted-foreground">
                 Form allows admin user to create a new host

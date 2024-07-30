@@ -9,11 +9,12 @@ generator client {
 
 model User {
     id            String          @id @default(cuid())
-    fname         String
-    lname         String
-    username      String
+    fname         String?
+    lname         String?
+    name          String // used for auth
+    username      String?
     email         String?         @unique
-    phone         String          @unique
+    phone         String?         @unique
     emailVerified DateTime?
     image         String?
     role          String          @default("user") // user, admin, host. Sqlite doesn't do enums

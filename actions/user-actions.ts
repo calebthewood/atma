@@ -2,6 +2,7 @@
 
 import { prisma } from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
+import { type } from "os";
 
 export async function createUser(data: {
   fname: string;
@@ -16,6 +17,7 @@ export async function createUser(data: {
     data: {
       fname: data.fname,
       lname: data.lname,
+      name: data.fname + ' ' + data.lname, // weird fix for google auth which require 'name'
       username: data.username,
       email: data.email,
       phone: data.phone,
@@ -24,7 +26,7 @@ export async function createUser(data: {
     },
   });
 
-  revalidatePath("/users");
+  // revalidatePath("/users");
 
   return user;
 }
@@ -34,11 +36,22 @@ export async function getUsers() {
   return users;
 }
 
-export async function getUserById(userId: string) {
+interface EmailQuery {
+  email: string
+}
+interface IdQuery {
+  id: string
+}
+interface PhoneQuery {
+  phone: string
+}
+type UserQuery = EmailQuery | IdQuery | PhoneQuery
+
+export async function getUser(query: UserQuery) {
+  if (!query) return null;
+
   const user = await prisma.user.findUnique({
-    where: {
-      id: userId,
-    },
+    where: query
   });
 
   return user;

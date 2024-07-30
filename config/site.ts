@@ -11,7 +11,7 @@ export const siteConfig = {
     },
     {
       title: "Login",
-      href: "/login",
+      href: "/authentication",
     },
     {
       title: "Admin",

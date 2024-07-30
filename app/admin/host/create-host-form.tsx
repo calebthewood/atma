@@ -144,7 +144,7 @@ export function CreateHostForm() {
                         <FormItem>
                             <FormLabel>Profile Picture URL</FormLabel>
                             <FormControl>
-                                <Input placeholder="https://example.com/profile.jpg" {...field} />
+                                <Input placeholder="/img/fem-placeholder.webp" {...field} />
                             </FormControl>
                             <FormMessage />
                         </FormItem>

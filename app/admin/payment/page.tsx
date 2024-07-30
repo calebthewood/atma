@@ -10,21 +10,19 @@ export default function Page() {
             <p className="text-sm text-muted-foreground">
                 For testing only, to be setup with Stripe
             </p>
-            <Separator className="my-6"/>
+            <Separator className="my-6" />
             <Tabs defaultValue="form" className="w-[400px]">
                 <TabsList>
                     <TabsTrigger value="form">Create Payment</TabsTrigger>
                     <TabsTrigger value="list">View Payments</TabsTrigger>
                 </TabsList>
                 <TabsContent value="form">
-
-
                     <CreatePaymentForm />
                 </TabsContent>
-                <TabsContent value="list">List Payments here</TabsContent>
+                <TabsContent value="list">
+                    List Payments here
+                </TabsContent>
             </Tabs>
-
-
         </div>
     );
 }
