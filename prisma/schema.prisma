@@ -1,3 +1,5 @@
+// when ready add detail, see for inspo
+// https://www.researchgate.net/profile/Shady-Hamouda/publication/335067480/figure/fig1/AS:880942646312960@1587044502394/Airbnb-schema-in-relational-database-https-createlycom-app-tempIDidbbu9op2.ppm
 datasource db {
     provider = "sqlite"
     url      = env("DATABASE_URL")
@@ -106,23 +108,30 @@ model Property {
     amenities      String // Property/Hotel/Resort amenities, not room amenities
     rating         String // sum of all ratings / reviewer count, ex: "187 / 842". When displayed, convert to numbers and do expression, when updated, convert to number and increment numerator by rating and denom by 1 (this would be a condensed rating system, real system would track all reviews)
     host           Host      @relation(fields: [hostId], references: [id])
-    hostId         String    @unique
-    Review         Review?
+    hostId         String
+    Review         Review[]
     Image          Image[]
     Retreat        Retreat[]
     Room           Room[]
+    coverImg       String?
+    thumbnail      String?
+    createdAt      DateTime  @default(now())
+    updatedAt      DateTime  @updatedAt
 }
 
 // The profile for a room type offered by Host, not a record of the room itself
 model Room {
-    id           String   @id @default(cuid())
-    type         String // Single, Double, Suite
-    roomCount    String
-    amenities    String // Air Conditioning and Heating, Wi-Fi Access, Flat-Screen TV, Mini Fridge, Coffee Maker and Tea Station, In-Room Safe, Wardrobe and Hangers, Desk and Chair, Alarm Clock, Hairdryer, Complimentary Toiletries, Bathrobe and Slippers, Iron and Ironing Board, Telephone, Room Service, Balcony or Patio (if applicable), Blackout Curtains, Extra Pillows and Blankets
-    bedType      String // Twin Bed: 39” x 75” (sleeps 1), Twin XL Bed: 39” x 80” (sleeps 1), Full Bed (Double Bed): 54” x 75” (sleeps 1-2), Queen Bed: 60” x 80” (sleeps 2), King Bed: 76” x 80” (sleeps 2), California King Bed: 72” x 84” (sleeps 2)
-    maxOccupancy String
-    property     Property @relation(fields: [propertyId], references: [id])
-    propertyId   String
+    id         String   @id @default(cuid())
+    type       String // Single, Double, Suite
+    roomCount  String
+    amenities  String // make relation Air Conditioning and Heating, Wi-Fi Access, Flat-Screen TV, Mini Fridge, Coffee Maker and Tea Station, In-Room Safe, Wardrobe and Hangers, Desk and Chair, Alarm Clock, Hairdryer, Complimentary Toiletries, Bathrobe and Slippers, Iron and Ironing Board, Telephone, Room Service, Balcony or Patio (if applicable), Blackout Curtains, Extra Pillows and Blankets
+    bedType    String // Twin Bed: 39” x 75” (sleeps 1), Twin XL Bed: 39” x 80” (sleeps 1), Full Bed (Double Bed): 54” x 75” (sleeps 1-2), Queen Bed: 60” x 80” (sleeps 2), King Bed: 76” x 80” (sleeps 2), California King Bed: 72” x 84” (sleeps 2)
+    minGuests  Int
+    maxGuests  Int
+    property   Property @relation(fields: [propertyId], references: [id])
+    propertyId String
+    createdAt  DateTime @default(now())
+    updatedAt  DateTime @updatedAt
 }
 
 // Hosts would be entities like Hilton, Marriot, or Susy's B&B
@@ -134,11 +143,17 @@ model Host {
     email       String
     phone       String
     profilePic  String
+    coverImg    String?
+    thumbnail   String?
     userId      String?
     HostUser    HostUser[]
     Image       Image[]
     Retreat     Retreat[]
     Property    Property[]
+    PriceMod    PriceMod[]
+    Review      Review[]
+    createdAt   DateTime   @default(now())
+    updatedAt   DateTime   @updatedAt
 }
 
 // Account managers for Hosts, defaults to the user who creates host
@@ -160,11 +175,18 @@ model Retreat {
     duration    String
     date        DateTime
     price       String
+    minGuests   Int
+    maxGuests   Int
+    coverImg    String?
+    thumbnail   String?
     images      Image[]
     host        Host     @relation(fields: [hostId], references: [id])
     hostId      String
     property    Property @relation(fields: [propertyId], references: [id])
     propertyId  String
+    createdAt   DateTime @default(now())
+    updatedAt   DateTime @updatedAt
+    Review      Review[]
 }
 
 model Booking {
@@ -175,11 +197,26 @@ model Booking {
     guestCount   Int
     totalPrice   String
     status       String
+    createdAt    DateTime @default(now())
+    updatedAt    DateTime @updatedAt
 
     user         User          @relation(fields: [userId], references: [id])
-    userId       String        @unique
+    userId       String
     Message      Message[]
     Notification Notification?
+}
+
+model PriceMod {
+    id          String   @id @default(cuid())
+    host        Host     @relation(fields: [hostId], references: [id])
+    hostId      String
+    name        String
+    description String
+    type        String // type: 'FIXED_VALUE', 'PERCENT'
+    category    String // 'Room Type', 'Extra Amenity' 'Transportation' 'Guide' etc,
+    value       Int
+    createdAt   DateTime @default(now())
+    updatedAt   DateTime @updatedAt
 }
 
 // TODO: add discounts & tax rate info (setup stripe first)
@@ -189,16 +226,25 @@ model Payment {
     paymentDate DateTime
     amount      String
     status      String
+    createdAt   DateTime @default(now())
+    updatedAt   DateTime @updatedAt
 }
 
 model Review {
-    id     String @id @default(cuid())
-    user   User   @relation(fields: [userId], references: [id])
-    userId String @unique
-    rating Float
+    id        String   @id @default(cuid())
+    user      User     @relation(fields: [userId], references: [id])
+    userId    String
+    type      String // retreat, host, property
+    rating    Float
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
 
-    property   Property @relation(fields: [propertyId], references: [id])
-    propertyId String   @unique
+    property   Property? @relation(fields: [propertyId], references: [id])
+    propertyId String?
+    host       Host?     @relation(fields: [hostId], references: [id])
+    hostId     String?
+    retreat    Retreat?  @relation(fields: [retreatId], references: [id])
+    retreatId  String?
 }
 
 model Message {
@@ -208,10 +254,12 @@ model Message {
     booking   Booking @relation(fields: [bookingId], references: [id])
     bookingId String
 
-    sender     User   @relation(name: "sentMessages", fields: [senderId], references: [id])
+    sender     User     @relation(name: "sentMessages", fields: [senderId], references: [id])
     senderId   String
-    receiver   User   @relation(name: "receivedMessages", fields: [receiverId], references: [id])
+    receiver   User     @relation(name: "receivedMessages", fields: [receiverId], references: [id])
     receiverId String
+    createdAt  DateTime @default(now())
+    updatedAt  DateTime @updatedAt
 }
 
 model Notification {
@@ -222,12 +270,13 @@ model Notification {
     userId    String   @unique
     booking   Booking  @relation(fields: [bookingId], references: [id])
     bookingId String   @unique
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
 }
 
 model Image {
     id         String    @id @default(cuid())
-    filePath   String    @unique
-    uploadDate DateTime  @default(now())
+    filePath   String
     user       User?     @relation(fields: [userId], references: [id])
     userId     String?
     property   Property? @relation(fields: [propertyId], references: [id])
@@ -236,6 +285,8 @@ model Image {
     hostId     String?
     retreat    Retreat?  @relation(fields: [retreatId], references: [id])
     retreatId  String?
+    createdAt  DateTime  @default(now())
+    updatedAt  DateTime  @updatedAt
 
     @@index([userId])
     @@index([propertyId])

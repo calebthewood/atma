@@ -1,71 +1,84 @@
 export interface Album {
+  id: number,
   name: string;
   artist: string;
   cover: string;
 }
 
-export const listenNowAlbums: Album[] = [
+export const retreats: Album[] = [
   {
+    id: 1,
     name: "React Rendezvous",
     artist: "Ethan Byte",
-    cover:
-      "https://images.unsplash.com/photo-1611348586804-61bf6c080437?w=300&dpr=2&q=80",
+    cover: "/img/iStock-1929812569.jpg",
   },
   {
+    id: 2,
     name: "Async Awakenings",
     artist: "Nina Netcode",
-    cover:
-      "https://images.unsplash.com/photo-1468817814611-b7edf94b5d60?w=300&dpr=2&q=80",
+    cover: "/img/iStock-1812905796.jpg",
   },
   {
+    id: 3,
     name: "The Art of Reusability",
     artist: "Lena Logic",
-    cover:
-      "https://images.unsplash.com/photo-1528143358888-6d3c7f67bd5d?w=300&dpr=2&q=80",
+    cover: "/img/iStock-1550112895.jpg",
   },
   {
+    id: 4,
     name: "Stateful Symphony",
     artist: "Beth Binary",
-    cover:
-      "https://images.unsplash.com/photo-1490300472339-79e4adc6be4a?w=300&dpr=2&q=80",
+    cover: "/img/iStock-1507078404.jpg",
+  },
+  {
+    id: 5,
+    name: "The Art of Reusability",
+    artist: "Lena Logic",
+    cover: "/img/iStock-1490140364.jpg",
+  },
+  {
+    id: 6,
+    name: "Stateful Symphony",
+    artist: "Beth Binary",
+    cover: "/img/iStock-1291807006.jpg",
   },
 ];
 
-export const madeForYouAlbums: Album[] = [
+export const destinations: Album[] = [
   {
-    name: "Thinking Components",
-    artist: "Lena Logic",
-    cover:
-      "https://images.unsplash.com/photo-1615247001958-f4bc92fa6a4a?w=300&dpr=2&q=80",
-  },
-  {
-    name: "Functional Fury",
-    artist: "Beth Binary",
-    cover:
-      "https://images.unsplash.com/photo-1513745405825-efaf9a49315f?w=300&dpr=2&q=80",
-  },
-  {
-    name: "React Rendezvous",
-    artist: "Ethan Byte",
-    cover:
-      "https://images.unsplash.com/photo-1614113489855-66422ad300a4?w=300&dpr=2&q=80",
-  },
-  {
-    name: "Stateful Symphony",
-    artist: "Beth Binary",
-    cover:
-      "https://images.unsplash.com/photo-1446185250204-f94591f7d702?w=300&dpr=2&q=80",
-  },
-  {
+    id: 7,
     name: "Async Awakenings",
     artist: "Nina Netcode",
-    cover:
-      "https://images.unsplash.com/photo-1468817814611-b7edf94b5d60?w=300&dpr=2&q=80",
+    cover: "/img/iStock-1812905796.jpg",
   },
   {
+    id: 8,
     name: "The Art of Reusability",
     artist: "Lena Logic",
-    cover:
-      "https://images.unsplash.com/photo-1490300472339-79e4adc6be4a?w=300&dpr=2&q=80",
+    cover: "/img/iStock-1550112895.jpg",
+  },
+  {
+    id: 9,
+    name: "React Rendezvous",
+    artist: "Ethan Byte",
+    cover: "/img/iStock-1929812569.jpg",
+  },
+  {
+    id: 10,
+    name: "Stateful Symphony",
+    artist: "Beth Binary",
+    cover: "/img/iStock-1291807006.jpg",
+  },
+  {
+    id: 11,
+    name: "Stateful Symphony",
+    artist: "Beth Binary",
+    cover: "/img/iStock-1507078404.jpg",
+  },
+  {
+    id: 12,
+    name: "The Art of Reusability",
+    artist: "Lena Logic",
+    cover: "/img/iStock-1490140364.jpg",
   },
 ];

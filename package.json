@@ -2,8 +2,12 @@
   "name": "next-template",
   "version": "0.0.2",
   "private": true,
+  "prisma": {
+    "seed": "node prisma/seed.js"
+  },
   "scripts": {
-    "dev": "prisma db push && next dev",
+    "reseed": "npx prisma db push --force-reset && npx prisma db push && node prisma/seed.js",
+    "dev": "npx prisma db push && next dev",
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
