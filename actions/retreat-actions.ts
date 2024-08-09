@@ -9,6 +9,8 @@ export async function createRetreat(data: {
   duration: string;
   date: Date;
   price: string;
+  minGuests: number;
+  maxGuests: number;
   hostId: string;
   propertyId: string;
 }) {
@@ -18,6 +20,8 @@ export async function createRetreat(data: {
         name: data.name,
         description: data.description,
         duration: data.duration,
+        minGuests: data.minGuests,
+        maxGuests: data.maxGuests,
         date: data.date,
         price: data.price,
         hostId: data.hostId,
@@ -65,6 +69,9 @@ export async function getRetreatById(retreatId: string) {
       where: {
         id: retreatId,
       },
+      include: {
+        RetreatInstance: true
+      }
     });
 
     if (!retreat) {

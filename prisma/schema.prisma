@@ -169,24 +169,39 @@ model HostUser {
 }
 
 model Retreat {
-    id          String   @id @default(cuid())
-    name        String
-    description String
-    duration    String
-    date        DateTime
-    price       String
-    minGuests   Int
-    maxGuests   Int
-    coverImg    String?
-    thumbnail   String?
-    images      Image[]
-    host        Host     @relation(fields: [hostId], references: [id])
-    hostId      String
-    property    Property @relation(fields: [propertyId], references: [id])
-    propertyId  String
-    createdAt   DateTime @default(now())
-    updatedAt   DateTime @updatedAt
-    Review      Review[]
+    id              String            @id @default(cuid())
+    name            String
+    description     String
+    duration        String
+    date            DateTime
+    price           String
+    minGuests       Int
+    maxGuests       Int
+    coverImg        String?
+    thumbnail       String?
+    images          Image[]
+    host            Host              @relation(fields: [hostId], references: [id])
+    hostId          String
+    property        Property          @relation(fields: [propertyId], references: [id])
+    propertyId      String
+    createdAt       DateTime          @default(now())
+    updatedAt       DateTime          @updatedAt
+    Review          Review[]
+    RetreatInstance RetreatInstance[] // rename these CapFields! so ugly
+}
+
+model RetreatInstance {
+    id             String     @id @default(cuid())
+    retreat        Retreat    @relation(fields: [retreatId], references: [id])
+    retreatId      String
+    startDate      DateTime
+    endDate        DateTime // New field to represent the end date of the retreat
+    availableSlots Int // Number of available slots for this instance
+    isFull         Boolean    @default(false) // New field to indicate if this instance is fully booked
+    createdAt      DateTime   @default(now())
+    updatedAt      DateTime   @updatedAt
+    Bookings       Booking[] // One-to-many relationship with Bookings
+    priceMods      PriceMod[]
 }
 
 model Booking {
@@ -200,23 +215,27 @@ model Booking {
     createdAt    DateTime @default(now())
     updatedAt    DateTime @updatedAt
 
-    user         User          @relation(fields: [userId], references: [id])
-    userId       String
-    Message      Message[]
-    Notification Notification?
+    user              User             @relation(fields: [userId], references: [id])
+    userId            String
+    Message           Message[]
+    Notification      Notification?
+    RetreatInstance   RetreatInstance? @relation(fields: [retreatInstanceId], references: [id])
+    retreatInstanceId String?
 }
 
 model PriceMod {
-    id          String   @id @default(cuid())
-    host        Host     @relation(fields: [hostId], references: [id])
-    hostId      String
-    name        String
-    description String
-    type        String // type: 'FIXED_VALUE', 'PERCENT'
-    category    String // 'Room Type', 'Extra Amenity' 'Transportation' 'Guide' etc,
-    value       Int
-    createdAt   DateTime @default(now())
-    updatedAt   DateTime @updatedAt
+    id                String           @id @default(cuid())
+    host              Host             @relation(fields: [hostId], references: [id])
+    hostId            String
+    name              String
+    description       String
+    type              String // type: 'FIXED_VALUE', 'PERCENT'
+    category          String // 'Room Type', 'Extra Amenity' 'Transportation' 'Guide' etc,
+    value             Int
+    createdAt         DateTime         @default(now())
+    updatedAt         DateTime         @updatedAt
+    RetreatInstance   RetreatInstance? @relation(fields: [retreatInstanceId], references: [id])
+    retreatInstanceId String?
 }
 
 // TODO: add discounts & tax rate info (setup stripe first)

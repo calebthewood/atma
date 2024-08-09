@@ -2,6 +2,7 @@ import Image from "next/image";
 import { BedSingle, NotepadText, Navigation, User, LucideIcon } from "lucide-react";
 import { getRetreatById } from "@/actions/retreat-actions";
 import { retreats } from "@/app/data/albums";
+import { BookingList } from "@/components/booking/booking-list";
 import {
     Card,
     CardContent,
@@ -15,7 +16,7 @@ import { LoadingSpinner } from "@/components/loading-spinner";
 
 export default async function Page({ params }: { params: { id: string; }; }) {
     const retreat = await getRetreatById(params.id);
-
+    console.log(retreat.RetreatInstance)
     const details = [
         { name: 'Room Type', icon: <BedSingle />, detail: '' },
         { name: 'Excursions', icon: <NotepadText />, detail: '' },
@@ -57,22 +58,12 @@ export default async function Page({ params }: { params: { id: string; }; }) {
                     <FakeImageGallery />
                 </div>
                 <div className="grid grid-cols-12">
-                    <div className="col-start-3 col-span-3 text-lg">
-                        <p className="my-4">    Lorem ipsum dolor sit amet, consectetur adipisicing elit. Fuga iste, repudiandae ipsam exercitationem reiciendis ea cumque corporis magni ipsum architecto nobis? Nihil libero rem cum dolorem quas ratione a fuga.</p>
-                        <p className="my-4">    Lorem ipsum dolor sit amet, consectetur adipisicing elit. Fuga iste, repudiandae ipsam exercitationem reiciendis ea cumque corporis magni ipsum architecto nobis? Nihil libero rem cum dolorem quas ratione a fuga.</p>
+                    <div className="col-start-2 col-span-4 text-lg">
+                        <p className="my-4">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Fuga iste, repudiandae ipsam exercitationem reiciendis ea cumque corporis magni ipsum architecto nobis? Nihil libero rem cum dolorem quas ratione a fuga.</p>
+                        <p className="my-4">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Fuga iste, repudiandae ipsam exercitationem reiciendis ea cumque corporis magni ipsum architecto nobis? Nihil libero rem cum dolorem quas ratione a fuga.</p>
                     </div>
-                    <div className="col-start-7 col-span-4">
-                        <Card>
-                            <CardHeader>
-                                header
-                            </CardHeader>
-                            <CardContent>
-                                content
-                            </CardContent>
-                            <CardFooter>
-                                foot
-                            </CardFooter>
-                        </Card>
+                    <div className="col-start-7 col-span-5">
+                        <BookingList retreat={retreat} events={retreat.RetreatInstance} />
                     </div>
                 </div>
             </div>

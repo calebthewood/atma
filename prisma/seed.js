@@ -1,4 +1,5 @@
 const { PrismaClient } = require('@prisma/client');
+const { addDays } = require('date-fns');
 const prisma = new PrismaClient();
 
 const imagePaths = [
@@ -126,8 +127,9 @@ const hosts = [
 ];
 
 async function main() {
-  await seedHostsPropsRetreats();
-  await seedImages();
+  // await seedHostsPropsRetreats();
+  // await seedImages();
+  seedRetreatInstances();
 }
 
 main()
@@ -140,9 +142,37 @@ main()
     process.exit(1);
   });
 
+async function seedRetreatInstances() {
+
+  await prisma.retreatInstance.deleteMany();
+  const retreats = await prisma.retreat.findMany();
+
+  for (const retreat of retreats) {
+    const numberOfInstances = Math.floor(Math.random() * 6);
+
+    for (let i = 0; i < numberOfInstances; i++) {
+      // Calculate random start date between June 2024 and June 2025
+      const startDate = new Date(
+        Date.UTC(2024, 5, 1) + Math.random() * (Date.UTC(2025, 5, 30) - Date.UTC(2024, 5, 1))
+      );
+      // stored as "1 Day", should move to int: 1
+      const durationInDays = parseInt(retreat.duration.split(' ')[0]);
+      const endDate = addDays(startDate, durationInDays);
+
+      await prisma.retreatInstance.create({
+        data: {
+          retreatId: retreat.id,
+          startDate: startDate,
+          endDate: endDate,
+          availableSlots: retreat.maxGuests,
+          isFull: false,
+        },
+      });
+    }
+  }
+}
+
 async function seedImages() {
-
-
   const hosts = await prisma.host.findMany();
 
   for (let i = 0; i < hosts.length; i++) {
