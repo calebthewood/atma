@@ -8,8 +8,8 @@ export async function createRoom(data: {
   roomCount: string;
   amenities: string;
   bedType: string;
-  maxOccupancy: string;
-  hostId: string;
+  minGuests: number;
+  maxGuests: number;
   propertyId: string;
 }) {
   try {
@@ -19,8 +19,8 @@ export async function createRoom(data: {
         roomCount: data.roomCount,
         amenities: data.amenities,
         bedType: data.bedType,
-        maxOccupancy: data.maxOccupancy,
-        hostId: data.hostId,
+        minGuests: data.minGuests,
+        maxGuests: data.maxGuests,
         propertyId: data.propertyId,
       },
     });

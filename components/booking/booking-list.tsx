@@ -1,3 +1,4 @@
+import CheckoutButton from "../checkout/checkout-button";
 
 import {
     Card,
@@ -69,14 +70,21 @@ interface BookingItemProps {
 function BookingItem({ item, retreat }: BookingItemProps) {
     const start = format(item.startDate, 'EEE, MMM dd');
     const end = format(item.endDate, 'EEE, MMM dd');
-    const price = toUSD(Number(retreat.price))
+    const price = toUSD(Number(retreat.price));
     return (
-        <div>
-            <Large>{retreat.name}</Large>
-            <Lead className="text-sm">{start} to {end}</Lead>
-            <p className="font-semibold text-sm">{price} <span className="font-normal">/ person</span></p>
-            <Button className="my-1 w-full">Book Retreat</Button>
-            <Separator className="my-4" />
+        <div className="grid cols-5">
+            <div className="col-start-1 col-span-4">
+
+                <Large>{retreat.name}</Large>
+                <Lead className="text-sm">{start} to {end}</Lead>
+                <p className="font-semibold text-sm">{price} <span className="font-normal">/ person</span></p>
+            </div>
+            <div className="col-start-5 col-span-1 content-end">
+                <CheckoutButton
+                    uiMode="embedded"
+                    price={parseFloat(retreat.price)} />
+            </div>
+            <Separator className="my-4 col-span-5" />
         </div>
     );
 }
