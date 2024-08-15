@@ -56,7 +56,7 @@ export default function CheckoutButton(props: CheckoutFormProps): JSX.Element {
                     <input type="hidden" name="price" value={input.price.toString()} />
                     <DialogTrigger asChild>
                         <Button
-                            className="checkout-style-background"
+                            className="w-full"
                             type="submit"
                             disabled={loading}
                         >
