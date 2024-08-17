@@ -42,12 +42,12 @@ interface BookingListProps {
     retreat: Retreat;
 }
 
-export function BookingList({ retreat, events }: BookingListProps) {
+export function FlexibleBooking({ retreat, events }: BookingListProps) {
 
     const [guestCount, setGuestCount] = useState(retreat.minGuests);
     const [calendarDate, setCalendarDate] = useState<Date | undefined>(today);
 
-    const comesAfter = (a: Date, b: Date) => compareAsc(a,b) === 1;
+    const comesAfter = (a: Date, b: Date) => compareAsc(a, b) === 1;
     const displayed = events.filter((e) => comesAfter(e.startDate, calendarDate ?? today));
 
     return (

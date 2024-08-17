@@ -104,7 +104,7 @@ model Property {
     address        String
     closestAirport String
     location       String
-    type           String // Resort || Hotel
+    type           String // Resort || Hotel || etc...
     amenities      String // Property/Hotel/Resort amenities, not room amenities
     rating         String // sum of all ratings / reviewer count, ex: "187 / 842". When displayed, convert to numbers and do expression, when updated, convert to number and increment numerator by rating and denom by 1 (this would be a condensed rating system, real system would track all reviews)
     host           Host      @relation(fields: [hostId], references: [id])
@@ -170,6 +170,7 @@ model HostUser {
 
 model Retreat {
     id              String            @id @default(cuid())
+    bookingType     String // open, fixed_range, flexible_range
     name            String
     description     String
     duration        String

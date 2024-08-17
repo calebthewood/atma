@@ -2,7 +2,9 @@ import Image from "next/image";
 import { BedSingle, NotepadText, Navigation, User, LucideIcon } from "lucide-react";
 import { getRetreatById } from "@/actions/retreat-actions";
 import { retreats } from "@/app/data/albums";
-import { BookingList } from "@/components/booking/booking-list";
+import { OpenBooking } from "@/components/booking/open-booking";
+import { FixedBooking } from "@/components/booking/fixed-booking";
+import { FlexibleBooking } from "@/components/booking/flexible-booking";
 import {
     Card,
     CardContent,
@@ -23,6 +25,20 @@ export default async function Page({ params }: { params: { id: string; }; }) {
         { name: 'Transportation', icon: <Navigation />, detail: 'Car & Boat' },
         { name: 'Tour Guide', icon: <User />, detail: 'Not Included' },
     ];
+
+    function RenderBookingType({type}: {type: "open" | "fixed_range" | "flexible_range"}) {
+        switch (type) {
+            case "open" :
+                return <OpenBooking retreat={retreat} events={retreat.RetreatInstance} />
+            case "fixed_range" :
+                return <FixedBooking retreat={retreat} events={retreat.RetreatInstance} />
+            case "flexible_range" :
+                return <FlexibleBooking retreat={retreat} events={retreat.RetreatInstance} />
+        }
+    }
+
+
+
     if (!retreat) {
         return <><LoadingSpinner /> Loading</>;
     }
@@ -63,7 +79,7 @@ export default async function Page({ params }: { params: { id: string; }; }) {
                         <p className="my-4">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Fuga iste, repudiandae ipsam exercitationem reiciendis ea cumque corporis magni ipsum architecto nobis? Nihil libero rem cum dolorem quas ratione a fuga.</p>
                     </div>
                     <div className="col-start-7 col-span-5">
-                        <BookingList retreat={retreat} events={retreat.RetreatInstance} />
+                        <OpenBooking retreat={retreat} events={retreat.RetreatInstance} />
                     </div>
                 </div>
             </div>

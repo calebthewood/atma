@@ -127,9 +127,10 @@ const hosts = [
 ];
 
 async function main() {
-  // await seedHostsPropsRetreats();
-  // await seedImages();
-  seedRetreatInstances();
+  await dropDB();
+  await seedHostsPropsRetreats();
+  await seedImages();
+  await seedRetreatInstances();
 }
 
 main()
@@ -142,9 +143,19 @@ main()
     process.exit(1);
   });
 
+async function dropDB() {
+  await prisma.retreatInstance.deleteMany();
+  await prisma.image.deleteMany();
+  await prisma.host.deleteMany();
+  await prisma.property.deleteMany();
+  await prisma.room.deleteMany();
+  await prisma.retreat.deleteMany();
+  await prisma.priceMod.deleteMany();
+}
+
 async function seedRetreatInstances() {
 
-  await prisma.retreatInstance.deleteMany();
+
   const retreats = await prisma.retreat.findMany();
 
   for (const retreat of retreats) {
@@ -173,6 +184,7 @@ async function seedRetreatInstances() {
 }
 
 async function seedImages() {
+
   const hosts = await prisma.host.findMany();
 
   for (let i = 0; i < hosts.length; i++) {
@@ -222,9 +234,11 @@ async function seedImages() {
 
 async function seedHostsPropsRetreats() {
 
+  const types = ['open', 'fixed_range', 'flexible_range'];
 
   const hostData = await prisma.host.createMany({ data: hosts });
   const hostsData = await prisma.host.findMany();
+
   for (const host of hostsData) {
 
     // Create 3 properties for each host
@@ -263,8 +277,9 @@ async function seedHostsPropsRetreats() {
       // Create 3 retreats for each host
       await prisma.retreat.create({
         data: {
-          name: `${['Bit', 'Byte', 'Algorithm'][i - 1]} Bliss Retreat`,
+          name: `${['Bit', 'Byte', 'Algorithm'][i - 1]} ${['Bliss', 'Serenity', 'Luxe'][Math.floor(Math.random() * 3)]} Retreat`,
           description: `Immerse yourself in ${['digital detox', 'coding workshops', 'tech-free luxury'][i - 1]}.`,
+          bookingType: types[Math.floor(Math.random() * 3)],
           duration: `${i * 2} days`,
           date: new Date(2024, i - 1, 15),
           price: `${1500 * i}`,
