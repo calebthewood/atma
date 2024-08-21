@@ -25,10 +25,9 @@ export default async function Page({ params }: { params: { id: string; }; }) {
         { name: 'Transportation', icon: <Navigation />, detail: 'Car & Boat' },
         { name: 'Tour Guide', icon: <User />, detail: 'Not Included' },
     ];
-    console.log(retreat)
 
     function RenderBookingType({ type }: { type: string; }) {
-        console.log(type);
+
         switch (type) {
             case "open":
                 return <OpenBooking retreat={retreat} events={retreat.RetreatInstance} />;

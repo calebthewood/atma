@@ -22,8 +22,6 @@ interface DatePickerProps {
 }
 
 export function DatePicker({ date, handleDate }: DatePickerProps) {
-
-
     return (
         <Popover>
             <PopoverTrigger asChild>
@@ -35,7 +33,7 @@ export function DatePicker({ date, handleDate }: DatePickerProps) {
                     )}
                 >
                     <CalendarIcon className="mr-2 h-4 w-4" />
-                    {date ? format(date, "PPP") : <span>Pick a date</span>}
+                    {date ? format(date, "EEE, MMM dd") : <span>Pick a date</span>}
                 </Button>
             </PopoverTrigger>
             <PopoverContent className="w-auto p-0">
@@ -75,7 +73,7 @@ export function DatePickerWithRange({
                     >
                         {date?.from ? (
                             date.to ? (
-                                <div className="flex justify-between">
+                                <div className="flex justify-evenly w-full">
                                     <div className="">
                                         <Small className="block">From</Small>
                                         {format(date.from, "LLL dd, y")}

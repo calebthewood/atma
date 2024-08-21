@@ -31,7 +31,7 @@ import { DatePickerWithRange } from "../ui/date-pickers";
 import { Button } from "../ui/button";
 import { Separator } from "../ui/separator";
 import { RetreatInstance, Retreat, PriceMod } from "@prisma/client";
-import { format } from "date-fns";
+import { format, differenceInDays } from "date-fns";
 import { toUSD } from "@/lib/utils";
 import { DateRange } from "react-day-picker";
 
@@ -59,16 +59,8 @@ export function FlexibleBooking({ retreat, events }: BookingListProps) {
         from: new Date(),
         to: addDays(new Date(), 3),
     });
-    const updateDate = (date: DateRange | undefined) => {
-        setDate(date);
-        console.log('Update Date: ', date?.from, date?.to);
-    };
 
-    const calculateTotal = () => {
-        let base = Number(retreat.price); // asssume there will be a guest modfier. Some events will not upcharge for guests some will, and it may not be base * guestCount
-        let priceMod = sumPriceMods();
-        return (base * guestCount) + priceMod;
-    };
+    const updateDate = (date: DateRange | undefined) => setDate(date);
 
     const sumPriceMods = () => {
         let total = 0;
@@ -79,9 +71,6 @@ export function FlexibleBooking({ retreat, events }: BookingListProps) {
         return total;
     };
 
-    const comesAfter = (a: Date, b: Date) => compareAsc(a, b) === 1;
-    // const displayed = events.filter((e) => comesAfter(e.startDate, calendarDate ?? today));
-
     const dateDiffDisplay = () => {
         if (!date || !date.to || !date.from) return -1;
         return formatDistance(date.to, date.from);
@@ -89,13 +78,20 @@ export function FlexibleBooking({ retreat, events }: BookingListProps) {
     const dateDiffNumber = () => {
         if (!date || !date.to || !date.from) return -1;
         return differenceInCalendarDays(date?.to, date?.from);
-    }
+    };
 
-    console.log(priceMods);
+    const duration = dateDiffNumber();
+
+    const calculateTotal = () => {
+        let base = Number(retreat.price); // asssume there will be a guest modfier. Some events will not upcharge for guests some will, and it may not be base * guestCount
+        let priceMod = sumPriceMods();
+        return (base * guestCount * duration) + priceMod;
+    };
+
     return (
         <Card>
             <CardHeader>
-                <CardTitle>$1,200 <Small>night</Small></CardTitle>
+                <CardTitle>{toUSD(Number(retreat.price))} <Small>night</Small></CardTitle>
                 <CardDescription>Flexible Booking</CardDescription>
             </CardHeader>
             <CardContent>
@@ -115,12 +111,12 @@ export function FlexibleBooking({ retreat, events }: BookingListProps) {
             </CardContent>
             <CardContent>
                 <P className="flex justify-between text-lg">
-                    <span>{guestCount} guests x ${retreat.price}</span>
-                    <span>{toUSD(guestCount * Number(retreat.price))}</span>
+                    <span>{guestCount} guests x ${Number(retreat.price)}</span>
+                    <span>{toUSD(guestCount * Number(retreat.price) * guestCount)}</span>
                 </P>
                 <P className="flex justify-between text-lg">
                     <span>{dateDiffDisplay()} x ${guestCount * Number(retreat.price)}</span>
-                    <span>{toUSD(dateDiffNumber() * Number(retreat.price))}</span>
+                    <span>{toUSD(duration * Number(retreat.price) * guestCount)}</span>
                 </P>
 
                 {priceMods?.length > 0 ? priceMods.map((mod, i) => (
@@ -136,7 +132,7 @@ export function FlexibleBooking({ retreat, events }: BookingListProps) {
                 </P>
 
             </CardContent>
-            <CardFooter>
+            <CardFooter className="justify-end">
                 <CheckoutButton
                     uiMode="embedded"
                     price={Number(retreat.price)} />

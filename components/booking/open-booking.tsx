@@ -27,7 +27,7 @@ import {
 } from "@/components/ui/tooltip";
 
 import { H2, Large, P, Small, Lead } from "../typography";
-import { DatePicker} from "../ui/date-pickers";
+import { DatePicker } from "../ui/date-pickers";
 import { Button } from "../ui/button";
 import { Separator } from "../ui/separator";
 import { RetreatInstance, Retreat } from "@prisma/client";
@@ -52,17 +52,16 @@ export function OpenBooking({ retreat, events }: BookingListProps) {
 
     const comesAfter = (a: Date, b: Date) => compareAsc(a, b) === 1;
     const displayed = events.filter((e) => comesAfter(e.startDate, date ?? today));
-    console.log(events);
 
     return (
         <Card>
             <CardHeader>
-                <CardTitle>$1,200 <Small>night</Small></CardTitle>
-                <CardDescription>Open Booking</CardDescription>
+                <CardTitle>{toUSD(Number(retreat.price))} <Small>base price</Small></CardTitle>
+                <CardDescription>Event Booking</CardDescription>
             </CardHeader>
             <CardContent>
                 <div className="flex items-center space-x-4">
-                    <Small>From</Small><br />
+                    <Small>From</Small>
                     <DatePicker date={date} handleDate={setDate} />
                     <GuestSelect
                         guestCount={guestCount}
@@ -100,17 +99,15 @@ function BookingItem({ item, retreat, guestCount }: BookingItemProps) {
     return (
         <div className="grid cols-5">
             <div className="col-start-1 col-span-4">
-
                 <Large>{retreat.name}</Large>
                 <Lead className="text-sm">{start} to {end}</Lead>
                 <p className="font-semibold text-sm">{toUSD(basePrice)} <span className="font-normal">/ person</span></p>
             </div>
             <div className="col-start-5 col-span-1 content-end">
-
                 <TooltipProvider>
                     <Tooltip>
                         <TooltipTrigger>
-                            <Small>{toUSD(adjustedPrice)}</Small><Lead className="text-xs inline">/ base price</Lead>
+                            <Small>{toUSD(adjustedPrice)}</Small><Lead className="text-xs inline"> / base price</Lead>
                         </TooltipTrigger>
                         <TooltipContent className="max-w-64">
                             <p>Proceed to checkout to view total cost including taxes & fees</p>
