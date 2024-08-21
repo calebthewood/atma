@@ -6,6 +6,7 @@ import { revalidatePath } from "next/cache";
 export async function createRetreat(data: {
   name: string;
   description: string;
+  bookingType: string;
   duration: string;
   date: Date;
   price: string;
@@ -19,6 +20,7 @@ export async function createRetreat(data: {
       data: {
         name: data.name,
         description: data.description,
+        bookingType: data.bookingType,
         duration: data.duration,
         minGuests: data.minGuests,
         maxGuests: data.maxGuests,
@@ -70,8 +72,13 @@ export async function getRetreatById(retreatId: string) {
         id: retreatId,
       },
       include: {
-        RetreatInstance: true
-      }
+        RetreatInstance: {
+          include: {
+            priceMods: true
+          }
+        },
+        images: true
+      },
     });
 
     if (!retreat) {

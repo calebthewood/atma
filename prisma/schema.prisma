@@ -170,7 +170,7 @@ model HostUser {
 
 model Retreat {
     id              String            @id @default(cuid())
-    bookingType     String // open, fixed_range, flexible_range
+    bookingType     String // Flexible: Fixed Start Open End. Fixed: Fixed Start Fixed End. Open: Open Start Open End
     name            String
     description     String
     duration        String
@@ -197,6 +197,8 @@ model RetreatInstance {
     retreatId      String
     startDate      DateTime
     endDate        DateTime // New field to represent the end date of the retreat
+    minNights      Int        @default(-1) // ignore negative numbers
+    maxNights      Int        @default(-1) // ignore negative numbers
     availableSlots Int // Number of available slots for this instance
     isFull         Boolean    @default(false) // New field to indicate if this instance is fully booked
     createdAt      DateTime   @default(now())
@@ -226,8 +228,8 @@ model Booking {
 
 model PriceMod {
     id                String           @id @default(cuid())
-    host              Host             @relation(fields: [hostId], references: [id])
-    hostId            String
+    host              Host?            @relation(fields: [hostId], references: [id])
+    hostId            String?
     name              String
     description       String
     type              String // type: 'FIXED_VALUE', 'PERCENT'
@@ -235,7 +237,7 @@ model PriceMod {
     value             Int
     createdAt         DateTime         @default(now())
     updatedAt         DateTime         @updatedAt
-    RetreatInstance   RetreatInstance? @relation(fields: [retreatInstanceId], references: [id])
+    retreatInstance   RetreatInstance? @relation(fields: [retreatInstanceId], references: [id])
     retreatInstanceId String?
 }
 

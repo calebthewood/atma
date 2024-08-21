@@ -18,30 +18,35 @@ import { LoadingSpinner } from "@/components/loading-spinner";
 
 export default async function Page({ params }: { params: { id: string; }; }) {
     const retreat = await getRetreatById(params.id);
-    console.log(retreat.RetreatInstance)
+
     const details = [
         { name: 'Room Type', icon: <BedSingle />, detail: '' },
         { name: 'Excursions', icon: <NotepadText />, detail: '' },
         { name: 'Transportation', icon: <Navigation />, detail: 'Car & Boat' },
         { name: 'Tour Guide', icon: <User />, detail: 'Not Included' },
     ];
+    console.log(retreat)
 
-    function RenderBookingType({type}: {type: "open" | "fixed_range" | "flexible_range"}) {
+    function RenderBookingType({ type }: { type: string; }) {
+        console.log(type);
         switch (type) {
-            case "open" :
-                return <OpenBooking retreat={retreat} events={retreat.RetreatInstance} />
-            case "fixed_range" :
-                return <FixedBooking retreat={retreat} events={retreat.RetreatInstance} />
-            case "flexible_range" :
-                return <FlexibleBooking retreat={retreat} events={retreat.RetreatInstance} />
+            case "open":
+                return <OpenBooking retreat={retreat} events={retreat.RetreatInstance} />;
+            case "fixed_range":
+                return <FixedBooking retreat={retreat} event={retreat.RetreatInstance[0]} />;
+            case "flexible_range":
+                return <FlexibleBooking retreat={retreat} events={retreat.RetreatInstance} />;
+            default:
+                return null;
         }
     }
-
 
 
     if (!retreat) {
         return <><LoadingSpinner /> Loading</>;
     }
+    // move this default to a general config? maybe not needed even.
+    const coverImgPath = retreat?.coverImg || retreat.images[0].filePath || '/img/iStock-1490140364.jpg'
     return (
         <div className="h-auto min-h-screen">
             <div className="relative h-3/4 min-h-[500px] flex flex-col justify-end bg-muted p-10 text-white dark:border-r">
@@ -49,21 +54,24 @@ export default async function Page({ params }: { params: { id: string; }; }) {
                 <Image
                     priority
                     alt="resort cover photo"
-                    src={retreat?.coverImg || '/img/iStock-1490140364.jpg'}
+                    src={coverImgPath}
                     layout="fill"
                     objectFit="cover"
                     objectPosition="center"
                     fill={true}
                 />
-                <div className="relative z-20 flex items-center text-lg font-medium">
+                <div className="relative z-20 bg-primary/10 w-min pl-20 -left-20 pr-4 backdrop-blur-sm rounded-r">
+
+                <div className="flex items-center text-lg font-medium">
                     {retreat.description}
                 </div>
-                <div className="relative z-20">
+                <div className=" w-min text-nowrap">
                     <blockquote className="space-y-2">
                         <p className="font-serif text-5xl">
                             {retreat.name}
                         </p>
                     </blockquote>
+                </div>
                 </div>
             </div>
             <div className="container">
@@ -78,8 +86,8 @@ export default async function Page({ params }: { params: { id: string; }; }) {
                         <p className="my-4">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Fuga iste, repudiandae ipsam exercitationem reiciendis ea cumque corporis magni ipsum architecto nobis? Nihil libero rem cum dolorem quas ratione a fuga.</p>
                         <p className="my-4">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Fuga iste, repudiandae ipsam exercitationem reiciendis ea cumque corporis magni ipsum architecto nobis? Nihil libero rem cum dolorem quas ratione a fuga.</p>
                     </div>
-                    <div className="col-start-7 col-span-5">
-                        <OpenBooking retreat={retreat} events={retreat.RetreatInstance} />
+                    <div className="col-start-7 col-span-5 mb-16">
+                        <RenderBookingType type={retreat.bookingType} />
                     </div>
                 </div>
             </div>

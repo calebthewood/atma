@@ -1,5 +1,6 @@
 const { PrismaClient } = require('@prisma/client');
 const { addDays } = require('date-fns');
+const { connect } = require('http2');
 const prisma = new PrismaClient();
 
 const imagePaths = [
@@ -159,7 +160,8 @@ async function seedRetreatInstances() {
   const retreats = await prisma.retreat.findMany();
 
   for (const retreat of retreats) {
-    const numberOfInstances = Math.floor(Math.random() * 6);
+    const oneOnly = ['open', 'flexible_range'].includes(retreat.bookingType);
+    const numberOfInstances = oneOnly ? 1 : Math.floor(Math.random() * 6);
 
     for (let i = 0; i < numberOfInstances; i++) {
       // Calculate random start date between June 2024 and June 2025
@@ -169,16 +171,36 @@ async function seedRetreatInstances() {
       // stored as "1 Day", should move to int: 1
       const durationInDays = parseInt(retreat.duration.split(' ')[0]);
       const endDate = addDays(startDate, durationInDays);
+      const minNight = Math.floor(Math.random() * 3) + 1;
 
-      await prisma.retreatInstance.create({
+      const instance = await prisma.retreatInstance.create({
         data: {
           retreatId: retreat.id,
           startDate: startDate,
           endDate: endDate,
+          minNights: minNight,
+          maxNights: minNight + minNight,
           availableSlots: retreat.maxGuests,
           isFull: false,
         },
       });
+
+      // Create 3 price mods for each host
+      const priceModTypes = ['FIXED_VALUE', 'PERCENT', 'FIXED_VALUE'];
+      const priceModCategories = ['Room Type', 'Extra Amenity', 'Transportation'];
+      for (let k = 0; k < 3; k++) {
+        await prisma.priceMod.create({
+          data: {
+            hostId: instance.hostId,
+            retreatInstanceId: instance.id,
+            name: `${['Binary', 'Quantum', 'Neural'][k]} ${['Boost', 'Upgrade', 'Enhancement'][k]}`,
+            description: `${['Elevate', 'Amplify', 'Maximize'][k]} your stay with our ${priceModCategories[k].toLowerCase()} options.`,
+            type: priceModTypes[k],
+            category: priceModCategories[k],
+            value: k === 1 ? 15 : 100 * (k + 1), // 15% for PERCENT, 100 or 300 for FIXED_VALUE
+          },
+        });
+      }
     }
   }
 }
@@ -267,7 +289,7 @@ async function seedHostsPropsRetreats() {
             roomCount: `${10 * j}`,
             amenities: "Air Conditioning, Wi-Fi Access, Flat-Screen TV, Mini Fridge, In-Room Safe",
             bedType: ['Queen Bed', 'King Bed', 'California King Bed'][j - 1],
-            minGuests: j,
+            minGuests: 1,
             maxGuests: j * 2,
             propertyId: property.id,
           },
@@ -283,8 +305,8 @@ async function seedHostsPropsRetreats() {
           duration: `${i * 2} days`,
           date: new Date(2024, i - 1, 15),
           price: `${1500 * i}`,
-          minGuests: 5,
-          maxGuests: 15,
+          minGuests: 1,
+          maxGuests: 6,
           hostId: host.id,
           propertyId: property.id,
         },

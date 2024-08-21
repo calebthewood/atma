@@ -1,8 +1,8 @@
 "use client";
-import { useState } from "react";
+import React, { useState } from "react";
 import CheckoutButton from "../checkout/checkout-button";
-import { compareAsc } from "date-fns";
-
+import { compareAsc, addDays } from "date-fns";
+import { DateRange } from "react-day-picker";
 import {
     Card,
     CardContent,
@@ -27,7 +27,7 @@ import {
 } from "@/components/ui/tooltip";
 
 import { H2, Large, P, Small, Lead } from "../typography";
-import { DatePicker } from "../ui/date-pickers";
+import { DatePicker} from "../ui/date-pickers";
 import { Button } from "../ui/button";
 import { Separator } from "../ui/separator";
 import { RetreatInstance, Retreat } from "@prisma/client";
@@ -41,25 +41,29 @@ interface BookingListProps {
     events: RetreatInstance[];
     retreat: Retreat;
 }
-
+/** Component for making open bookings. Any start & any end, within whatever parameters set by parent retreat
+ * DatePicker will be a variable range between 2 points. Will need to show unavailable days. Like for example, maybe
+ * the user can book any range, but it cant go over a monday.
+ */
 export function OpenBooking({ retreat, events }: BookingListProps) {
 
     const [guestCount, setGuestCount] = useState(retreat.minGuests);
-    const [calendarDate, setCalendarDate] = useState<Date | undefined>(today);
+    const [date, setDate] = React.useState<Date | undefined>(today);
 
-    const comesAfter = (a: Date, b: Date) => compareAsc(a,b) === 1;
-    const displayed = events.filter((e) => comesAfter(e.startDate, calendarDate ?? today));
+    const comesAfter = (a: Date, b: Date) => compareAsc(a, b) === 1;
+    const displayed = events.filter((e) => comesAfter(e.startDate, date ?? today));
+    console.log(events);
 
     return (
         <Card>
             <CardHeader>
                 <CardTitle>$1,200 <Small>night</Small></CardTitle>
-                <CardDescription>Card Description</CardDescription>
+                <CardDescription>Open Booking</CardDescription>
             </CardHeader>
             <CardContent>
                 <div className="flex items-center space-x-4">
                     <Small>From</Small><br />
-                    <DatePicker date={calendarDate} handleDate={(date) => setCalendarDate(date)} />
+                    <DatePicker date={date} handleDate={setDate} />
                     <GuestSelect
                         guestCount={guestCount}
                         handleGuests={(val: string) => setGuestCount(Number(val))}
@@ -148,7 +152,7 @@ function GuestSelect({ guestCount, handleGuests, minGuests, maxGuests }: GuestSe
                 <SelectValue placeholder="Guests" />
             </SelectTrigger>
             <SelectContent>
-                {guests.map(g => <SelectItem value={g.value}>{g.name}</SelectItem>)}
+                {guests.map(g => <SelectItem key={`guest-${g.value}`} value={g.value}>{g.name}</SelectItem>)}
             </SelectContent>
         </Select>
     );

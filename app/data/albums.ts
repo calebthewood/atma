@@ -5,6 +5,7 @@ export interface Album {
   cover: string;
 }
 
+
 export const retreats: Album[] = [
   {
     id: 1,

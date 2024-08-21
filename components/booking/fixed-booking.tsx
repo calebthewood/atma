@@ -1,8 +1,8 @@
 "use client";
-import React, { useState } from "react";
+import { useState } from "react";
 import CheckoutButton from "../checkout/checkout-button";
-import { compareAsc, addDays } from "date-fns";
-import { DateRange } from "react-day-picker";
+import { compareAsc, addDays, formatDistance, differenceInCalendarDays, isSameDay } from "date-fns";
+
 import {
     Card,
     CardContent,
@@ -27,42 +27,98 @@ import {
 } from "@/components/ui/tooltip";
 
 import { H2, Large, P, Small, Lead } from "../typography";
-import { DatePickerWithRange } from "../ui/date-pickers";
+import { DatePickerFixedRange } from "../ui/date-pickers";
 import { Button } from "../ui/button";
 import { Separator } from "../ui/separator";
-import { RetreatInstance, Retreat } from "@prisma/client";
+import { RetreatInstance, Retreat, PriceMod } from "@prisma/client";
 import { format } from "date-fns";
 import { toUSD } from "@/lib/utils";
-
+import { DateRange } from "react-day-picker";
 
 const today = new Date();
 
+interface RetreatIntanceWithMods extends RetreatInstance {
+    priceMods: PriceMod[];
+}
 interface BookingListProps {
-    events: RetreatInstance[];
+    event: RetreatIntanceWithMods;
     retreat: Retreat;
 }
 
-export function FixedBooking({ retreat, events }: BookingListProps) {
-
+/** This is the variable start, fixed duration picker. So a  user can start any day within the confines of the parent
+ * retreat, but the duration is set. So this would be like preset 3-day retreats, or however long is set in the parent
+ * retreat. DatePicker here will always have a set length, but you can move around thew start date.
+ *
+ * Note that the flexible_range retreats need only 1 retreat instance.
+ */
+export function FixedBooking({ retreat, event }: BookingListProps) {
+    retreat.duration;
+    const [priceMods, setPriceMods] = useState<PriceMod[]>(event.priceMods || []);
     const [guestCount, setGuestCount] = useState(retreat.minGuests);
-    const [date, setDate] = React.useState<DateRange | undefined>({
-        from: new Date(2022, 0, 20),
-        to: addDays(new Date(2022, 0, 20), 20),
-    })
+    const [date, setDate] = useState<DateRange | undefined>({
+        from: today,
+        to: addDays(today, event.minNights)
+    });
+
+    const duration = event.minNights;
+
+    const updateDate = (newDate: DateRange | undefined) => {
+        console.log('Update Date: ', newDate);
+        // if from unchanged, to changed, use to as new base
+        if (newDate?.from && date?.from && isSameDay(newDate.from, date.from) && date.to) {
+            const toDate = date?.from;
+            setDate({ from: toDate, to: addDays(toDate, 3) });
+            // else to unchanged, use from as base
+        } else {
+            // if (newDate?.to && date?.to && isSameDay(newDate.to, date.to) && date?.from) {
+            const fromDate = date?.from;
+            setDate({ from: fromDate, to: addDays(fromDate, duration) });
+        }
+    };
+
+    const calculateTotal = () => {
+        let base = Number(retreat.price) * duration; // asssume there will be a guest modfier. Some events will not upcharge for guests some will, and it may not be base * guestCount
+        let priceMod = sumPriceMods();
+        return (base * guestCount) + priceMod;
+    };
+
+    const sumPriceMods = () => {
+        let total = 0;
+        for (const mod of priceMods) {
+            total += mod.value;
+            // this will likely be more complex as price mods can be %, flat rate, daily, etc
+        }
+        return total;
+    };
 
     const comesAfter = (a: Date, b: Date) => compareAsc(a, b) === 1;
-    const displayed = events.filter((e) => comesAfter(e.startDate, date?.from ?? today));
+    // const displayed = events.filter((e) => comesAfter(e.startDate, calendarDate ?? today));
+
+    const dateDiffDisplay = () => {
+        if (!date || !date.to || !date.from) return -1;
+        return formatDistance(date.to, date.from);
+    };
+
+    const dateDiffNumber = () => {
+        if (!date || !date.to || !date.from) return -1;
+        return differenceInCalendarDays(date?.to, date?.from);
+    };
 
     return (
         <Card>
             <CardHeader>
-                <CardTitle>$1,200 <Small>night</Small></CardTitle>
-                <CardDescription>Card Description</CardDescription>
+                <CardTitle>{toUSD(Number(retreat.price) * duration)}<Lead className="inline"> / </Lead><Small>{duration} nights</Small></CardTitle>
+                <CardDescription>Fixed Booking</CardDescription>
             </CardHeader>
             <CardContent>
                 <div className="flex items-center space-x-4">
-                    <Small>From</Small><br />
-                    <DatePickerWithRange date={date} handleDate={setDate} />
+                    <DatePickerFixedRange
+                        className="w-full"
+                        selectedRange={date}
+                        setSelectedRange={setDate}
+                        duration={duration} />
+                </div>
+                <div className="flex w-full mt-2">
                     <GuestSelect
                         guestCount={guestCount}
                         handleGuests={(val: string) => setGuestCount(Number(val))}
@@ -70,60 +126,38 @@ export function FixedBooking({ retreat, events }: BookingListProps) {
                         maxGuests={retreat.maxGuests} />
                 </div>
             </CardContent>
-            {displayed.map((r, i) => (
-                <CardContent key={i} >
-                    <BookingItem guestCount={guestCount} retreat={retreat} item={r} />
-                </CardContent>
-            ))}
             <CardContent>
-                <p>Card Content</p>
+                <P className="flex justify-between text-lg">
+                    <span>{guestCount} guests x ${retreat.price}</span>
+                    <span>{toUSD(guestCount * Number(retreat.price))}</span>
+                </P>
+                <P className="flex justify-between text-lg">
+                    <span>{dateDiffDisplay()} x ${guestCount * Number(retreat.price)}</span>
+                    <span>{toUSD(dateDiffNumber() * Number(retreat.price) * duration)}</span>
+                </P>
+
+                {priceMods?.length > 0 ? priceMods.map((mod, i) => (
+                    <Small className="flex justify-between text-primary/60">
+                        <span>{mod.name}</span>
+                        <span>{toUSD(mod.value)}</span>
+                    </Small>
+                )) : <P>No Price modifiers</P>}
+
+                <P className="flex justify-between text-primary/60">
+                    <span>Total</span>
+                    <span>{toUSD(calculateTotal())}</span>
+                </P>
+
             </CardContent>
-            <CardFooter>
-                <p>Card Footer</p>
+            <CardFooter className="justify-end">
+                <CheckoutButton
+                    uiMode="embedded"
+                    price={Number(retreat.price)} />
             </CardFooter>
         </Card>
     );
 }
 
-interface BookingItemProps {
-    item: RetreatInstance;
-    retreat: Retreat;
-    guestCount: number;
-}
-
-function BookingItem({ item, retreat, guestCount }: BookingItemProps) {
-    const start = format(item.startDate, 'EEE, MMM dd');
-    const end = format(item.endDate, 'EEE, MMM dd');
-    const basePrice = Number(retreat.price);
-    const adjustedPrice = basePrice * guestCount;
-    return (
-        <div className="grid cols-5">
-            <div className="col-start-1 col-span-4">
-
-                <Large>{retreat.name}</Large>
-                <Lead className="text-sm">{start} to {end}</Lead>
-                <p className="font-semibold text-sm">{toUSD(basePrice)} <span className="font-normal">/ person</span></p>
-            </div>
-            <div className="col-start-5 col-span-1 content-end">
-
-                <TooltipProvider>
-                    <Tooltip>
-                        <TooltipTrigger>
-                            <Small>{toUSD(adjustedPrice)}</Small><Lead className="text-xs inline">/ base price</Lead>
-                        </TooltipTrigger>
-                        <TooltipContent className="max-w-64">
-                            <p>Proceed to checkout to view total cost including taxes & fees</p>
-                        </TooltipContent>
-                    </Tooltip>
-                </TooltipProvider>
-                <CheckoutButton
-                    uiMode="embedded"
-                    price={adjustedPrice} />
-            </div>
-            <Separator className="my-4 col-span-5" />
-        </div>
-    );
-}
 
 interface GuestSelectProps {
     guestCount: number;
@@ -147,11 +181,11 @@ function GuestSelect({ guestCount, handleGuests, minGuests, maxGuests }: GuestSe
 
     return (
         <Select onValueChange={handleGuests} defaultValue={String(guestCount)}>
-            <SelectTrigger className="w-[180px]">
+            <SelectTrigger className="w-full">
                 <SelectValue placeholder="Guests" />
             </SelectTrigger>
             <SelectContent>
-                {guests.map(g => <SelectItem value={g.value}>{g.name}</SelectItem>)}
+                {guests.map(g => <SelectItem key={g.name} value={g.value}>{g.name}</SelectItem>)}
             </SelectContent>
         </Select>
     );

@@ -1,7 +1,7 @@
 "use client";
 import { useState } from "react";
 import CheckoutButton from "../checkout/checkout-button";
-import { compareAsc } from "date-fns";
+import { compareAsc, addDays, formatDistance, differenceInCalendarDays } from "date-fns";
 
 import {
     Card,
@@ -27,39 +27,85 @@ import {
 } from "@/components/ui/tooltip";
 
 import { H2, Large, P, Small, Lead } from "../typography";
-import { DatePicker } from "../ui/date-pickers";
+import { DatePickerWithRange } from "../ui/date-pickers";
 import { Button } from "../ui/button";
 import { Separator } from "../ui/separator";
-import { RetreatInstance, Retreat } from "@prisma/client";
+import { RetreatInstance, Retreat, PriceMod } from "@prisma/client";
 import { format } from "date-fns";
 import { toUSD } from "@/lib/utils";
-
+import { DateRange } from "react-day-picker";
 
 const today = new Date();
 
+interface RetreatIntanceWithMods extends RetreatInstance {
+    priceMods: PriceMod[];
+}
 interface BookingListProps {
-    events: RetreatInstance[];
+    events: RetreatIntanceWithMods[];
     retreat: Retreat;
 }
 
+/** This is the variable start, fixed duration picker. So a  user can start any day within the confines of the parent
+ * retreat, but the duration is set. So this would be like preset 3-day retreats, or however long is set in the parent
+ * retreat. DatePicker here will always have a set length, but you can move around thew start date.
+ *
+ * Note that the flexible_range retreats need only 1 retreat instance.
+ */
 export function FlexibleBooking({ retreat, events }: BookingListProps) {
 
+    const [priceMods, setPriceMods] = useState<PriceMod[]>(events[0]?.priceMods || []);
     const [guestCount, setGuestCount] = useState(retreat.minGuests);
-    const [calendarDate, setCalendarDate] = useState<Date | undefined>(today);
+    const [date, setDate] = useState<DateRange | undefined>({
+        from: new Date(),
+        to: addDays(new Date(), 3),
+    });
+    const updateDate = (date: DateRange | undefined) => {
+        setDate(date);
+        console.log('Update Date: ', date?.from, date?.to);
+    };
+
+    const calculateTotal = () => {
+        let base = Number(retreat.price); // asssume there will be a guest modfier. Some events will not upcharge for guests some will, and it may not be base * guestCount
+        let priceMod = sumPriceMods();
+        return (base * guestCount) + priceMod;
+    };
+
+    const sumPriceMods = () => {
+        let total = 0;
+        for (const mod of priceMods) {
+            total += mod.value;
+            // this will likely be more complex as price mods can be %, flat rate, daily, etc
+        }
+        return total;
+    };
 
     const comesAfter = (a: Date, b: Date) => compareAsc(a, b) === 1;
-    const displayed = events.filter((e) => comesAfter(e.startDate, calendarDate ?? today));
+    // const displayed = events.filter((e) => comesAfter(e.startDate, calendarDate ?? today));
 
+    const dateDiffDisplay = () => {
+        if (!date || !date.to || !date.from) return -1;
+        return formatDistance(date.to, date.from);
+    };
+    const dateDiffNumber = () => {
+        if (!date || !date.to || !date.from) return -1;
+        return differenceInCalendarDays(date?.to, date?.from);
+    }
+
+    console.log(priceMods);
     return (
         <Card>
             <CardHeader>
                 <CardTitle>$1,200 <Small>night</Small></CardTitle>
-                <CardDescription>Card Description</CardDescription>
+                <CardDescription>Flexible Booking</CardDescription>
             </CardHeader>
             <CardContent>
                 <div className="flex items-center space-x-4">
-                    <Small>From</Small><br />
-                    <DatePicker date={calendarDate} handleDate={(date) => setCalendarDate(date)} />
+                    <DatePickerWithRange
+                        className="w-full"
+                        date={date}
+                        updateDate={updateDate} />
+                </div>
+                <div className="flex w-full mt-2">
                     <GuestSelect
                         guestCount={guestCount}
                         handleGuests={(val: string) => setGuestCount(Number(val))}
@@ -67,16 +113,33 @@ export function FlexibleBooking({ retreat, events }: BookingListProps) {
                         maxGuests={retreat.maxGuests} />
                 </div>
             </CardContent>
-            {displayed.map((r, i) => (
-                <CardContent key={i} >
-                    <BookingItem guestCount={guestCount} retreat={retreat} item={r} />
-                </CardContent>
-            ))}
             <CardContent>
-                <p>Card Content</p>
+                <P className="flex justify-between text-lg">
+                    <span>{guestCount} guests x ${retreat.price}</span>
+                    <span>{toUSD(guestCount * Number(retreat.price))}</span>
+                </P>
+                <P className="flex justify-between text-lg">
+                    <span>{dateDiffDisplay()} x ${guestCount * Number(retreat.price)}</span>
+                    <span>{toUSD(dateDiffNumber() * Number(retreat.price))}</span>
+                </P>
+
+                {priceMods?.length > 0 ? priceMods.map((mod, i) => (
+                    <Small className="flex justify-between text-primary/60">
+                        <span>{mod.name}</span>
+                        <span>{toUSD(mod.value)}</span>
+                    </Small>
+                )) : <P>No Price modifiers</P>}
+
+                <P className="flex justify-between text-primary/60">
+                    <span>Total</span>
+                    <span>{toUSD(calculateTotal())}</span>
+                </P>
+
             </CardContent>
             <CardFooter>
-                <p>Card Footer</p>
+                <CheckoutButton
+                    uiMode="embedded"
+                    price={Number(retreat.price)} />
             </CardFooter>
         </Card>
     );
@@ -144,11 +207,11 @@ function GuestSelect({ guestCount, handleGuests, minGuests, maxGuests }: GuestSe
 
     return (
         <Select onValueChange={handleGuests} defaultValue={String(guestCount)}>
-            <SelectTrigger className="w-[180px]">
+            <SelectTrigger className="w-full">
                 <SelectValue placeholder="Guests" />
             </SelectTrigger>
             <SelectContent>
-                {guests.map(g => <SelectItem value={g.value}>{g.name}</SelectItem>)}
+                {guests.map(g => <SelectItem key={g.name} value={g.value}>{g.name}</SelectItem>)}
             </SelectContent>
         </Select>
     );
