@@ -1,5 +1,7 @@
 import { CreateBookingForm } from "./create-booking-form";
 import { Separator } from "@/components/ui/separator";
+import { BookingList } from "./booking-list";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 export default function Page() {
     return (
@@ -11,7 +13,18 @@ export default function Page() {
                 </p>
             </div>
             <Separator />
-            <CreateBookingForm />
+            <Tabs defaultValue="form" className="">
+                <TabsList>
+                    <TabsTrigger value="form">Create Booking</TabsTrigger>
+                    <TabsTrigger value="list">View Bookings</TabsTrigger>
+                </TabsList>
+                <TabsContent value="form">
+                    <CreateBookingForm />
+                </TabsContent>
+                <TabsContent value="list">
+                    <BookingList />
+                </TabsContent>
+            </Tabs>
         </div>
     );
 

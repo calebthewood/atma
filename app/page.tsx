@@ -70,6 +70,7 @@ export default async function Page() {
                     <RetreatItem
                       key={r.name + `${i * 3.7}`}
                       retreat={r}
+                      segment='retreats'
                       className="w-[250px]"
                       aspectRatio="portrait"
                       width={250}
@@ -96,6 +97,7 @@ export default async function Page() {
                     <RetreatItem
                       key={p.name + `${i * 2}`}
                       retreat={p}
+                      segment='destinations'
                       className="w-[150px]"
                       aspectRatio="square"
                       width={150}
@@ -122,6 +124,7 @@ export default async function Page() {
                     <RetreatItem
                       key={h.name + `${i * 2.3}`}
                       retreat={h}
+                      segment="partners"
                       className="w-[150px]"
                       aspectRatio="square"
                       width={150}

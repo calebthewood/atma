@@ -207,6 +207,8 @@ model RetreatInstance {
     priceMods      PriceMod[]
 }
 
+
+
 model Booking {
     id           String   @id @default(cuid())
     propertyId   String

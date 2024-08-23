@@ -2,17 +2,18 @@
 
 import type { Stripe } from "stripe";
 import { headers } from "next/headers";
-import { CURRENCY, formatAmountForStripe } from "@/lib/stripe"
+import { CURRENCY, formatAmountForStripe } from "@/lib/stripe";
 import { stripe } from "@/lib/stripe";
-
+import { BookingData } from "@/types/booking";
 
 export async function createCheckoutSession(
   data: FormData,
+  bookingId: string,
 ): Promise<{ client_secret: string | null; url: string | null; }> {
   const ui_mode = data.get(
     "uiMode",
   ) as Stripe.Checkout.SessionCreateParams.UiMode;
-
+  console.log('booking id: ', bookingId);
   const origin: string = headers().get("origin") as string;
 
   const checkoutSession: Stripe.Checkout.Session =
@@ -34,6 +35,7 @@ export async function createCheckoutSession(
           },
         },
       ],
+      metadata: { bookingId },
       ...(ui_mode === "hosted" && {
         success_url: `${origin}/checkout?session_id={CHECKOUT_SESSION_ID}`,
         cancel_url: `${origin}/checkout`,
@@ -43,6 +45,8 @@ export async function createCheckoutSession(
       }),
       ui_mode,
     });
+
+  console.log('checkout session: ', checkoutSession);
 
   return {
     client_secret: checkoutSession.client_secret,

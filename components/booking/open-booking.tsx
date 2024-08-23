@@ -1,8 +1,7 @@
 "use client";
 import React, { useState } from "react";
 import CheckoutButton from "../checkout/checkout-button";
-import { compareAsc, addDays } from "date-fns";
-import { DateRange } from "react-day-picker";
+import { compareAsc } from "date-fns";
 import {
     Card,
     CardContent,
@@ -26,9 +25,8 @@ import {
     TooltipTrigger,
 } from "@/components/ui/tooltip";
 
-import { H2, Large, P, Small, Lead } from "../typography";
+import { Large, Small, Lead } from "../typography";
 import { DatePicker } from "../ui/date-pickers";
-import { Button } from "../ui/button";
 import { Separator } from "../ui/separator";
 import { RetreatInstance, Retreat } from "@prisma/client";
 import { format } from "date-fns";
@@ -40,12 +38,13 @@ const today = new Date();
 interface BookingListProps {
     events: RetreatInstance[];
     retreat: Retreat;
+    userId: string | undefined;
 }
 /** Component for making open bookings. Any start & any end, within whatever parameters set by parent retreat
  * DatePicker will be a variable range between 2 points. Will need to show unavailable days. Like for example, maybe
  * the user can book any range, but it cant go over a monday.
  */
-export function OpenBooking({ retreat, events }: BookingListProps) {
+export function OpenBooking({ userId, retreat, events }: BookingListProps) {
 
     const [guestCount, setGuestCount] = useState(retreat.minGuests);
     const [date, setDate] = React.useState<Date | undefined>(today);
@@ -54,7 +53,7 @@ export function OpenBooking({ retreat, events }: BookingListProps) {
     const displayed = events.filter((e) => comesAfter(e.startDate, date ?? today));
 
     return (
-        <Card>
+        <Card className="max-w-md">
             <CardHeader>
                 <CardTitle>{toUSD(Number(retreat.price))} <Small>base price</Small></CardTitle>
                 <CardDescription>Event Booking</CardDescription>
@@ -72,7 +71,7 @@ export function OpenBooking({ retreat, events }: BookingListProps) {
             </CardContent>
             {displayed.map((r, i) => (
                 <CardContent key={i} >
-                    <BookingItem guestCount={guestCount} retreat={retreat} item={r} />
+                    <BookingItem userId={userId} guestCount={guestCount} retreat={retreat} item={r} />
                 </CardContent>
             ))}
             <CardContent>
@@ -89,25 +88,27 @@ interface BookingItemProps {
     item: RetreatInstance;
     retreat: Retreat;
     guestCount: number;
+    userId: string | undefined;
 }
 
-function BookingItem({ item, retreat, guestCount }: BookingItemProps) {
+function BookingItem({ userId, item, retreat, guestCount }: BookingItemProps) {
     const start = format(item.startDate, 'EEE, MMM dd');
     const end = format(item.endDate, 'EEE, MMM dd');
     const basePrice = Number(retreat.price);
     const adjustedPrice = basePrice * guestCount;
     return (
-        <div className="grid cols-5">
-            <div className="col-start-1 col-span-4">
+    <>
+        <div className="flex flex-row">
+            <div className="basis-1/2 flex flex-col">
                 <Large>{retreat.name}</Large>
                 <Lead className="text-sm">{start} to {end}</Lead>
                 <p className="font-semibold text-sm">{toUSD(basePrice)} <span className="font-normal">/ person</span></p>
             </div>
-            <div className="col-start-5 col-span-1 content-end">
+            <div className="basis-1/2 flex flex-col items-end">
                 <TooltipProvider>
                     <Tooltip>
                         <TooltipTrigger>
-                            <Small>{toUSD(adjustedPrice)}</Small><Lead className="text-xs inline"> / base price</Lead>
+                            <Small className="">{toUSD(adjustedPrice)}</Small><Lead className="text-xs inline mr-1"> / base price</Lead>
                         </TooltipTrigger>
                         <TooltipContent className="max-w-64">
                             <p>Proceed to checkout to view total cost including taxes & fees</p>
@@ -116,10 +117,16 @@ function BookingItem({ item, retreat, guestCount }: BookingItemProps) {
                 </TooltipProvider>
                 <CheckoutButton
                     uiMode="embedded"
-                    price={adjustedPrice} />
+                    price={adjustedPrice}
+                    userId={userId}
+                    propertyId={retreat.propertyId}
+                    checkInDate={item.startDate}
+                    checkOutDate={item.endDate}
+                    guestCount={guestCount} />
             </div>
-            <Separator className="my-4 col-span-5" />
         </div>
+        <Separator className="my-4 col-span-5" />
+    </>
     );
 }
 

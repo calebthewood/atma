@@ -15,10 +15,11 @@ import {
 } from "@/components/ui/card";
 import { FakeImageGallery } from "@/components/image-gallery";
 import { LoadingSpinner } from "@/components/loading-spinner";
+import { auth } from "@/auth";
 
 export default async function Page({ params }: { params: { id: string; }; }) {
     const retreat = await getRetreatById(params.id);
-
+    const session = await auth();
     const details = [
         { name: 'Room Type', icon: <BedSingle />, detail: '' },
         { name: 'Excursions', icon: <NotepadText />, detail: '' },
@@ -30,11 +31,11 @@ export default async function Page({ params }: { params: { id: string; }; }) {
 
         switch (type) {
             case "open":
-                return <OpenBooking retreat={retreat} events={retreat.RetreatInstance} />;
+                return <OpenBooking userId={session?.user?.id} retreat={retreat} events={retreat.RetreatInstance} />;
             case "fixed_range":
-                return <FixedBooking retreat={retreat} event={retreat.RetreatInstance[0]} />;
+                return <FixedBooking userId={session?.user?.id} retreat={retreat} event={retreat.RetreatInstance[0]} />;
             case "flexible_range":
-                return <FlexibleBooking retreat={retreat} events={retreat.RetreatInstance} />;
+                return <FlexibleBooking userId={session?.user?.id} retreat={retreat} events={retreat.RetreatInstance} />;
             default:
                 return null;
         }
@@ -45,7 +46,7 @@ export default async function Page({ params }: { params: { id: string; }; }) {
         return <><LoadingSpinner /> Loading</>;
     }
     // move this default to a general config? maybe not needed even.
-    const coverImgPath = retreat?.coverImg || retreat.images[0].filePath || '/img/iStock-1490140364.jpg'
+    const coverImgPath = retreat?.coverImg || retreat.images[0].filePath || '/img/iStock-1490140364.jpg';
     return (
         <div className="h-auto min-h-screen">
             <div className="relative h-3/4 min-h-[500px] flex flex-col justify-end bg-muted p-10 text-white dark:border-r">
@@ -61,16 +62,16 @@ export default async function Page({ params }: { params: { id: string; }; }) {
                 />
                 <div className="relative z-20 bg-primary/10 w-min pl-20 -left-20 pr-4 backdrop-blur-sm rounded-r">
 
-                <div className="flex items-center text-lg font-medium">
-                    {retreat.description}
-                </div>
-                <div className=" w-min text-nowrap">
-                    <blockquote className="space-y-2">
-                        <p className="font-serif text-5xl">
-                            {retreat.name}
-                        </p>
-                    </blockquote>
-                </div>
+                    <div className="flex items-center text-lg font-medium">
+                        {retreat.description}
+                    </div>
+                    <div className=" w-min text-nowrap">
+                        <blockquote className="space-y-2">
+                            <p className="font-serif text-5xl">
+                                {retreat.name}
+                            </p>
+                        </blockquote>
+                    </div>
                 </div>
             </div>
             <div className="container">

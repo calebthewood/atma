@@ -26,12 +26,11 @@ import {
     TooltipTrigger,
 } from "@/components/ui/tooltip";
 
-import { H2, Large, P, Small, Lead } from "../typography";
+import { Large, P, Small, Lead } from "../typography";
 import { DatePickerWithRange } from "../ui/date-pickers";
-import { Button } from "../ui/button";
 import { Separator } from "../ui/separator";
 import { RetreatInstance, Retreat, PriceMod } from "@prisma/client";
-import { format, differenceInDays } from "date-fns";
+import { format } from "date-fns";
 import { toUSD } from "@/lib/utils";
 import { DateRange } from "react-day-picker";
 
@@ -43,6 +42,7 @@ interface RetreatIntanceWithMods extends RetreatInstance {
 interface BookingListProps {
     events: RetreatIntanceWithMods[];
     retreat: Retreat;
+    userId: string;
 }
 
 /** This is the variable start, fixed duration picker. So a  user can start any day within the confines of the parent
@@ -51,7 +51,7 @@ interface BookingListProps {
  *
  * Note that the flexible_range retreats need only 1 retreat instance.
  */
-export function FlexibleBooking({ retreat, events }: BookingListProps) {
+export function FlexibleBooking({ userId, retreat, events }: BookingListProps) {
 
     const [priceMods, setPriceMods] = useState<PriceMod[]>(events[0]?.priceMods || []);
     const [guestCount, setGuestCount] = useState(retreat.minGuests);
@@ -89,7 +89,7 @@ export function FlexibleBooking({ retreat, events }: BookingListProps) {
     };
 
     return (
-        <Card>
+        <Card className="max-w-md">
             <CardHeader>
                 <CardTitle>{toUSD(Number(retreat.price))} <Small>night</Small></CardTitle>
                 <CardDescription>Flexible Booking</CardDescription>
@@ -120,7 +120,7 @@ export function FlexibleBooking({ retreat, events }: BookingListProps) {
                 </P>
 
                 {priceMods?.length > 0 ? priceMods.map((mod, i) => (
-                    <Small className="flex justify-between text-primary/60">
+                    <Small key={`price-mod-${i}`} className="flex justify-between text-primary/60">
                         <span>{mod.name}</span>
                         <span>{toUSD(mod.value)}</span>
                     </Small>
@@ -135,49 +135,14 @@ export function FlexibleBooking({ retreat, events }: BookingListProps) {
             <CardFooter className="justify-end">
                 <CheckoutButton
                     uiMode="embedded"
-                    price={Number(retreat.price)} />
+                    price={Number(retreat.price)}
+                    userId={userId}
+                    propertyId={retreat.propertyId}
+                    checkInDate={date?.from}
+                    checkOutDate={date?.to}
+                    guestCount={guestCount} />
             </CardFooter>
         </Card>
-    );
-}
-
-interface BookingItemProps {
-    item: RetreatInstance;
-    retreat: Retreat;
-    guestCount: number;
-}
-
-function BookingItem({ item, retreat, guestCount }: BookingItemProps) {
-    const start = format(item.startDate, 'EEE, MMM dd');
-    const end = format(item.endDate, 'EEE, MMM dd');
-    const basePrice = Number(retreat.price);
-    const adjustedPrice = basePrice * guestCount;
-    return (
-        <div className="grid cols-5">
-            <div className="col-start-1 col-span-4">
-
-                <Large>{retreat.name}</Large>
-                <Lead className="text-sm">{start} to {end}</Lead>
-                <p className="font-semibold text-sm">{toUSD(basePrice)} <span className="font-normal">/ person</span></p>
-            </div>
-            <div className="col-start-5 col-span-1 content-end">
-
-                <TooltipProvider>
-                    <Tooltip>
-                        <TooltipTrigger>
-                            <Small>{toUSD(adjustedPrice)}</Small><Lead className="text-xs inline">/ base price</Lead>
-                        </TooltipTrigger>
-                        <TooltipContent className="max-w-64">
-                            <p>Proceed to checkout to view total cost including taxes & fees</p>
-                        </TooltipContent>
-                    </Tooltip>
-                </TooltipProvider>
-                <CheckoutButton
-                    uiMode="embedded"
-                    price={adjustedPrice} />
-            </div>
-            <Separator className="my-4 col-span-5" />
-        </div>
     );
 }
 

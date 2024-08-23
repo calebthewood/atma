@@ -43,6 +43,7 @@ interface RetreatIntanceWithMods extends RetreatInstance {
 interface BookingListProps {
     event: RetreatIntanceWithMods;
     retreat: Retreat;
+    userId: string;
 }
 
 /** This is the variable start, fixed duration picker. So a  user can start any day within the confines of the parent
@@ -51,7 +52,7 @@ interface BookingListProps {
  *
  * Note that the flexible_range retreats need only 1 retreat instance.
  */
-export function FixedBooking({ retreat, event }: BookingListProps) {
+export function FixedBooking({ userId, retreat, event }: BookingListProps) {
     retreat.duration;
     const [priceMods, setPriceMods] = useState<PriceMod[]>(event.priceMods || []);
     const [guestCount, setGuestCount] = useState(retreat.minGuests);
@@ -61,20 +62,6 @@ export function FixedBooking({ retreat, event }: BookingListProps) {
     });
 
     const duration = event.minNights;
-
-    const updateDate = (newDate: DateRange | undefined) => {
-        console.log('Update Date: ', newDate);
-        // if from unchanged, to changed, use to as new base
-        if (newDate?.from && date?.from && isSameDay(newDate.from, date.from) && date.to) {
-            const toDate = date?.from;
-            setDate({ from: toDate, to: addDays(toDate, 3) });
-            // else to unchanged, use from as base
-        } else {
-            // if (newDate?.to && date?.to && isSameDay(newDate.to, date.to) && date?.from) {
-            const fromDate = date?.from;
-            setDate({ from: fromDate, to: addDays(fromDate, duration) });
-        }
-    };
 
     const calculateTotal = () => {
         let base = Number(retreat.price) * duration; // asssume there will be a guest modfier. Some events will not upcharge for guests some will, and it may not be base * guestCount
@@ -105,7 +92,7 @@ export function FixedBooking({ retreat, event }: BookingListProps) {
     };
 
     return (
-        <Card>
+        <Card className="max-w-md">
             <CardHeader>
                 <CardTitle>{toUSD(Number(retreat.price) * duration)}<Lead className="inline"> / </Lead><Small>{duration} nights</Small></CardTitle>
                 <CardDescription>Fixed Booking</CardDescription>
@@ -152,7 +139,12 @@ export function FixedBooking({ retreat, event }: BookingListProps) {
             <CardFooter className="justify-end">
                 <CheckoutButton
                     uiMode="embedded"
-                    price={Number(retreat.price)} />
+                    price={Number(retreat.price)}
+                    userId={userId}
+                    propertyId={retreat.propertyId}
+                    checkInDate={date?.from}
+                    checkOutDate={date?.to}
+                    guestCount={guestCount} />
             </CardFooter>
         </Card>
     );

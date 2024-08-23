@@ -40,6 +40,7 @@ interface RetreatCardProps extends React.HTMLAttributes<HTMLDivElement> {
     aspectRatio?: "portrait" | "square";
     width?: number;
     height?: number;
+    segment?: string
 }
 
 export function RetreatItem({
@@ -48,11 +49,12 @@ export function RetreatItem({
     width,
     height,
     className,
+    segment,
     ...props
 }: RetreatCardProps) {
     return (
         <div className={cn("space-y-3", className)} {...props}>
-            <Link href={`/retreats/${retreat.id}`}>
+            <Link href={`/${segment}/${retreat.id}`}>
                 <ContextMenu>
                     <ContextMenuTrigger>
                         <div className="overflow-hidden rounded-md">

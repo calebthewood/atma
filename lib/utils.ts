@@ -8,5 +8,5 @@ export function cn(...inputs: ClassValue[]) {
 export const toUSD = (value: any): string => {
   const n = Number(value);
   if (isNaN(n)) return "$";
-  return value.toLocaleString("en-US", { style: "currency", currency: "USD", minimumFractionDigits: 0 });
+  return n.toLocaleString("en-US", { style: "currency", currency: "USD", minimumFractionDigits: 0 });
 };

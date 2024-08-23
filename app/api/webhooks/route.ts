@@ -1,8 +1,14 @@
 import type { Stripe } from "stripe";
 import { NextResponse } from "next/server";
 import { stripe } from "@/lib/stripe";
+import { createBooking, updateBooking } from "@/actions/booking-actions";
 
-
+/* ReadMe
+  to test locally, run "stripe listen --forward-to localhost:3000/api/webhooks" in
+  the terminal, this establishes a 'local listener' connected to your stripe dashboard.
+  you can verify this by checkig the local listener STATUS here: https://dashboard.stripe.com/test/webhooks
+  otherwise your local dev app wont receive events when going thru the checkout process.
+*/
 export async function POST(req: Request) {
   let event: Stripe.Event;
 
@@ -34,12 +40,22 @@ export async function POST(req: Request) {
 
   if (permittedEvents.includes(event.type)) {
     let data;
-    console.log('[event.data.object] ', event.data.object)
+    console.log('[event.data.object] ', event.data.object);
     try {
       switch (event.type) {
         case "checkout.session.completed":
           data = event.data.object as Stripe.Checkout.Session;
           console.log(`💰 CheckoutSession status: ${data.payment_status}`);
+
+          if (data.metadata) {
+            const bookingId = data.metadata.bookingId;
+            const res = await updateBooking(bookingId, { status: 'completed' });
+
+            if (res) {
+              console.log(`💰💰 Booking status: completeda`);
+            }
+          }
+
           break;
         case "payment_intent.payment_failed":
           data = event.data.object as Stripe.PaymentIntent;
