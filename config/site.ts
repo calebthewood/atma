@@ -1,9 +1,8 @@
-export type SiteConfig = typeof siteConfig
+export type SiteConfig = typeof siteConfig;
 
 export const siteConfig = {
   name: "atma",
-  description:
-    "Unleash your potential.",
+  description: "Unleash your potential.",
   mainNav: [
     {
       title: "Home",
@@ -20,7 +19,7 @@ export const siteConfig = {
   ],
   links: {
     twitter: "https://twitter.com/shadcn",
-    github: "https://github.com/shadcn/ui",
+    github: "https://github.com/calebthewood/",
     docs: "https://ui.shadcn.com",
   },
-}
+};

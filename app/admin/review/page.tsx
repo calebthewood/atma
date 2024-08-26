@@ -1,8 +1,3 @@
-
-
 export default function Page() {
-    return <div>
-       Review
-    </div>;
-
+  return <div>Review</div>;
 }

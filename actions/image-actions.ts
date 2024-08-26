@@ -1,7 +1,8 @@
 "use server";
 
-import { prisma } from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
+
+import { prisma } from "@/lib/prisma";
 
 export async function createImage(data: {
   filePath: string;
@@ -29,7 +30,6 @@ export async function createImage(data: {
     throw new Error("Failed to create image");
   }
 }
-
 
 export async function getImages() {
   try {
@@ -60,14 +60,16 @@ export async function getImageById(imageId: string) {
   }
 }
 
-
-export async function updateImage(imageId: string, data: {
-  filePath?: string;
-  userId?: string;
-  propertyId?: string;
-  hostId?: string;
-  retreatId?: string;
-}) {
+export async function updateImage(
+  imageId: string,
+  data: {
+    filePath?: string;
+    userId?: string;
+    propertyId?: string;
+    hostId?: string;
+    retreatId?: string;
+  }
+) {
   try {
     const image = await prisma.image.update({
       where: {
@@ -84,7 +86,6 @@ export async function updateImage(imageId: string, data: {
     throw new Error(`Failed to update image with id ${imageId}`);
   }
 }
-
 
 export async function deleteImage(imageId: string) {
   try {

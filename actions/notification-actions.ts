@@ -1,7 +1,8 @@
 "use server";
 
-import { prisma } from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
+
+import { prisma } from "@/lib/prisma";
 
 export async function createNotification(data: {
   timestamp: Date;
@@ -52,18 +53,23 @@ export async function getNotificationById(notificationId: string) {
 
     return notification;
   } catch (error) {
-    console.error(`Error fetching notification with id ${notificationId}:`, error);
+    console.error(
+      `Error fetching notification with id ${notificationId}:`,
+      error
+    );
     throw new Error(`Failed to fetch notification with id ${notificationId}`);
   }
 }
 
-
-export async function updateNotification(notificationId: string, data: {
-  timestamp?: Date;
-  status?: string;
-  userId?: string;
-  bookingId?: string;
-}) {
+export async function updateNotification(
+  notificationId: string,
+  data: {
+    timestamp?: Date;
+    status?: string;
+    userId?: string;
+    bookingId?: string;
+  }
+) {
   try {
     const notification = await prisma.notification.update({
       where: {
@@ -76,11 +82,13 @@ export async function updateNotification(notificationId: string, data: {
 
     return notification;
   } catch (error) {
-    console.error(`Error updating notification with id ${notificationId}:`, error);
+    console.error(
+      `Error updating notification with id ${notificationId}:`,
+      error
+    );
     throw new Error(`Failed to update notification with id ${notificationId}`);
   }
 }
-
 
 export async function deleteNotification(notificationId: string) {
   try {
@@ -94,7 +102,10 @@ export async function deleteNotification(notificationId: string) {
 
     return notification;
   } catch (error) {
-    console.error(`Error deleting notification with id ${notificationId}:`, error);
+    console.error(
+      `Error deleting notification with id ${notificationId}:`,
+      error
+    );
     throw new Error(`Failed to delete notification with id ${notificationId}`);
   }
 }

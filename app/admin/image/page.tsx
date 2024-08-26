@@ -1,8 +1,3 @@
-
-
 export default function Page() {
-    return <div>
-       Image
-    </div>;
-
+  return <div>Image</div>;
 }

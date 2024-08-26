@@ -1,10 +1,9 @@
 export interface Album {
-  id: number,
+  id: number;
   name: string;
   artist: string;
   cover: string;
 }
-
 
 export const retreats: Album[] = [
   {

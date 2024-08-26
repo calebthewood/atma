@@ -1,5 +1,6 @@
-import { NextRequest, NextResponse } from "next/server";
 import { headers } from "next/headers";
+import { NextRequest, NextResponse } from "next/server";
+
 import { stripe } from "@/lib/stripe";
 
 export async function POST(req: NextRequest, res: NextResponse) {

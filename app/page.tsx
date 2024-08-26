@@ -1,23 +1,16 @@
 import { Metadata } from "next";
 import Image from "next/image";
 import { getHosts } from "@/actions/host-actions";
+import { getProperties } from "@/actions/property-actions";
+import { getRetreats } from "@/actions/retreat-actions";
 import { auth } from "@/auth";
+
 import { Button } from "@/components/ui/button";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import { Separator } from "@/components/ui/separator";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { LoadingSpinner } from "@/components/loading-spinner";
-import {
-  Tabs,
-  TabsContent,
-  TabsList,
-  TabsTrigger,
-} from "@/components/ui/tabs";
-
 import { RetreatItem } from "@/components/retreat-item";
-
-import { getProperties } from "@/actions/property-actions";
-import { getRetreats } from "@/actions/retreat-actions";
-
 
 export const metadata: Metadata = {
   title: "atma reserve",
@@ -30,22 +23,25 @@ export default async function Page() {
   const properties = await getProperties();
   const retreats = await getRetreats();
 
-
   return (
     <div className="container">
-
       <div className="h-full px-4 py-6 lg:px-8">
         <Tabs defaultValue="retreats" className="h-full space-y-6">
           <div className="space-between flex items-center">
             <TabsList>
-              <TabsTrigger value="retreats" className="relative">Retreats</TabsTrigger>
-              <TabsTrigger value="other" disabled>Other</TabsTrigger>
-              <TabsTrigger value="misc" disabled> Options</TabsTrigger>
+              <TabsTrigger value="retreats" className="relative">
+                Retreats
+              </TabsTrigger>
+              <TabsTrigger value="other" disabled>
+                Other
+              </TabsTrigger>
+              <TabsTrigger value="misc" disabled>
+                {" "}
+                Options
+              </TabsTrigger>
             </TabsList>
             <div className="ml-auto mr-4">
-              <Button>
-                {session?.user?.name || 'Sign in'}
-              </Button>
+              <Button>{session?.user?.name || "Sign in"}</Button>
             </div>
           </div>
           <TabsContent
@@ -70,7 +66,7 @@ export default async function Page() {
                     <RetreatItem
                       key={r.name + `${i * 3.7}`}
                       retreat={r}
-                      segment='retreats'
+                      segment="retreats"
                       className="w-[250px]"
                       aspectRatio="portrait"
                       width={250}
@@ -97,7 +93,7 @@ export default async function Page() {
                     <RetreatItem
                       key={p.name + `${i * 2}`}
                       retreat={p}
-                      segment='destinations'
+                      segment="destinations"
                       className="w-[150px]"
                       aspectRatio="square"
                       width={150}
@@ -120,23 +116,24 @@ export default async function Page() {
             <div className="relative">
               <ScrollArea>
                 <div className="flex space-x-4 pb-4">
-                  {hosts.map((h, i) => (
-                    <RetreatItem
-                      key={h.name + `${i * 2.3}`}
-                      retreat={h}
-                      segment="partners"
-                      className="w-[150px]"
-                      aspectRatio="square"
-                      width={150}
-                      height={150}
-                    />
-                  )).reverse()}
+                  {hosts
+                    .map((h, i) => (
+                      <RetreatItem
+                        key={h.name + `${i * 2.3}`}
+                        retreat={h}
+                        segment="partners"
+                        className="w-[150px]"
+                        aspectRatio="square"
+                        width={150}
+                        height={150}
+                      />
+                    ))
+                    .reverse()}
                 </div>
                 <ScrollBar orientation="horizontal" />
               </ScrollArea>
             </div>
           </TabsContent>
-
         </Tabs>
       </div>
     </div>

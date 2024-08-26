@@ -1,7 +1,8 @@
 "use server";
 
-import { prisma } from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
+
+import { prisma } from "@/lib/prisma";
 
 export async function createMessage(data: {
   timestamp: Date;
@@ -27,7 +28,6 @@ export async function createMessage(data: {
     throw new Error("Failed to create message");
   }
 }
-
 
 export async function getMessages() {
   try {
@@ -58,13 +58,15 @@ export async function getMessageById(messageId: string) {
   }
 }
 
-
-export async function updateMessage(messageId: string, data: {
-  timestamp?: Date;
-  bookingId?: string;
-  senderId?: string;
-  receiverId?: string;
-}) {
+export async function updateMessage(
+  messageId: string,
+  data: {
+    timestamp?: Date;
+    bookingId?: string;
+    senderId?: string;
+    receiverId?: string;
+  }
+) {
   try {
     const message = await prisma.message.update({
       where: {
@@ -81,7 +83,6 @@ export async function updateMessage(messageId: string, data: {
     throw new Error(`Failed to update message with id ${messageId}`);
   }
 }
-
 
 export async function deleteMessage(messageId: string) {
   try {

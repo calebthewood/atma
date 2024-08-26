@@ -1,3 +1,3 @@
 export default function Page() {
-    return <div>Retreat List</div>
-  }
+  return <div>Retreat List</div>;
+}

@@ -1,7 +1,8 @@
 "use server";
 
-import { prisma } from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
+
+import { prisma } from "@/lib/prisma";
 
 export async function createPayment(data: {
   bookingId: string;
@@ -27,7 +28,6 @@ export async function createPayment(data: {
     throw new Error("Failed to create payment");
   }
 }
-
 
 export async function getPayments() {
   try {
@@ -58,13 +58,15 @@ export async function getPaymentById(paymentId: string) {
   }
 }
 
-
-export async function updatePayment(paymentId: string, data: {
-  bookingId?: string;
-  paymentDate?: Date;
-  amount?: string;
-  status?: string;
-}) {
+export async function updatePayment(
+  paymentId: string,
+  data: {
+    bookingId?: string;
+    paymentDate?: Date;
+    amount?: string;
+    status?: string;
+  }
+) {
   try {
     const payment = await prisma.payment.update({
       where: {
@@ -81,8 +83,6 @@ export async function updatePayment(paymentId: string, data: {
     throw new Error(`Failed to update payment with id ${paymentId}`);
   }
 }
-
-
 
 export async function deletePayment(paymentId: string) {
   try {

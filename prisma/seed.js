@@ -1,6 +1,6 @@
-const { PrismaClient } = require('@prisma/client');
-const { addDays } = require('date-fns');
-const { connect } = require('http2');
+const { PrismaClient } = require("@prisma/client");
+const { addDays } = require("date-fns");
+const { connect } = require("http2");
 const prisma = new PrismaClient();
 
 const imagePaths = [
@@ -40,7 +40,8 @@ const hosts = [
   {
     name: "Grace's Graceful Getaways",
     type: "Corporate",
-    description: "Compile unforgettable memories in our high-level accommodations.",
+    description:
+      "Compile unforgettable memories in our high-level accommodations.",
     email: "grace@gracefulgetaways.com",
     phone: "+1 (555) 246-8135",
     profilePic: "/img/woman-sits-pool-with-palm-trees-background.jpg",
@@ -48,7 +49,8 @@ const hosts = [
   {
     name: "Hopper's Haven",
     type: "Corporate",
-    description: "Debug your stress in our compiler-free coastal retreat, where the only bugs you'll encounter are on the beach.",
+    description:
+      "Debug your stress in our compiler-free coastal retreat, where the only bugs you'll encounter are on the beach.",
     email: "ada@algorithmicretreats.com",
     phone: "+1 (555) 123-4567",
     profilePic: "/img/indoor-design-luxury-resort.jpg",
@@ -56,7 +58,8 @@ const hosts = [
   {
     name: "Babbage's Blissful Bungalows",
     type: "Independent",
-    description: "Experience analytical luxury in our difference engine of relaxation, where every stay computes to perfection.",
+    description:
+      "Experience analytical luxury in our difference engine of relaxation, where every stay computes to perfection.",
     email: "alan@tranquilescapes.com",
     phone: "+1 (555) 987-6543",
     profilePic: "",
@@ -64,7 +67,8 @@ const hosts = [
   {
     name: "Dijkstra's Serene Paths",
     type: "Corporate",
-    description: "Navigate to tranquility through our optimally relaxing accommodations, where every route leads to bliss.",
+    description:
+      "Navigate to tranquility through our optimally relaxing accommodations, where every route leads to bliss.",
     email: "grace@gracefulgetaways.com",
     phone: "+1 (555) 246-8135",
     profilePic: "",
@@ -72,7 +76,8 @@ const hosts = [
   {
     name: "Jobs' Innovative Retreats",
     type: "Corporate",
-    description: "Think different about vacations in our sleek, user-friendly oasis. Our genius bar serves cocktails, and relaxation comes standard on all our devices.",
+    description:
+      "Think different about vacations in our sleek, user-friendly oasis. Our genius bar serves cocktails, and relaxation comes standard on all our devices.",
     email: "ada@algorithmicretreats.com",
     phone: "+1 (555) 123-4567",
     profilePic: "",
@@ -80,7 +85,8 @@ const hosts = [
   {
     name: "Engelbart's Interactive Oasis",
     type: "Independent",
-    description: "Click into comfort with our revolutionary approach to hospitality, featuring intuitive luxury at your fingertips.",
+    description:
+      "Click into comfort with our revolutionary approach to hospitality, featuring intuitive luxury at your fingertips.",
     email: "alan@tranquilescapes.com",
     phone: "+1 (555) 987-6543",
     profilePic: "",
@@ -88,7 +94,8 @@ const hosts = [
   {
     name: "Von Neumann's Architectural Marvel",
     type: "Corporate",
-    description: "Immerse yourself in the architecture of opulence, where luxury is stored in every address of our resort.",
+    description:
+      "Immerse yourself in the architecture of opulence, where luxury is stored in every address of our resort.",
     email: "grace@gracefulgetaways.com",
     phone: "+1 (555) 246-8135",
     profilePic: "",
@@ -96,7 +103,8 @@ const hosts = [
   {
     name: "Torvalds' Open Source Serenity",
     type: "Corporate",
-    description: "Contribute to your own relaxation in our collaborative luxury environment, where peace is always the latest stable release.",
+    description:
+      "Contribute to your own relaxation in our collaborative luxury environment, where peace is always the latest stable release.",
     email: "ada@algorithmicretreats.com",
     phone: "+1 (555) 123-4567",
     profilePic: "",
@@ -104,7 +112,8 @@ const hosts = [
   {
     name: "Berners-Lee's Web of Wellness",
     type: "Independent",
-    description: "Connect to ultimate relaxation in our worldwide web of spa treatments and gourmet dining experiences.",
+    description:
+      "Connect to ultimate relaxation in our worldwide web of spa treatments and gourmet dining experiences.",
     email: "alan@tranquilescapes.com",
     phone: "+1 (555) 987-6543",
     profilePic: "",
@@ -112,7 +121,8 @@ const hosts = [
   {
     name: "Lovelace's Analytical Spa",
     type: "Corporate",
-    description: "Compute your way to bliss in our numerically inspired sanctuary. Our algorithms of comfort will leave you feeling positively integrated.",
+    description:
+      "Compute your way to bliss in our numerically inspired sanctuary. Our algorithms of comfort will leave you feeling positively integrated.",
     email: "grace@gracefulgetaways.com",
     phone: "+1 (555) 246-8135",
     profilePic: "",
@@ -120,7 +130,8 @@ const hosts = [
   {
     name: "Knuth's Algorithmic Escapes",
     type: "Corporate",
-    description: "Optimize your vacation with our art of relaxation programming, where every moment is precisely calculated for maximum enjoyment.",
+    description:
+      "Optimize your vacation with our art of relaxation programming, where every moment is precisely calculated for maximum enjoyment.",
     email: "grace@gracefulgetaways.com",
     phone: "+1 (555) 246-8135",
     profilePic: "",
@@ -155,21 +166,20 @@ async function dropDB() {
 }
 
 async function seedRetreatInstances() {
-
-
   const retreats = await prisma.retreat.findMany();
 
   for (const retreat of retreats) {
-    const oneOnly = ['open', 'flexible_range'].includes(retreat.bookingType);
+    const oneOnly = ["open", "flexible_range"].includes(retreat.bookingType);
     const numberOfInstances = oneOnly ? 1 : Math.floor(Math.random() * 6);
 
     for (let i = 0; i < numberOfInstances; i++) {
       // Calculate random start date between June 2024 and June 2025
       const startDate = new Date(
-        Date.UTC(2024, 5, 1) + Math.random() * (Date.UTC(2025, 5, 30) - Date.UTC(2024, 5, 1))
+        Date.UTC(2024, 5, 1) +
+          Math.random() * (Date.UTC(2025, 5, 30) - Date.UTC(2024, 5, 1))
       );
       // stored as "1 Day", should move to int: 1
-      const durationInDays = parseInt(retreat.duration.split(' ')[0]);
+      const durationInDays = parseInt(retreat.duration.split(" ")[0]);
       const endDate = addDays(startDate, durationInDays);
       const minNight = Math.floor(Math.random() * 3) + 1;
 
@@ -186,15 +196,19 @@ async function seedRetreatInstances() {
       });
 
       // Create 3 price mods for each host
-      const priceModTypes = ['FIXED_VALUE', 'PERCENT', 'FIXED_VALUE'];
-      const priceModCategories = ['Room Type', 'Extra Amenity', 'Transportation'];
+      const priceModTypes = ["FIXED_VALUE", "PERCENT", "FIXED_VALUE"];
+      const priceModCategories = [
+        "Room Type",
+        "Extra Amenity",
+        "Transportation",
+      ];
       for (let k = 0; k < 3; k++) {
         await prisma.priceMod.create({
           data: {
             hostId: instance.hostId,
             retreatInstanceId: instance.id,
-            name: `${['Binary', 'Quantum', 'Neural'][k]} ${['Boost', 'Upgrade', 'Enhancement'][k]}`,
-            description: `${['Elevate', 'Amplify', 'Maximize'][k]} your stay with our ${priceModCategories[k].toLowerCase()} options.`,
+            name: `${["Binary", "Quantum", "Neural"][k]} ${["Boost", "Upgrade", "Enhancement"][k]}`,
+            description: `${["Elevate", "Amplify", "Maximize"][k]} your stay with our ${priceModCategories[k].toLowerCase()} options.`,
             type: priceModTypes[k],
             category: priceModCategories[k],
             value: k === 1 ? 15 : 100 * (k + 1), // 15% for PERCENT, 100 or 300 for FIXED_VALUE
@@ -206,7 +220,6 @@ async function seedRetreatInstances() {
 }
 
 async function seedImages() {
-
   const hosts = await prisma.host.findMany();
 
   for (let i = 0; i < hosts.length; i++) {
@@ -251,31 +264,30 @@ async function seedImages() {
       });
     }
   }
-  console.log('Seed data for images has been created successfully.');
+  console.log("Seed data for images has been created successfully.");
 }
 
 async function seedHostsPropsRetreats() {
-
-  const types = ['open', 'fixed_range', 'flexible_range'];
+  const types = ["open", "fixed_range", "flexible_range"];
 
   const hostData = await prisma.host.createMany({ data: hosts });
   const hostsData = await prisma.host.findMany();
 
   for (const host of hostsData) {
-
     // Create 3 properties for each host
     for (let i = 1; i <= 3; i++) {
       const property = await prisma.property.create({
         data: {
-          email: `property${i}@${host.name.toLowerCase().replace(/\s/g, '')}.com`,
+          email: `property${i}@${host.name.toLowerCase().replace(/\s/g, "")}.com`,
           phone: `+1 (555) ${100 + i}-${2000 + i}`,
-          name: `${host.name.split(' ')[0]}'s ${['Luxury', 'Elite', 'Premium'][i - 1]} ${['Resort', 'Hotel', 'Villa'][i - 1]}`,
-          description: `A ${['stunning', 'breathtaking', 'awe-inspiring'][i - 1]} ${['beachfront', 'mountain', 'urban'][i - 1]} retreat.`,
+          name: `${host.name.split(" ")[0]}'s ${["Luxury", "Elite", "Premium"][i - 1]} ${["Resort", "Hotel", "Villa"][i - 1]}`,
+          description: `A ${["stunning", "breathtaking", "awe-inspiring"][i - 1]} ${["beachfront", "mountain", "urban"][i - 1]} retreat.`,
           address: `${1000 + i} Paradise Lane, Exotica City, EX ${10000 + i}`,
-          closestAirport: `${['Sun', 'Moon', 'Star'][i - 1]} International Airport`,
-          location: `${['Tropical Island', 'Alpine Peaks', 'Cosmopolitan Center'][i - 1]}`,
-          type: i === 1 ? 'Resort' : 'Hotel',
-          amenities: "Infinity Pool, Spa, Gourmet Restaurants, Private Beach, Fitness Center",
+          closestAirport: `${["Sun", "Moon", "Star"][i - 1]} International Airport`,
+          location: `${["Tropical Island", "Alpine Peaks", "Cosmopolitan Center"][i - 1]}`,
+          type: i === 1 ? "Resort" : "Hotel",
+          amenities:
+            "Infinity Pool, Spa, Gourmet Restaurants, Private Beach, Fitness Center",
           rating: "0 / 0",
           hostId: host.id,
         },
@@ -285,10 +297,11 @@ async function seedHostsPropsRetreats() {
       for (let j = 1; j <= 3; j++) {
         await prisma.room.create({
           data: {
-            type: ['Single', 'Double', 'Suite'][j - 1],
+            type: ["Single", "Double", "Suite"][j - 1],
             roomCount: `${10 * j}`,
-            amenities: "Air Conditioning, Wi-Fi Access, Flat-Screen TV, Mini Fridge, In-Room Safe",
-            bedType: ['Queen Bed', 'King Bed', 'California King Bed'][j - 1],
+            amenities:
+              "Air Conditioning, Wi-Fi Access, Flat-Screen TV, Mini Fridge, In-Room Safe",
+            bedType: ["Queen Bed", "King Bed", "California King Bed"][j - 1],
             minGuests: 1,
             maxGuests: j * 2,
             propertyId: property.id,
@@ -299,8 +312,8 @@ async function seedHostsPropsRetreats() {
       // Create 3 retreats for each host
       await prisma.retreat.create({
         data: {
-          name: `${['Bit', 'Byte', 'Algorithm'][i - 1]} ${['Bliss', 'Serenity', 'Luxe'][Math.floor(Math.random() * 3)]} Retreat`,
-          description: `Immerse yourself in ${['digital detox', 'coding workshops', 'tech-free luxury'][i - 1]}.`,
+          name: `${["Bit", "Byte", "Algorithm"][i - 1]} ${["Bliss", "Serenity", "Luxe"][Math.floor(Math.random() * 3)]} Retreat`,
+          description: `Immerse yourself in ${["digital detox", "coding workshops", "tech-free luxury"][i - 1]}.`,
           bookingType: types[Math.floor(Math.random() * 3)],
           duration: `${i * 2} days`,
           date: new Date(2024, i - 1, 15),
@@ -314,14 +327,14 @@ async function seedHostsPropsRetreats() {
     }
 
     // Create 3 price mods for each host
-    const priceModTypes = ['FIXED_VALUE', 'PERCENT', 'FIXED_VALUE'];
-    const priceModCategories = ['Room Type', 'Extra Amenity', 'Transportation'];
+    const priceModTypes = ["FIXED_VALUE", "PERCENT", "FIXED_VALUE"];
+    const priceModCategories = ["Room Type", "Extra Amenity", "Transportation"];
     for (let k = 0; k < 3; k++) {
       await prisma.priceMod.create({
         data: {
           hostId: host.id,
-          name: `${['Binary', 'Quantum', 'Neural'][k]} ${['Boost', 'Upgrade', 'Enhancement'][k]}`,
-          description: `${['Elevate', 'Amplify', 'Maximize'][k]} your stay with our ${priceModCategories[k].toLowerCase()} options.`,
+          name: `${["Binary", "Quantum", "Neural"][k]} ${["Boost", "Upgrade", "Enhancement"][k]}`,
+          description: `${["Elevate", "Amplify", "Maximize"][k]} your stay with our ${priceModCategories[k].toLowerCase()} options.`,
           type: priceModTypes[k],
           category: priceModCategories[k],
           value: k === 1 ? 15 : 100 * (k + 1), // 15% for PERCENT, 100 or 300 for FIXED_VALUE

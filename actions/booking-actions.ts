@@ -1,7 +1,8 @@
 "use server";
 
-import { prisma } from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
+
+import { prisma } from "@/lib/prisma";
 
 export async function createBooking(data: {
   propertyId: string;
@@ -34,7 +35,6 @@ export async function createBooking(data: {
   }
 }
 
-
 export async function getBookings() {
   try {
     const bookings = await prisma.booking.findMany();
@@ -64,16 +64,18 @@ export async function getBookingById(bookingId: string) {
   }
 }
 
-
-export async function updateBooking(bookingId: string, data: {
-  propertyId?: string;
-  checkInDate?: Date;
-  checkOutDate?: Date;
-  guestCount?: number;
-  totalPrice?: string;
-  status?: string;
-  userId?: string;
-}) {
+export async function updateBooking(
+  bookingId: string,
+  data: {
+    propertyId?: string;
+    checkInDate?: Date;
+    checkOutDate?: Date;
+    guestCount?: number;
+    totalPrice?: string;
+    status?: string;
+    userId?: string;
+  }
+) {
   try {
     const booking = await prisma.booking.update({
       where: {
@@ -90,7 +92,6 @@ export async function updateBooking(bookingId: string, data: {
     throw new Error(`Failed to update booking with id ${bookingId}`);
   }
 }
-
 
 export async function deleteBooking(bookingId: string) {
   try {

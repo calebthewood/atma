@@ -1,7 +1,8 @@
 "use server";
 
-import { prisma } from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
+
+import { prisma } from "@/lib/prisma";
 
 export async function createProperty(data: {
   email: string;
@@ -43,7 +44,7 @@ export async function getProperties() {
       host: {
         select: {
           name: true,
-          id: true
+          id: true,
         },
       },
     },
@@ -61,19 +62,22 @@ export async function getPropertyById(propertyId: string) {
   return property;
 }
 
-export async function updateProperty(propertyId: string, data: {
-  email?: string;
-  phone?: string;
-  name?: string;
-  description?: string;
-  address?: string;
-  closestAirport?: string;
-  location?: string;
-  type?: string;
-  amenities?: string;
-  rating?: string;
-  hostId?: string;
-}) {
+export async function updateProperty(
+  propertyId: string,
+  data: {
+    email?: string;
+    phone?: string;
+    name?: string;
+    description?: string;
+    address?: string;
+    closestAirport?: string;
+    location?: string;
+    type?: string;
+    amenities?: string;
+    rating?: string;
+    hostId?: string;
+  }
+) {
   const property = await prisma.property.update({
     where: {
       id: propertyId,

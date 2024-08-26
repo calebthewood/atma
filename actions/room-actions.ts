@@ -1,7 +1,8 @@
 "use server";
 
-import { prisma } from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
+
+import { prisma } from "@/lib/prisma";
 
 export async function createRoom(data: {
   type: string;
@@ -63,16 +64,18 @@ export async function getRoomById(roomId: string) {
   }
 }
 
-
-export async function updateRoom(roomId: string, data: {
-  type?: string;
-  roomCount?: string;
-  amenities?: string;
-  bedType?: string;
-  maxOccupancy?: string;
-  hostId?: string;
-  propertyId?: string;
-}) {
+export async function updateRoom(
+  roomId: string,
+  data: {
+    type?: string;
+    roomCount?: string;
+    amenities?: string;
+    bedType?: string;
+    maxOccupancy?: string;
+    hostId?: string;
+    propertyId?: string;
+  }
+) {
   try {
     const room = await prisma.room.update({
       where: {
@@ -89,7 +92,6 @@ export async function updateRoom(roomId: string, data: {
     throw new Error(`Failed to update room with id ${roomId}`);
   }
 }
-
 
 export async function deleteRoom(roomId: string) {
   try {

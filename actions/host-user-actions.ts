@@ -1,7 +1,8 @@
 "use server";
 
-import { prisma } from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
+
+import { prisma } from "@/lib/prisma";
 
 export async function createHostUser(data: {
   userId: string;
@@ -53,15 +54,23 @@ export async function getHostUserById(userId: string, hostId: string) {
 
     return hostUser;
   } catch (error) {
-    console.error(`Error fetching hostUser with userId ${userId} and hostId ${hostId}:`, error);
-    throw new Error(`Failed to fetch hostUser with userId ${userId} and hostId ${hostId}`);
+    console.error(
+      `Error fetching hostUser with userId ${userId} and hostId ${hostId}:`,
+      error
+    );
+    throw new Error(
+      `Failed to fetch hostUser with userId ${userId} and hostId ${hostId}`
+    );
   }
 }
 
-
-export async function updateHostUser(userId: string, hostId: string, data: {
-  assignedBy?: string;
-}) {
+export async function updateHostUser(
+  userId: string,
+  hostId: string,
+  data: {
+    assignedBy?: string;
+  }
+) {
   try {
     const hostUser = await prisma.hostUser.update({
       where: {
@@ -77,8 +86,13 @@ export async function updateHostUser(userId: string, hostId: string, data: {
 
     return hostUser;
   } catch (error) {
-    console.error(`Error updating hostUser with userId ${userId} and hostId ${hostId}:`, error);
-    throw new Error(`Failed to update hostUser with userId ${userId} and hostId ${hostId}`);
+    console.error(
+      `Error updating hostUser with userId ${userId} and hostId ${hostId}:`,
+      error
+    );
+    throw new Error(
+      `Failed to update hostUser with userId ${userId} and hostId ${hostId}`
+    );
   }
 }
 
@@ -97,7 +111,12 @@ export async function deleteHostUser(userId: string, hostId: string) {
 
     return hostUser;
   } catch (error) {
-    console.error(`Error deleting hostUser with userId ${userId} and hostId ${hostId}:`, error);
-    throw new Error(`Failed to delete hostUser with userId ${userId} and hostId ${hostId}`);
+    console.error(
+      `Error deleting hostUser with userId ${userId} and hostId ${hostId}:`,
+      error
+    );
+    throw new Error(
+      `Failed to delete hostUser with userId ${userId} and hostId ${hostId}`
+    );
   }
 }

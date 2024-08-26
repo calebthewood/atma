@@ -1,7 +1,8 @@
 "use server";
 
-import { prisma } from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
+
+import { prisma } from "@/lib/prisma";
 
 export async function createRetreat(data: {
   name: string;
@@ -74,10 +75,10 @@ export async function getRetreatById(retreatId: string) {
       include: {
         RetreatInstance: {
           include: {
-            priceMods: true
-          }
+            priceMods: true,
+          },
         },
-        images: true
+        images: true,
       },
     });
 
@@ -92,16 +93,18 @@ export async function getRetreatById(retreatId: string) {
   }
 }
 
-
-export async function updateRetreat(retreatId: string, data: {
-  name?: string;
-  description?: string;
-  duration?: string;
-  date?: Date;
-  price?: string;
-  hostId?: string;
-  propertyId?: string;
-}) {
+export async function updateRetreat(
+  retreatId: string,
+  data: {
+    name?: string;
+    description?: string;
+    duration?: string;
+    date?: Date;
+    price?: string;
+    hostId?: string;
+    propertyId?: string;
+  }
+) {
   try {
     const retreat = await prisma.retreat.update({
       where: {
@@ -118,7 +121,6 @@ export async function updateRetreat(retreatId: string, data: {
     throw new Error(`Failed to update retreat with id ${retreatId}`);
   }
 }
-
 
 export async function deleteRetreat(retreatId: string) {
   try {

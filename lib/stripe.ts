@@ -22,7 +22,7 @@ export const stripe = new Stripe(process.env.STRIPE_SECRET_KEY as string, {
 
 export function formatAmountForDisplay(
   amount: number,
-  currency: string,
+  currency: string
 ): string {
   let numberFormat = new Intl.NumberFormat(["en-US"], {
     style: "currency",
@@ -34,7 +34,7 @@ export function formatAmountForDisplay(
 
 export function formatAmountForStripe(
   amount: number,
-  currency: string,
+  currency: string
 ): number {
   let numberFormat = new Intl.NumberFormat(["en-US"], {
     style: "currency",

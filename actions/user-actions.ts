@@ -1,8 +1,9 @@
 "use server";
 
-import { prisma } from "@/lib/prisma";
-import { revalidatePath } from "next/cache";
 import { type } from "os";
+import { revalidatePath } from "next/cache";
+
+import { prisma } from "@/lib/prisma";
 
 export async function createUser(data: {
   fname: string;
@@ -17,7 +18,7 @@ export async function createUser(data: {
     data: {
       fname: data.fname,
       lname: data.lname,
-      name: data.fname + ' ' + data.lname, // weird fix for google auth which require 'name'
+      name: data.fname + " " + data.lname, // weird fix for google auth which require 'name'
       username: data.username,
       email: data.email,
       phone: data.phone,
@@ -37,35 +38,38 @@ export async function getUsers() {
 }
 
 interface EmailQuery {
-  email: string
+  email: string;
 }
 interface IdQuery {
-  id: string
+  id: string;
 }
 interface PhoneQuery {
-  phone: string
+  phone: string;
 }
-type UserQuery = EmailQuery | IdQuery | PhoneQuery
+type UserQuery = EmailQuery | IdQuery | PhoneQuery;
 
 export async function getUser(query: UserQuery) {
   if (!query) return null;
 
   const user = await prisma.user.findUnique({
-    where: query
+    where: query,
   });
 
   return user;
 }
 
-export async function updateUser(userId: string, data: {
-  fname?: string;
-  lname?: string;
-  username?: string;
-  email?: string;
-  phone?: string;
-  role?: string;
-  image?: string;
-}) {
+export async function updateUser(
+  userId: string,
+  data: {
+    fname?: string;
+    lname?: string;
+    username?: string;
+    email?: string;
+    phone?: string;
+    role?: string;
+    image?: string;
+  }
+) {
   const user = await prisma.user.update({
     where: {
       id: userId,

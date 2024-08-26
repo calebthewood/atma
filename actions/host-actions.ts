@@ -1,7 +1,8 @@
 "use server";
 
-import { prisma } from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
+
+import { prisma } from "@/lib/prisma";
 
 export async function createHost(data: {
   name: string;
@@ -63,15 +64,18 @@ export async function getHostById(hostId: string) {
   }
 }
 
-export async function updateHost(hostId: string, data: {
-  name?: string;
-  type?: string;
-  description?: string;
-  email?: string;
-  phone?: string;
-  profilePic?: string;
-  userId?: string;
-}) {
+export async function updateHost(
+  hostId: string,
+  data: {
+    name?: string;
+    type?: string;
+    description?: string;
+    email?: string;
+    phone?: string;
+    profilePic?: string;
+    userId?: string;
+  }
+) {
   try {
     const host = await prisma.host.update({
       where: {
@@ -89,7 +93,6 @@ export async function updateHost(hostId: string, data: {
   }
 }
 
-
 export async function deleteHost(hostId: string) {
   try {
     const host = await prisma.host.delete({
@@ -106,4 +109,3 @@ export async function deleteHost(hostId: string) {
     throw new Error(`Failed to delete host with id ${hostId}`);
   }
 }
-

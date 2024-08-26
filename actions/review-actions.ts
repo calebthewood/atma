@@ -1,31 +1,31 @@
 "use server";
 
-import { prisma } from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
 
-export async function createReview(data: {
-  userId: string;
-  rating: number;
-  propertyId: string;
-}) {
-  try {
-    const review = await prisma.review.create({
-      data: {
-        userId: data.userId,
-        rating: data.rating,
-        propertyId: data.propertyId,
-      },
-    });
+import { prisma } from "@/lib/prisma";
 
-    revalidatePath("/reviews");
+// export async function createReview(data: {
+//   userId: string;
+//   rating: number;
+//   propertyId: string;
+// }) {
+//   try {
+//     const review = await prisma.review.create({
+//       data: {
+//         userId: data.userId,
+//         rating: data.rating,
+//         propertyId: data.propertyId,
+//       },
+//     });
 
-    return review;
-  } catch (error) {
-    console.error("Error creating review:", error);
-    throw new Error("Failed to create review");
-  }
-}
+//     revalidatePath("/reviews");
 
+//     return review;
+//   } catch (error) {
+//     console.error("Error creating review:", error);
+//     throw new Error("Failed to create review");
+//   }
+// }
 
 export async function getReviews() {
   try {
@@ -56,12 +56,14 @@ export async function getReviewById(reviewId: string) {
   }
 }
 
-
-export async function updateReview(reviewId: string, data: {
-  userId?: string;
-  rating?: number;
-  propertyId?: string;
-}) {
+export async function updateReview(
+  reviewId: string,
+  data: {
+    userId?: string;
+    rating?: number;
+    propertyId?: string;
+  }
+) {
   try {
     const review = await prisma.review.update({
       where: {
@@ -78,7 +80,6 @@ export async function updateReview(reviewId: string, data: {
     throw new Error(`Failed to update review with id ${reviewId}`);
   }
 }
-
 
 export async function deleteReview(reviewId: string) {
   try {

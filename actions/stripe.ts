@@ -1,19 +1,19 @@
 "use server";
 
-import type { Stripe } from "stripe";
 import { headers } from "next/headers";
-import { CURRENCY, formatAmountForStripe } from "@/lib/stripe";
-import { stripe } from "@/lib/stripe";
+import type { Stripe } from "stripe";
+
 import { BookingData } from "@/types/booking";
+import { CURRENCY, formatAmountForStripe, stripe } from "@/lib/stripe";
 
 export async function createCheckoutSession(
   data: FormData,
-  bookingId: string,
-): Promise<{ client_secret: string | null; url: string | null; }> {
+  bookingId: string
+): Promise<{ client_secret: string | null; url: string | null }> {
   const ui_mode = data.get(
-    "uiMode",
+    "uiMode"
   ) as Stripe.Checkout.SessionCreateParams.UiMode;
-  console.log('booking id: ', bookingId);
+  console.log("booking id: ", bookingId);
   const origin: string = headers().get("origin") as string;
 
   const checkoutSession: Stripe.Checkout.Session =
@@ -30,7 +30,7 @@ export async function createCheckoutSession(
             },
             unit_amount: formatAmountForStripe(
               Number(data.get("price") as string),
-              CURRENCY,
+              CURRENCY
             ),
           },
         },
@@ -46,7 +46,7 @@ export async function createCheckoutSession(
       ui_mode,
     });
 
-  console.log('checkout session: ', checkoutSession);
+  console.log("checkout session: ", checkoutSession);
 
   return {
     client_secret: checkoutSession.client_secret,
@@ -55,13 +55,13 @@ export async function createCheckoutSession(
 }
 
 export async function createPaymentIntent(
-  data: FormData,
-): Promise<{ client_secret: string; }> {
+  data: FormData
+): Promise<{ client_secret: string }> {
   const paymentIntent: Stripe.PaymentIntent =
     await stripe.paymentIntents.create({
       amount: formatAmountForStripe(
         Number(data.get("customDonation") as string),
-        CURRENCY,
+        CURRENCY
       ),
       automatic_payment_methods: { enabled: true },
       currency: CURRENCY,

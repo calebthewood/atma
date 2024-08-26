@@ -1,7 +1,8 @@
-import type { Stripe } from "stripe";
 import { NextResponse } from "next/server";
-import { stripe } from "@/lib/stripe";
 import { createBooking, updateBooking } from "@/actions/booking-actions";
+import type { Stripe } from "stripe";
+
+import { stripe } from "@/lib/stripe";
 
 /* ReadMe
   to test locally, run "stripe listen --forward-to localhost:3000/api/webhooks" in
@@ -16,7 +17,7 @@ export async function POST(req: Request) {
     event = stripe.webhooks.constructEvent(
       await (await req.blob()).text(),
       req.headers.get("stripe-signature") as string,
-      process.env.STRIPE_WEBHOOK_SECRET as string,
+      process.env.STRIPE_WEBHOOK_SECRET as string
     );
   } catch (err) {
     const errorMessage = err instanceof Error ? err.message : "Unknown error";
@@ -25,7 +26,7 @@ export async function POST(req: Request) {
     console.log(`❌ Error message: ${errorMessage}`);
     return NextResponse.json(
       { message: `Webhook Error: ${errorMessage}` },
-      { status: 400 },
+      { status: 400 }
     );
   }
 
@@ -40,7 +41,7 @@ export async function POST(req: Request) {
 
   if (permittedEvents.includes(event.type)) {
     let data;
-    console.log('[event.data.object] ', event.data.object);
+    console.log("[event.data.object] ", event.data.object);
     try {
       switch (event.type) {
         case "checkout.session.completed":
@@ -49,7 +50,7 @@ export async function POST(req: Request) {
 
           if (data.metadata) {
             const bookingId = data.metadata.bookingId;
-            const res = await updateBooking(bookingId, { status: 'completed' });
+            const res = await updateBooking(bookingId, { status: "completed" });
 
             if (res) {
               console.log(`💰💰 Booking status: completeda`);
@@ -72,7 +73,7 @@ export async function POST(req: Request) {
       console.log(error);
       return NextResponse.json(
         { message: "Webhook handler failed" },
-        { status: 500 },
+        { status: 500 }
       );
     }
   }

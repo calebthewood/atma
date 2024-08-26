@@ -1,8 +1,3 @@
-
-
 export default function Page() {
-    return <div>
-        Notification
-    </div>;
-
+  return <div>Notification</div>;
 }
