@@ -3,7 +3,6 @@ import { getRetreatById } from "@/actions/retreat-actions";
 import { auth } from "@/auth";
 import {
   BedSingle,
-  LucideIcon,
   Navigation,
   NotepadText,
   User,
@@ -17,15 +16,12 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import ThumbnailCarousel from "@/components/ui/carousel-thumbnail";
 import { FixedBooking } from "@/components/booking/fixed-booking";
 import { FlexibleBooking } from "@/components/booking/flexible-booking";
 import { OpenBooking } from "@/components/booking/open-booking";
-import { FakeImageGallery } from "@/components/image-gallery";
 import { LoadingSpinner } from "@/components/loading-spinner";
 import { H1 } from "@/components/typography";
-import ThumbnailCarousel from "@/components/ui/carousel-thumbnail";
-import { cn } from "@/lib/utils";
-
 
 const SLIDES = [
   "/img/iStock-1929812569.jpg",
