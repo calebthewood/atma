@@ -23,6 +23,18 @@ import { OpenBooking } from "@/components/booking/open-booking";
 import { FakeImageGallery } from "@/components/image-gallery";
 import { LoadingSpinner } from "@/components/loading-spinner";
 import { H1 } from "@/components/typography";
+import ThumbnailCarousel from "@/components/ui/carousel-thumbnail";
+import { cn } from "@/lib/utils";
+
+
+const SLIDES = [
+  "/img/iStock-1929812569.jpg",
+  "/img/iStock-1812905796.jpg",
+  "/img/iStock-1550112895.jpg",
+  "/img/iStock-1507078404.jpg",
+  "/img/iStock-1490140364.jpg",
+  "/img/iStock-1291807006.jpg",
+];
 
 export default async function Page({ params }: { params: { id: string } }) {
   const retreat = await getRetreatById(params.id);
@@ -107,8 +119,8 @@ export default async function Page({ params }: { params: { id: string } }) {
             <RetreatDescCard key={d.name} desc={d} />
           ))}
         </div>
-        <div>
-          <FakeImageGallery />
+        <div className="my-12">
+          <ThumbnailCarousel slides={SLIDES} />
         </div>
         <div className="grid grid-cols-12">
           <div className="col-start-2 col-span-4 text-lg">
