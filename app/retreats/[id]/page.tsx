@@ -1,12 +1,7 @@
 import Image from "next/image";
 import { getRetreatById } from "@/actions/retreat-actions";
 import { auth } from "@/auth";
-import {
-  BedSingle,
-  Navigation,
-  NotepadText,
-  User,
-} from "lucide-react";
+import { BedSingle, Navigation, NotepadText, User } from "lucide-react";
 
 import {
   Card,
@@ -36,10 +31,26 @@ export default async function Page({ params }: { params: { id: string } }) {
   const retreat = await getRetreatById(params.id);
   const session = await auth();
   const details = [
-    { name: "Room Type", icon: <BedSingle />, detail: "" },
-    { name: "Excursions", icon: <NotepadText />, detail: "" },
-    { name: "Transportation", icon: <Navigation />, detail: "Car & Boat" },
-    { name: "Tour Guide", icon: <User />, detail: "Not Included" },
+    {
+      name: "Room Type",
+      icon: <BedSingle />,
+      detail: "",
+    },
+    {
+      name: "Excursions",
+      icon: <NotepadText />,
+      detail: "",
+    },
+    {
+      name: "Transportation",
+      icon: <Navigation />,
+      detail: "Car & Boat",
+    },
+    {
+      name: "Tour Guide",
+      icon: <User />,
+      detail: "Not Included",
+    },
   ];
 
   function RenderBookingType({ type }: { type: string }) {
