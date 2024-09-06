@@ -19,6 +19,13 @@ module.exports = {
         ring: "hsl(var(--ring))",
         background: "hsl(var(--background))",
         foreground: "hsl(var(--foreground))",
+        crowshead: "#1B0E0A",
+        eternity: "#271910",
+        bistre: "#3F2C20",
+        rich: {
+          white: "#F0F1DD",
+          black: "#060201",
+        },
         primary: {
           DEFAULT: "hsl(var(--primary))",
           foreground: "hsl(var(--primary-foreground))",
@@ -54,6 +61,8 @@ module.exports = {
         sm: "calc(var(--radius) - 4px)",
       },
       fontFamily: {
+        title: ["bristone", "sans"],
+        tagline: ["telugumn", "sans"],
         sans: ["var(--font-sans)", ...fontFamily.sans],
       },
       keyframes: {

@@ -87,7 +87,7 @@ export default async function Page({ params }: { params: { id: string } }) {
   if (!retreat) {
     return (
       <>
-        <LoadingSpinner /> Loading
+        <LoadingSpinner /> Loading...
       </>
     );
   }

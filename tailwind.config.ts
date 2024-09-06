@@ -71,6 +71,10 @@ const config = {
         atmaBeige: {
           DEFAULT: "#FFDBCD",
         },
+        richblack: "#060201",
+        crowshead: "#1B0E0A",
+        eternity: "#271910",
+        bistre: "#3F2C20",
       },
       borderRadius: {
         lg: "var(--radius)",
