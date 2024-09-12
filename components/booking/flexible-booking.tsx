@@ -10,7 +10,7 @@ import {
   formatDistance,
 } from "date-fns";
 import { DateRange } from "react-day-picker";
-import { GuestSelect } from "./guest-select";
+
 import { toUSD } from "@/lib/utils";
 import {
   Card,
@@ -38,6 +38,7 @@ import CheckoutButton from "../checkout/checkout-button";
 import { Large, Lead, P, Small } from "../typography";
 import { DatePickerWithRange } from "../ui/date-pickers";
 import { Separator } from "../ui/separator";
+import { GuestSelect } from "./guest-select";
 
 const today = new Date();
 

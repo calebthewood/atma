@@ -13,7 +13,6 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { GuestSelect } from "./guest-select";
 import {
   Tooltip,
   TooltipContent,
@@ -25,6 +24,7 @@ import CheckoutButton from "../checkout/checkout-button";
 import { Large, Lead, Small } from "../typography";
 import { DatePicker } from "../ui/date-pickers";
 import { Separator } from "../ui/separator";
+import { GuestSelect } from "./guest-select";
 
 const today = new Date();
 

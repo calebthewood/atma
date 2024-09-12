@@ -5,10 +5,10 @@ import { Metadata, Viewport } from "next";
 import { siteConfig } from "@/config/site";
 import { fontSans } from "@/lib/fonts";
 import { cn } from "@/lib/utils";
+import { BookingBar } from "@/components/booking-bar";
 import { SiteHeader } from "@/components/site-header";
 import { TailwindIndicator } from "@/components/tailwind-indicator";
 import { ThemeProvider } from "@/components/theme-provider";
-import { BookingBar } from "@/components/booking-bar";
 
 export const metadata: Metadata = {
   title: {
@@ -48,7 +48,8 @@ export default function RootLayout({ children }: RootLayoutProps) {
 
               <div className="container">
                 <BookingBar />
-                {children}</div>
+                {children}
+              </div>
             </div>
             <TailwindIndicator />
           </ThemeProvider>

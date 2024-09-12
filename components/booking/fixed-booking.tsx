@@ -21,7 +21,6 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { GuestSelect } from "./guest-select";
 import {
   Tooltip,
   TooltipContent,
@@ -34,6 +33,7 @@ import { H2, Large, Lead, P, Small } from "../typography";
 import { Button } from "../ui/button";
 import { DatePickerFixedRange } from "../ui/date-pickers";
 import { Separator } from "../ui/separator";
+import { GuestSelect } from "./guest-select";
 
 const today = new Date();
 
