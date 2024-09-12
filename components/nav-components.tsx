@@ -35,7 +35,7 @@ interface MainNavProps {
 export function HeroTitle() {
   return (
     <Link href="/" className="W-[373] mt-16 hover:brightness-200 hover:">
-      <h1 className="w-full flex justify-between font-title text-6xl leading-6 tracking-[100%] hover:scale-90 transition-all">
+      <h1 className="w-full flex justify-between font-title text-6xl leading-6 tracking-[100%] hover:scale-[97%] transition-all">
         <span>A</span>
         <span>T</span>
         <span>M</span>

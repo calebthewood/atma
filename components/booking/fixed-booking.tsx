@@ -21,13 +21,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+import { GuestSelect } from "./guest-select";
 import {
   Tooltip,
   TooltipContent,
@@ -169,43 +163,5 @@ export function FixedBooking({ userId, retreat, event }: BookingListProps) {
         />
       </CardFooter>
     </Card>
-  );
-}
-
-interface GuestSelectProps {
-  guestCount: number;
-  handleGuests: (val: string) => void;
-  minGuests: number;
-  maxGuests: number;
-}
-
-function GuestSelect({
-  guestCount,
-  handleGuests,
-  minGuests,
-  maxGuests,
-}: GuestSelectProps) {
-  const arrayRange = (start: number, stop: number, step: number) =>
-    Array.from({ length: (stop - start) / step + 1 }, (_, index) => {
-      const value = start + index * step;
-      const name = value === 1 ? "Guest" : "Guests";
-      return { name: `${value} ${name}`, value: String(value) };
-    });
-
-  const guests = arrayRange(minGuests, maxGuests, 1);
-
-  return (
-    <Select onValueChange={handleGuests} defaultValue={String(guestCount)}>
-      <SelectTrigger className="w-full">
-        <SelectValue placeholder="Guests" />
-      </SelectTrigger>
-      <SelectContent>
-        {guests.map((g) => (
-          <SelectItem key={g.name} value={g.value}>
-            {g.name}
-          </SelectItem>
-        ))}
-      </SelectContent>
-    </Select>
   );
 }

@@ -24,7 +24,6 @@ export default async function Page() {
   const retreats = await getRetreats();
 
   return (
-    <div className="container">
       <div className="h-full px-4 py-6 lg:px-8">
         <Tabs defaultValue="retreats" className="h-full space-y-6">
           <div className="space-between flex items-center">
@@ -136,6 +135,5 @@ export default async function Page() {
           </TabsContent>
         </Tabs>
       </div>
-    </div>
   );
 }

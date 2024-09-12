@@ -2,7 +2,51 @@
 @tailwind components;
 @tailwind utilities;
 
+
+.noise {
+  position: relative;
+  overflow: hidden;
+}
+
+.noise::before,
+.noise::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0;
+  right: 0;
+  bottom: 0;
+}
+
+.noise::before {
+  background:
+    repeating-radial-gradient(#000 0 0.0001%, #fff 0 0.0002%) 60% 60%/3000px 3000px,
+    repeating-conic-gradient(#000 0 0.0001%, #fff 0 0.0002%) 40% 40%/3000px 3000px;
+  background-blend-mode: difference;
+  opacity: .1;
+}
+
+.noise::after {
+  background-image: linear-gradient(45deg,
+      hsl(0deg 0% 100% / 80%) 0%,
+      hsl(300deg 100% 100%) 8%,
+      hsl(300deg 100% 100%) 17%,
+      hsl(300deg 100% 100%) 25%,
+      hsl(300deg 100% 100%) 33%,
+      hsl(300deg 100% 100%) 42%,
+      hsl(300deg 100% 100%) 50%,
+      hsl(300deg 100% 100%) 58%,
+      hsl(300deg 100% 100%) 67%,
+      hsl(300deg 100% 100%) 75%,
+      hsl(300deg 100% 100%) 83%,
+      hsl(300deg 100% 100%) 92%,
+      hsl(0deg 0% 100% / 20%) 100%);
+  mix-blend-mode: normal;
+  opacity: .2;
+}
+
 @layer base {
+
   @font-face {
     font-family: "bristone";
     src: url("/fonts/bristone-reg.otf") format("opentype");
