@@ -73,6 +73,8 @@ export async function getPointsInBoundingBox(
 
 /**
  * Searches for nearby places based on a given latitude and longitude.
+ * This WILL need to be refactored if the property list grows to beyond just a few hundred.
+ *
  * @param latitude - The latitude of the user's location.
  * @param longitude - The longitude of the user's location.
  * @param radiusMiles - The search radius in miles (default is 20).
@@ -83,10 +85,8 @@ export const searchNearbyPlaces = async (
   longitude: number | null,
   radiusMiles: number = 20
 ): Promise<Property[]> => {
-  // Fetch all places (optimized for small datasets)
   const allPlaces = await prisma.property.findMany()
 
-  // Calculate distances, filter by radius, and sort by proximity
   const nearbyPlaces = allPlaces
     .map((property) => ({
       ...property,
@@ -99,7 +99,7 @@ export const searchNearbyPlaces = async (
     }))
     .filter((property) => property.distance <= radiusMiles)
     .sort((a, b) => a.distance - b.distance)
-    .slice(0, 10) // Return top 10 closest places
+    .slice(0, 10)
 
   return nearbyPlaces
 }

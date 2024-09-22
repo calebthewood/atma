@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import {  format, parse } from "date-fns";
+import { format, parse } from "date-fns";
 import { DateRange } from "react-day-picker";
 
 import { cn } from "@/lib/utils";
@@ -68,31 +68,40 @@ export function BookingBarCalendar() {
         <div className={cn("grid gap-2 w-full")}>
             <Popover>
                 <PopoverTrigger asChild>
-                    <Button
-                        id="date"
-                        variant={"outline"}
-                        className={cn(
-                            "size-full text-left font-normal bg-transparent border-transparent",
-                            !date && "text-muted-foreground"
-                        )}
-                    >
-                        <div className="flex justify-between w-full h-12 items-center">
+                    <div className="flex justify-around w-full h-12 items-center">
+                        <Button
+                            id="date"
+                            variant={"outline"}
+                            className={cn(
+                                "size-full text-left font-normal bg-transparent border-transparent",
+                                !date && "text-muted-foreground"
+                            )}
+                        >
                             {date?.from ? (
                                 <DateDisplay date={date.from} />
                             ) : (
                                 <DatePlaceholder />
                             )}
-                            <Separator
-                                orientation="vertical"
-                                className="h-full h-full mx-2 bg-rich-white w-[0.5px]"
-                            />
+                        </Button>
+                        <Separator
+                            orientation="vertical"
+                            className="h-full h-full mx-2 bg-rich-white w-[0.5px]"
+                        />
+                        <Button
+                            id="date"
+                            variant={"outline"}
+                            className={cn(
+                                "size-full text-left font-normal bg-transparent border-transparent",
+                                !date && "text-muted-foreground"
+                            )}
+                        >
                             {date?.to ? (
                                 <DateDisplay date={date.to} to />
                             ) : (
                                 <DatePlaceholder />
                             )}
-                        </div>
-                    </Button>
+                        </Button>
+                    </div>
                 </PopoverTrigger>
                 <PopoverContent className="w-auto p-0" align="start">
                     <Calendar

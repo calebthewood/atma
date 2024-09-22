@@ -145,7 +145,7 @@ export function LocationCombobox() {
                     variant="outline"
                     role="combobox"
                     aria-expanded={open}
-                    className="w-[200px] pl-2 justify-between bg-transparent border-transparent"
+                    className="w-full pl-2 h-12 justify-between bg-transparent border-transparent"
                 >
                     {value ? value.name : (
                         <Placeholder
@@ -236,7 +236,7 @@ export function GuestCombobox() {
                     variant="outline"
                     role="combobox"
                     aria-expanded={open}
-                    className="w-[200px] pl-2 justify-between bg-transparent border-transparent"
+                    className="w-full h-12 pl-2 justify-between bg-transparent border-transparent"
                 >
                     {guestCount > 0 ? (
                         <span className="flex flex-col items-start">

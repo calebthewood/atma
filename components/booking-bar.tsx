@@ -60,17 +60,23 @@ export function BookingBar({ updateResults }: { updateResults: (list: Property[]
     return (
         <div className="w-full flex flex-row justify-between mt-6">
             <div className="h-16 grow flex flex-row rounded border justify-evenly items-center bg-white/20 backdrop-blur p-2 shadow">
-                <LocationCombobox />
+                <div className="basis-3/12">
+                    <LocationCombobox />
+                </div>
                 <Separator
                     orientation="vertical"
                     className="h-full mx-2  bg-rich-white w-[0.5px]"
                 />
-                <BookingBarCalendar />
+                <div className="basis-6/12">
+                    <BookingBarCalendar />
+                </div>
                 <Separator
                     orientation="vertical"
                     className="h-full mx-2  bg-rich-white w-[0.5px]"
                 />
-                <GuestCombobox />
+                <div className="basis-2/12">
+                    <GuestCombobox />
+                </div>
             </div>
             <Button asChild onClick={handleSearch} className="h-16 w-20 ml-2 p-4 cursor-pointer rounded border flex justify-center items-center align-center bg-white/20  backdrop-blur shadow">
                 <Search className="stroke-white hover:stroke-rich-black" strokeWidth={0.5} />
