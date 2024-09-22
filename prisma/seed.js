@@ -1,7 +1,7 @@
-const { PrismaClient } = require("@prisma/client");
-const { addDays } = require("date-fns");
-const { connect } = require("http2");
-const prisma = new PrismaClient();
+const { PrismaClient } = require("@prisma/client")
+const { addDays } = require("date-fns")
+const { connect } = require("http2")
+const prisma = new PrismaClient()
 
 const imagePaths = [
   "/img/iStock-1929812569.jpg",
@@ -18,7 +18,7 @@ const imagePaths = [
   "/img/recovery-center-outside-lush-stunning-spa-nature-mauritiusisland.jpg",
   "/img/wellness-practices-self-care-world-health-day.jpg",
   "/img/woman-sits-pool-with-palm-trees-background.jpg",
-];
+]
 
 const hosts = [
   {
@@ -136,52 +136,52 @@ const hosts = [
     phone: "+1 (555) 246-8135",
     profilePic: "",
   },
-];
+]
 
 async function main() {
-  await dropDB();
-  await seedHostsPropsRetreats();
-  await seedImages();
-  await seedRetreatInstances();
+  await dropDB()
+  await seedHostsPropsRetreats()
+  await seedImages()
+  await seedRetreatInstances()
 }
 
 main()
   .then(async () => {
-    await prisma.$disconnect();
+    await prisma.$disconnect()
   })
   .catch(async (e) => {
-    console.error(e);
-    await prisma.$disconnect();
-    process.exit(1);
-  });
+    console.error(e)
+    await prisma.$disconnect()
+    process.exit(1)
+  })
 
 async function dropDB() {
-  await prisma.retreatInstance.deleteMany();
-  await prisma.image.deleteMany();
-  await prisma.host.deleteMany();
-  await prisma.property.deleteMany();
-  await prisma.room.deleteMany();
-  await prisma.retreat.deleteMany();
-  await prisma.priceMod.deleteMany();
+  await prisma.retreatInstance.deleteMany()
+  await prisma.image.deleteMany()
+  await prisma.host.deleteMany()
+  await prisma.property.deleteMany()
+  await prisma.room.deleteMany()
+  await prisma.retreat.deleteMany()
+  await prisma.priceMod.deleteMany()
 }
 
 async function seedRetreatInstances() {
-  const retreats = await prisma.retreat.findMany();
+  const retreats = await prisma.retreat.findMany()
 
   for (const retreat of retreats) {
-    const oneOnly = ["open", "flexible_range"].includes(retreat.bookingType);
-    const numberOfInstances = oneOnly ? 1 : Math.floor(Math.random() * 6);
+    const oneOnly = ["open", "flexible_range"].includes(retreat.bookingType)
+    const numberOfInstances = oneOnly ? 1 : Math.floor(Math.random() * 6)
 
     for (let i = 0; i < numberOfInstances; i++) {
       // Calculate random start date between June 2024 and June 2025
       const startDate = new Date(
         Date.UTC(2024, 5, 1) +
           Math.random() * (Date.UTC(2025, 5, 30) - Date.UTC(2024, 5, 1))
-      );
+      )
       // stored as "1 Day", should move to int: 1
-      const durationInDays = parseInt(retreat.duration.split(" ")[0]);
-      const endDate = addDays(startDate, durationInDays);
-      const minNight = Math.floor(Math.random() * 3) + 1;
+      const durationInDays = parseInt(retreat.duration.split(" ")[0])
+      const endDate = addDays(startDate, durationInDays)
+      const minNight = Math.floor(Math.random() * 3) + 1
 
       const instance = await prisma.retreatInstance.create({
         data: {
@@ -193,15 +193,15 @@ async function seedRetreatInstances() {
           availableSlots: retreat.maxGuests,
           isFull: false,
         },
-      });
+      })
 
       // Create 3 price mods for each host
-      const priceModTypes = ["FIXED_VALUE", "PERCENT", "FIXED_VALUE"];
+      const priceModTypes = ["FIXED_VALUE", "PERCENT", "FIXED_VALUE"]
       const priceModCategories = [
         "Room Type",
         "Extra Amenity",
         "Transportation",
-      ];
+      ]
       for (let k = 0; k < 3; k++) {
         await prisma.priceMod.create({
           data: {
@@ -213,17 +213,17 @@ async function seedRetreatInstances() {
             category: priceModCategories[k],
             value: k === 1 ? 15 : 100 * (k + 1), // 15% for PERCENT, 100 or 300 for FIXED_VALUE
           },
-        });
+        })
       }
     }
   }
 }
 
 async function seedImages() {
-  const hosts = await prisma.host.findMany();
+  const hosts = await prisma.host.findMany()
 
   for (let i = 0; i < hosts.length; i++) {
-    const host = hosts[i];
+    const host = hosts[i]
 
     for (let j = 0; j < 6; j++) {
       await prisma.image.create({
@@ -231,14 +231,14 @@ async function seedImages() {
           filePath: imagePaths[Math.floor((i + j) % imagePaths.length)],
           hostId: host.id,
         },
-      });
+      })
     }
   }
 
-  const properties = await prisma.property.findMany();
+  const properties = await prisma.property.findMany()
 
   for (let i = 0; i < properties.length; i++) {
-    const property = properties[i];
+    const property = properties[i]
 
     for (let j = 0; j < 6; j++) {
       await prisma.image.create({
@@ -246,14 +246,14 @@ async function seedImages() {
           filePath: imagePaths[Math.floor((i + j + 1) % imagePaths.length)],
           propertyId: property.id,
         },
-      });
+      })
     }
   }
 
-  const retreats = await prisma.retreat.findMany();
+  const retreats = await prisma.retreat.findMany()
 
   for (let i = 0; i < retreats.length; i++) {
-    const retreat = retreats[i];
+    const retreat = retreats[i]
 
     for (let j = 0; j < 6; j++) {
       await prisma.image.create({
@@ -261,21 +261,39 @@ async function seedImages() {
           filePath: imagePaths[Math.floor((i + j + 2) % imagePaths.length)],
           retreatId: retreat.id,
         },
-      });
+      })
     }
   }
-  console.log("Seed data for images has been created successfully.");
+  console.log("Seed data for images has been created successfully.")
 }
 
 async function seedHostsPropsRetreats() {
-  const types = ["open", "fixed_range", "flexible_range"];
+  const types = ["open", "fixed_range", "flexible_range"]
+  const cities = [
+    { name: "London", lat: 51.5074, lon: -0.1278 },
+    { name: "Stockholm", lat: 59.3293, lon: 18.0686 },
+    { name: "New York", lat: 40.7128, lon: -74.006 },
+    { name: "Honolulu", lat: 21.3069, lon: -157.8583 },
+    { name: "Tokyo", lat: 35.6762, lon: 139.6503 },
+    { name: "Hong Kong", lat: 22.3193, lon: 114.1694 },
+  ]
 
-  const hostData = await prisma.host.createMany({ data: hosts });
-  const hostsData = await prisma.host.findMany();
+  function getRandomCity() {
+    return cities[Math.floor(Math.random() * cities.length)]
+  }
+
+  function getRandomOffset() {
+    // Generate a random offset between -0.05 and 0.05 (roughly 5km at the equator)
+    return (Math.random() - 0.5) * 0.1
+  }
+  const hostData = await prisma.host.createMany({ data: hosts })
+  const hostsData = await prisma.host.findMany()
 
   for (const host of hostsData) {
-    // Create 3 properties for each host
     for (let i = 1; i <= 3; i++) {
+      const city = getRandomCity()
+      const latitude = city.lat + getRandomOffset()
+      const longitude = city.lon + getRandomOffset()
       const property = await prisma.property.create({
         data: {
           email: `property${i}@${host.name.toLowerCase().replace(/\s/g, "")}.com`,
@@ -290,8 +308,11 @@ async function seedHostsPropsRetreats() {
             "Infinity Pool, Spa, Gourmet Restaurants, Private Beach, Fitness Center",
           rating: "0 / 0",
           hostId: host.id,
+          latitude: latitude,
+          longitude: longitude,
+          city: city.name,
         },
-      });
+      })
 
       // Create 3 rooms for each property
       for (let j = 1; j <= 3; j++) {
@@ -306,7 +327,7 @@ async function seedHostsPropsRetreats() {
             maxGuests: j * 2,
             propertyId: property.id,
           },
-        });
+        })
       }
 
       // Create 3 retreats for each host
@@ -323,12 +344,12 @@ async function seedHostsPropsRetreats() {
           hostId: host.id,
           propertyId: property.id,
         },
-      });
+      })
     }
 
     // Create 3 price mods for each host
-    const priceModTypes = ["FIXED_VALUE", "PERCENT", "FIXED_VALUE"];
-    const priceModCategories = ["Room Type", "Extra Amenity", "Transportation"];
+    const priceModTypes = ["FIXED_VALUE", "PERCENT", "FIXED_VALUE"]
+    const priceModCategories = ["Room Type", "Extra Amenity", "Transportation"]
     for (let k = 0; k < 3; k++) {
       await prisma.priceMod.create({
         data: {
@@ -339,7 +360,7 @@ async function seedHostsPropsRetreats() {
           category: priceModCategories[k],
           value: k === 1 ? 15 : 100 * (k + 1), // 15% for PERCENT, 100 or 300 for FIXED_VALUE
         },
-      });
+      })
     }
   }
 }

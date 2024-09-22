@@ -47,7 +47,6 @@ export default function RootLayout({ children }: RootLayoutProps) {
               <SiteHeader />
 
               <div className="container">
-                <BookingBar />
                 {children}
               </div>
             </div>

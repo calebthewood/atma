@@ -101,6 +101,9 @@ model Property {
     phone          String
     name           String
     description    String
+    latitude       Float?
+    longitude      Float?
+    city           String?
     address        String
     closestAirport String
     location       String
@@ -206,8 +209,6 @@ model RetreatInstance {
     Bookings       Booking[] // One-to-many relationship with Bookings
     priceMods      PriceMod[]
 }
-
-
 
 model Booking {
     id           String   @id @default(cuid())
