@@ -42,7 +42,7 @@ export function OpenBooking({ userId, retreat, events }: BookingListProps) {
   const [date, setDate] = React.useState<Date | undefined>(today);
 
   const comesAfter = (a: Date, b: Date) => compareAsc(a, b) === 1;
-  const displayed = events.filter((e) =>
+  const displayed = events?.filter((e) =>
     comesAfter(e.startDate, date ?? today)
   );
 
@@ -66,7 +66,7 @@ export function OpenBooking({ userId, retreat, events }: BookingListProps) {
           />
         </div>
       </CardContent>
-      {displayed.map((r, i) => (
+      {displayed?.map((r, i) => (
         <CardContent key={i}>
           <BookingItem
             userId={userId}

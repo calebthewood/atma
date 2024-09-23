@@ -48,8 +48,7 @@ export default function CheckoutButton({
   const [clientSecret, setClientSecret] = useState<string | null>(null);
 
   const formAction = async (data: FormData): Promise<void> => {
-    console.log(userId);
-    console.log(checkInDate, checkOutDate);
+
     if (userId === undefined) redirect("/authentication"); // TODO: create redirect flow that brings user back to checkout
     if (!checkInDate || !checkOutDate) {
       console.log("failed on dates");

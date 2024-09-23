@@ -112,10 +112,10 @@ model Property {
     rating         String // sum of all ratings / reviewer count, ex: "187 / 842". When displayed, convert to numbers and do expression, when updated, convert to number and increment numerator by rating and denom by 1 (this would be a condensed rating system, real system would track all reviews)
     host           Host      @relation(fields: [hostId], references: [id])
     hostId         String
-    Review         Review[]
-    Image          Image[]
-    Retreat        Retreat[]
-    Room           Room[]
+    reviews        Review[]
+    images         Image[]
+    retreats       Retreat[]
+    rooms          Room[]
     coverImg       String?
     thumbnail      String?
     createdAt      DateTime  @default(now())
@@ -150,11 +150,11 @@ model Host {
     thumbnail   String?
     userId      String?
     HostUser    HostUser[]
-    Image       Image[]
-    Retreat     Retreat[]
-    Property    Property[]
-    PriceMod    PriceMod[]
-    Review      Review[]
+    images      Image[]
+    retreats    Retreat[]
+    properties  Property[]
+    priceMods   PriceMod[]
+    reviews     Review[]
     createdAt   DateTime   @default(now())
     updatedAt   DateTime   @updatedAt
 }
@@ -190,8 +190,8 @@ model Retreat {
     propertyId      String
     createdAt       DateTime          @default(now())
     updatedAt       DateTime          @updatedAt
-    Review          Review[]
-    RetreatInstance RetreatInstance[] // rename these CapFields! so ugly
+    reviews          Review[]
+    retreatInstances RetreatInstance[] // rename these CapFields! so ugly
 }
 
 model RetreatInstance {
@@ -225,7 +225,7 @@ model Booking {
     userId            String
     Message           Message[]
     Notification      Notification?
-    RetreatInstance   RetreatInstance? @relation(fields: [retreatInstanceId], references: [id])
+    retreatInstance   RetreatInstance? @relation(fields: [retreatInstanceId], references: [id])
     retreatInstanceId String?
 }
 
@@ -300,18 +300,19 @@ model Notification {
 }
 
 model Image {
-    id         String    @id @default(cuid())
-    filePath   String
-    user       User?     @relation(fields: [userId], references: [id])
-    userId     String?
-    property   Property? @relation(fields: [propertyId], references: [id])
-    propertyId String?
-    host       Host?     @relation(fields: [hostId], references: [id])
-    hostId     String?
-    retreat    Retreat?  @relation(fields: [retreatId], references: [id])
-    retreatId  String?
-    createdAt  DateTime  @default(now())
-    updatedAt  DateTime  @updatedAt
+    id          String    @id @default(cuid())
+    filePath    String
+    description String?
+    user        User?     @relation(fields: [userId], references: [id])
+    userId      String?
+    property    Property? @relation(fields: [propertyId], references: [id])
+    propertyId  String?
+    host        Host?     @relation(fields: [hostId], references: [id])
+    hostId      String?
+    retreat     Retreat?  @relation(fields: [retreatId], references: [id])
+    retreatId   String?
+    createdAt   DateTime  @default(now())
+    updatedAt   DateTime  @updatedAt
 
     @@index([userId])
     @@index([propertyId])

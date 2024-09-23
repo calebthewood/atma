@@ -1,21 +1,22 @@
-"use server";
+"use server"
 
-import { revalidatePath } from "next/cache";
+import { revalidatePath } from "next/cache"
+import { Prisma } from "@prisma/client"
 
-import { prisma } from "@/lib/prisma";
+import { prisma } from "@/lib/prisma"
 
 export async function createProperty(data: {
-  email: string;
-  phone: string;
-  name: string;
-  description: string;
-  address: string;
-  closestAirport: string;
-  location: string;
-  type: string;
-  amenities: string;
-  rating: string;
-  hostId: string;
+  email: string
+  phone: string
+  name: string
+  description: string
+  address: string
+  closestAirport: string
+  location: string
+  type: string
+  amenities: string
+  rating: string
+  hostId: string
 }) {
   const property = await prisma.property.create({
     data: {
@@ -31,14 +32,25 @@ export async function createProperty(data: {
       rating: data.rating,
       hostId: data.hostId,
     },
-  });
+  })
 
-  revalidatePath("/properties");
+  revalidatePath("/properties")
 
-  return property;
+  return property
 }
 
-export async function getProperties() {
+export type PropertiesWithImages = Prisma.PropertyGetPayload<{
+  include: {
+    images: {
+      select: {
+        filePath: true
+        description: true
+      }
+    }
+  }
+}>
+
+export async function getProperties(): Promise<PropertiesWithImages[]> {
   const properties = await prisma.property.findMany({
     include: {
       host: {
@@ -47,9 +59,15 @@ export async function getProperties() {
           id: true,
         },
       },
+      images: {
+        select: {
+          filePath: true,
+          description: true,
+        },
+      },
     },
-  });
-  return properties;
+  })
+  return properties
 }
 
 export async function getPropertyById(propertyId: string) {
@@ -57,25 +75,25 @@ export async function getPropertyById(propertyId: string) {
     where: {
       id: propertyId,
     },
-  });
+  })
 
-  return property;
+  return property
 }
 
 export async function updateProperty(
   propertyId: string,
   data: {
-    email?: string;
-    phone?: string;
-    name?: string;
-    description?: string;
-    address?: string;
-    closestAirport?: string;
-    location?: string;
-    type?: string;
-    amenities?: string;
-    rating?: string;
-    hostId?: string;
+    email?: string
+    phone?: string
+    name?: string
+    description?: string
+    address?: string
+    closestAirport?: string
+    location?: string
+    type?: string
+    amenities?: string
+    rating?: string
+    hostId?: string
   }
 ) {
   const property = await prisma.property.update({
@@ -83,11 +101,11 @@ export async function updateProperty(
       id: propertyId,
     },
     data,
-  });
+  })
 
-  revalidatePath(`/properties/${propertyId}`);
+  revalidatePath(`/properties/${propertyId}`)
 
-  return property;
+  return property
 }
 
 export async function deleteProperty(propertyId: string) {
@@ -95,9 +113,9 @@ export async function deleteProperty(propertyId: string) {
     where: {
       id: propertyId,
     },
-  });
+  })
 
-  revalidatePath("/properties");
+  revalidatePath("/properties")
 
-  return property;
+  return property
 }

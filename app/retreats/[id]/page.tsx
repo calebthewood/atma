@@ -60,7 +60,7 @@ export default async function Page({ params }: { params: { id: string } }) {
           <OpenBooking
             userId={session?.user?.id}
             retreat={retreat}
-            events={retreat.RetreatInstance}
+            events={retreat.retreatInstances}
           />
         );
       case "fixed_range":
@@ -68,7 +68,7 @@ export default async function Page({ params }: { params: { id: string } }) {
           <FixedBooking
             userId={session?.user?.id}
             retreat={retreat}
-            event={retreat.RetreatInstance[0]}
+            event={retreat.retreatInstances[0]}
           />
         );
       case "flexible_range":
@@ -76,7 +76,7 @@ export default async function Page({ params }: { params: { id: string } }) {
           <FlexibleBooking
             userId={session?.user?.id}
             retreat={retreat}
-            events={retreat.RetreatInstance}
+            events={retreat.retreatInstances}
           />
         );
       default:
@@ -94,7 +94,7 @@ export default async function Page({ params }: { params: { id: string } }) {
   // move this default to a general config? maybe not needed even.
   const coverImgPath =
     retreat?.coverImg ||
-    retreat.images[0].filePath ||
+    retreat?.images[0].filePath ||
     "/img/iStock-1490140364.jpg";
   return (
     <div className="h-auto min-h-screen">

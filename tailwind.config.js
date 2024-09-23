@@ -19,13 +19,14 @@ module.exports = {
         ring: "hsl(var(--ring))",
         background: "hsl(var(--background))",
         foreground: "hsl(var(--foreground))",
+        richBlack: "#060201",
         crowshead: "#1B0E0A",
         eternity: "#271910",
-        bistre: "#3F2C20",
-        rich: {
-          white: "#F0F1DD",
-          black: "#060201",
-        },
+        bistre: "#271910",
+        richBistre: "#3F2C20",
+        linear: "#271910",
+        richBeige: "#F3EEE7",
+        fontColor: "#F0F1DD",
         primary: {
           DEFAULT: "hsl(var(--primary))",
           foreground: "hsl(var(--primary-foreground))",
@@ -79,7 +80,10 @@ module.exports = {
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
       },
+      backgroundImage: {
+        "gradient-dark": "linear-gradient(to top right, #060201, #271910)",
+      },
     },
   },
   plugins: [require("tailwindcss-animate")],
-};
+}

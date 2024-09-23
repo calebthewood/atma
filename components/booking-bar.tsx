@@ -2,22 +2,18 @@
 
 import React from "react";
 import { useSearchParams } from 'next/navigation';
-import { addDays, format } from "date-fns";
+import { addDays } from "date-fns";
 import { Search } from "lucide-react";
-
-// import { searchProperties } from "@/app/actions/search-properties"; // placeholder func searchNearbyPlaces
 import { searchNearbyPlaces } from "@/actions/location-actions";
-
 import { BookingBarCalendar } from "./booking/booking-bar-calendar";
-import { GuestSelect } from "./booking/guest-select";
 import { GuestCombobox, LocationCombobox } from "./ui/location-combobox";
 import { Separator } from "./ui/separator";
 import { Button } from "./ui/button";
-import { Property } from "@prisma/client";
+import { PropertiesWithImages } from "@/actions/property-actions";
 
 
 
-export function BookingBar({ updateResults }: { updateResults: (list: Property[]) => void; }) {
+export function BookingBar({ updateResults }: { updateResults: (list: PropertiesWithImages[]) => void; }) {
     const searchParams = useSearchParams();
 
     const handleSearch = async () => {
@@ -65,21 +61,21 @@ export function BookingBar({ updateResults }: { updateResults: (list: Property[]
                 </div>
                 <Separator
                     orientation="vertical"
-                    className="h-full mx-2  bg-rich-white w-[0.5px]"
+                    className="h-full mx-2  w-[0.5px]"
                 />
                 <div className="basis-6/12">
                     <BookingBarCalendar />
                 </div>
                 <Separator
                     orientation="vertical"
-                    className="h-full mx-2  bg-rich-white w-[0.5px]"
+                    className="h-full mx-2  w-[0.5px]"
                 />
                 <div className="basis-2/12">
                     <GuestCombobox />
                 </div>
             </div>
-            <Button asChild onClick={handleSearch} className="h-16 w-20 ml-2 p-4 cursor-pointer rounded border flex justify-center items-center align-center bg-white/20  backdrop-blur shadow">
-                <Search className="stroke-white hover:stroke-rich-black" strokeWidth={0.5} />
+            <Button variant={'outline'} asChild onClick={handleSearch} className="h-16 w-20 ml-2 p-4 dark:bg-white/20 dark:hover:bg-white/10 dark:hover:stroke-white cursor-pointer rounded border flex justify-center items-center align-center backdrop-blur shadow">
+                <Search className="" strokeWidth={0.5} />
             </Button>
         </div>
     );

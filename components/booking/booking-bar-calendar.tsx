@@ -73,7 +73,7 @@ export function BookingBarCalendar() {
                             id="date"
                             variant={"outline"}
                             className={cn(
-                                "size-full text-left font-normal bg-transparent border-transparent",
+                                "size-full text-left font-normal bg-transparent border-transparent rounded",
                                 !date && "text-muted-foreground"
                             )}
                         >
@@ -85,13 +85,13 @@ export function BookingBarCalendar() {
                         </Button>
                         <Separator
                             orientation="vertical"
-                            className="h-full h-full mx-2 bg-rich-white w-[0.5px]"
+                            className="h-full h-full mx-2 w-[0.5px]"
                         />
                         <Button
                             id="date"
                             variant={"outline"}
                             className={cn(
-                                "size-full text-left font-normal bg-transparent border-transparent",
+                                "size-full text-left font-normal bg-transparent border-transparent rounded",
                                 !date && "text-muted-foreground"
                             )}
                         >

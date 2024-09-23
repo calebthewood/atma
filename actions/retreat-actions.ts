@@ -1,20 +1,21 @@
-"use server";
+"use server"
 
-import { revalidatePath } from "next/cache";
+import { revalidatePath } from "next/cache"
+import { Prisma } from "@prisma/client"
 
-import { prisma } from "@/lib/prisma";
+import { prisma } from "@/lib/prisma"
 
 export async function createRetreat(data: {
-  name: string;
-  description: string;
-  bookingType: string;
-  duration: string;
-  date: Date;
-  price: string;
-  minGuests: number;
-  maxGuests: number;
-  hostId: string;
-  propertyId: string;
+  name: string
+  description: string
+  bookingType: string
+  duration: string
+  date: Date
+  price: string
+  minGuests: number
+  maxGuests: number
+  hostId: string
+  propertyId: string
 }) {
   try {
     const retreat = await prisma.retreat.create({
@@ -30,18 +31,42 @@ export async function createRetreat(data: {
         hostId: data.hostId,
         propertyId: data.propertyId,
       },
-    });
+    })
 
-    revalidatePath("/retreats");
+    revalidatePath("/retreats")
 
-    return retreat;
+    return retreat
   } catch (error) {
-    console.error("Error creating retreat:", error);
-    throw new Error("Failed to create retreat");
+    console.error("Error creating retreat:", error)
+    throw new Error("Failed to create retreat")
   }
 }
 
-export async function getRetreats() {
+export type RetreatItems = Prisma.RetreatGetPayload<{
+  include: {
+    host: {
+      select: {
+        name: true
+        id: true
+      }
+    }
+    property: {
+      select: {
+        id: true
+        name: true
+        city: true
+      }
+    }
+    images: {
+      select: {
+        filePath: true
+        description: true
+      }
+    }
+  }
+}>
+
+export async function getRetreats(): Promise<RetreatItems[]> {
   try {
     const retreats = await prisma.retreat.findMany({
       include: {
@@ -53,16 +78,23 @@ export async function getRetreats() {
         },
         property: {
           select: {
-            name: true,
             id: true,
+            name: true,
+            city: true,
+          },
+        },
+        images: {
+          select: {
+            filePath: true,
+            description: true,
           },
         },
       },
-    });
-    return retreats;
+    })
+    return retreats
   } catch (error) {
-    console.error("Error fetching retreats:", error);
-    throw new Error("Failed to fetch retreats");
+    console.error("Error fetching retreats:", error)
+    throw new Error("Failed to fetch retreats")
   }
 }
 
@@ -73,36 +105,41 @@ export async function getRetreatById(retreatId: string) {
         id: retreatId,
       },
       include: {
-        RetreatInstance: {
+        retreatInstances: {
           include: {
             priceMods: true,
           },
         },
-        images: true,
+        images: {
+          select: {
+            filePath: true,
+            description: true,
+          },
+        },
       },
-    });
+    })
 
     if (!retreat) {
-      throw new Error("Retreat not found");
+      throw new Error("Retreat not found")
     }
 
-    return retreat;
+    return retreat
   } catch (error) {
-    console.error(`Error fetching retreat with id ${retreatId}:`, error);
-    throw new Error(`Failed to fetch retreat with id ${retreatId}`);
+    console.error(`Error fetching retreat with id ${retreatId}:`, error)
+    throw new Error(`Failed to fetch retreat with id ${retreatId}`)
   }
 }
 
 export async function updateRetreat(
   retreatId: string,
   data: {
-    name?: string;
-    description?: string;
-    duration?: string;
-    date?: Date;
-    price?: string;
-    hostId?: string;
-    propertyId?: string;
+    name?: string
+    description?: string
+    duration?: string
+    date?: Date
+    price?: string
+    hostId?: string
+    propertyId?: string
   }
 ) {
   try {
@@ -111,14 +148,14 @@ export async function updateRetreat(
         id: retreatId,
       },
       data,
-    });
+    })
 
-    revalidatePath(`/retreats/${retreatId}`);
+    revalidatePath(`/retreats/${retreatId}`)
 
-    return retreat;
+    return retreat
   } catch (error) {
-    console.error(`Error updating retreat with id ${retreatId}:`, error);
-    throw new Error(`Failed to update retreat with id ${retreatId}`);
+    console.error(`Error updating retreat with id ${retreatId}:`, error)
+    throw new Error(`Failed to update retreat with id ${retreatId}`)
   }
 }
 
@@ -128,13 +165,13 @@ export async function deleteRetreat(retreatId: string) {
       where: {
         id: retreatId,
       },
-    });
+    })
 
-    revalidatePath("/retreats");
+    revalidatePath("/retreats")
 
-    return retreat;
+    return retreat
   } catch (error) {
-    console.error(`Error deleting retreat with id ${retreatId}:`, error);
-    throw new Error(`Failed to delete retreat with id ${retreatId}`);
+    console.error(`Error deleting retreat with id ${retreatId}:`, error)
+    throw new Error(`Failed to delete retreat with id ${retreatId}`)
   }
 }

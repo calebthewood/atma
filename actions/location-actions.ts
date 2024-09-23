@@ -1,8 +1,15 @@
-"use server"
+"use server";
 
-import { Property } from "@prisma/client"
+import { Property } from "@prisma/client";
 
-import { prisma } from "@/lib/prisma"
+
+
+import { prisma } from "@/lib/prisma";
+
+
+
+import { PropertiesWithImages } from "./property-actions";
+
 
 const EARTH_RADIUS_MILES = 3959
 const EARTH_RADIUS_KM = 6371
@@ -84,8 +91,17 @@ export const searchNearbyPlaces = async (
   latitude: number | null,
   longitude: number | null,
   radiusMiles: number = 20
-): Promise<Property[]> => {
-  const allPlaces = await prisma.property.findMany()
+): Promise<PropertiesWithImages[]> => {
+  const allPlaces = await prisma.property.findMany({
+    include: {
+      images: {
+        select: {
+          filePath: true,
+          description: true
+        },
+      },
+    },
+  })
 
   const nearbyPlaces = allPlaces
     .map((property) => ({

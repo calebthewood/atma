@@ -74,7 +74,7 @@ export function MainNav({ items }: MainNavProps) {
 export function MainNavigationMenu() {
   const paths = usePathname().split("/");
   const path = paths[1];
-  console.log("path", paths);
+
   return (
     <NavigationMenu>
       <NavigationMenuList>

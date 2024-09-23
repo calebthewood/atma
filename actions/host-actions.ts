@@ -1,17 +1,24 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
+import { Prisma } from "@prisma/client";
+
+
 
 import { prisma } from "@/lib/prisma";
 
+
+
+
+
 export async function createHost(data: {
-  name: string;
-  type: string;
-  description: string;
-  email: string;
-  phone: string;
-  profilePic: string;
-  userId?: string;
+  name: string
+  type: string
+  description: string
+  email: string
+  phone: string
+  profilePic: string
+  userId?: string
 }) {
   try {
     const host = await prisma.host.create({
@@ -24,24 +31,44 @@ export async function createHost(data: {
         profilePic: data.profilePic,
         userId: data.userId,
       },
-    });
+    })
 
-    revalidatePath("/hosts");
+    revalidatePath("/hosts")
 
-    return host;
+    return host
   } catch (error) {
-    console.error("Error creating host:", error);
-    throw new Error("Failed to create host");
+    console.error("Error creating host:", error)
+    throw new Error("Failed to create host")
   }
 }
 
-export async function getHosts() {
+export type HostWithImages = Prisma.HostGetPayload<{
+  include: {
+    images: {
+      select: {
+        filePath: true
+        description: true
+      }
+    }
+  }
+}>
+
+export async function getHosts(): Promise<HostWithImages[]> {
   try {
-    const hosts = await prisma.host.findMany();
-    return hosts;
+    const hosts = await prisma.host.findMany({
+      include: {
+        images: {
+          select: {
+            filePath: true,
+            description: true,
+          },
+        },
+      },
+    })
+    return hosts
   } catch (error) {
-    console.error("Error fetching hosts:", error);
-    throw new Error("Failed to fetch hosts");
+    console.error("Error fetching hosts:", error)
+    throw new Error("Failed to fetch hosts")
   }
 }
 
@@ -51,29 +78,29 @@ export async function getHostById(hostId: string) {
       where: {
         id: hostId,
       },
-    });
+    })
 
     if (!host) {
-      throw new Error("Host not found");
+      throw new Error("Host not found")
     }
 
-    return host;
+    return host
   } catch (error) {
-    console.error(`Error fetching host with id ${hostId}:`, error);
-    throw new Error(`Failed to fetch host with id ${hostId}`);
+    console.error(`Error fetching host with id ${hostId}:`, error)
+    throw new Error(`Failed to fetch host with id ${hostId}`)
   }
 }
 
 export async function updateHost(
   hostId: string,
   data: {
-    name?: string;
-    type?: string;
-    description?: string;
-    email?: string;
-    phone?: string;
-    profilePic?: string;
-    userId?: string;
+    name?: string
+    type?: string
+    description?: string
+    email?: string
+    phone?: string
+    profilePic?: string
+    userId?: string
   }
 ) {
   try {
@@ -82,14 +109,14 @@ export async function updateHost(
         id: hostId,
       },
       data,
-    });
+    })
 
-    revalidatePath(`/hosts/${hostId}`);
+    revalidatePath(`/hosts/${hostId}`)
 
-    return host;
+    return host
   } catch (error) {
-    console.error(`Error updating host with id ${hostId}:`, error);
-    throw new Error(`Failed to update host with id ${hostId}`);
+    console.error(`Error updating host with id ${hostId}:`, error)
+    throw new Error(`Failed to update host with id ${hostId}`)
   }
 }
 
@@ -99,13 +126,13 @@ export async function deleteHost(hostId: string) {
       where: {
         id: hostId,
       },
-    });
+    })
 
-    revalidatePath("/hosts");
+    revalidatePath("/hosts")
 
-    return host;
+    return host
   } catch (error) {
-    console.error(`Error deleting host with id ${hostId}:`, error);
-    throw new Error(`Failed to delete host with id ${hostId}`);
+    console.error(`Error deleting host with id ${hostId}:`, error)
+    throw new Error(`Failed to delete host with id ${hostId}`)
   }
 }
