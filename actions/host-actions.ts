@@ -42,20 +42,7 @@ export async function createHost(data: {
   }
 }
 
-// Define the type for the query result
-export type HostWithImages = Prisma.HostGetPayload<{
-  include: {
-    images: {
-      select: {
-        filePath: true
-        description: true
-      }
-    }
-  }
-}>
-
-// Define the Prisma query arguments type
-const hostWithImagesArgs = Prisma.validator<Prisma.HostDefaultArgs>()({
+const hostWithImagesArgs = {
   include: {
     images: {
       select: {
@@ -64,10 +51,22 @@ const hostWithImagesArgs = Prisma.validator<Prisma.HostDefaultArgs>()({
       },
     },
   },
-})
+} as const
 
-// Define the return type of the getHosts function
+type HostWithImages = Prisma.HostGetPayload<typeof hostWithImagesArgs>
+
 type GetHostsReturn = HostWithImages[]
+
+export type ImageType = {
+  filePath: string
+  description: string | null
+}
+
+export type HostWithImagesStandalone = Prisma.HostGetPayload<
+  typeof hostWithImagesArgs
+> & {
+  images: ImageType[]
+}
 
 export async function getHosts(): Promise<GetHostsReturn> {
   try {
@@ -79,35 +78,37 @@ export async function getHosts(): Promise<GetHostsReturn> {
   }
 }
 
+
+
 export async function getHostById(hostId: string) {
   try {
     const host = await prisma.host.findUnique({
       where: {
         id: hostId,
       },
-    });
+    })
 
     if (!host) {
-      throw new Error("Host not found");
+      throw new Error("Host not found")
     }
 
-    return host;
+    return host
   } catch (error) {
-    console.error(`Error fetching host with id ${hostId}:`, error);
-    throw new Error(`Failed to fetch host with id ${hostId}`);
+    console.error(`Error fetching host with id ${hostId}:`, error)
+    throw new Error(`Failed to fetch host with id ${hostId}`)
   }
 }
 
 export async function updateHost(
   hostId: string,
   data: {
-    name?: string;
-    type?: string;
-    description?: string;
-    email?: string;
-    phone?: string;
-    profilePic?: string;
-    userId?: string;
+    name?: string
+    type?: string
+    description?: string
+    email?: string
+    phone?: string
+    profilePic?: string
+    userId?: string
   }
 ) {
   try {
@@ -116,14 +117,14 @@ export async function updateHost(
         id: hostId,
       },
       data,
-    });
+    })
 
-    revalidatePath(`/hosts/${hostId}`);
+    revalidatePath(`/hosts/${hostId}`)
 
-    return host;
+    return host
   } catch (error) {
-    console.error(`Error updating host with id ${hostId}:`, error);
-    throw new Error(`Failed to update host with id ${hostId}`);
+    console.error(`Error updating host with id ${hostId}:`, error)
+    throw new Error(`Failed to update host with id ${hostId}`)
   }
 }
 
@@ -133,13 +134,13 @@ export async function deleteHost(hostId: string) {
       where: {
         id: hostId,
       },
-    });
+    })
 
-    revalidatePath("/hosts");
+    revalidatePath("/hosts")
 
-    return host;
+    return host
   } catch (error) {
-    console.error(`Error deleting host with id ${hostId}:`, error);
-    throw new Error(`Failed to delete host with id ${hostId}`);
+    console.error(`Error deleting host with id ${hostId}:`, error)
+    throw new Error(`Failed to delete host with id ${hostId}`)
   }
 }
