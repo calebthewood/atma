@@ -55,7 +55,7 @@ export type HostWithImages = Prisma.HostGetPayload<{
 }>
 
 // Define the Prisma query arguments type
-const hostWithImagesArgs = Prisma.validator<Prisma.HostArgs>()({
+const hostWithImagesArgs = Prisma.validator<Prisma.HostDefaultArgs>()({
   include: {
     images: {
       select: {
