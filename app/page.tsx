@@ -3,6 +3,7 @@ import { getHosts } from "@/actions/host-actions";
 import { getProperties } from "@/actions/property-actions";
 import { getRetreats } from "@/actions/retreat-actions";
 import { auth } from "@/auth";
+
 import { HomePageLists } from "./home-page-lists";
 
 export const metadata: Metadata = {
@@ -16,5 +17,7 @@ export default async function Page() {
   const properties = await getProperties();
   const retreats = await getRetreats();
 
-  return <HomePageLists retreats={retreats} properties={properties} hosts={hosts} />
+  return (
+    <HomePageLists retreats={retreats} properties={properties} hosts={hosts} />
+  );
 }

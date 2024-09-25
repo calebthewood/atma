@@ -1,7 +1,10 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { getProperties } from "@/actions/property-actions"; // Adjust this import path as needed
+import {
+  getProperties,
+  PropertiesWithImages,
+} from "@/actions/property-actions";
 
 import {
   Table,
@@ -12,20 +15,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 
-// Define the Property type based on your Prisma schema
-type Property = {
-  id: string;
-  email: string;
-  name: string;
-  address: string;
-  type: string;
-  host: {
-    name: string;
-    id: string;
-  };
-};
-
-function PropertyListItem({ property }: { property: Property }) {
+function PropertyListItem({ property }: { property: PropertiesWithImages }) {
   return (
     <TableRow>
       <TableCell>{property.name}</TableCell>
@@ -38,7 +28,7 @@ function PropertyListItem({ property }: { property: Property }) {
 }
 
 export function PropertyList() {
-  const [properties, setProperties] = useState<Property[]>([]);
+  const [properties, setProperties] = useState<PropertiesWithImages[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 

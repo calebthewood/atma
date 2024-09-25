@@ -30,7 +30,7 @@ export const metadata: Metadata = {
 interface RootLayoutProps {
   children: React.ReactNode;
 }
-// tw bg gradient goes on body: dark:bg-gradient-to-tr dark:from-rich-black dark:to-bistre bg-rich-beige
+
 export default function RootLayout({ children }: RootLayoutProps) {
   return (
     <>
@@ -38,7 +38,7 @@ export default function RootLayout({ children }: RootLayoutProps) {
         <head />
         <body
           className={cn(
-            "min-h-screen font-sans text-rich-white antialiased bg-richBeige dark:bg-gradient-dark dark:bg-gradient-to-tr from-richBlack to-bistre",
+            "min-h-screen font-sans text-rich-white antialiased bg-richBeige dark:bg-gradient-dark",
             fontSans.variable
           )}
         >
@@ -46,9 +46,7 @@ export default function RootLayout({ children }: RootLayoutProps) {
             <div className="relative flex min-h-screen flex-col">
               <SiteHeader />
 
-              <div className="container">
-                {children}
-              </div>
+              <div className="container">{children}</div>
             </div>
             <TailwindIndicator />
           </ThemeProvider>

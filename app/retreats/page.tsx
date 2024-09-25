@@ -1,7 +1,8 @@
-import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
-import { RetreatItem } from "@/components/retreat-item";
-import { Separator } from "@/components/ui/separator";
 import { getRetreats } from "@/actions/retreat-actions";
+
+import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
+import { Separator } from "@/components/ui/separator";
+import { RetreatItem } from "@/components/retreat-item";
 
 export default async function Page() {
   const retreats = await getRetreats();
@@ -82,23 +83,24 @@ export default async function Page() {
       <div className="relative">
         <ScrollArea>
           <div className="flex space-x-4 pb-4">
-            {retreats.filter(r => r.property.city?.toLowerCase().includes('york')).map((r, i) => (
-              <RetreatItem
-                key={r.name + `${i * 3.7}`}
-                retreat={r}
-                imgUrl={r.images[0].filePath}
-                segment="retreats"
-                className="w-[250px]"
-                aspectRatio="portrait"
-                width={250}
-                height={330}
-              />
-            ))}
+            {retreats
+              .filter((r) => r.property.city?.toLowerCase().includes("york"))
+              .map((r, i) => (
+                <RetreatItem
+                  key={r.name + `${i * 3.7}`}
+                  retreat={r}
+                  imgUrl={r.images[0].filePath}
+                  segment="retreats"
+                  className="w-[250px]"
+                  aspectRatio="portrait"
+                  width={250}
+                  height={330}
+                />
+              ))}
           </div>
           <ScrollBar orientation="horizontal" />
         </ScrollArea>
       </div>
     </div>
-
   );
 }

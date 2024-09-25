@@ -102,7 +102,7 @@ const ThumbnailCarousel: React.FC<PropType> = (props) => {
   return (
     <div className="max-w-3xl mx-auto">
       <Carousel
-        setApi={setMainApi}
+        setApi={setMainApi} //@ts-ignore
         opts={{ ...options, loop: true }}
         className="overflow-hidden"
       >
@@ -114,7 +114,7 @@ const ThumbnailCarousel: React.FC<PropType> = (props) => {
                   ref={(el) => {
                     parallaxLayers.current[i] = el;
                   }}
-                  className="relative h-full w-full flex justify-center"
+                  className="relative size-full flex justify-center"
                 >
                   <Image
                     src={img}

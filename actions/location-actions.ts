@@ -2,24 +2,19 @@
 
 import { Property } from "@prisma/client";
 
-
-
 import { prisma } from "@/lib/prisma";
-
-
 
 import { PropertiesWithImages } from "./property-actions";
 
-
-const EARTH_RADIUS_MILES = 3959
-const EARTH_RADIUS_KM = 6371
+const EARTH_RADIUS_MILES = 3959;
+const EARTH_RADIUS_KM = 6371;
 
 /**
  * Converts degrees to radians.
  * @param degrees - The angle in degrees.
  * @returns The angle in radians.
  */
-const toRadians = (degrees: number): number => (degrees * Math.PI) / 180
+const toRadians = (degrees: number): number => (degrees * Math.PI) / 180;
 
 /**
  * Calculates the Haversine distance between two geographic coordinates.
@@ -38,25 +33,25 @@ const haversineDistance = (
   radius: number = EARTH_RADIUS_MILES
 ): number => {
   if (lat1 === null || lon1 === null || lat2 === null || lon2 === null) {
-    throw new Error("Null Coordinate")
+    throw new Error("Null Coordinate");
   }
-  const dLat = toRadians(lat2 - lat1)
-  const dLon = toRadians(lon2 - lon1)
+  const dLat = toRadians(lat2 - lat1);
+  const dLon = toRadians(lon2 - lon1);
 
-  const lat1Rad = toRadians(lat1)
-  const lat2Rad = toRadians(lat2)
+  const lat1Rad = toRadians(lat1);
+  const lat2Rad = toRadians(lat2);
 
   const a =
     Math.sin(dLat / 2) * Math.sin(dLat / 2) +
     Math.cos(lat1Rad) *
       Math.cos(lat2Rad) *
       Math.sin(dLon / 2) *
-      Math.sin(dLon / 2)
+      Math.sin(dLon / 2);
 
-  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a))
+  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
 
-  return radius * c
-}
+  return radius * c;
+};
 
 export async function getPointsInBoundingBox(
   minLat: number,
@@ -73,9 +68,13 @@ export async function getPointsInBoundingBox(
         { longitude: { lte: maxLon } },
       ],
     },
-  })
+  });
 
-  return points
+  return points;
+}
+
+interface PropertiesWithDistance extends PropertiesWithImages {
+  distance: number;
 }
 
 /**
@@ -91,17 +90,23 @@ export const searchNearbyPlaces = async (
   latitude: number | null,
   longitude: number | null,
   radiusMiles: number = 20
-): Promise<PropertiesWithImages[]> => {
+): Promise<PropertiesWithDistance[]> => {
   const allPlaces = await prisma.property.findMany({
     include: {
+      host: {
+        select: {
+          name: true,
+          id: true,
+        },
+      },
       images: {
         select: {
           filePath: true,
-          description: true
+          description: true,
         },
       },
     },
-  })
+  });
 
   const nearbyPlaces = allPlaces
     .map((property) => ({
@@ -115,7 +120,7 @@ export const searchNearbyPlaces = async (
     }))
     .filter((property) => property.distance <= radiusMiles)
     .sort((a, b) => a.distance - b.distance)
-    .slice(0, 10)
+    .slice(0, 10);
 
-  return nearbyPlaces
-}
+  return nearbyPlaces;
+};
