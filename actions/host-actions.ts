@@ -3,16 +3,22 @@
 import { revalidatePath } from "next/cache";
 import { Prisma } from "@prisma/client";
 
+
+
 import { prisma } from "@/lib/prisma";
 
+
+
+
+
 export async function createHost(data: {
-  name: string;
-  type: string;
-  description: string;
-  email: string;
-  phone: string;
-  profilePic: string;
-  userId?: string;
+  name: string
+  type: string
+  description: string
+  email: string
+  phone: string
+  profilePic: string
+  userId?: string
 }) {
   try {
     const host = await prisma.host.create({
@@ -25,44 +31,51 @@ export async function createHost(data: {
         profilePic: data.profilePic,
         userId: data.userId,
       },
-    });
+    })
 
-    revalidatePath("/hosts");
+    revalidatePath("/hosts")
 
-    return host;
+    return host
   } catch (error) {
-    console.error("Error creating host:", error);
-    throw new Error("Failed to create host");
+    console.error("Error creating host:", error)
+    throw new Error("Failed to create host")
   }
 }
 
+// Define the type for the query result
 export type HostWithImages = Prisma.HostGetPayload<{
   include: {
     images: {
       select: {
-        filePath: true;
-        description: true;
-      };
-    };
-  };
-}>;
+        filePath: true
+        description: true
+      }
+    }
+  }
+}>
 
-export async function getHosts(): Promise<HostWithImages[]> {
-  try {
-    const hosts = await prisma.host.findMany({
-      include: {
-        images: {
-          select: {
-            filePath: true,
-            description: true,
-          },
-        },
+// Define the Prisma query arguments type
+const hostWithImagesArgs = Prisma.validator<Prisma.HostArgs>()({
+  include: {
+    images: {
+      select: {
+        filePath: true,
+        description: true,
       },
-    });
-    return hosts;
+    },
+  },
+})
+
+// Define the return type of the getHosts function
+type GetHostsReturn = HostWithImages[]
+
+export async function getHosts(): Promise<GetHostsReturn> {
+  try {
+    const hosts = await prisma.host.findMany(hostWithImagesArgs)
+    return hosts
   } catch (error) {
-    console.error("Error fetching hosts:", error);
-    throw new Error("Failed to fetch hosts");
+    console.error("Error fetching hosts:", error)
+    throw new Error("Failed to fetch hosts")
   }
 }
 
