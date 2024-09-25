@@ -53,9 +53,9 @@ const hostWithImagesArgs = {
   },
 } as const
 
-type HostWithImages = Prisma.HostGetPayload<typeof hostWithImagesArgs>
+export type HostWithImages = Prisma.HostGetPayload<typeof hostWithImagesArgs>
 
-type GetHostsReturn = HostWithImages[]
+export type GetHostsReturn = HostWithImages[]
 
 export type ImageType = {
   filePath: string
@@ -77,8 +77,6 @@ export async function getHosts(): Promise<GetHostsReturn> {
     throw new Error("Failed to fetch hosts")
   }
 }
-
-
 
 export async function getHostById(hostId: string) {
   try {
