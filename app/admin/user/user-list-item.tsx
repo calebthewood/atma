@@ -1,3 +1,4 @@
+import { updateUser } from "@/actions/user-actions";
 import { User } from "@prisma/client";
 import { ChevronDown } from "lucide-react";
 
@@ -22,6 +23,10 @@ interface UserListItemProps {
 }
 
 export function UserListItem({ user }: UserListItemProps) {
+  const handleChange = async (role: string) => {
+    const res = await updateUser(user.id, { role });
+  };
+
   return (
     <div className="flex items-center justify-between space-x-4">
       <div className="flex items-center space-x-4">
@@ -45,24 +50,33 @@ export function UserListItem({ user }: UserListItemProps) {
           </Button>
         </PopoverTrigger>
         <PopoverContent className="p-0" align="end">
-          <Command>
+          <Command onValueChange={handleChange}>
             <CommandInput placeholder="Select new role..." />
             <CommandList>
               <CommandEmpty>No roles found.</CommandEmpty>
               <CommandGroup>
-                <CommandItem className="teamaspace-y-1 flex flex-col items-start px-4 py-2">
+                <CommandItem
+                  value="user"
+                  className="teamaspace-y-1 flex flex-col items-start px-4 py-2"
+                >
                   <p>User</p>
                   <p className="text-sm text-muted-foreground">
                     Can view and book retreats.
                   </p>
                 </CommandItem>
-                <CommandItem className="teamaspace-y-1 flex flex-col items-start px-4 py-2">
+                <CommandItem
+                  value="admin"
+                  className="teamaspace-y-1 flex flex-col items-start px-4 py-2"
+                >
                   <p>Admin</p>
                   <p className="text-sm text-muted-foreground">
                     Can view, comment and edit.
                   </p>
                 </CommandItem>
-                <CommandItem className="teamaspace-y-1 flex flex-col items-start px-4 py-2">
+                <CommandItem
+                  value="host"
+                  className="teamaspace-y-1 flex flex-col items-start px-4 py-2"
+                >
                   <p>Host</p>
                   <p className="text-sm text-muted-foreground">
                     Can create, edit retreats.

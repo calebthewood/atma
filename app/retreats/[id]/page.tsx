@@ -102,7 +102,9 @@ export default async function Page({ params }: { params: { id: string } }) {
         <div className="absolute inset-0 bg-zinc-900" />
         <Image
           priority
-          alt="resort cover photo"
+          // placeholder="blur"
+          sizes="100vw"
+          alt="destination cover photo"
           src={coverImgPath}
           layout="fill"
           objectFit="cover"
