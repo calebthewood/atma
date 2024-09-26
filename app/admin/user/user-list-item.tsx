@@ -1,3 +1,6 @@
+"use client";
+
+import { useState } from "react";
 import { updateUser } from "@/actions/user-actions";
 import { User } from "@prisma/client";
 import { ChevronDown } from "lucide-react";
@@ -23,8 +26,13 @@ interface UserListItemProps {
 }
 
 export function UserListItem({ user }: UserListItemProps) {
+  const [open, setOpen] = useState(false);
+  const [value, setValue] = useState(user.role);
+
   const handleChange = async (role: string) => {
+    if (role === value) return;
     const res = await updateUser(user.id, { role });
+    if (res) setValue(res.role);
   };
 
   return (
@@ -42,15 +50,15 @@ export function UserListItem({ user }: UserListItemProps) {
           <p className="text-sm text-muted-foreground">{user.email}</p>
         </div>
       </div>
-      <Popover>
+      <Popover open={open} onOpenChange={setOpen}>
         <PopoverTrigger asChild>
           <Button variant="outline" className="ml-auto">
-            {user.role}{" "}
+            {value}{" "}
             <ChevronDown className="ml-2 size-4 text-muted-foreground" />
           </Button>
         </PopoverTrigger>
         <PopoverContent className="p-0" align="end">
-          <Command onValueChange={handleChange}>
+          <Command>
             <CommandInput placeholder="Select new role..." />
             <CommandList>
               <CommandEmpty>No roles found.</CommandEmpty>
@@ -58,6 +66,10 @@ export function UserListItem({ user }: UserListItemProps) {
                 <CommandItem
                   value="user"
                   className="teamaspace-y-1 flex flex-col items-start px-4 py-2"
+                  onSelect={(currentValue) => {
+                    handleChange(currentValue);
+                    setOpen(false);
+                  }}
                 >
                   <p>User</p>
                   <p className="text-sm text-muted-foreground">
@@ -67,6 +79,10 @@ export function UserListItem({ user }: UserListItemProps) {
                 <CommandItem
                   value="admin"
                   className="teamaspace-y-1 flex flex-col items-start px-4 py-2"
+                  onSelect={(currentValue) => {
+                    handleChange(currentValue);
+                    setOpen(false);
+                  }}
                 >
                   <p>Admin</p>
                   <p className="text-sm text-muted-foreground">
@@ -76,6 +92,10 @@ export function UserListItem({ user }: UserListItemProps) {
                 <CommandItem
                   value="host"
                   className="teamaspace-y-1 flex flex-col items-start px-4 py-2"
+                  onSelect={(currentValue) => {
+                    handleChange(currentValue);
+                    setOpen(false);
+                  }}
                 >
                   <p>Host</p>
                   <p className="text-sm text-muted-foreground">

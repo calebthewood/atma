@@ -149,7 +149,7 @@ model Host {
     coverImg    String?
     thumbnail   String?
     userId      String?
-    HostUser    HostUser[]
+    hostUser    HostUser[]
     images      Image[]
     retreats    Retreat[]
     properties  Property[]
