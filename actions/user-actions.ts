@@ -1,9 +1,14 @@
 "use server";
 
-import { type } from "os";
 import { revalidatePath } from "next/cache";
+import { uploadToS3 } from "@/lib/s3";
+
 
 import { prisma } from "@/lib/prisma";
+
+
+
+
 
 export async function createUser(data: {
   fname: string;
@@ -26,9 +31,6 @@ export async function createUser(data: {
       image: data.image,
     },
   });
-
-  // revalidatePath("/users");
-
   return user;
 }
 
@@ -87,9 +89,31 @@ export async function deleteUser(userId: string) {
     where: {
       id: userId,
     },
-  });
+  })
 
-  revalidatePath("/users");
+  revalidatePath("/users")
 
-  return user;
+  return user
+}
+
+export async function uploadImage(formData: FormData) {
+  const file = formData.get("image") as File
+  if (!file) {
+    return { success: false, error: "No file provided" }
+  }
+
+  try {
+    // Assuming uploadToS3 returns the URL of the uploaded image
+    const url = await uploadToS3(file, 'users')
+
+    // Here you might want to save the URL to your database
+    // await saveImageUrlToDatabase(url);
+
+    revalidatePath("/") // Revalidate the current page
+
+    return { success: true, url }
+  } catch (error) {
+    console.error("Error uploading image:", error)
+    return { success: false, error: "Failed to upload image" }
+  }
 }

@@ -3,6 +3,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 import { CreateUserForm } from "./create-user-form";
 import { UserList } from "./user-list";
+import { ImageUploadForm } from "./image-upload";
 
 export default function Page() {
   return (
@@ -17,12 +18,16 @@ export default function Page() {
         <TabsList>
           <TabsTrigger value="form">Create User</TabsTrigger>
           <TabsTrigger value="list">View Users</TabsTrigger>
+          <TabsTrigger value="img">Upload Image</TabsTrigger>
         </TabsList>
         <TabsContent value="form">
           <CreateUserForm />
         </TabsContent>
         <TabsContent value="list">
           <UserList />
+        </TabsContent>
+        <TabsContent value="img">
+          <ImageUploadForm />
         </TabsContent>
       </Tabs>
     </div>

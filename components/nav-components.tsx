@@ -57,9 +57,9 @@ export function MainNav({ items }: MainNavProps) {
       <DropdownMenuContent>
         <DropdownMenuLabel>Your Menu</DropdownMenuLabel>
         <DropdownMenuSeparator />
-        {items?.map((item) =>
+        {items?.map((item, i) =>
           item?.href ? (
-            <DropdownMenuItem>
+            <DropdownMenuItem key={`main-nav-dmi-${i}`}>
               <Link href={item?.href}>{item.title}</Link>
             </DropdownMenuItem>
           ) : (

@@ -10,7 +10,6 @@ import { Button } from "@/components/ui/button";
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -24,6 +23,10 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { uploadToS3 } from "@/lib/s3";
+
+const MAX_UPLOAD_SIZE = 1024 * 1024 * 3; // 3MB
+const ACCEPTED_FILE_TYPES = ['image/png', 'image/jpg', 'image/jpeg'];
 
 const formSchema = z.object({
   fname: z
@@ -44,8 +47,6 @@ const formSchema = z.object({
     .string()
     .min(10, { message: "Phone number must be at least 10 digits." }),
   role: z.enum(["user", "host", "admin"]).default("user"),
-  image: z.string().min(2, { message: "Image must be at least 2 characters." }),
-  // image: z.string().url({ message: "Invalid image URL." }).optional().or(z.literal("")),
 });
 
 export function CreateUserForm() {
@@ -60,20 +61,18 @@ export function CreateUserForm() {
       email: "",
       phone: "",
       role: "user",
-      image: "",
     },
   });
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
     setIsSubmitting(true);
     try {
-      const user = await createUser(values);
-      console.log("User created:", user);
-      form.reset(); // Reset form after successful submission
-      // TODO: Add success message or redirect
+      const user = await createUser({
+        ...values
+      });
+      form.reset();
     } catch (error) {
       console.error("Error creating user:", error);
-      // TODO: Add error message
     } finally {
       setIsSubmitting(false);
     }
@@ -168,19 +167,6 @@ export function CreateUserForm() {
                   <SelectItem value="admin">Admin</SelectItem>
                 </SelectContent>
               </Select>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name="image"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Profile Image URL</FormLabel>
-              <FormControl>
-                <Input placeholder="https://example.com/image.jpg" {...field} />
-              </FormControl>
               <FormMessage />
             </FormItem>
           )}
