@@ -1,8 +1,9 @@
 import Image from "next/image";
-import { getRetreatById } from "@/actions/retreat-actions";
+import { getPropertyById } from "@/actions/property-actions";
 import { auth } from "@/auth";
 import { BedSingle, Navigation, NotepadText, User } from "lucide-react";
 
+import { AspectRatio } from "@/components/ui/aspect-ratio";
 import {
   Card,
   CardContent,
@@ -12,9 +13,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import ThumbnailCarousel from "@/components/ui/carousel-thumbnail";
-import { FixedBooking } from "@/components/booking/fixed-booking";
-import { FlexibleBooking } from "@/components/booking/flexible-booking";
-import { OpenBooking } from "@/components/booking/open-booking";
+import { CatalogTabs } from "@/components/catalog-tabs";
 import { LoadingSpinner } from "@/components/loading-spinner";
 import { H1 } from "@/components/typography";
 
@@ -28,7 +27,7 @@ const SLIDES = [
 ];
 
 export default async function Page({ params }: { params: { id: string } }) {
-  const retreat = await getRetreatById(params.id);
+  const property = await getPropertyById(params.id);
   const session = await auth();
   const details = [
     {
@@ -53,51 +52,68 @@ export default async function Page({ params }: { params: { id: string } }) {
     },
   ];
 
-  function RenderBookingType({ type }: { type: string }) {
-    switch (type) {
-      case "open":
-        return (
-          <OpenBooking
-            userId={session?.user?.id}
-            retreat={retreat}
-            events={retreat.retreatInstances}
-          />
-        );
-      case "fixed_range":
-        return (
-          <FixedBooking
-            userId={session?.user?.id}
-            retreat={retreat}
-            event={retreat.retreatInstances[0]}
-          />
-        );
-      case "flexible_range":
-        return (
-          <FlexibleBooking
-            userId={session?.user?.id}
-            retreat={retreat}
-            events={retreat.retreatInstances}
-          />
-        );
-      default:
-        return null;
-    }
-  }
+  const tabsData = [
+    {
+      value: "tab-1",
+      label: "1 Nacht",
+      content: <div>Content for 1 Night stay</div>,
+    },
+    {
+      value: "tab-2",
+      label: "2 Nacht",
+      content: <div>Content for 2 Night stay</div>,
+    },
+    {
+      value: "tab-3",
+      label: "3 Nacht",
+      content: <div>Content for 3 Night stay</div>,
+    },
+  ];
+  // function RenderBookingType({ type }: { type: string; }) {
+  //   switch (type) {
+  //     case "open":
+  //       return (
+  //         <OpenBooking
+  //           userId={session?.user?.id}
+  //           retreat={property}
+  //           events={property.retreatInstances}
+  //         />
+  //       );
+  //     case "fixed_range":
+  //       return (
+  //         <FixedBooking
+  //           userId={session?.user?.id}
+  //           retreat={property}
+  //           event={property.retreatInstances[0]}
+  //         />
+  //       );
+  //     case "flexible_range":
+  //       return (
+  //         <FlexibleBooking
+  //           userId={session?.user?.id}
+  //           retreat={property}
+  //           events={property.retreatInstances}
+  //         />
+  //       );
+  //     default:
+  //       return null;
+  //   }
+  // }
 
-  if (!retreat) {
+  if (!property) {
     return (
       <>
         <LoadingSpinner /> Loading...
       </>
     );
   }
-  // move this default to a general config? maybe not needed even.
+
   const coverImgPath =
-    retreat?.coverImg ||
-    retreat?.images[0].filePath ||
-    "/img/iStock-1490140364.jpg";
+    property?.coverImg ||
+    property?.images[0].filePath ||
+    "/img/iStock-1490140364.jpg"; // move this default to a general config? maybe not needed even.
   return (
-    <div className="h-auto min-h-screen">
+    <div className="h-auto min-h-screen mt-4">
       <div className="relative h-3/4 min-h-[500px] flex flex-col justify-end bg-muted p-10 text-white dark:border-r">
         <div className="absolute inset-0 bg-zinc-900" />
         <Image
@@ -111,13 +127,13 @@ export default async function Page({ params }: { params: { id: string } }) {
           objectPosition="center"
           fill={true}
         />
-        <div className="relative z-20 bg-primary/10 w-min pl-20 -left-20 pr-4 backdrop-blur-sm rounded-r">
+        <div className="relative z-20 bg-primary/10 w-1/2 pl-10 -left-10 pr-4 backdrop-blur-sm rounded-r">
           <div className="flex items-center text-lg font-medium">
-            {retreat.description}
+            {property.description}
           </div>
           <div className=" w-min text-nowrap">
             <blockquote className="space-y-2">
-              <H1>{retreat.name}</H1>
+              <H1>{property.name}</H1>
             </blockquote>
           </div>
         </div>
@@ -133,21 +149,17 @@ export default async function Page({ params }: { params: { id: string } }) {
         </div>
         <div className="grid grid-cols-12">
           <div className="col-start-2 col-span-4 text-lg">
-            <p className="my-4">
-              Lorem ipsum dolor sit amet, consectetur adipisicing elit. Fuga
-              iste, repudiandae ipsam exercitationem reiciendis ea cumque
-              corporis magni ipsum architecto nobis? Nihil libero rem cum
-              dolorem quas ratione a fuga.
-            </p>
-            <p className="my-4">
-              Lorem ipsum dolor sit amet, consectetur adipisicing elit. Fuga
-              iste, repudiandae ipsam exercitationem reiciendis ea cumque
-              corporis magni ipsum architecto nobis? Nihil libero rem cum
-              dolorem quas ratione a fuga.
-            </p>
+            <CatalogTabs tabs={tabsData} />
           </div>
           <div className="col-start-7 col-span-5 mb-16">
-            <RenderBookingType type={retreat.bookingType} />
+            {/* <RenderBookingType type={property.bookingType} /> */}
+
+            <AspectRatio
+              ratio={3 / 4}
+              className="bg-[url('/img/gifnoise.gif')] opacity-20 rounded border"
+            >
+              <div className="w-full h-full rounded bg-white/20  backdrop-blur p-2 shadow"></div>
+            </AspectRatio>
           </div>
         </div>
       </div>

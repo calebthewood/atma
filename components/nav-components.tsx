@@ -52,7 +52,7 @@ export function MainNav({ items }: MainNavProps) {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger>
-        <Menu className="stroke-rich-white" strokeWidth={0.5} />
+        <Menu className="stroke-richBeige" strokeWidth={0.5} />
       </DropdownMenuTrigger>
       <DropdownMenuContent>
         <DropdownMenuLabel>Your Menu</DropdownMenuLabel>
@@ -92,7 +92,7 @@ export function MainNavigationMenu() {
           </Link>
           <Separator
             className={cn(
-              "h-0.5 w-0 bg-rich-white transition-all mx-auto duration-300",
+              "h-0.5 w-0 bg-richBeige transition-all mx-auto duration-300",
               path === "destinations" && "w-4 opacity-100"
             )}
           />
@@ -111,18 +111,18 @@ export function MainNavigationMenu() {
           </Link>
           <Separator
             className={cn(
-              "h-0.5 w-0 bg-rich-white transition-all mx-auto duration-300",
+              "h-0.5 w-0 bg-richBeige transition-all mx-auto duration-300",
               path === "retreats" && "w-4 opacity-100"
             )}
           />
         </NavigationMenuItem>
         <NavigationMenuItem>
-          <Link href="/special-programmes" legacyBehavior passHref>
+          <Link href="/programs" legacyBehavior passHref>
             <NavigationMenuLink
               className={cn(
                 navigationMenuTriggerStyle(),
                 "bg-transparent font-title text-xs leading-6 opacity-50 hover:opacity-100",
-                path === "special-programmes" && "opacity-100"
+                path === "programs" && "opacity-100"
               )}
             >
               SPECIAL PROGRAMMES
@@ -130,8 +130,8 @@ export function MainNavigationMenu() {
           </Link>
           <Separator
             className={cn(
-              "h-0.5 w-0 bg-rich-white transition-all mx-auto duration-300",
-              path === "special-programmes" && "w-4 opacity-100"
+              "h-0.5 w-0 bg-richBeige transition-all mx-auto duration-300",
+              path === "programs" && "w-4 opacity-100"
             )}
           />
         </NavigationMenuItem>

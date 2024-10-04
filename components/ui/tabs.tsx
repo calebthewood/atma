@@ -5,6 +5,8 @@ import * as TabsPrimitive from "@radix-ui/react-tabs";
 
 import { cn } from "@/lib/utils";
 
+import { Separator } from "./separator";
+
 const Tabs = TabsPrimitive.Root;
 
 const TabsList = React.forwardRef<
@@ -36,6 +38,29 @@ const TabsTrigger = React.forwardRef<
   />
 ));
 TabsTrigger.displayName = TabsPrimitive.Trigger.displayName;
+
+export const CustomTabsTrigger = React.forwardRef<
+  React.ElementRef<typeof TabsTrigger>,
+  React.ComponentPropsWithoutRef<typeof TabsTrigger>
+>(({ className, children, ...props }, ref) => {
+  return (
+    <TabsTrigger
+      ref={ref}
+      className={cn(
+        "relative flex flex-col items-center px-4",
+        "after:absolute after:bottom-0 after:left-1/2 after:-translate-x-1/2",
+        "after:h-0.5 after:w-0 after:bg-richBeige after:transition-all after:duration-300",
+        "data-[state=active]:after:w-4 data-[state=active]:bg-transparent",
+        className
+      )}
+      {...props}
+    >
+      {children}
+    </TabsTrigger>
+  );
+});
+
+CustomTabsTrigger.displayName = "CustomTabsTrigger";
 
 const TabsContent = React.forwardRef<
   React.ElementRef<typeof TabsPrimitive.Content>,

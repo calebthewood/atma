@@ -120,6 +120,7 @@ model Property {
     thumbnail      String?
     createdAt      DateTime  @default(now())
     updatedAt      DateTime  @updatedAt
+    programs       Program[]
 }
 
 // The profile for a room type offered by Host, not a record of the room itself
@@ -157,6 +158,7 @@ model Host {
     reviews     Review[]
     createdAt   DateTime   @default(now())
     updatedAt   DateTime   @updatedAt
+    programs    Program[]
 }
 
 // Account managers for Hosts, defaults to the user who creates host
@@ -172,26 +174,39 @@ model HostUser {
 }
 
 model Retreat {
-    id              String            @id @default(cuid())
-    bookingType     String // Flexible: Fixed Start Open End. Fixed: Fixed Start Fixed End. Open: Open Start Open End
-    name            String
-    description     String
-    duration        String
-    date            DateTime
-    price           String
-    minGuests       Int
-    maxGuests       Int
-    coverImg        String?
-    thumbnail       String?
-    images          Image[]
-    host            Host              @relation(fields: [hostId], references: [id])
-    hostId          String
-    property        Property          @relation(fields: [propertyId], references: [id])
-    propertyId      String
-    createdAt       DateTime          @default(now())
-    updatedAt       DateTime          @updatedAt
+    id               String            @id @default(cuid())
+    bookingType      String // Flexible: Fixed Start Open End. Fixed: Fixed Start Fixed End. Open: Open Start Open End
+    name             String
+    description      String
+    duration         String
+    date             DateTime
+    price            String
+    minGuests        Int
+    maxGuests        Int
+    coverImg         String?
+    thumbnail        String?
+    images           Image[]
+    host             Host              @relation(fields: [hostId], references: [id])
+    hostId           String
+    property         Property          @relation(fields: [propertyId], references: [id])
+    propertyId       String
+    createdAt        DateTime          @default(now())
+    updatedAt        DateTime          @updatedAt
     reviews          Review[]
-    retreatInstances RetreatInstance[] // rename these CapFields! so ugly
+    retreatInstances RetreatInstance[]
+}
+
+model Program {
+    id          String @id @default(cuid())
+    name        String
+    duration    String
+    description String
+    prices      String
+
+    property   Property @relation(fields: [propertyId], references: [id])
+    propertyId String
+    host       Host     @relation(fields: [hostId], references: [id])
+    hostId     String
 }
 
 model RetreatInstance {
@@ -199,14 +214,14 @@ model RetreatInstance {
     retreat        Retreat    @relation(fields: [retreatId], references: [id])
     retreatId      String
     startDate      DateTime
-    endDate        DateTime // New field to represent the end date of the retreat
+    endDate        DateTime
     minNights      Int        @default(-1) // ignore negative numbers
-    maxNights      Int        @default(-1) // ignore negative numbers
-    availableSlots Int // Number of available slots for this instance
-    isFull         Boolean    @default(false) // New field to indicate if this instance is fully booked
+    maxNights      Int        @default(-1)
+    availableSlots Int
+    isFull         Boolean    @default(false)
     createdAt      DateTime   @default(now())
     updatedAt      DateTime   @updatedAt
-    Bookings       Booking[] // One-to-many relationship with Bookings
+    bookings       Booking[]
     priceMods      PriceMod[]
 }
 
@@ -223,8 +238,8 @@ model Booking {
 
     user              User             @relation(fields: [userId], references: [id])
     userId            String
-    Message           Message[]
-    Notification      Notification?
+    message           Message[]
+    notification      Notification?
     retreatInstance   RetreatInstance? @relation(fields: [retreatInstanceId], references: [id])
     retreatInstanceId String?
 }
@@ -244,7 +259,6 @@ model PriceMod {
     retreatInstanceId String?
 }
 
-// TODO: add discounts & tax rate info (setup stripe first)
 model Payment {
     id          String   @id @default(cuid())
     bookingId   String

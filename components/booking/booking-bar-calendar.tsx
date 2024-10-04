@@ -124,7 +124,7 @@ function DatePlaceholder({ checkIn = true }: { checkIn?: boolean }) {
       <div className="font-title text-xs">
         {checkIn ? "CHECK IN" : "CHECK OUT"}
       </div>
-      <div className="font-tagline font-light text-xs text-rich-white/70">
+      <div className="font-tagline font-light text-xs text-richBeige/70">
         {checkIn ? "ARRIVAL DATE" : "DEPARTURE DATE"}
       </div>
     </div>

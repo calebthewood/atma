@@ -204,7 +204,7 @@ function Placeholder({ title, subtitle }: { title: string; subtitle: string }) {
   return (
     <div className="w-full text-start">
       <div className="font-title text-xs">{title}</div>
-      <div className="font-tagline font-light text-xs text-rich-white/70">
+      <div className="font-tagline font-light text-xs text-richBeige/70">
         {subtitle}
       </div>
     </div>

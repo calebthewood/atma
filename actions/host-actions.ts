@@ -5,6 +5,8 @@ import { Prisma } from "@prisma/client";
 
 import { prisma } from "@/lib/prisma";
 
+const thing = true;
+
 export async function createHost(data: {
   name: string;
   type: string;

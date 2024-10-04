@@ -13,7 +13,7 @@ export async function getRetreatInstance(id: string) {
 
   return prisma.retreatInstance.findUnique({
     where: { id },
-    include: { retreat: true, Bookings: true, priceMods: true },
+    include: { retreat: true, bookings: true, priceMods: true },
   });
 }
 
@@ -24,7 +24,7 @@ export async function getRetreatInstances() {
   }
 
   return prisma.retreatInstance.findMany({
-    include: { retreat: true, Bookings: true, priceMods: true },
+    include: { retreat: true, bookings: true, priceMods: true },
   });
 }
 

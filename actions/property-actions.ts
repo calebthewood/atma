@@ -81,6 +81,9 @@ export async function getPropertyById(propertyId: string) {
     where: {
       id: propertyId,
     },
+    include: {
+      images: true,
+    },
   });
 
   return property;

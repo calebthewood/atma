@@ -1,14 +1,9 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import { uploadToS3 } from "@/lib/s3";
-
 
 import { prisma } from "@/lib/prisma";
-
-
-
-
+import { uploadToS3 } from "@/lib/s3";
 
 export async function createUser(data: {
   fname: string;
@@ -89,31 +84,27 @@ export async function deleteUser(userId: string) {
     where: {
       id: userId,
     },
-  })
-
-  revalidatePath("/users")
-
-  return user
+  });
+  revalidatePath("/users");
+  return user;
 }
 
 export async function uploadImage(formData: FormData) {
-  const file = formData.get("image") as File
+  const file = formData.get("image") as File;
   if (!file) {
-    return { success: false, error: "No file provided" }
+    return { success: false, error: "No file provided" };
   }
 
   try {
-    // Assuming uploadToS3 returns the URL of the uploaded image
-    const url = await uploadToS3(file, 'users')
+    const url = await uploadToS3(file, "users");
 
-    // Here you might want to save the URL to your database
     // await saveImageUrlToDatabase(url);
 
-    revalidatePath("/") // Revalidate the current page
+    revalidatePath("/");
 
-    return { success: true, url }
+    return { success: true, url };
   } catch (error) {
-    console.error("Error uploading image:", error)
-    return { success: false, error: "Failed to upload image" }
+    console.error("Error uploading image:", error);
+    return { success: false, error: "Failed to upload image" };
   }
 }
