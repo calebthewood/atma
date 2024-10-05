@@ -81,14 +81,14 @@ export function DatePickerWithRange({
           >
             {date?.from ? (
               date.to ? (
-                <div className="flex justify-evenly w-full">
+                <div className="flex w-full justify-evenly">
                   <div className="">
                     <Small className="block">From</Small>
                     {format(date.from, "LLL dd, y")}
                   </div>
                   <Separator
                     orientation="vertical"
-                    className="h-8 my-auto mx-8"
+                    className="mx-8 my-auto h-8"
                   />
                   <div className="">
                     <Small className="block">To</Small>
@@ -168,7 +168,7 @@ export function DatePickerFixedRange({
                   </div>
                   <Separator
                     orientation="vertical"
-                    className="h-8 my-auto mx-8 flex-none"
+                    className="mx-8 my-auto h-8 flex-none"
                   />
                   <div className="">
                     <Small className="block">To</Small>

@@ -100,27 +100,27 @@ const ThumbnailCarousel: React.FC<PropType> = (props) => {
   }, [mainApi, onSelect, parallaxEffect]);
 
   return (
-    <div className="max-w-3xl mx-auto">
+    <div className="mx-auto max-w-3xl">
       <Carousel
         setApi={setMainApi} //@ts-ignore
         opts={{ ...options, loop: true }}
         className="overflow-hidden"
       >
-        <CarouselContent className="flex -ml-4">
+        <CarouselContent className="-ml-4 flex">
           {slides.map((img, i) => (
-            <CarouselItem key={i} className="pl-1 flex-[0_0_80%]">
-              <div className="rounded h-[19rem] overflow-hidden">
+            <CarouselItem key={i} className="flex-[0_0_80%] pl-1">
+              <div className="h-[19rem] overflow-hidden rounded">
                 <div
                   ref={(el) => {
                     parallaxLayers.current[i] = el;
                   }}
-                  className="relative size-full flex justify-center"
+                  className="relative flex size-full justify-center"
                 >
                   <Image
                     src={img}
                     alt={`Slide ${i + 1}`}
                     fill
-                    className="object-cover max-w-none flex-[0_0_calc(115%+2rem)] transition-all hover:scale-105 "
+                    className="max-w-none flex-[0_0_calc(115%+2rem)] object-cover transition-all hover:scale-105"
                   />
                 </div>
               </div>
@@ -140,11 +140,11 @@ const ThumbnailCarousel: React.FC<PropType> = (props) => {
           }}
           className="overflow-hidden"
         >
-          <CarouselContent className="flex -ml-3">
+          <CarouselContent className="-ml-3 flex">
             {slides.map((img, idx) => (
               <CarouselItem
                 key={`thumb-${idx}`}
-                className="pl-3 flex-[0_0_22%] sm:flex-[0_0_15%]"
+                className="flex-[0_0_22%] pl-3 sm:flex-[0_0_15%]"
               >
                 <Thumb
                   onClick={() => onThumbClick(idx)}
@@ -175,9 +175,9 @@ const Thumb: React.FC<ThumbProps> = (props) => {
       variant="outline"
       size="sm"
       className={cn(
-        "relative overflow-hidden size-24 rounded-xl p-0",
+        "relative size-24 overflow-hidden rounded-xl p-0",
         "shadow-[inset_0_0_0_0.2rem_var(--detail-medium-contrast)]",
-        "appearance-none bg-transparent cursor-pointer",
+        "cursor-pointer appearance-none bg-transparent",
         "touch-manipulation focus:outline-none",
         selected ? "shadow-[inset_0_0_0_0.2rem_var(--text-body)]" : ""
       )}
@@ -186,7 +186,7 @@ const Thumb: React.FC<ThumbProps> = (props) => {
         fill={true}
         src={img}
         alt="Thumbnail"
-        className="object-cover transition-all hover:scale-105 "
+        className="object-cover transition-all hover:scale-105"
       />
     </Button>
   );

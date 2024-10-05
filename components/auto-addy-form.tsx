@@ -64,7 +64,7 @@ const AutoAddressInput = React.forwardRef<
   }, [placesLibrary]);
 
   return (
-    <div className="relative w-full ">
+    <div className="relative w-full">
       {showIcon && (
         <div className="pointer-events-none absolute inset-y-0 start-0 flex items-center ps-2.5 text-gray-500 dark:text-gray-400">
           <Map />
@@ -74,7 +74,7 @@ const AutoAddressInput = React.forwardRef<
         type={type}
         className={cn(
           showIcon ? "pr-2 ps-10" : "px-3",
-          "flex  h-10 w-full rounded-md border border-input bg-background py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50",
+          "flex h-10 w-full rounded-md border border-input bg-background py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50",
           className
         )}
         ref={(node) => {

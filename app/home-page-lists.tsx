@@ -134,7 +134,7 @@ const HeroSection = () => {
   ];
 
   return (
-    <div className="w-full h-[600px]">
+    <div className="h-[600px] w-full">
       <HeroCarousel slides={slides} />
     </div>
   );

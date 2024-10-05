@@ -22,7 +22,7 @@ function generateSlides() {
       src={img}
       alt="alt"
       className={cn(
-        "size-auto object-cover transition-all hover:scale-105 aspect-square"
+        "aspect-square size-auto object-cover transition-all hover:scale-105"
       )}
     />
   ));
@@ -31,9 +31,9 @@ function generateSlides() {
 export function FakeImageGallery() {
   const [currImg, setCurrImg] = useState(images[0]);
   return (
-    <div className="flex flex-row  my-12 mx-auto justify-center gap-6">
+    <div className="mx-auto my-12 flex flex-row justify-center gap-6">
       <div className="basis-1/2">
-        <div className="overflow-hidden rounded-md h-[450px] w-[700px] relative">
+        <div className="relative h-[450px] w-[700px] overflow-hidden rounded-md">
           <Image
             src={currImg}
             alt="alt"
@@ -45,12 +45,12 @@ export function FakeImageGallery() {
         </div>
       </div>
 
-      <div className="flex flex-row align-end w-80 flex-wrap gap-2">
+      <div className="align-end flex w-80 flex-row flex-wrap gap-2">
         {images.map((img, i) => (
           <div
             key={`img-${i}`}
             onClick={() => setCurrImg(img)}
-            className="overflow-hidden rounded-md relative size-36"
+            className="relative size-36 overflow-hidden rounded-md"
           >
             <Image
               fill={true}
@@ -59,7 +59,7 @@ export function FakeImageGallery() {
               // width={150}
               // height={150}
               className={cn(
-                "size-auto object-cover transition-all hover:scale-105 aspect-square"
+                "aspect-square size-auto object-cover transition-all hover:scale-105"
               )}
             />
           </div>

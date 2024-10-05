@@ -39,7 +39,7 @@ export default async function Page() {
           <ScrollBar orientation="horizontal" />
         </ScrollArea>
       </div>
-      <div className="flex items-center justify-between mt-8">
+      <div className="mt-8 flex items-center justify-between">
         <div className="space-y-1">
           <h2 className="text-2xl font-semibold tracking-tight">
             Destinations Near You
@@ -69,7 +69,7 @@ export default async function Page() {
           <ScrollBar orientation="horizontal" />
         </ScrollArea>
       </div>
-      <div className="flex items-center justify-between mt-8">
+      <div className="mt-8 flex items-center justify-between">
         <div className="space-y-1">
           <h2 className="text-2xl font-semibold tracking-tight">
             London Based Destinations

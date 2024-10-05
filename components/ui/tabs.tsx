@@ -50,7 +50,7 @@ export const CustomTabsTrigger = React.forwardRef<
         "relative flex flex-col items-center px-4",
         "after:absolute after:bottom-0 after:left-1/2 after:-translate-x-1/2",
         "after:h-0.5 after:w-0 after:bg-richBeige after:transition-all after:duration-300",
-        "data-[state=active]:after:w-4 data-[state=active]:bg-transparent",
+        "data-[state=active]:bg-transparent data-[state=active]:after:w-4",
         className
       )}
       {...props}

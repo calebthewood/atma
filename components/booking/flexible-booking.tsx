@@ -111,7 +111,7 @@ export function FlexibleBooking({ userId, retreat, events }: BookingListProps) {
             updateDate={updateDate}
           />
         </div>
-        <div className="flex w-full mt-2">
+        <div className="mt-2 flex w-full">
           <GuestSelect
             guestCount={guestCount}
             handleGuests={(val: string) => setGuestCount(Number(val))}

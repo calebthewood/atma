@@ -22,16 +22,16 @@ export function BookingBar() {
   }, [searchParams]);
 
   return (
-    <div className="w-full flex flex-row justify-between mt-6">
-      <div className="h-16 grow flex flex-row rounded border justify-evenly items-center bg-white/20 backdrop-blur p-2 shadow">
+    <div className="mt-6 flex w-full flex-row justify-between">
+      <div className="flex h-16 grow flex-row items-center justify-evenly rounded border bg-white/20 p-2 shadow backdrop-blur">
         <div className="basis-3/12">
           <LocationCombobox />
         </div>
-        <Separator orientation="vertical" className="h-full mx-2  w-[0.5px]" />
+        <Separator orientation="vertical" className="mx-2 h-full w-[0.5px]" />
         <div className="basis-6/12">
           <BookingBarCalendar />
         </div>
-        <Separator orientation="vertical" className="h-full mx-2  w-[0.5px]" />
+        <Separator orientation="vertical" className="mx-2 h-full w-[0.5px]" />
         <div className="basis-2/12">
           <GuestCombobox />
         </div>
@@ -39,7 +39,7 @@ export function BookingBar() {
       <Button
         variant={"outline"}
         asChild
-        className="h-16 w-20 ml-2 p-4 dark:bg-white/20 dark:hover:bg-white/10 dark:hover:stroke-white cursor-pointer rounded border flex justify-center items-center align-center backdrop-blur shadow"
+        className="align-center ml-2 flex h-16 w-20 cursor-pointer items-center justify-center rounded border p-4 shadow backdrop-blur dark:bg-white/20 dark:hover:bg-white/10 dark:hover:stroke-white"
       >
         <Link href={constructSearchUrl()}>
           <Search className="" strokeWidth={0.5} />

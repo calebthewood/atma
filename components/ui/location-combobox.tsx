@@ -155,7 +155,7 @@ export function LocationCombobox() {
           variant="outline"
           role="combobox"
           aria-expanded={open}
-          className="w-full pl-2 h-12 justify-between rounded bg-transparent border-transparent"
+          className="h-12 w-full justify-between rounded border-transparent bg-transparent pl-2"
         >
           {value ? (
             value.name
@@ -204,7 +204,7 @@ function Placeholder({ title, subtitle }: { title: string; subtitle: string }) {
   return (
     <div className="w-full text-start">
       <div className="font-title text-xs">{title}</div>
-      <div className="font-tagline font-light text-xs text-richBeige/70">
+      <div className="font-tagline text-xs font-light text-richBeige/70">
         {subtitle}
       </div>
     </div>
@@ -249,7 +249,7 @@ export function GuestCombobox() {
           variant="outline"
           role="combobox"
           aria-expanded={open}
-          className="w-full h-12 pl-2 justify-between bg-transparent border-transparent rounded"
+          className="h-12 w-full justify-between rounded border-transparent bg-transparent pl-2"
         >
           {guestCount > 0 ? (
             <span className="flex flex-col items-start">

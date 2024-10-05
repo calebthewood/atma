@@ -50,7 +50,7 @@ function GuestPlaceholder() {
   return (
     <div className="w-full text-start">
       <div className="font-title text-xs">{"GUESTS"}</div>
-      <div className="font-tagline font-light text-xs text-richBeige/70">
+      <div className="font-tagline text-xs font-light text-richBeige/70">
         {"SELECT GUESTS"}
       </div>
     </div>

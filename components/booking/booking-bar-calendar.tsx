@@ -65,15 +65,15 @@ export function BookingBarCalendar() {
   }, [date, router, searchParams]);
 
   return (
-    <div className={cn("grid gap-2 w-full")}>
+    <div className={cn("grid w-full gap-2")}>
       <Popover>
         <PopoverTrigger asChild>
-          <div className="flex justify-around w-full h-12 items-center">
+          <div className="flex h-12 w-full items-center justify-around">
             <Button
               id="date"
               variant={"outline"}
               className={cn(
-                "size-full text-left font-normal bg-transparent border-transparent rounded",
+                "size-full rounded border-transparent bg-transparent text-left font-normal",
                 !date && "text-muted-foreground"
               )}
             >
@@ -85,13 +85,13 @@ export function BookingBarCalendar() {
             </Button>
             <Separator
               orientation="vertical"
-              className="h-full h-full mx-2 w-[0.5px]"
+              className="mx-2 h-full w-[0.5px]"
             />
             <Button
               id="date"
               variant={"outline"}
               className={cn(
-                "size-full text-left font-normal bg-transparent border-transparent rounded",
+                "size-full rounded border-transparent bg-transparent text-left font-normal",
                 !date && "text-muted-foreground"
               )}
             >
@@ -124,7 +124,7 @@ function DatePlaceholder({ checkIn = true }: { checkIn?: boolean }) {
       <div className="font-title text-xs">
         {checkIn ? "CHECK IN" : "CHECK OUT"}
       </div>
-      <div className="font-tagline font-light text-xs text-richBeige/70">
+      <div className="font-tagline text-xs font-light text-richBeige/70">
         {checkIn ? "ARRIVAL DATE" : "DEPARTURE DATE"}
       </div>
     </div>

@@ -97,8 +97,8 @@ export default async function Page({ params }: { params: { id: string } }) {
     retreat?.images[0].filePath ||
     "/img/iStock-1490140364.jpg";
   return (
-    <div className="h-auto min-h-screen mt-4">
-      <div className="relative h-3/4 min-h-[500px] flex flex-col justify-end bg-muted p-10 text-white dark:border-r">
+    <div className="mt-4 h-auto min-h-screen">
+      <div className="relative flex h-3/4 min-h-[500px] flex-col justify-end bg-muted p-10 text-white dark:border-r">
         <div className="absolute inset-0 bg-zinc-900" />
         <Image
           priority
@@ -111,11 +111,11 @@ export default async function Page({ params }: { params: { id: string } }) {
           objectPosition="center"
           fill={true}
         />
-        <div className="relative z-20 bg-primary/10 w-1/2 pl-10 -left-10 pr-4 backdrop-blur-sm rounded-r">
+        <div className="relative -left-10 z-20 w-1/2 rounded-r bg-primary/10 pl-10 pr-4 backdrop-blur-sm">
           <div className="flex items-center text-lg font-medium">
             {retreat.description}
           </div>
-          <div className=" w-min text-nowrap">
+          <div className="w-min text-nowrap">
             <blockquote className="space-y-2">
               <H1>{retreat.name}</H1>
             </blockquote>
@@ -132,7 +132,7 @@ export default async function Page({ params }: { params: { id: string } }) {
           <ThumbnailCarousel slides={SLIDES} />
         </div>
         <div className="grid grid-cols-12">
-          <div className="col-start-2 col-span-4 text-lg">
+          <div className="col-span-4 col-start-2 text-lg">
             <p className="my-4">
               Lorem ipsum dolor sit amet, consectetur adipisicing elit. Fuga
               iste, repudiandae ipsam exercitationem reiciendis ea cumque
@@ -146,7 +146,7 @@ export default async function Page({ params }: { params: { id: string } }) {
               dolorem quas ratione a fuga.
             </p>
           </div>
-          <div className="col-start-7 col-span-5 mb-16">
+          <div className="col-span-5 col-start-7 mb-16">
             <RenderBookingType type={retreat.bookingType} />
           </div>
         </div>

@@ -34,14 +34,14 @@ interface MainNavProps {
 
 export function HeroTitle() {
   return (
-    <Link href="/" className="W-[373] mt-16 hover:brightness-200 hover:">
-      <h1 className="w-full flex justify-between font-title text-6xl leading-6 tracking-[100%] hover:scale-[97%] transition-all">
+    <Link href="/" className="W-[373] hover: mt-16 hover:brightness-200">
+      <h1 className="flex w-full justify-between font-title text-6xl leading-6 tracking-[100%] transition-all hover:scale-[97%]">
         <span>A</span>
         <span>T</span>
         <span>M</span>
         <span>A</span>
       </h1>
-      <p className="leading-[56px] font-tagline">
+      <p className="font-tagline leading-[56px]">
         THE WORLD&apos;S DESTINATION FOR FINEST RETREATS
       </p>
     </Link>
@@ -92,7 +92,7 @@ export function MainNavigationMenu() {
           </Link>
           <Separator
             className={cn(
-              "h-0.5 w-0 bg-richBeige transition-all mx-auto duration-300",
+              "mx-auto h-0.5 w-0 bg-richBeige transition-all duration-300",
               path === "destinations" && "w-4 opacity-100"
             )}
           />
@@ -111,7 +111,7 @@ export function MainNavigationMenu() {
           </Link>
           <Separator
             className={cn(
-              "h-0.5 w-0 bg-richBeige transition-all mx-auto duration-300",
+              "mx-auto h-0.5 w-0 bg-richBeige transition-all duration-300",
               path === "retreats" && "w-4 opacity-100"
             )}
           />
@@ -130,7 +130,7 @@ export function MainNavigationMenu() {
           </Link>
           <Separator
             className={cn(
-              "h-0.5 w-0 bg-richBeige transition-all mx-auto duration-300",
+              "mx-auto h-0.5 w-0 bg-richBeige transition-all duration-300",
               path === "programs" && "w-4 opacity-100"
             )}
           />

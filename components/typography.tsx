@@ -12,7 +12,7 @@ export function H1({ children, className }: TypographyProps) {
   return (
     <h1
       className={cn(
-        "scroll-m-20 text-5xl  tracking-tight lg:text-5xl font-weight",
+        "font-weight scroll-m-20 text-5xl tracking-tight lg:text-5xl",
         fontTitle.className,
         className
       )}

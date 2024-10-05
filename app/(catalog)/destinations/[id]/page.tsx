@@ -113,8 +113,8 @@ export default async function Page({ params }: { params: { id: string } }) {
     property?.images[0].filePath ||
     "/img/iStock-1490140364.jpg"; // move this default to a general config? maybe not needed even.
   return (
-    <div className="h-auto min-h-screen mt-4">
-      <div className="relative h-3/4 min-h-[500px] flex flex-col justify-end bg-muted p-10 text-white dark:border-r">
+    <div className="mt-4 h-auto min-h-screen">
+      <div className="relative flex h-3/4 min-h-[500px] flex-col justify-end bg-muted p-10 text-white dark:border-r">
         <div className="absolute inset-0 bg-zinc-900" />
         <Image
           priority
@@ -127,11 +127,11 @@ export default async function Page({ params }: { params: { id: string } }) {
           objectPosition="center"
           fill={true}
         />
-        <div className="relative z-20 bg-primary/10 w-1/2 pl-10 -left-10 pr-4 backdrop-blur-sm rounded-r">
+        <div className="relative -left-10 z-20 w-1/2 rounded-r bg-primary/10 pl-10 pr-4 backdrop-blur-sm">
           <div className="flex items-center text-lg font-medium">
             {property.description}
           </div>
-          <div className=" w-min text-nowrap">
+          <div className="w-min text-nowrap">
             <blockquote className="space-y-2">
               <H1>{property.name}</H1>
             </blockquote>
@@ -148,17 +148,17 @@ export default async function Page({ params }: { params: { id: string } }) {
           <ThumbnailCarousel slides={SLIDES} />
         </div>
         <div className="grid grid-cols-12">
-          <div className="col-start-2 col-span-4 text-lg">
+          <div className="col-span-4 col-start-2 text-lg">
             <CatalogTabs tabs={tabsData} />
           </div>
-          <div className="col-start-7 col-span-5 mb-16">
+          <div className="col-span-5 col-start-7 mb-16">
             {/* <RenderBookingType type={property.bookingType} /> */}
 
             <AspectRatio
               ratio={3 / 4}
-              className="bg-[url('/img/gifnoise.gif')] opacity-20 rounded border"
+              className="rounded border bg-[url('/img/gifnoise.gif')] opacity-20"
             >
-              <div className="w-full h-full rounded bg-white/20  backdrop-blur p-2 shadow"></div>
+              <div className="size-full rounded bg-white/20 p-2 shadow backdrop-blur"></div>
             </AspectRatio>
           </div>
         </div>

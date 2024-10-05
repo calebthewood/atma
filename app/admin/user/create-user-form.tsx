@@ -82,7 +82,7 @@ export function CreateUserForm() {
     <Form {...form}>
       <form
         onSubmit={form.handleSubmit(onSubmit)}
-        className="space-y-8 max-w-md"
+        className="max-w-md space-y-8"
       >
         <FormField
           control={form.control}

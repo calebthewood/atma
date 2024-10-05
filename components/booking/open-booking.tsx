@@ -101,21 +101,21 @@ function BookingItem({ userId, item, retreat, guestCount }: BookingItemProps) {
   return (
     <>
       <div className="flex flex-row">
-        <div className="basis-1/2 flex flex-col">
+        <div className="flex basis-1/2 flex-col">
           <Large>{retreat.name}</Large>
           <Lead className="text-sm">
             {start} to {end}
           </Lead>
-          <p className="font-semibold text-sm">
+          <p className="text-sm font-semibold">
             {toUSD(basePrice)} <span className="font-normal">/ person</span>
           </p>
         </div>
-        <div className="basis-1/2 flex flex-col items-end">
+        <div className="flex basis-1/2 flex-col items-end">
           <TooltipProvider>
             <Tooltip>
               <TooltipTrigger>
                 <Small className="">{toUSD(adjustedPrice)}</Small>
-                <Lead className="text-xs inline mr-1"> / base price</Lead>
+                <Lead className="mr-1 inline text-xs"> / base price</Lead>
               </TooltipTrigger>
               <TooltipContent className="max-w-64">
                 <p>
@@ -135,7 +135,7 @@ function BookingItem({ userId, item, retreat, guestCount }: BookingItemProps) {
           />
         </div>
       </div>
-      <Separator className="my-4 col-span-5" />
+      <Separator className="col-span-5 my-4" />
     </>
   );
 }

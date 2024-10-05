@@ -110,7 +110,7 @@ export function FixedBooking({ userId, retreat, event }: BookingListProps) {
             duration={duration}
           />
         </div>
-        <div className="flex w-full mt-2">
+        <div className="mt-2 flex w-full">
           <GuestSelect
             guestCount={guestCount}
             handleGuests={(val: string) => setGuestCount(Number(val))}

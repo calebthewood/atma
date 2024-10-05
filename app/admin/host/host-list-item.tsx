@@ -27,7 +27,7 @@ export function HostListItem({ host }: HostListItemProps) {
           <AvatarFallback>{host.name?.[0]}</AvatarFallback>
         </Avatar>
       </TableCell>
-      <TableCell className="font-medium text-nowrap">{host.name}</TableCell>
+      <TableCell className="text-nowrap font-medium">{host.name}</TableCell>
       <TableCell>
         <Badge variant="outline">{host.type}</Badge>
       </TableCell>
