@@ -27,13 +27,13 @@ model User {
 
     createdAt        DateTime       @default(now())
     updatedAt        DateTime       @updatedAt
-    Bookings         Booking[]
-    Reviews          Review[]
-    Notifications    Notification[]
+    bookings         Booking[]
+    reviews          Review[]
+    notifications    Notification[]
     sentMessages     Message[]      @relation("sentMessages")
     receivedMessages Message[]      @relation("receivedMessages")
-    HostUser         HostUser[]
-    Image            Image[]
+    hostUsers        HostUser[]
+    images           Image[]
 }
 
 model Account {
