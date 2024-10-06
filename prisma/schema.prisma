@@ -94,71 +94,84 @@ model Authenticator {
 }
 
 //  https://medium.com/towards-data-engineering/data-modelling-design-a-data-model-for-a-hotel-booking-system-like-airbnb-2110a6d079c6
-
+// List denotes a string field of "" separated values.
 model Property {
-    id             String    @id @default(cuid())
-    email          String
-    phone          String
-    name           String
-    description    String
-    latitude       Float?
-    longitude      Float?
-    city           String?
-    address        String
-    closestAirport String
-    location       String
-    type           String // Resort || Hotel || etc...
-    amenities      String // Property/Hotel/Resort amenities, not room amenities
-    rating         String // sum of all ratings / reviewer count, ex: "187 / 842". When displayed, convert to numbers and do expression, when updated, convert to number and increment numerator by rating and denom by 1 (this would be a condensed rating system, real system would track all reviews)
-    host           Host      @relation(fields: [hostId], references: [id])
-    hostId         String
-    reviews        Review[]
-    images         Image[]
-    retreats       Retreat[]
-    rooms          Room[]
-    coverImg       String?
-    thumbnail      String?
-    createdAt      DateTime  @default(now())
-    updatedAt      DateTime  @updatedAt
-    programs       Program[]
+    id              String    @id @default(cuid())
+    email           String?
+    phone           String?
+    name            String
+    descShort       String?
+    descList        String?
+    lat             Float?
+    lng             Float?
+    coordType       String? // exact or approximate
+    city            String?
+    address         String? // street address, think about how to show international address types
+    addressRaw      String? // the raw scraped address - think about best way to handle big ugly foreign addresses
+    nearbyAirport   String? // manually pull this from nearbyPlaces field
+    placeList       String? // a list of '\n' separated places
+    policyList      String? // a string/list of misc policies
+    tagList         String? // | separated list of tags
+    location        String? // what is this field?
+    type            String? // Resort || Hotel || etc...
+    amenityHealing  String?
+    amenityCuisine  String?
+    amenityActivity String?
+    amenityFacility String?
+    rating          String? // sum of all ratings / reviewer count, ex: "187 / 842". When displayed, convert to numbers and do expression, when updated, convert to number and increment numerator by rating and denom by 1 (this would be a condensed rating system, real system would track all reviews)
+    coverImg        String? // must be hi-res (think of alternative design for pages with no hires img)
+    host            Host?     @relation(fields: [hostId], references: [id])
+    hostId          String?
+    reviews         Review[]
+    images          Image[]
+    retreats        Retreat[]
+    rooms           Room[]
+    createdAt       DateTime  @default(now())
+    updatedAt       DateTime  @updatedAt
+    programs        Program[]
+    amenities       Amenity[]
 }
 
 // The profile for a room type offered by Host, not a record of the room itself
 model Room {
-    id         String   @id @default(cuid())
-    type       String // Single, Double, Suite
-    roomCount  String
-    amenities  String // make relation Air Conditioning and Heating, Wi-Fi Access, Flat-Screen TV, Mini Fridge, Coffee Maker and Tea Station, In-Room Safe, Wardrobe and Hangers, Desk and Chair, Alarm Clock, Hairdryer, Complimentary Toiletries, Bathrobe and Slippers, Iron and Ironing Board, Telephone, Room Service, Balcony or Patio (if applicable), Blackout Curtains, Extra Pillows and Blankets
-    bedType    String // Twin Bed: 39” x 75” (sleeps 1), Twin XL Bed: 39” x 80” (sleeps 1), Full Bed (Double Bed): 54” x 75” (sleeps 1-2), Queen Bed: 60” x 80” (sleeps 2), King Bed: 76” x 80” (sleeps 2), California King Bed: 72” x 84” (sleeps 2)
-    minGuests  Int
-    maxGuests  Int
-    property   Property @relation(fields: [propertyId], references: [id])
-    propertyId String
-    createdAt  DateTime @default(now())
-    updatedAt  DateTime @updatedAt
+    id          String   @id @default(cuid())
+    name        String?
+    desc        String?
+    images      Image[]
+    type        String? // Single, Double, Suite
+    roomCount   String?
+    amenityList String? // make relation Air Conditioning and Heating, Wi-Fi Access, Flat-Screen TV, Mini Fridge, Coffee Maker and Tea Station, In-Room Safe, Wardrobe and Hangers, Desk and Chair, Alarm Clock, Hairdryer, Complimentary Toiletries, Bathrobe and Slippers, Iron and Ironing Board, Telephone, Room Service, Balcony or Patio (if applicable), Blackout Curtains, Extra Pillows and Blankets
+    bedType     String? // Twin Bed: 39” x 75” (sleeps 1), Twin XL Bed: 39” x 80” (sleeps 1), Full Bed (Double Bed): 54” x 75” (sleeps 1-2), Queen Bed: 60” x 80” (sleeps 2), King Bed: 76” x 80” (sleeps 2), California King Bed: 72” x 84” (sleeps 2)
+    minGuests   Int      @default(1)
+    maxGuests   Int      @default(-1)
+    property    Property @relation(fields: [propertyId], references: [id])
+    propertyId  String
+    createdAt   DateTime @default(now())
+    updatedAt   DateTime @updatedAt
 }
 
 // Hosts would be entities like Hilton, Marriot, or Susy's B&B
 model Host {
-    id          String     @id @default(cuid())
-    name        String
-    type        String // Corporate, Independant, ...Something else?
-    description String
-    email       String
-    phone       String
-    profilePic  String
-    coverImg    String?
-    thumbnail   String?
-    userId      String?
-    hostUser    HostUser[]
-    images      Image[]
-    retreats    Retreat[]
-    properties  Property[]
-    priceMods   PriceMod[]
-    reviews     Review[]
-    createdAt   DateTime   @default(now())
-    updatedAt   DateTime   @updatedAt
-    programs    Program[]
+    id         String     @id @default(cuid())
+    name       String?
+    type       String? // Corporate, Independant, ...Something else?
+    desc       String?
+    email      String?
+    phone      String?
+    profilePic String?
+    coverImg   String?
+    thumbnail  String?
+    userId     String?
+    hostUser   HostUser[]
+    images     Image[]
+    retreats   Retreat[]
+    properties Property[]
+    priceMods  PriceMod[]
+    reviews    Review[]
+    createdAt  DateTime   @default(now())
+    updatedAt  DateTime   @updatedAt
+    programs   Program[]
+    amenities  Amenity[]
 }
 
 // Account managers for Hosts, defaults to the user who creates host
@@ -175,38 +188,41 @@ model HostUser {
 
 model Retreat {
     id               String            @id @default(cuid())
-    bookingType      String // Flexible: Fixed Start Open End. Fixed: Fixed Start Fixed End. Open: Open Start Open End
-    name             String
-    description      String
-    duration         String
-    date             DateTime
-    price            String
-    minGuests        Int
-    maxGuests        Int
+    bookingType      String? // Flexible: Fixed Start Open End. Fixed: Fixed Start Fixed End. Open: Open Start Open End
+    name             String?
+    desc             String?
+    duration         String?
+    date             DateTime?
+    priceList        String?
+    minGuests        Int?
+    maxGuests        Int?
     coverImg         String?
     thumbnail        String?
     images           Image[]
-    host             Host              @relation(fields: [hostId], references: [id])
-    hostId           String
+    host             Host?             @relation(fields: [hostId], references: [id])
+    hostId           String?
     property         Property          @relation(fields: [propertyId], references: [id])
     propertyId       String
     createdAt        DateTime          @default(now())
     updatedAt        DateTime          @updatedAt
     reviews          Review[]
     retreatInstances RetreatInstance[]
+    amenities        Amenity[]
 }
 
 model Program {
-    id          String @id @default(cuid())
-    name        String
-    duration    String
-    description String
-    prices      String
+    id        String  @id @default(cuid())
+    name      String?
+    duration  String?
+    desc      String?
+    priceList String?
 
-    property   Property @relation(fields: [propertyId], references: [id])
-    propertyId String
-    host       Host     @relation(fields: [hostId], references: [id])
-    hostId     String
+    property   Property? @relation(fields: [propertyId], references: [id])
+    propertyId String?
+    host       Host?     @relation(fields: [hostId], references: [id])
+    hostId     String?
+    images     Image[]
+    amenities  Amenity[]
 }
 
 model RetreatInstance {
@@ -248,11 +264,11 @@ model PriceMod {
     id                String           @id @default(cuid())
     host              Host?            @relation(fields: [hostId], references: [id])
     hostId            String?
-    name              String
-    description       String
-    type              String // type: 'FIXED_VALUE', 'PERCENT'
-    category          String // 'Room Type', 'Extra Amenity' 'Transportation' 'Guide' etc,
-    value             Int
+    name              String?
+    desc              String?
+    type              String? // type: 'FIXED_VALUE', 'PERCENT'
+    category          String? // 'Room Type', 'Extra Amenity' 'Transportation' 'Guide' etc,
+    value             Int?
     createdAt         DateTime         @default(now())
     updatedAt         DateTime         @updatedAt
     retreatInstance   RetreatInstance? @relation(fields: [retreatInstanceId], references: [id])
@@ -314,24 +330,48 @@ model Notification {
 }
 
 model Image {
-    id          String    @id @default(cuid())
-    filePath    String
-    description String?
-    user        User?     @relation(fields: [userId], references: [id])
-    userId      String?
-    property    Property? @relation(fields: [propertyId], references: [id])
-    propertyId  String?
-    host        Host?     @relation(fields: [hostId], references: [id])
-    hostId      String?
-    retreat     Retreat?  @relation(fields: [retreatId], references: [id])
-    retreatId   String?
-    createdAt   DateTime  @default(now())
-    updatedAt   DateTime  @updatedAt
+    id         String    @id @default(cuid())
+    filePath   String
+    desc       String?
+    user       User?     @relation(fields: [userId], references: [id])
+    userId     String?
+    property   Property? @relation(fields: [propertyId], references: [id])
+    propertyId String?
+    program    Program?  @relation(fields: [programId], references: [id])
+    programId  String?
+    host       Host?     @relation(fields: [hostId], references: [id])
+    hostId     String?
+    retreat    Retreat?  @relation(fields: [retreatId], references: [id])
+    retreatId  String?
+    createdAt  DateTime  @default(now())
+    updatedAt  DateTime  @updatedAt
+    room       Room?     @relation(fields: [roomId], references: [id])
+    roomId     String?
 
     @@index([userId])
     @@index([propertyId])
     @@index([hostId])
     @@index([retreatId])
+}
+
+model Amenity {
+    id           String @id @default(cuid())
+    type         String // activity, facility, etc
+    category     String // mind-body-practices
+    categoryName String // Mind-Body Practices, Recreational Sports, etc
+    name         String // yoga, sauna, wakeboarding, mediation, etc
+
+    property   Property? @relation(fields: [propertyId], references: [id])
+    propertyId String?
+    host       Host?     @relation(fields: [hostId], references: [id])
+    hostId     String?
+    retreat    Retreat?  @relation(fields: [retreatId], references: [id])
+    retreatId  String?
+    program    Program?  @relation(fields: [programId], references: [id])
+    programId  String?
+
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
 }
 
 // Fact Tables

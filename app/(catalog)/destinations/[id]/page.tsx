@@ -17,16 +17,9 @@ import { CatalogTabs } from "@/components/catalog-tabs";
 import { LoadingSpinner } from "@/components/loading-spinner";
 import { H1 } from "@/components/typography";
 
-const SLIDES = [
-  "/img/iStock-1929812569.jpg",
-  "/img/iStock-1812905796.jpg",
-  "/img/iStock-1550112895.jpg",
-  "/img/iStock-1507078404.jpg",
-  "/img/iStock-1490140364.jpg",
-  "/img/iStock-1291807006.jpg",
-];
 
-export default async function Page({ params }: { params: { id: string } }) {
+
+export default async function Page({ params }: { params: { id: string; }; }) {
   const property = await getPropertyById(params.id);
   const session = await auth();
   const details = [
@@ -54,19 +47,24 @@ export default async function Page({ params }: { params: { id: string } }) {
 
   const tabsData = [
     {
-      value: "tab-1",
-      label: "1 Nacht",
-      content: <div>Content for 1 Night stay</div>,
+      value: "healing",
+      label: "Healing",
+      content: <div>{property?.amenityHealing}</div>,
     },
     {
-      value: "tab-2",
-      label: "2 Nacht",
-      content: <div>Content for 2 Night stay</div>,
+      value: "cuisine",
+      label: "Cuisine",
+      content: <div>{property?.amenityCuisine}</div>,
     },
     {
-      value: "tab-3",
-      label: "3 Nacht",
-      content: <div>Content for 3 Night stay</div>,
+      value: "activity",
+      label: "Activity",
+      content: <div>{property?.amenityActivity}</div>,
+    },
+    {
+      value: "facility",
+      label: "Amenities",
+      content: <div>{property?.amenityFacility}</div>,
     },
   ];
   // function RenderBookingType({ type }: { type: string; }) {
@@ -122,14 +120,15 @@ export default async function Page({ params }: { params: { id: string } }) {
           sizes="100vw"
           alt="destination cover photo"
           src={coverImgPath}
-          layout="fill"
-          objectFit="cover"
-          objectPosition="center"
+          style={{
+            objectFit: "cover",
+            objectPosition: "center"
+          }}
           fill={true}
         />
         <div className="relative -left-10 z-20 w-1/2 rounded-r bg-primary/10 pl-10 pr-4 backdrop-blur-sm">
           <div className="flex items-center text-lg font-medium">
-            {property.description}
+            {property.descShort}
           </div>
           <div className="w-min text-nowrap">
             <blockquote className="space-y-2">
@@ -145,11 +144,11 @@ export default async function Page({ params }: { params: { id: string } }) {
           ))}
         </div>
         <div className="my-12">
-          <ThumbnailCarousel slides={SLIDES} />
+          <ThumbnailCarousel slides={property.images.map(img => img.filePath)} />
         </div>
         <div className="grid grid-cols-12">
           <div className="col-span-4 col-start-2 text-lg">
-            <CatalogTabs tabs={tabsData} />
+            <CatalogTabs tabs={tabsData} defaultTab="healing" />
           </div>
           <div className="col-span-5 col-start-7 mb-16">
             {/* <RenderBookingType type={property.bookingType} /> */}
@@ -170,7 +169,7 @@ export default async function Page({ params }: { params: { id: string } }) {
 function RetreatDescCard({
   desc,
 }: {
-  desc: { name: string; icon: any; detail: string };
+  desc: { name: string; icon: any; detail: string; };
 }) {
   return (
     <Card className="w-56">

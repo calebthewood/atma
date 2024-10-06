@@ -34,3 +34,7 @@ yarn-error.log*
 
 .contentlayer
 .env
+
+# dev db setup
+parsePropertyList.js
+*.csv

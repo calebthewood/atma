@@ -1,10 +1,12 @@
 "use server";
 
 import {
+  GetObjectCommand,
   PutObjectCommand,
   PutObjectCommandInput,
   S3Client,
 } from "@aws-sdk/client-s3";
+import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 
 const s3Client = new S3Client({
   region: process.env.AWS_REGION as string,
@@ -41,3 +43,12 @@ export const uploadToS3 = async (
     throw error;
   }
 };
+
+async function getSignedImageUrl(key) {
+  const command = new GetObjectCommand({
+    Bucket: "atma-reserve-wd7vimpbnjrl",
+    Key: key,
+  });
+
+  return await getSignedUrl(s3Client, command, { expiresIn: 3600 });
+}

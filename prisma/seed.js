@@ -1,7 +1,6 @@
 const { PrismaClient } = require("@prisma/client");
-const { addDays } = require("date-fns");
-const { connect } = require("http2");
 const prisma = new PrismaClient();
+const { addDays } = require("date-fns");
 
 const imagePaths = [
   "/img/iStock-1929812569.jpg",

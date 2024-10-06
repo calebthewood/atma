@@ -27,7 +27,7 @@ const SLIDES = [
   "/img/iStock-1291807006.jpg",
 ];
 
-export default async function Page({ params }: { params: { id: string } }) {
+export default async function Page({ params }: { params: { id: string; }; }) {
   const retreat = await getRetreatById(params.id);
   const session = await auth();
   const details = [
@@ -53,7 +53,7 @@ export default async function Page({ params }: { params: { id: string } }) {
     },
   ];
 
-  function RenderBookingType({ type }: { type: string }) {
+  function RenderBookingType({ type }: { type: string; }) {
     switch (type) {
       case "open":
         return (
@@ -106,9 +106,7 @@ export default async function Page({ params }: { params: { id: string } }) {
           sizes="100vw"
           alt="destination cover photo"
           src={coverImgPath}
-          layout="fill"
-          objectFit="cover"
-          objectPosition="center"
+          className="object-cover object-center"
           fill={true}
         />
         <div className="relative -left-10 z-20 w-1/2 rounded-r bg-primary/10 pl-10 pr-4 backdrop-blur-sm">
@@ -158,7 +156,7 @@ export default async function Page({ params }: { params: { id: string } }) {
 function RetreatDescCard({
   desc,
 }: {
-  desc: { name: string; icon: any; detail: string };
+  desc: { name: string; icon: any; detail: string; };
 }) {
   return (
     <Card className="w-56">

@@ -11,6 +11,12 @@ const nextConfig = {
         protocol: "https",
         hostname: "images.unsplash.com",
       },
+      {
+        protocol: "https",
+        hostname: "atma-reserve-wd7vimpbnjrl.s3.us-west-1.amazonaws.com",
+        port: "",
+        pathname: "/**",
+      },
     ],
   },
 };

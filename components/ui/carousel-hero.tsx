@@ -13,7 +13,7 @@ import {
   CarouselItem,
 } from "@/components/ui/carousel";
 
-const HeroCarousel = ({ slides }: { slides: { [val: string]: string }[] }) => {
+const HeroCarousel = ({ slides }: { slides: { [val: string]: string; }[]; }) => {
   const [api, setApi] = useState<UseEmblaCarouselType[1] | null>(null);
   const [current, setCurrent] = useState(0);
   const [count, setCount] = useState(0);
