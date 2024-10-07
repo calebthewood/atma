@@ -86,8 +86,8 @@ export const searchProperties = async (options: SearchOptions) => {
         distance: haversineDistance(
           latitude,
           longitude,
-          property?.lat ?? 0,
-          property?.lng ?? 0
+          property.lat,
+          property.lng
         ),
       }))
       .filter((property) => property.distance <= radiusMiles)
@@ -103,12 +103,12 @@ export const searchProperties = async (options: SearchOptions) => {
 
 // Haversine distance calculation function
 function haversineDistance(
-  lat1: number,
-  lon1: number,
-  lat2: number | null,
-  lon2: number | null
+  lat1: number | null | undefined,
+  lon1: number | null | undefined,
+  lat2: number | null | undefined,
+  lon2: number | null | undefined
 ): number {
-  if (lat2 === null || lon2 === null) return Infinity;
+  if (!lat2 || !lon2 || !lat1 || !lon1) return Infinity;
 
   const R = 3959; // Earth radius in miles
   const dLat = toRadians(lat2 - lat1);
