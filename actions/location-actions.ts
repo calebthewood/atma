@@ -79,15 +79,15 @@ export const searchProperties = async (options: SearchOptions) => {
   });
 
   // If latitude and longitude are provided, filter by distance
-  if (latitude !== undefined && longitude !== undefined) {
+  if (latitude && longitude) {
     const nearbyProperties = properties
       .map((property) => ({
         ...property,
         distance: haversineDistance(
           latitude,
           longitude,
-          property.lat,
-          property.lng
+          property?.lat ?? 0,
+          property?.lng ?? 0
         ),
       }))
       .filter((property) => property.distance <= radiusMiles)
