@@ -1,36 +1,14 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import { Prisma } from "@prisma/client";
+import { Prisma, Retreat } from "@prisma/client";
 
 import { prisma } from "@/lib/prisma";
 
-export async function createRetreat(data: {
-  name: string;
-  desc: string;
-  bookingType: string;
-  duration: string;
-  date: Date;
-  price: string;
-  minGuests: number;
-  maxGuests: number;
-  hostId: string;
-  propertyId: string;
-}) {
+export async function createRetreat(data: Retreat) {
   try {
     const retreat = await prisma.retreat.create({
-      data: {
-        name: data.name,
-        desc: data.desc,
-        bookingType: data.bookingType,
-        duration: data.duration,
-        minGuests: data.minGuests,
-        maxGuests: data.maxGuests,
-        date: data.date,
-        priceList: data.price,
-        hostId: data.hostId,
-        propertyId: data.propertyId,
-      },
+      data: { ...data },
     });
 
     revalidatePath("/retreats");
@@ -132,18 +110,7 @@ export async function getRetreatById(retreatId: string) {
   }
 }
 
-export async function updateRetreat(
-  retreatId: string,
-  data: {
-    name?: string;
-    description?: string;
-    duration?: string;
-    date?: Date;
-    price?: string;
-    hostId?: string;
-    propertyId?: string;
-  }
-) {
+export async function updateRetreat(retreatId: string, data: Retreat) {
   try {
     const retreat = await prisma.retreat.update({
       where: {
