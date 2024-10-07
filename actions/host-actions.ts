@@ -1,31 +1,17 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import { Prisma } from "@prisma/client";
+import { Host, Prisma } from "@prisma/client";
 
 import { prisma } from "@/lib/prisma";
 
 const thing = true;
 
-export async function createHost(data: {
-  name: string;
-  type: string;
-  desc: string;
-  email: string;
-  phone: string;
-  profilePic: string;
-  userId?: string;
-}) {
+export async function createHost(data: Host) {
   try {
     const host = await prisma.host.create({
       data: {
-        name: data.name,
-        type: data.type,
-        desc: data.desc,
-        email: data.email,
-        phone: data.phone,
-        profilePic: data.profilePic,
-        userId: data.userId,
+        ...data,
       },
     });
 
