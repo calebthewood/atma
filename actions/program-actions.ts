@@ -99,7 +99,7 @@ export async function getProgramsWithNoProperty() {
   try {
     const programs = await prisma.program.findMany({
       where: {
-        propertyId: null,
+        propertyId: undefined,
       },
     });
     return programs;
