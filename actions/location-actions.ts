@@ -48,7 +48,7 @@ export const searchProperties = async (options: SearchOptions) => {
     nameContains,
   } = options;
 
-  const include: Prisma.PropertyInclude = {};
+  const include: any = {};
 
   if (includeHost) {
     include.host = { select: { name: true, id: true } };

@@ -59,6 +59,7 @@ export function CreateHostForm() {
   async function onSubmit(values: z.infer<typeof formSchema>) {
     setIsSubmitting(true);
     try {
+      //@ts-ignore
       const host = await createHost(values);
       console.log("Host created:", host);
       form.reset(); // Reset form after successful submission
