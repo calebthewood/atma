@@ -84,10 +84,10 @@ export const searchProperties = async (options: SearchOptions) => {
       .map((property) => ({
         ...property,
         distance: haversineDistance(
-          latitude,
-          longitude,
-          property.lat,
-          property.lng
+          latitude, //@ts-ignore
+          longitude, //@ts-ignore
+          property.lat, //@ts-ignore
+          property.lng //@ts-ignore
         ),
       }))
       .filter((property) => property.distance <= radiusMiles)
