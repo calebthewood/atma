@@ -25,16 +25,11 @@ export type PropertiesWithImages = Prisma.PropertyGetPayload<{
         id: true;
       };
     };
-    images: {
-      select: {
-        filePath: true;
-        desc: true;
-      };
-    };
+    images: true;
   };
 }>;
 
-export async function getProperties(): Promise<PropertiesWithImages[]> {
+export async function getProperties() {
   const properties = await prisma.property.findMany({
     include: {
       host: {
@@ -43,12 +38,7 @@ export async function getProperties(): Promise<PropertiesWithImages[]> {
           id: true,
         },
       },
-      images: {
-        select: {
-          filePath: true,
-          desc: true,
-        },
-      },
+      images: true,
     },
   });
   return properties;

@@ -56,6 +56,7 @@ export default function Page() {
           includeImages: true,
         });
         if (places) {
+          // @ts-ignore
           setSearchResults(places);
         }
       } catch (err) {
