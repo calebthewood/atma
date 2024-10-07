@@ -45,7 +45,7 @@ export type RetreatItems = Prisma.RetreatGetPayload<{
   };
 }>;
 
-export async function getRetreats(): Promise<RetreatItems[]> {
+export async function getRetreats() {
   try {
     const retreats = await prisma.retreat.findMany({
       include: {
@@ -63,12 +63,7 @@ export async function getRetreats(): Promise<RetreatItems[]> {
             images: true,
           },
         },
-        images: {
-          select: {
-            filePath: true,
-            desc: true,
-          },
-        },
+        images: true,
       },
     });
     return retreats;
