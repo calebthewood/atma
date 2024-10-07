@@ -194,10 +194,10 @@ model Retreat {
     duration         String?
     date             DateTime?
     priceList        String?
-    minGuests        Int?
-    maxGuests        Int?
+    minGuests        Int?              @default(1)
+    maxGuests        Int?              @default(-1)
     coverImg         String?
-    thumbnail        String?
+    sourceUrl        String?
     images           Image[]
     host             Host?             @relation(fields: [hostId], references: [id])
     hostId           String?
@@ -216,6 +216,7 @@ model Program {
     duration  String?
     desc      String?
     priceList String?
+    sourceUrl String? // for admin use, not for linking on page
 
     property   Property? @relation(fields: [propertyId], references: [id])
     propertyId String?
@@ -223,6 +224,8 @@ model Program {
     hostId     String?
     images     Image[]
     amenities  Amenity[]
+    createdAt  DateTime  @default(now())
+    updatedAt  DateTime  @updatedAt
 }
 
 model RetreatInstance {

@@ -94,7 +94,7 @@ export default async function Page({ params }: { params: { id: string; }; }) {
   // move this default to a general config? maybe not needed even.
   const coverImgPath =
     retreat?.coverImg ||
-    retreat?.images[0].filePath ||
+    retreat?.images[0]?.filePath ||
     "/img/iStock-1490140364.jpg";
   return (
     <div className="mt-4 h-auto min-h-screen">
@@ -111,7 +111,7 @@ export default async function Page({ params }: { params: { id: string; }; }) {
         />
         <div className="relative -left-10 z-20 w-1/2 rounded-r bg-primary/10 pl-10 pr-4 backdrop-blur-sm">
           <div className="flex items-center text-lg font-medium">
-            {retreat.description}
+            {retreat.desc}
           </div>
           <div className="w-min text-nowrap">
             <blockquote className="space-y-2">

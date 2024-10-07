@@ -21,13 +21,13 @@ export async function createRetreat(data: {
     const retreat = await prisma.retreat.create({
       data: {
         name: data.name,
-        description: data.description,
+        desc: data.description,
         bookingType: data.bookingType,
         duration: data.duration,
         minGuests: data.minGuests,
         maxGuests: data.maxGuests,
         date: data.date,
-        price: data.price,
+        priceList: data.price,
         hostId: data.hostId,
         propertyId: data.propertyId,
       },
@@ -55,12 +55,13 @@ export type RetreatItems = Prisma.RetreatGetPayload<{
         id: true;
         name: true;
         city: true;
+        images: true;
       };
     };
     images: {
       select: {
         filePath: true;
-        description: true;
+        desc: true;
       };
     };
   };
@@ -81,12 +82,13 @@ export async function getRetreats(): Promise<RetreatItems[]> {
             id: true,
             name: true,
             city: true,
+            images: true,
           },
         },
         images: {
           select: {
             filePath: true,
-            description: true,
+            desc: true,
           },
         },
       },
@@ -113,7 +115,7 @@ export async function getRetreatById(retreatId: string) {
         images: {
           select: {
             filePath: true,
-            description: true,
+            desc: true,
           },
         },
       },

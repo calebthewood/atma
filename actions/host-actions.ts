@@ -43,7 +43,7 @@ const hostWithImagesArgs = {
     images: {
       select: {
         filePath: true,
-        description: true,
+        desc: true,
       },
     },
   },

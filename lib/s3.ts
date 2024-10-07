@@ -22,7 +22,6 @@ export const uploadToS3 = async (
 ): Promise<string> => {
   const uniqueFileName = `${dir}/${Date.now()}-${file.name}`;
 
-  // Convert the file to a Buffer
   const arrayBuffer = await file.arrayBuffer();
   const buffer = Buffer.from(arrayBuffer);
 
@@ -44,9 +43,9 @@ export const uploadToS3 = async (
   }
 };
 
-async function getSignedImageUrl(key) {
+export async function getSignedImageUrl(key) {
   const command = new GetObjectCommand({
-    Bucket: "atma-reserve-wd7vimpbnjrl",
+    Bucket: process.env.S3_BUCKET_NAME,
     Key: key,
   });
 

@@ -1,10 +1,10 @@
 "use server";
 
-import { Property } from "@prisma/client";
+import { Prisma, PrismaClient } from "@prisma/client";
 
 import { prisma } from "@/lib/prisma";
 
-import { PropertiesWithImages } from "./property-actions";
+// import { PropertiesWithImages } from "./property-actions";
 
 const EARTH_RADIUS_MILES = 3959;
 const EARTH_RADIUS_KM = 6371;
@@ -16,111 +16,109 @@ const EARTH_RADIUS_KM = 6371;
  */
 const toRadians = (degrees: number): number => (degrees * Math.PI) / 180;
 
+type SearchOptions = {
+  latitude?: number;
+  longitude?: number;
+  radiusMiles?: number;
+  limit?: number;
+  includeHost?: boolean;
+  includeImages?: boolean;
+  includePrograms?: boolean;
+  includeRetreats?: boolean;
+  // Add more filter options as needed
+  nameContains?: string;
+};
+
 /**
- * Calculates the Haversine distance between two geographic coordinates.
- * @param lat1 - Latitude of the first point.
- * @param lon1 - Longitude of the first point.
- * @param lat2 - Latitude of the second point.
- * @param lon2 - Longitude of the second point.
- * @param radius - (Optional) Radius of the Earth, defaults to miles.
- * @returns The distance between the two points in the specified unit (miles by default).
+ * Searches for properties based on given options, including related records.
+ *
+ * @param options - Search options including location, radius, and what to include
+ * @returns Properties matching the search criteria with included related records
  */
-const haversineDistance = (
-  lat1: number | null,
-  lon1: number | null,
-  lat2: number | null,
-  lon2: number | null,
-  radius: number = EARTH_RADIUS_MILES
-): number => {
-  if (lat1 === null || lon1 === null || lat2 === null || lon2 === null) {
-    throw new Error("Null Coordinate");
+export const searchProperties = async (options: SearchOptions) => {
+  const {
+    latitude,
+    longitude,
+    radiusMiles = 20,
+    limit = 10,
+    includeHost = false,
+    includeImages = false,
+    includePrograms = false,
+    includeRetreats = false,
+    nameContains,
+  } = options;
+
+  const include: Prisma.PropertyInclude = {};
+
+  if (includeHost) {
+    include.host = { select: { name: true, id: true } };
   }
+
+  if (includeImages) {
+    include.images = { select: { filePath: true, desc: true } };
+  }
+
+  if (includePrograms) {
+    include.programs = true;
+  }
+
+  if (includeRetreats) {
+    include.retreats = true;
+  }
+
+  const where: Prisma.PropertyWhereInput = {};
+
+  if (nameContains) {
+    where.name = { contains: nameContains };
+  }
+
+  // Fetch properties
+  const properties = await prisma.property.findMany({
+    where,
+    include,
+  });
+
+  // If latitude and longitude are provided, filter by distance
+  if (latitude !== undefined && longitude !== undefined) {
+    const nearbyProperties = properties
+      .map((property) => ({
+        ...property,
+        distance: haversineDistance(
+          latitude,
+          longitude,
+          property.lat,
+          property.lng
+        ),
+      }))
+      .filter((property) => property.distance <= radiusMiles)
+      .sort((a, b) => a.distance - b.distance)
+      .slice(0, limit);
+
+    return nearbyProperties;
+  }
+
+  // If no location filtering, just return the first 'limit' properties
+  return properties.slice(0, limit);
+};
+
+// Haversine distance calculation function
+function haversineDistance(
+  lat1: number,
+  lon1: number,
+  lat2: number | null,
+  lon2: number | null
+): number {
+  if (lat2 === null || lon2 === null) return Infinity;
+
+  const R = 3959; // Earth radius in miles
   const dLat = toRadians(lat2 - lat1);
   const dLon = toRadians(lon2 - lon1);
-
-  const lat1Rad = toRadians(lat1);
-  const lat2Rad = toRadians(lat2);
-
   const a =
     Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-    Math.cos(lat1Rad) *
-      Math.cos(lat2Rad) *
+    Math.cos(toRadians(lat1)) *
+      Math.cos(toRadians(lat2)) *
       Math.sin(dLon / 2) *
       Math.sin(dLon / 2);
-
   const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-
-  return radius * c;
-};
-
-export async function getPointsInBoundingBox(
-  minLat: number,
-  maxLat: number,
-  minLon: number,
-  maxLon: number
-) {
-  const points = await prisma.property.findMany({
-    where: {
-      AND: [
-        { latitude: { gte: minLat } },
-        { latitude: { lte: maxLat } },
-        { longitude: { gte: minLon } },
-        { longitude: { lte: maxLon } },
-      ],
-    },
-  });
-
-  return points;
+  return R * c;
 }
-
-interface PropertiesWithDistance extends PropertiesWithImages {
-  distance: number;
-}
-
-/**
- * Searches for nearby places based on a given latitude and longitude.
- * This WILL need to be refactored if the property list grows to beyond just a few hundred.
- *
- * @param latitude - The latitude of the user's location.
- * @param longitude - The longitude of the user's location.
- * @param radiusMiles - The search radius in miles (default is 20).
- * @returns The top 10 closest places within the given radius.
- */
-export const searchNearbyPlaces = async (
-  latitude: number | null,
-  longitude: number | null,
-  radiusMiles: number = 20
-): Promise<PropertiesWithDistance[]> => {
-  const allPlaces = await prisma.property.findMany({
-    include: {
-      host: {
-        select: {
-          name: true,
-          id: true,
-        },
-      },
-      images: {
-        select: {
-          filePath: true,
-          description: true,
-        },
-      },
-    },
-  });
-
-  const nearbyPlaces = allPlaces
-    .map((property) => ({
-      ...property,
-      distance: haversineDistance(
-        latitude,
-        longitude,
-        property.latitude,
-        property.longitude
-      ),
-    }))
-    .filter((property) => property.distance <= radiusMiles)
-    .sort((a, b) => a.distance - b.distance)
-    .slice(0, 10);
-
-  return nearbyPlaces;
-};

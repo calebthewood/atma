@@ -3,9 +3,6 @@
 import React, { useCallback } from "react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
-import { searchNearbyPlaces } from "@/actions/location-actions";
-import { PropertiesWithImages } from "@/actions/property-actions";
-import { addDays } from "date-fns";
 import { Search } from "lucide-react";
 
 import { BookingBarCalendar } from "./booking/booking-bar-calendar";

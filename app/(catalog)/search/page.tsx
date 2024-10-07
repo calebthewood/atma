@@ -2,7 +2,7 @@
 
 import React, { useCallback, useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
-import { searchNearbyPlaces } from "@/actions/location-actions";
+import { searchProperties } from "@/actions/location-actions";
 import { PropertiesWithImages } from "@/actions/property-actions";
 import { addDays } from "date-fns";
 
@@ -47,12 +47,14 @@ export default function Page() {
       setError(null);
 
       try {
-        const places = await searchNearbyPlaces(
-          searchCriteria.lat,
-          searchCriteria.lon,
-          200
-        );
-        console.log("places  ", places);
+        const places = await searchProperties({
+          latitude: searchCriteria.lat,
+          longitude: searchCriteria.lon,
+          radiusMiles: 200,
+          limit: 10,
+          includeHost: true,
+          includeImages: true,
+        });
         if (places) {
           setSearchResults(places);
         }
@@ -102,7 +104,7 @@ export default function Page() {
                 <div key={r.name + `${i * 3.7}`} className="flex flex-col">
                   <RetreatItem
                     retreat={r}
-                    imgUrl={r.images[0].filePath}
+                    imgUrl={r.images[0]?.filePath}
                     segment="retreats"
                     className="w-[250px]"
                     aspectRatio="portrait"

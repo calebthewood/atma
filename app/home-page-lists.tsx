@@ -42,7 +42,7 @@ export function HomePageLists({
                 <RetreatItem
                   key={r.name + `${i * 3.7}`}
                   retreat={r}
-                  imgUrl={r.images[0].filePath}
+                  imgUrl={r.images[0]?.filePath}
                   segment="retreats"
                   className="w-[250px]"
                   aspectRatio="portrait"
@@ -70,7 +70,7 @@ export function HomePageLists({
                 <RetreatItem
                   key={p.name + `${i * 2}`}
                   retreat={p}
-                  imgUrl={p.images[0].filePath}
+                  imgUrl={p.images[0]?.filePath}
                   segment="destinations"
                   className="w-[150px]"
                   aspectRatio="square"

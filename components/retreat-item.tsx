@@ -63,7 +63,7 @@ export function RetreatItem({
                   imgUrl ??
                   imagePaths[Math.floor(Math.random() * imagePaths.length)]
                 }
-                alt={retreat.name}
+                alt={retreat.name || "n/a"}
                 width={width}
                 height={height}
                 className={cn(

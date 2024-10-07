@@ -36,5 +36,4 @@ yarn-error.log*
 .env
 
 # dev db setup
-parsePropertyList.js
-*.csv
+ingest/

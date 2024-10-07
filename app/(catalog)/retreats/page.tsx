@@ -27,7 +27,7 @@ export default async function Page() {
               <RetreatItem
                 key={r.name + `${i * 3.7}`}
                 retreat={r}
-                imgUrl={r.images[0].filePath}
+                imgUrl={r.property.images[0]?.filePath}
                 segment="retreats"
                 className="w-[250px]"
                 aspectRatio="portrait"
@@ -57,7 +57,7 @@ export default async function Page() {
               <RetreatItem
                 key={r.name + `${i * 3.7}`}
                 retreat={r}
-                imgUrl={r.images[0].filePath}
+                imgUrl={r.property.images[0]?.filePath}
                 segment="retreats"
                 className="w-[250px]"
                 aspectRatio="portrait"
@@ -89,7 +89,7 @@ export default async function Page() {
                 <RetreatItem
                   key={r.name + `${i * 3.7}`}
                   retreat={r}
-                  imgUrl={r.images[0].filePath}
+                  imgUrl={r.property.images[0]?.filePath}
                   segment="retreats"
                   className="w-[250px]"
                   aspectRatio="portrait"

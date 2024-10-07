@@ -1,10 +1,106 @@
-import { H1, Lead } from "@/components/typography";
+import { getProgramsGroupedByProperty } from "@/actions/program-actions";
 
-export default function Page() {
+import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
+import { Separator } from "@/components/ui/separator";
+import { RetreatItem } from "@/components/retreat-item";
+
+export default async function Page() {
+  const properties = await getProgramsGroupedByProperty();
+
   return (
-    <div className="mt-8">
-      <H1>Browse Special Programmes</H1>
-      <Lead>Not sure what these are yet.</Lead>
+    <div className="h-full px-4 py-6 lg:px-8">
+      <div className="flex items-center justify-between">
+        <div className="space-y-1">
+          <h2 className="text-2xl font-semibold tracking-tight">
+            Browse Destinations
+          </h2>
+          <p className="text-sm text-muted-foreground">
+            Retreats held at the finest locales around the world.
+          </p>
+        </div>
+      </div>
+      <Separator className="my-4" />
+      <div className="relative">
+        <ScrollArea>
+          <div className="flex space-x-4 pb-4">
+            {properties.map((r, i) => (
+              <RetreatItem
+                key={r.propertyId + `${i * 3.7}`}
+                retreat={r.programs[0]}
+                imgUrl={r.images[0]?.filePath}
+                segment="programs"
+                className="w-[250px]"
+                aspectRatio="portrait"
+                width={250}
+                height={330}
+              />
+            ))}
+          </div>
+          <ScrollBar orientation="horizontal" />
+        </ScrollArea>
+      </div>
+      <div className="mt-8 flex items-center justify-between">
+        <div className="space-y-1">
+          <h2 className="text-2xl font-semibold tracking-tight">
+            Destinations Near You
+          </h2>
+          <p className="text-sm text-muted-foreground">
+            This is not currently implemented.
+          </p>
+        </div>
+      </div>
+      <Separator className="my-4" />
+      <div className="relative">
+        <ScrollArea>
+          <div className="flex space-x-4 pb-4">
+            {properties.map((r, i) => (
+              <RetreatItem
+                key={r.name + `${i * 3.7}`}
+                retreat={r}
+                imgUrl={r.images[0]?.filePath}
+                segment="destinations"
+                className="w-[250px]"
+                aspectRatio="portrait"
+                width={250}
+                height={330}
+              />
+            ))}
+          </div>
+          <ScrollBar orientation="horizontal" />
+        </ScrollArea>
+      </div>
+      <div className="mt-8 flex items-center justify-between">
+        <div className="space-y-1">
+          <h2 className="text-2xl font-semibold tracking-tight">
+            London Based Destinations
+          </h2>
+          <p className="text-sm text-muted-foreground">
+            Browse Properties situated in and around London
+          </p>
+        </div>
+      </div>
+      <Separator className="my-4" />
+      <div className="relative">
+        <ScrollArea>
+          <div className="flex space-x-4 pb-4">
+            {properties
+              .filter((p) => p.city?.toLowerCase().includes("london"))
+              .map((r, i) => (
+                <RetreatItem
+                  key={r.name + `${i * 3.7}`}
+                  retreat={r}
+                  imgUrl={r.images[0]?.filePath}
+                  segment="destinations"
+                  className="w-[250px]"
+                  aspectRatio="portrait"
+                  width={250}
+                  height={330}
+                />
+              ))}
+          </div>
+          <ScrollBar orientation="horizontal" />
+        </ScrollArea>
+      </div>
     </div>
   );
 }
