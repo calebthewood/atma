@@ -85,12 +85,7 @@ export async function getRetreatById(retreatId: string) {
             priceMods: true,
           },
         },
-        images: {
-          select: {
-            filePath: true,
-            desc: true,
-          },
-        },
+        images: true,
       },
     });
 
