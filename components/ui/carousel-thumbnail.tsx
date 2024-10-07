@@ -18,7 +18,7 @@ import {
 const TWEEN_FACTOR = 0.9;
 
 type PropType = {
-  slides: string[];
+  slides: string[] | undefined;
   options?: EmblaOptionsType;
 };
 
@@ -98,7 +98,7 @@ const ThumbnailCarousel: React.FC<PropType> = (props) => {
       mainApi.off("select", onSelect);
     };
   }, [mainApi, onSelect, parallaxEffect]);
-
+  if (!slides) return null;
   return (
     <div className="mx-auto max-w-3xl">
       <Carousel

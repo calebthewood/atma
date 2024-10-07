@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { getHosts } from "@/actions/host-actions";
 import { createProperty } from "@/actions/property-actions";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { Host } from "@prisma/client";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 
@@ -27,33 +28,25 @@ import {
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 
-type Host = {
-  id: string;
-  name: string;
-};
-
 const formSchema = z.object({
   email: z.string().email({ message: "Invalid email address." }),
   phone: z
     .string()
     .min(10, { message: "Phone number must be at least 10 digits." }),
   name: z.string().min(2, { message: "Name must be at least 2 characters." }),
-  description: z
+  desc: z
     .string()
     .min(10, { message: "Description must be at least 10 characters." }),
   address: z
     .string()
     .min(5, { message: "Address must be at least 5 characters." }),
-  closestAirport: z
+  nearbyAirport: z
     .string()
     .min(3, { message: "Closest airport must be at least 3 characters." }),
   location: z
     .string()
     .min(2, { message: "Location must be at least 2 characters." }),
   type: z.string().min(2, { message: "Type must be at least 2 characters." }),
-  amenities: z
-    .string()
-    .min(2, { message: "Amenities must be at least 2 characters." }),
   rating: z.string().min(1, { message: "Rating is required." }),
   hostId: z.string().min(1, { message: "Host ID is required." }),
 });
@@ -82,12 +75,11 @@ export function CreatePropertyForm() {
       email: "",
       phone: "",
       name: "",
-      description: "",
+      desc: "",
       address: "",
-      closestAirport: "",
+      nearbyAirport: "",
       location: "",
       type: "",
-      amenities: "",
       rating: "",
       hostId: "",
     },
@@ -96,6 +88,7 @@ export function CreatePropertyForm() {
   async function onSubmit(values: z.infer<typeof formSchema>) {
     setIsSubmitting(true);
     try {
+      //@ts-ignore
       const property = await createProperty(values);
       console.log("Property created:", property);
       form.reset(); // Reset form after successful submission
@@ -159,7 +152,7 @@ export function CreatePropertyForm() {
         />
         <FormField
           control={form.control}
-          name="description"
+          name="desc"
           render={({ field }) => (
             <FormItem>
               <FormLabel>Description</FormLabel>
@@ -185,7 +178,7 @@ export function CreatePropertyForm() {
         />
         <FormField
           control={form.control}
-          name="closestAirport"
+          name="nearbyAirport"
           render={({ field }) => (
             <FormItem>
               <FormLabel>Closest Airport</FormLabel>
@@ -228,20 +221,6 @@ export function CreatePropertyForm() {
                   <SelectItem value="hotel">Hotel</SelectItem>
                 </SelectContent>
               </Select>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name="amenities"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Amenities</FormLabel>
-              <FormControl>
-                <Input placeholder="WiFi, Pool, Gym" {...field} />
-              </FormControl>
-              <FormDescription>Separate amenities with commas</FormDescription>
               <FormMessage />
             </FormItem>
           )}

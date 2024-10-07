@@ -55,7 +55,7 @@ interface BookingListProps {
 export function FixedBooking({ userId, retreat, event }: BookingListProps) {
   retreat.duration;
   const [priceMods, setPriceMods] = useState<PriceMod[]>(event.priceMods || []);
-  const [guestCount, setGuestCount] = useState(retreat.minGuests);
+  const [guestCount, setGuestCount] = useState(retreat.minGuests || 1);
   const [date, setDate] = useState<DateRange | undefined>({
     from: today,
     to: addDays(today, event.minNights),
@@ -64,7 +64,8 @@ export function FixedBooking({ userId, retreat, event }: BookingListProps) {
   const duration = event.minNights;
 
   const calculateTotal = () => {
-    let base = Number(retreat.price) * duration; // asssume there will be a guest modfier. Some events will not upcharge for guests some will, and it may not be base * guestCount
+    // let base = Number(retreat.price) * duration; // asssume there will be a guest modfier. Some events will not upcharge for guests some will, and it may not be base * guestCount
+    let base = 250 * duration;
     let priceMod = sumPriceMods();
     return base * guestCount + priceMod;
   };
@@ -72,7 +73,7 @@ export function FixedBooking({ userId, retreat, event }: BookingListProps) {
   const sumPriceMods = () => {
     let total = 0;
     for (const mod of priceMods) {
-      total += mod.value;
+      total += mod?.value ?? 0;
       // this will likely be more complex as price mods can be %, flat rate, daily, etc
     }
     return total;
@@ -95,7 +96,8 @@ export function FixedBooking({ userId, retreat, event }: BookingListProps) {
     <Card className="max-w-md">
       <CardHeader>
         <CardTitle>
-          {toUSD(Number(retreat.price) * duration)}
+          {/* {toUSD(Number(retreat.price) * duration)} */}
+          {toUSD(250 * duration)}
           <Lead className="inline"> / </Lead>
           <Small>{duration} nights</Small>
         </CardTitle>
@@ -114,24 +116,28 @@ export function FixedBooking({ userId, retreat, event }: BookingListProps) {
           <GuestSelect
             guestCount={guestCount}
             handleGuests={(val: string) => setGuestCount(Number(val))}
-            minGuests={retreat.minGuests}
-            maxGuests={retreat.maxGuests}
+            minGuests={retreat.minGuests ?? 1}
+            maxGuests={retreat.maxGuests ?? 16}
           />
         </div>
       </CardContent>
       <CardContent>
         <P className="flex justify-between text-lg">
           <span>
-            {guestCount} guests x ${retreat.price}
+            {/* {guestCount} guests x ${retreat.price} */}
+            {guestCount} guests x $XXXX
           </span>
-          <span>{toUSD(guestCount * Number(retreat.price))}</span>
+          <span>$XXXXX</span>
+          {/* <span>{toUSD(guestCount * Number(retreat.price))}</span> */}
         </P>
         <P className="flex justify-between text-lg">
           <span>
-            {dateDiffDisplay()} x ${guestCount * Number(retreat.price)}
+            $XXXX
+            {/* {dateDiffDisplay()} x ${guestCount * Number(retreat.price)} */}
           </span>
           <span>
-            {toUSD(dateDiffNumber() * Number(retreat.price) * duration)}
+            $XXXX
+            {/* {toUSD(dateDiffNumber() * Number(retreat.price) * duration)} */}
           </span>
         </P>
 
@@ -154,7 +160,8 @@ export function FixedBooking({ userId, retreat, event }: BookingListProps) {
       <CardFooter className="justify-end">
         <CheckoutButton
           uiMode="embedded"
-          price={Number(retreat.price)}
+          // price={Number(retreat.price)}
+          price={250}
           userId={userId}
           propertyId={retreat.propertyId}
           checkInDate={date?.from}

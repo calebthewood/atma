@@ -1,6 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
-import { Host, Property, Retreat } from "@prisma/client";
+import { Host, Program, Property, Retreat } from "@prisma/client";
 import { CirclePlus } from "lucide-react";
 
 import { cn } from "@/lib/utils";
@@ -33,7 +33,7 @@ const imagePaths = [
 ];
 
 interface RetreatCardProps extends React.HTMLAttributes<HTMLDivElement> {
-  retreat: Retreat | Host | Property;
+  retreat: Retreat | Host | Property | Program;
   aspectRatio?: "portrait" | "square";
   width?: number;
   height?: number;
@@ -113,7 +113,7 @@ export function RetreatItem({
       </Link>
       <div className="space-y-1 text-sm">
         <h3 className="font-medium leading-none">{retreat.name}</h3>
-        <p className="text-xs text-muted-foreground">{retreat.description}</p>
+        {/* <p className="text-xs text-muted-foreground">{retreat?.desc}</p> */}
       </div>
     </div>
   );

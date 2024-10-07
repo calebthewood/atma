@@ -120,14 +120,13 @@ const HeroSection = () => {
     {
       image: "/img/iStock-1929812569.jpg",
       title: "FEATURED RETREAT OR PROGRAM",
-      description:
-        "10 Days of Yoga and Meditation, leave your boyfriend at home!",
+      desc: "10 Days of Yoga and Meditation, leave your boyfriend at home!",
       buttonText: "Explore",
     },
     {
       image: "/img/iStock-1812905796.jpg",
       title: "UPCOMING RETREAT",
-      description: "Hopefully they paid us to be featured prominently.",
+      desc: "Hopefully they paid us to be featured prominently.",
       buttonText: "Explore",
     },
     // Add more slides as needed

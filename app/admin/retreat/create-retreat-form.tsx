@@ -5,6 +5,7 @@ import { getHosts } from "@/actions/host-actions";
 import { getProperties } from "@/actions/property-actions";
 import { createRetreat } from "@/actions/retreat-actions";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { Host, Property } from "@prisma/client";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 
@@ -27,12 +28,12 @@ import {
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 
-type Host = { id: string; name: string };
-type Property = { id: string; name: string };
+// type Host = { id: string; name: string };
+// type Property = { id: string; name: string };
 
 const formSchema = z.object({
   name: z.string().min(2, { message: "Name must be at least 2 characters." }),
-  description: z
+  desc: z
     .string()
     .min(10, { message: "Description must be at least 10 characters." }),
   duration: z.string().min(1, { message: "Duration is required." }),
@@ -76,7 +77,7 @@ export function CreateRetreatForm() {
     resolver: zodResolver(formSchema),
     defaultValues: {
       name: "",
-      description: "",
+      desc: "",
       duration: "",
       date: "",
       price: "",
@@ -127,7 +128,7 @@ export function CreateRetreatForm() {
         />
         <FormField
           control={form.control}
-          name="description"
+          name="desc"
           render={({ field }) => (
             <FormItem>
               <FormLabel>Description</FormLabel>

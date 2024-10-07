@@ -7,7 +7,7 @@ import { prisma } from "@/lib/prisma";
 
 export async function createRetreat(data: {
   name: string;
-  description: string;
+  desc: string;
   bookingType: string;
   duration: string;
   date: Date;
@@ -21,7 +21,7 @@ export async function createRetreat(data: {
     const retreat = await prisma.retreat.create({
       data: {
         name: data.name,
-        desc: data.description,
+        desc: data.desc,
         bookingType: data.bookingType,
         duration: data.duration,
         minGuests: data.minGuests,

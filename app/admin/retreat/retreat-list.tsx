@@ -27,20 +27,20 @@ type RetreatListItem = Pick<
   property: Pick<Property, "id" | "name">;
 };
 
-function RetreatListItem({ retreat }: { retreat: RetreatListItem }) {
+function RetreatListItem({ retreat }: { retreat: Retreat }) {
   return (
     <TableRow>
       <TableCell>{retreat.name}</TableCell>
-      <TableCell>{new Date(retreat.date).toLocaleDateString()}</TableCell>
+      {/* <TableCell>{new Date(retreat.date).toLocaleDateString()}</TableCell> */}
       <TableCell>{retreat.duration}</TableCell>
-      <TableCell>{retreat.host.name}</TableCell>
-      <TableCell>{retreat.property.name}</TableCell>
+      {/* <TableCell>{retreat.host.name}</TableCell>
+      <TableCell>{retreat.property.name}</TableCell> */}
     </TableRow>
   );
 }
 
 export function RetreatList() {
-  const [retreats, setRetreats] = useState<RetreatListItem[]>([]);
+  const [retreats, setRetreats] = useState<Retreat[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 

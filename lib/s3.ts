@@ -43,7 +43,7 @@ export const uploadToS3 = async (
   }
 };
 
-export async function getSignedImageUrl(key) {
+export async function getSignedImageUrl(key: string) {
   const command = new GetObjectCommand({
     Bucket: process.env.S3_BUCKET_NAME,
     Key: key,

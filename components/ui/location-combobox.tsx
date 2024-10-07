@@ -22,7 +22,7 @@ import {
 } from "@/components/ui/popover";
 
 interface Place {
-  description: string;
+  desc: string;
   place_id: string;
 }
 
@@ -91,6 +91,7 @@ export function LocationCombobox() {
             status === google.maps.places.PlacesServiceStatus.OK &&
             predictions
           ) {
+            //@ts-ignore
             setPlaces(predictions);
           }
         }
@@ -98,7 +99,7 @@ export function LocationCombobox() {
     }
   };
 
-  const handlePlaceSelect = (placeId: string, description: string) => {
+  const handlePlaceSelect = (placeId: string, desc: string) => {
     if (placesDetailsService) {
       placesDetailsService.getDetails(
         {
@@ -113,7 +114,7 @@ export function LocationCombobox() {
             place.geometry.location
           ) {
             setValue({
-              name: description,
+              name: desc,
               lat: place.geometry.location.lat(),
               lon: place.geometry.location.lng(),
             });
@@ -155,7 +156,7 @@ export function LocationCombobox() {
           variant="outline"
           role="combobox"
           aria-expanded={open}
-          className="h-12 w-full justify-between rounded border-transparent bg-transparent pl-2"
+          className="h-12 w-full justify-between rounded border-transparent bg-transparent pl-2 text-foreground"
         >
           {value ? (
             value.name
@@ -177,20 +178,16 @@ export function LocationCombobox() {
               {places.map((place) => (
                 <CommandItem
                   key={place.place_id}
-                  value={place.description}
-                  onSelect={() =>
-                    handlePlaceSelect(place.place_id, place.description)
-                  }
+                  value={place.desc}
+                  onSelect={() => handlePlaceSelect(place.place_id, place.desc)}
                 >
                   <Check
                     className={cn(
                       "mr-2 size-4",
-                      value?.name === place.description
-                        ? "opacity-100"
-                        : "opacity-0"
+                      value?.name === place.desc ? "opacity-100" : "opacity-0"
                     )}
                   />
-                  {place.description}
+                  {place.desc}
                 </CommandItem>
               ))}
             </CommandGroup>
@@ -204,7 +201,7 @@ function Placeholder({ title, subtitle }: { title: string; subtitle: string }) {
   return (
     <div className="w-full text-start">
       <div className="font-title text-xs">{title}</div>
-      <div className="font-tagline text-xs font-light text-richBeige/70">
+      <div className="font-tagline text-xs font-light opacity-70">
         {subtitle}
       </div>
     </div>

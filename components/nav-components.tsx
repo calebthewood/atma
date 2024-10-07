@@ -52,7 +52,7 @@ export function MainNav({ items }: MainNavProps) {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger>
-        <Menu className="stroke-richBeige" strokeWidth={0.5} />
+        <Menu className="stroke-foreground" strokeWidth={0.5} />
       </DropdownMenuTrigger>
       <DropdownMenuContent>
         <DropdownMenuLabel>Your Menu</DropdownMenuLabel>

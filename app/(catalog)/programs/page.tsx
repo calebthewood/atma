@@ -55,10 +55,10 @@ export default async function Page() {
           <div className="flex space-x-4 pb-4">
             {properties.map((r, i) => (
               <RetreatItem
-                key={r.name + `${i * 3.7}`}
-                retreat={r}
+                key={r.propertyId + `${i * 3.7}`}
+                retreat={r.programs[0]}
                 imgUrl={r.images[0]?.filePath}
-                segment="destinations"
+                segment="programs"
                 className="w-[250px]"
                 aspectRatio="portrait"
                 width={250}
@@ -83,20 +83,18 @@ export default async function Page() {
       <div className="relative">
         <ScrollArea>
           <div className="flex space-x-4 pb-4">
-            {properties
-              .filter((p) => p.city?.toLowerCase().includes("london"))
-              .map((r, i) => (
-                <RetreatItem
-                  key={r.name + `${i * 3.7}`}
-                  retreat={r}
-                  imgUrl={r.images[0]?.filePath}
-                  segment="destinations"
-                  className="w-[250px]"
-                  aspectRatio="portrait"
-                  width={250}
-                  height={330}
-                />
-              ))}
+            {properties.map((r, i) => (
+              <RetreatItem
+                key={r.propertyId + `${i * 3.7}`}
+                retreat={r.programs[1]}
+                imgUrl={r.images[0]?.filePath}
+                segment="programs"
+                className="w-[250px]"
+                aspectRatio="portrait"
+                width={250}
+                height={330}
+              />
+            ))}
           </div>
           <ScrollBar orientation="horizontal" />
         </ScrollArea>

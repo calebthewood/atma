@@ -39,7 +39,7 @@ export function BookingBar() {
         className="align-center ml-2 flex h-16 w-20 cursor-pointer items-center justify-center rounded border p-4 shadow backdrop-blur dark:bg-white/20 dark:hover:bg-white/10 dark:hover:stroke-white"
       >
         <Link href={constructSearchUrl()}>
-          <Search className="" strokeWidth={0.5} />
+          <Search className="" size={32} strokeWidth={0.75} />
         </Link>
       </Button>
     </div>

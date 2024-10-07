@@ -22,7 +22,7 @@ function PropertyListItem({ property }: { property: PropertiesWithImages }) {
       <TableCell>{property.email}</TableCell>
       <TableCell>{property.address}</TableCell>
       <TableCell>{property.type}</TableCell>
-      <TableCell>{property.host.name}</TableCell>
+      {/* <TableCell>{property.host.name}</TableCell> */}
     </TableRow>
   );
 }

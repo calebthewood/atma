@@ -72,7 +72,7 @@ export function FlexibleBooking({ userId, retreat, events }: BookingListProps) {
   const sumPriceMods = () => {
     let total = 0;
     for (const mod of priceMods) {
-      total += mod.value;
+      total += mod.value ?? 0;
       // this will likely be more complex as price mods can be %, flat rate, daily, etc
     }
     return total;
@@ -90,16 +90,19 @@ export function FlexibleBooking({ userId, retreat, events }: BookingListProps) {
   const duration = dateDiffNumber();
 
   const calculateTotal = () => {
-    let base = Number(retreat.price); // asssume there will be a guest modfier. Some events will not upcharge for guests some will, and it may not be base * guestCount
+    let base = 250;
+    // let base = Number(retreat.price); // asssume there will be a guest modfier. Some events will not upcharge for guests some will, and it may not be base * guestCount
     let priceMod = sumPriceMods();
-    return base * guestCount * duration + priceMod;
+    // return base * guestCount * duration + priceMod;
+    return base * 1 * duration + priceMod;
   };
 
   return (
     <Card className="max-w-md">
       <CardHeader>
         <CardTitle>
-          {toUSD(Number(retreat.price))} <Small>night</Small>
+          $XXXX <Small>night</Small>
+          {/* {toUSD(Number(retreat.price))} <Small>night</Small> */}
         </CardTitle>
         <CardDescription>Flexible Booking</CardDescription>
       </CardHeader>
@@ -113,25 +116,29 @@ export function FlexibleBooking({ userId, retreat, events }: BookingListProps) {
         </div>
         <div className="mt-2 flex w-full">
           <GuestSelect
-            guestCount={guestCount}
+            guestCount={guestCount ?? 1}
             handleGuests={(val: string) => setGuestCount(Number(val))}
-            minGuests={retreat.minGuests}
-            maxGuests={retreat.maxGuests}
+            minGuests={retreat.minGuests ?? 1}
+            maxGuests={retreat.maxGuests ?? 16}
           />
         </div>
       </CardContent>
       <CardContent>
         <P className="flex justify-between text-lg">
           <span>
-            {guestCount} guests x ${Number(retreat.price)}
+            {guestCount} guests x $$XXXX
+            {/* {guestCount} guests x ${Number(retreat.price)} */}
           </span>
-          <span>{toUSD(guestCount * Number(retreat.price) * guestCount)}</span>
+          <span>$XXXX</span>
+          {/* <span>{toUSD(guestCount * Number(retreat.price) * guestCount)}</span> */}
         </P>
         <P className="flex justify-between text-lg">
           <span>
-            {dateDiffDisplay()} x ${guestCount * Number(retreat.price)}
+            $XXXX
+            {/* {dateDiffDisplay()} x ${guestCount * Number(retreat.price)} */}
           </span>
-          <span>{toUSD(duration * Number(retreat.price) * guestCount)}</span>
+          <span>$XXXX</span>
+          {/* <span>{toUSD(duration * Number(retreat.price) * guestCount)}</span> */}
         </P>
 
         {priceMods?.length > 0 ? (
@@ -156,12 +163,13 @@ export function FlexibleBooking({ userId, retreat, events }: BookingListProps) {
       <CardFooter className="justify-end">
         <CheckoutButton
           uiMode="embedded"
-          price={Number(retreat.price)}
+          // price={Number(retreat.price)}
+          price={250}
           userId={userId}
           propertyId={retreat.propertyId}
           checkInDate={date?.from}
           checkOutDate={date?.to}
-          guestCount={guestCount}
+          guestCount={guestCount ?? 1}
         />
       </CardFooter>
     </Card>

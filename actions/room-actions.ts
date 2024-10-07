@@ -1,28 +1,15 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
+import { Room } from "@prisma/client";
 
 import { prisma } from "@/lib/prisma";
 
-export async function createRoom(data: {
-  type: string;
-  roomCount: string;
-  amenities: string;
-  bedType: string;
-  minGuests: number;
-  maxGuests: number;
-  propertyId: string;
-}) {
+export async function createRoom(data: Room) {
   try {
     const room = await prisma.room.create({
       data: {
-        type: data.type,
-        roomCount: data.roomCount,
-        amenities: data.amenities,
-        bedType: data.bedType,
-        minGuests: data.minGuests,
-        maxGuests: data.maxGuests,
-        propertyId: data.propertyId,
+        ...data,
       },
     });
 

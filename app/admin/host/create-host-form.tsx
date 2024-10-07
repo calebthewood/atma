@@ -29,7 +29,7 @@ import { Textarea } from "@/components/ui/textarea";
 const formSchema = z.object({
   name: z.string().min(2, { message: "Name must be at least 2 characters." }),
   type: z.enum(["individual", "company"]), // Adjust these options as needed
-  description: z
+  desc: z
     .string()
     .min(10, { message: "Description must be at least 10 characters." }),
   email: z.string().email({ message: "Invalid email address." }),
@@ -48,7 +48,7 @@ export function CreateHostForm() {
     defaultValues: {
       name: "",
       type: "individual",
-      description: "",
+      desc: "",
       email: "",
       phone: "",
       profilePic: "",
@@ -113,7 +113,7 @@ export function CreateHostForm() {
         />
         <FormField
           control={form.control}
-          name="description"
+          name="desc"
           render={({ field }) => (
             <FormItem>
               <FormLabel>Description</FormLabel>

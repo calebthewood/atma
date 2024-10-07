@@ -50,7 +50,8 @@ export function OpenBooking({ userId, retreat, events }: BookingListProps) {
     <Card className="max-w-md">
       <CardHeader>
         <CardTitle>
-          {toUSD(Number(retreat.price))} <Small>base price</Small>
+          $XXXX
+          {/* {toUSD(Number(retreat.price))} <Small>base price</Small> */}
         </CardTitle>
         <CardDescription>Event Booking</CardDescription>
       </CardHeader>
@@ -59,10 +60,10 @@ export function OpenBooking({ userId, retreat, events }: BookingListProps) {
           <Small>From</Small>
           <DatePicker date={date} handleDate={setDate} />
           <GuestSelect
-            guestCount={guestCount}
+            guestCount={guestCount ?? 1}
             handleGuests={(val: string) => setGuestCount(Number(val))}
-            minGuests={retreat.minGuests}
-            maxGuests={retreat.maxGuests}
+            minGuests={retreat.minGuests ?? 1}
+            maxGuests={retreat.maxGuests ?? 16}
           />
         </div>
       </CardContent>
@@ -70,7 +71,7 @@ export function OpenBooking({ userId, retreat, events }: BookingListProps) {
         <CardContent key={i}>
           <BookingItem
             userId={userId}
-            guestCount={guestCount}
+            guestCount={guestCount ?? 1}
             retreat={retreat}
             item={r}
           />
@@ -96,7 +97,8 @@ interface BookingItemProps {
 function BookingItem({ userId, item, retreat, guestCount }: BookingItemProps) {
   const start = format(item.startDate, "EEE, MMM dd");
   const end = format(item.endDate, "EEE, MMM dd");
-  const basePrice = Number(retreat.price);
+  const basePrice = 250;
+  // const basePrice = Number(retreat.price);
   const adjustedPrice = basePrice * guestCount;
   return (
     <>

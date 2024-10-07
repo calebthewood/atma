@@ -98,7 +98,7 @@ export function BookingBarCalendar() {
               {date?.to ? (
                 <DateDisplay date={date.to} to />
               ) : (
-                <DatePlaceholder />
+                <DatePlaceholder checkIn={false} />
               )}
             </Button>
           </div>
@@ -124,7 +124,7 @@ function DatePlaceholder({ checkIn = true }: { checkIn?: boolean }) {
       <div className="font-title text-xs">
         {checkIn ? "CHECK IN" : "CHECK OUT"}
       </div>
-      <div className="font-tagline text-xs font-light text-richBeige/70">
+      <div className="font-tagline text-xs font-light opacity-70">
         {checkIn ? "ARRIVAL DATE" : "DEPARTURE DATE"}
       </div>
     </div>

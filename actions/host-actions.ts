@@ -10,7 +10,7 @@ const thing = true;
 export async function createHost(data: {
   name: string;
   type: string;
-  description: string;
+  desc: string;
   email: string;
   phone: string;
   profilePic: string;
@@ -21,7 +21,7 @@ export async function createHost(data: {
       data: {
         name: data.name,
         type: data.type,
-        description: data.description,
+        desc: data.desc,
         email: data.email,
         phone: data.phone,
         profilePic: data.profilePic,
@@ -55,7 +55,7 @@ export type GetHostsReturn = HostWithImages[];
 
 export type ImageType = {
   filePath: string;
-  description: string | null;
+  desc: string | null;
 };
 
 export type HostWithImagesStandalone = Prisma.HostGetPayload<
