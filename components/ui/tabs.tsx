@@ -47,10 +47,10 @@ export const CustomTabsTrigger = React.forwardRef<
     <TabsTrigger
       ref={ref}
       className={cn(
-        "relative flex flex-col items-center px-4",
+        "relative flex h-8 w-24 flex-col items-center px-4 text-opacity-80",
         "after:absolute after:bottom-0 after:left-1/2 after:-translate-x-1/2",
-        "after:h-0.5 after:w-0 after:bg-richBeige after:transition-all after:duration-300",
-        "data-[state=active]:bg-transparent data-[state=active]:after:w-4",
+        "after:h-0.5 after:w-0 after:bg-richBlack after:transition-all after:duration-300 dark:after:bg-richBeige",
+        "data-[state=active]:bg-transparent data-[state=active]:text-opacity-100 data-[state=active]:shadow-none data-[state=active]:after:w-4",
         className
       )}
       {...props}

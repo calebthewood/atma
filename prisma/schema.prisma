@@ -130,6 +130,7 @@ model Property {
     updatedAt       DateTime  @updatedAt
     programs        Program[]
     amenities       Amenity[]
+    verified        DateTime? // last date verified by human admin to fix scraping issues
 }
 
 // The profile for a room type offered by Host, not a record of the room itself
@@ -172,6 +173,7 @@ model Host {
     updatedAt  DateTime   @updatedAt
     programs   Program[]
     amenities  Amenity[]
+    verified   DateTime? // last date verified by human admin to fix scraping issues
 }
 
 // Account managers for Hosts, defaults to the user who creates host
@@ -208,6 +210,7 @@ model Retreat {
     reviews          Review[]
     retreatInstances RetreatInstance[]
     amenities        Amenity[]
+    verified         DateTime? // last date verified by human admin to fix scraping issues
 }
 
 model Program {
@@ -226,6 +229,7 @@ model Program {
     amenities  Amenity[]
     createdAt  DateTime  @default(now())
     updatedAt  DateTime  @updatedAt
+    verified   DateTime? // last date verified by human admin to fix scraping issues
 }
 
 model RetreatInstance {

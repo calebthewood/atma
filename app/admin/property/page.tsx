@@ -1,8 +1,10 @@
 import { Separator } from "@/components/ui/separator";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
+import { PropertyDataTable } from "./components";
 import { CreatePropertyForm } from "./create-property-form";
-import { PropertyList } from "./property-list";
+
+// import { PropertyList } from "./property-list";
 
 export default function Page() {
   return (
@@ -10,7 +12,7 @@ export default function Page() {
       <div>
         <h3 className="text-lg font-medium">Create Property</h3>
         <p className="text-sm text-muted-foreground">
-          A Host may have multiple properties, retreats are held at a property
+          Properties belong to Hosts, Retreats & Programs are held at a Property
         </p>
       </div>
       <Separator className="my-6" />
@@ -23,7 +25,7 @@ export default function Page() {
           <CreatePropertyForm />
         </TabsContent>
         <TabsContent value="list">
-          <PropertyList />
+          <PropertyDataTable />
         </TabsContent>
       </Tabs>
     </div>
