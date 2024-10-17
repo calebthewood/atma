@@ -36,29 +36,7 @@ const parseAmenity = (str: string | null | undefined) => {
 
 export default async function Page({ params }: { params: { id: string } }) {
   const property = await getPropertyById(params.id);
-  const session = await auth();
-  const details = [
-    {
-      name: "Room Type",
-      icon: <BedSingle />,
-      detail: "",
-    },
-    {
-      name: "Excursions",
-      icon: <NotepadText />,
-      detail: "",
-    },
-    {
-      name: "Nearby Airport",
-      icon: <Plane size={48} strokeWidth={0.5} />,
-      detail: property?.nearbyAirport,
-    },
-    {
-      name: "Tour Guide",
-      icon: <User />,
-      detail: "Not Included",
-    },
-  ];
+  // const session = await auth();
 
   const tabsData = [
     {
