@@ -29,7 +29,7 @@ export type PropertiesWithImages = Prisma.PropertyGetPayload<{
   };
 }>;
 
-export async function getProperties() {
+export async function getProperties(): Promise<PropertiesWithImages[]> {
   const properties = await prisma.property.findMany({
     include: {
       host: {
