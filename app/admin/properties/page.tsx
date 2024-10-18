@@ -16,10 +16,10 @@ export default function Page() {
         </p>
       </div>
       <Separator className="my-6" />
-      <Tabs defaultValue="form" className="">
+      <Tabs defaultValue="list" className="">
         <TabsList>
-          <TabsTrigger value="form">Create Property</TabsTrigger>
           <TabsTrigger value="list">View Properties</TabsTrigger>
+          <TabsTrigger value="form">Create Property</TabsTrigger>
         </TabsList>
         <TabsContent value="form">
           <CreatePropertyForm />

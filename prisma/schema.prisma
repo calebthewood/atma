@@ -120,14 +120,14 @@ model Property {
     amenityFacility String?
     rating          String? // sum of all ratings / reviewer count, ex: "187 / 842". When displayed, convert to numbers and do expression, when updated, convert to number and increment numerator by rating and denom by 1 (this would be a condensed rating system, real system would track all reviews)
     coverImg        String? // must be hi-res (think of alternative design for pages with no hires img)
-    host            Host?     @relation(fields: [hostId], references: [id])
     hostId          String?
+    createdAt       DateTime  @default(now())
+    updatedAt       DateTime  @updatedAt
+    host            Host?     @relation(fields: [hostId], references: [id])
     reviews         Review[]
     images          Image[]
     retreats        Retreat[]
     rooms           Room[]
-    createdAt       DateTime  @default(now())
-    updatedAt       DateTime  @updatedAt
     programs        Program[]
     amenities       Amenity[]
     verified        DateTime? // last date verified by human admin to fix scraping issues

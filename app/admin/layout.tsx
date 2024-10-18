@@ -1,12 +1,12 @@
 import { Metadata } from "next";
-import Image from "next/image";
 import { redirect } from "next/navigation";
 import { getUser } from "@/actions/user-actions";
 import { auth } from "@/auth";
 
 import { Separator } from "@/components/ui/separator";
 
-import { SidebarNav } from "./sidebar-nav";
+import { AdminTitle } from "./components";
+import { ClientSidebarNav } from "./sidebar-nav";
 
 export const metadata: Metadata = {
   title: "Forms",
@@ -14,34 +14,14 @@ export const metadata: Metadata = {
 };
 
 const sidebarNavItems = [
-  {
-    title: "Admin",
-    href: "/admin",
-  },
-  {
-    title: "Users",
-    href: "/admin/user",
-  },
-  {
-    title: "Hosts",
-    href: "/admin/host",
-  },
-  {
-    title: "Properties",
-    href: "/admin/property",
-  },
-  {
-    title: "Retreats",
-    href: "/admin/retreat",
-  },
-  {
-    title: "Payments",
-    href: "/admin/payment",
-  },
-  {
-    title: "Bookings",
-    href: "/admin/booking",
-  },
+  { title: "Admin", href: "/admin" },
+  { title: "Users", href: "/admin/user" },
+  { title: "Hosts", href: "/admin/host" },
+  { title: "Properties", href: "/admin/properties" },
+  { title: "Retreats", href: "/admin/retreats" },
+  { title: "Programs", href: "/admin/programs" },
+  { title: "Payments", href: "/admin/payment" },
+  { title: "Bookings", href: "/admin/booking" },
 ];
 
 interface SettingsLayoutProps {
@@ -61,16 +41,11 @@ export default async function SettingsLayout({
   return (
     <>
       <div className="hidden space-y-6 p-10 pb-16 md:block">
-        <div className="space-y-0.5">
-          <h2 className="text-2xl font-bold tracking-tight">Admin Dashboard</h2>
-          <p className="text-muted-foreground">
-            Create, Edit, or Delete database entries. More later...
-          </p>
-        </div>
+        <AdminTitle />
         <Separator className="my-6" />
         <div className="flex flex-col space-y-8 lg:flex-row lg:space-x-12 lg:space-y-0">
           <aside className="-mx-4 lg:w-1/5">
-            <SidebarNav items={sidebarNavItems} />
+            <ClientSidebarNav items={sidebarNavItems} />
           </aside>
           <div className="flex-1 lg:max-w-4xl">{children}</div>
         </div>

@@ -1,5 +1,5 @@
 import Image from "next/image";
-import { getRetreatById } from "@/actions/retreat-actions";
+import { getRetreatWithPrice } from "@/actions/retreat-actions";
 import { auth } from "@/auth";
 import { BedSingle, Navigation, NotepadText, User } from "lucide-react";
 
@@ -29,7 +29,7 @@ const SLIDES = [
 ];
 
 export default async function Page({ params }: { params: { id: string } }) {
-  const retreat = await getRetreatById(params.id);
+  const retreat = await getRetreatWithPrice(params.id);
   const session = await auth();
   const details = [
     {

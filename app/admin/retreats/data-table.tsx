@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from "react";
 import Link from "next/link";
-import { getPaginatedProperties } from "@/actions/property-actions";
+import { getPaginatedRetreats } from "@/actions/retreat-actions";
 import { CaretSortIcon, ChevronDownIcon } from "@radix-ui/react-icons";
 import {
   ColumnDef,
@@ -34,22 +34,23 @@ import {
   TableRow,
 } from "@/components/ui/table";
 
-// Define the Property type based on your Prisma model
-type Property = {
+type Retreat = {
   id: string;
-  name: string;
-  email: string | null;
-  phone: string | null;
-  city: string | null;
-  type: string | null;
-  rating: string | null;
-  verified: Date | null;
+  name: string | null;
+  bookingType: string | null;
+  duration: string | null;
+  date: Date | null;
+  minGuests: number | null;
+  maxGuests: number | null;
+  propertyId: string;
+  hostId: string | null;
   createdAt: Date;
   updatedAt: Date;
+  propertyName: string;
+  hostName: string | null;
 };
 
-// Define the columns for the data table
-const columns: ColumnDef<Property>[] = [
+const columns: ColumnDef<Retreat>[] = [
   {
     accessorKey: "name",
     header: ({ column }) => {
@@ -65,68 +66,63 @@ const columns: ColumnDef<Property>[] = [
     },
   },
   {
-    accessorKey: "city",
-    header: "City",
+    accessorKey: "bookingType",
+    header: "Booking Type",
   },
   {
-    accessorKey: "type",
-    header: "Type",
+    accessorKey: "duration",
+    header: "Duration",
   },
   {
-    accessorKey: "rating",
-    header: "Rating",
+    accessorKey: "date",
+    header: "Date",
     cell: ({ row }) => {
-      const rating = row.getValue("rating") as string;
-      if (!rating) return "N/A";
-      const [sum, count] = rating.split(" / ");
-      return `${(parseInt(sum) / parseInt(count)).toFixed(2)} (${count} reviews)`;
+      const date = row.getValue("date") as Date | null;
+      return date ? date.toLocaleDateString() : "Not set";
     },
   },
   {
-    accessorKey: "verified",
-    header: "Verified",
+    accessorKey: "guests",
+    header: "Guests",
     cell: ({ row }) => {
-      const date = row.getValue("verified") as Date | null;
-      return date ? date.toLocaleDateString() : "Not verified";
+      const min = row.original.minGuests;
+      const max = row.original.maxGuests;
+      return `${min || 0} - ${max || "unlimited"}`;
     },
+  },
+  {
+    accessorKey: "propertyName",
+    header: "Property",
+  },
+  {
+    accessorKey: "hostName",
+    header: "Host",
   },
   {
     accessorKey: "updatedAt",
     header: "Updated At",
     cell: ({ row }) => {
-      return (row.getValue("updatedAt") as Date)
-        ? (row.getValue("updatedAt") as Date).toLocaleDateString()
-        : "N/A";
-    },
-  },
-  {
-    accessorKey: "createdAt",
-    header: "Created At",
-    cell: ({ row }) => {
-      return (row.getValue("createdAt") as Date)
-        ? (row.getValue("createdAt") as Date).toLocaleDateString()
-        : "N/A";
+      return (row.getValue("updatedAt") as Date).toLocaleDateString();
     },
   },
   {
     id: "actions",
     cell: ({ row }) => {
-      const property = row.original;
-
+      const retreat = row.original;
       return (
         <Link
-          href={`/admin/property/${property.id}`}
+          href={`/admin/retreats/${retreat.id}`}
           className="text-blue-600 hover:underline"
         >
-          Edit Details
+          View Details
         </Link>
       );
     },
   },
 ];
 
-export function PropertyDataTable() {
-  const [data, setData] = useState<Property[]>([]);
+export function RetreatDataTable() {
+  const [data, setData] = useState<Retreat[]>([]);
   const [sorting, setSorting] = useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
@@ -137,19 +133,23 @@ export function PropertyDataTable() {
   const [totalPages, setTotalPages] = useState(0);
 
   useEffect(() => {
-    fetchProperties();
-  }, [pagination.pageIndex, pagination.pageSize]);
+    fetchRetreats();
+  }, [pagination.pageIndex, pagination.pageSize, columnFilters]);
 
-  const fetchProperties = async () => {
+  const fetchRetreats = async () => {
     try {
-      const result = await getPaginatedProperties(
+      const searchTerm =
+        (table.getColumn("name")?.getFilterValue() as string) ?? "";
+      const result = await getPaginatedRetreats(
         pagination.pageIndex + 1,
-        pagination.pageSize
+        pagination.pageSize,
+        searchTerm
       );
-      setData(result.properties);
+      setData(result.retreats);
       setTotalPages(result.totalPages);
     } catch (error) {
-      console.error("Failed to fetch properties:", error);
+      console.error("Failed to fetch retreats:", error);
+      // TODO: Add error handling UI
     }
   };
 
@@ -178,7 +178,7 @@ export function PropertyDataTable() {
     <div className="w-full">
       <div className="flex items-center py-4">
         <Input
-          placeholder="Filter properties..."
+          placeholder="Filter retreats..."
           value={(table.getColumn("name")?.getFilterValue() as string) ?? ""}
           onChange={(event) =>
             table.getColumn("name")?.setFilterValue(event.target.value)
@@ -234,24 +234,21 @@ export function PropertyDataTable() {
           </TableHeader>
           <TableBody>
             {table.getRowModel().rows?.length ? (
-              table.getRowModel().rows.map((row) => {
-                console.log(row);
-                return (
-                  <TableRow
-                    key={row.id}
-                    data-state={row.getIsSelected() && "selected"}
-                  >
-                    {row.getVisibleCells().map((cell) => (
-                      <TableCell key={cell.id}>
-                        {flexRender(
-                          cell.column.columnDef.cell,
-                          cell.getContext()
-                        )}
-                      </TableCell>
-                    ))}
-                  </TableRow>
-                );
-              })
+              table.getRowModel().rows.map((row) => (
+                <TableRow
+                  key={row.id}
+                  data-state={row.getIsSelected() && "selected"}
+                >
+                  {row.getVisibleCells().map((cell) => (
+                    <TableCell key={cell.id}>
+                      {flexRender(
+                        cell.column.columnDef.cell,
+                        cell.getContext()
+                      )}
+                    </TableCell>
+                  ))}
+                </TableRow>
+              ))
             ) : (
               <TableRow>
                 <TableCell
