@@ -2,6 +2,10 @@
 @tailwind components;
 @tailwind utilities;
 
+.custom-gradient {
+  background: linear-gradient(65deg, #004476 10%, #006fbe 90%);
+}
+
 .noise {
   position: relative;
   overflow: hidden;
