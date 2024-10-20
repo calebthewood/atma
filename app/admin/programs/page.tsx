@@ -1,18 +1,16 @@
 import { Separator } from "@/components/ui/separator";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
-// import { PropertyDataTable } from "./components";
-// import { CreatePropertyForm } from "./create-property-form";
-
-// import { PropertyList } from "./property-list";
+import { ProgramDataTable } from "./data-table";
+import { ProgramForm } from "./program-form";
 
 export default function ProgramPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h3 className="text-lg font-medium">Create Property</h3>
+        <h3 className="text-lg font-medium">Create or Edit Property</h3>
         <p className="text-sm text-muted-foreground">
-          Properties belong to Hosts, Retreats & Programs are held at a Property
+          Programs are similar to Retreats. Held at a Property, should have Host
         </p>
       </div>
       <Separator className="my-6" />
@@ -21,8 +19,12 @@ export default function ProgramPage() {
           <TabsTrigger value="list">View Programs</TabsTrigger>
           <TabsTrigger value="form">Create Program</TabsTrigger>
         </TabsList>
-        <TabsContent value="form">{/* <CreatePropertyForm /> */}</TabsContent>
-        <TabsContent value="list">{/* <ProgramDataTable /> */}</TabsContent>
+        <TabsContent value="form">
+          <ProgramForm />
+        </TabsContent>
+        <TabsContent value="list">
+          <ProgramDataTable />
+        </TabsContent>
       </Tabs>
     </div>
   );

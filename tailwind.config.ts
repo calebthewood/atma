@@ -56,21 +56,6 @@ const config = {
           DEFAULT: "hsl(var(--card))",
           foreground: "hsl(var(--card-foreground))",
         },
-        atmaRed: {
-          DEFAULT: "#FC5630",
-        },
-        atmaTurquoise: {
-          DEFAULT: "#C1EAE6",
-        },
-        atmaYellow: {
-          DEFAULT: "#FEFF97",
-        },
-        atmaMint: {
-          DEFAULT: "#BDFFCB",
-        },
-        atmaBeige: {
-          DEFAULT: "#FFDBCD",
-        },
         richblack: "#060201",
         crowshead: "#1B0E0A",
         eternity: "#271910",

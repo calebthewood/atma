@@ -110,7 +110,13 @@ export default async function Page({ params }: { params: { id: string } }) {
           ))}
         </div>
         <div className="my-12">
-          <ThumbnailCarousel slides={SLIDES} />
+          <ThumbnailCarousel
+            slides={
+              retreat.images.length > 0
+                ? retreat.images.map((img) => img.filePath)
+                : SLIDES
+            }
+          />
         </div>
         <div className="grid grid-cols-12">
           <div className="col-span-4 col-start-2 text-lg">

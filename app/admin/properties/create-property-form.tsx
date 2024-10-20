@@ -2,12 +2,20 @@
 
 import { useEffect, useState } from "react";
 import { getHosts } from "@/actions/host-actions";
-import { createProperty } from "@/actions/property-actions";
+import {
+  createProperty,
+  getProperties,
+  updateProperty,
+} from "@/actions/property-actions";
+import {
+  PropertyFormData,
+  propertyFormSchema,
+} from "@/schemas/property-schema";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Host } from "@prisma/client";
+import { Property, Host } from "@prisma/client";
 import { useForm } from "react-hook-form";
-import { z } from "zod";
 
+import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import {
   Form,
@@ -27,137 +35,211 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
+import { toast } from "@/components/ui/use-toast";
 
-const formSchema = z.object({
-  email: z.string().email({ message: "Invalid email address." }),
-  phone: z
-    .string()
-    .min(10, { message: "Phone number must be at least 10 digits." }),
-  name: z.string().min(2, { message: "Name must be at least 2 characters." }),
-  desc: z
-    .string()
-    .min(10, { message: "Description must be at least 10 characters." }),
-  address: z
-    .string()
-    .min(5, { message: "Address must be at least 5 characters." }),
-  nearbyAirport: z
-    .string()
-    .min(3, { message: "Closest airport must be at least 3 characters." }),
-  location: z
-    .string()
-    .min(2, { message: "Location must be at least 2 characters." }),
-  type: z.string().min(2, { message: "Type must be at least 2 characters." }),
-  rating: z.string().min(1, { message: "Rating is required." }),
-  hostId: z.string().min(1, { message: "Host ID is required." }),
-});
+type PropertyFormProps = {
+  property?: Property;
+};
 
-export function CreatePropertyForm() {
-  const [isSubmitting, setIsSubmitting] = useState(false);
+export function PropertyForm({ property }: PropertyFormProps) {
+  const [isLoading, setIsLoading] = useState(false);
   const [hosts, setHosts] = useState<Host[]>([]);
-
-  useEffect(() => {
-    async function fetchHosts() {
-      try {
-        const fetchedHosts = await getHosts();
-        setHosts(fetchedHosts);
-      } catch (error) {
-        console.error("Error fetching hosts:", error);
-        // TODO: Handle error (e.g., show error message to user)
-      }
-    }
-
-    fetchHosts();
-  }, []);
-
-  const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
+  const [properties, setProperties] = useState<Property[]>([]);
+  const form = useForm<PropertyFormData>({
+    resolver: zodResolver(propertyFormSchema),
     defaultValues: {
-      email: "",
-      phone: "",
-      name: "",
-      desc: "",
-      address: "",
-      nearbyAirport: "",
-      location: "",
-      type: "",
-      rating: "",
-      hostId: "",
+      name: property?.name || "",
+      email: property?.email || "",
+      phone: property?.phone || "",
+      descShort: property?.descShort || "",
+      descList: property?.descList || "",
+      lat: property?.lat || undefined,
+      lng: property?.lng || undefined,
+      coordType: property?.coordType || "",
+      city: property?.city || "",
+      address: property?.address || "",
+      addressRaw: property?.addressRaw || "",
+      nearbyAirport: property?.nearbyAirport || "",
+      placeList: property?.placeList || "",
+      policyList: property?.policyList || "",
+      tagList: property?.tagList || "",
+      location: property?.location || "",
+      type: property?.type || "",
+      amenityHealing: property?.amenityHealing || "",
+      amenityCuisine: property?.amenityCuisine || "",
+      amenityActivity: property?.amenityActivity || "",
+      amenityFacility: property?.amenityFacility || "",
+      rating: property?.rating || "",
+      coverImg: property?.coverImg || "",
+      hostId: property?.hostId || "",
     },
   });
 
-  async function onSubmit(values: z.infer<typeof formSchema>) {
-    setIsSubmitting(true);
+  const handleFieldBlur = async (fieldName: keyof PropertyFormData) => {
+    if (property) {
+      try {
+        const fieldValue = form.getValues(fieldName);
+        await updateProperty(property.id, { [fieldName]: fieldValue });
+        toast({
+          title: "Updated",
+          description: `${fieldName} has been updated.`,
+        });
+      } catch (error) {
+        console.error(`Error updating ${fieldName}:`, error);
+        toast({
+          title: "Error",
+          description: `Failed to update ${fieldName}. Please try again.`,
+          variant: "destructive",
+        });
+        form.setError(fieldName, { type: "manual", message: "Update failed" });
+      }
+    }
+  };
+
+  async function onSubmit(values: PropertyFormData) {
+    setIsLoading(true);
     try {
-      //@ts-ignore
-      const property = await createProperty(values);
-      console.log("Property created:", property);
-      form.reset(); // Reset form after successful submission
-      // TODO: Add success message or redirect
+      if (property) {
+        await updateProperty(property.id, values);
+        toast({
+          title: "Success",
+          description: "Property updated successfully.",
+        });
+      } else {
+        await createProperty(values);
+        toast({
+          title: "Success",
+          description: "Property created successfully.",
+        });
+      }
+      form.reset(values);
     } catch (error) {
-      console.error("Error creating property:", error);
-      // TODO: Add error message
+      console.error("Error submitting property:", error);
+      toast({
+        title: "Error",
+        description: "Failed to save property. Please try again.",
+        variant: "destructive",
+      });
     } finally {
-      setIsSubmitting(false);
+      setIsLoading(false);
     }
   }
+
+  useEffect(() => {
+    async function fetchData() {
+      try {
+        const [fetchedHosts, fetchedProperties] = await Promise.all([
+          getHosts(),
+          getProperties(),
+        ]);
+        setHosts(fetchedHosts);
+        setProperties(fetchedProperties);
+      } catch (error) {
+        console.error("Error fetching data:", error);
+        toast({
+          title: "Error",
+          description: "Failed to load form data. Please try again.",
+          variant: "destructive",
+        });
+      }
+    }
+
+    fetchData();
+  }, []);
+
+  const getFieldStyles = (fieldName: keyof PropertyFormData) => {
+    const isSubmitting = form.formState.isSubmitting;
+    const isValid = !form.formState.errors[fieldName];
+    const isDirty = form.formState.dirtyFields[fieldName];
+
+    return cn("transition-colors duration-300", {
+      "border-atma-yellow text-atma-yellow": isSubmitting,
+      "border-atma-mint text-atma-mint": isValid && isDirty && !isSubmitting,
+      "border-atma-red text-atma-red": !isValid && !isSubmitting,
+    });
+  };
 
   return (
     <Form {...form}>
       <form
         onSubmit={form.handleSubmit(onSubmit)}
-        className="max-w-md space-y-8"
+        className="max-w-lg space-y-8"
       >
         <FormField
           control={form.control}
-          name="email"
+          name="name"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Email</FormLabel>
+              <FormLabel className={getFieldStyles("name")}>
+                Property Name
+              </FormLabel>
               <FormControl>
                 <Input
-                  type="email"
-                  placeholder="property@example.com"
+                  className={getFieldStyles("name")}
+                  placeholder="Amazing Resort"
                   {...field}
+                  onBlur={() => handleFieldBlur("name")}
                 />
               </FormControl>
               <FormMessage />
             </FormItem>
           )}
         />
+
+        <FormField
+          control={form.control}
+          name="email"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel className={getFieldStyles("email")}>Email</FormLabel>
+              <FormControl>
+                <Input
+                  {...field}
+                  className={getFieldStyles("email")}
+                  type="email"
+                  placeholder="contact@example.com"
+                  onBlur={() => handleFieldBlur("email")}
+                />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
         <FormField
           control={form.control}
           name="phone"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Phone</FormLabel>
+              <FormLabel className={getFieldStyles("phone")}>Phone</FormLabel>
               <FormControl>
-                <Input placeholder="1234567890" {...field} />
+                <Input
+                  className={getFieldStyles("phone")}
+                  placeholder="+1 (123) 456-7890"
+                  {...field}
+                  onBlur={() => handleFieldBlur("phone")}
+                />
               </FormControl>
               <FormMessage />
             </FormItem>
           )}
         />
+
         <FormField
           control={form.control}
-          name="name"
+          name="descShort"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Property Name</FormLabel>
+              <FormLabel className={getFieldStyles("descShort")}>
+                Short Description
+              </FormLabel>
               <FormControl>
-                <Input placeholder="Seaside Villa" {...field} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name="desc"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Description</FormLabel>
-              <FormControl>
-                <Textarea placeholder="Describe the property..." {...field} />
+                <Textarea
+                  className={getFieldStyles("descShort")}
+                  placeholder="A brief description of the property..."
+                  {...field}
+                  onBlur={() => handleFieldBlur("descShort")}
+                />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -273,8 +355,19 @@ export function CreatePropertyForm() {
             </FormItem>
           )}
         />
-        <Button type="submit" disabled={isSubmitting}>
-          {isSubmitting ? "Creating..." : "Create Property"}
+        <Button
+          type="submit"
+          disabled={isLoading}
+          className={cn({
+            "bg-atma-yellow text-black": isLoading || form.formState.isDirty,
+            "bg-atma-mint text-black": form.formState.isSubmitSuccessful,
+          })}
+        >
+          {isLoading
+            ? "Submitting..."
+            : property
+              ? "Update Property"
+              : "Create Property"}
         </Button>
       </form>
     </Form>

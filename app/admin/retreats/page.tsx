@@ -8,18 +8,17 @@ export default function Page() {
   return (
     <div className="space-y-6">
       <div>
-        <h3 className="text-lg font-medium">Create Retreat</h3>
+        <h3 className="text-lg font-medium">Create or Edit Retreat</h3>
         <p className="text-sm text-muted-foreground">
-          Must be associated with a Host and a Property, will need more details
-          & properties
+          Retreats are held at Properties, and should have a Host
         </p>
       </div>
       <Separator className="my-6" />
 
-      <Tabs defaultValue="form" className="">
+      <Tabs defaultValue="list" className="">
         <TabsList>
-          <TabsTrigger value="form">Create Retreat</TabsTrigger>
           <TabsTrigger value="list">View Retreats</TabsTrigger>
+          <TabsTrigger value="form">Create Retreat</TabsTrigger>
         </TabsList>
         <TabsContent value="form">
           <RetreatForm />

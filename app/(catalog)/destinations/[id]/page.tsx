@@ -135,7 +135,7 @@ export default async function Page({ params }: { params: { id: string } }) {
                   <div className="absolute inset-0 bg-[url('/img/white-noise-2.webp')] opacity-20"></div>
                   <div className="absolute inset-0 bg-[url('/img/white-noise-1.webp')] opacity-20"></div>
 
-                  <div className="absolute inset-0 rounded bg-gradient-to-br from-white/75 to-white/30 opacity-20 backdrop-blur"></div>
+                  <div className="absolute inset-0 rounded bg-gradient-to-br from-white/75 to-white/30 opacity-20 backdrop-blur-sm"></div>
 
                   <div className="relative z-10 p-6 text-white">
                     {/* children */}

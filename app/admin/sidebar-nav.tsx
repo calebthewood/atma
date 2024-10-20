@@ -34,7 +34,8 @@ export function ClientSidebarNav({
           href={item.href}
           className={cn(
             buttonVariants({ variant: "ghost" }),
-            pathname === item.href
+            (pathname.includes(item.href) && item.title !== "Admin") ||
+              item.href === pathname
               ? "bg-muted hover:bg-muted"
               : "hover:bg-transparent hover:underline",
             "justify-start"

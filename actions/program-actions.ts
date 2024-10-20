@@ -1,6 +1,9 @@
 "use server";
 
-import { Program } from "@prisma/client";
+import { revalidatePath } from "next/cache";
+import { programFormSchema } from "@/schemas/program-schema";
+import { Prisma, Program } from "@prisma/client";
+import { z } from "zod";
 
 import prisma from "@/lib/prisma";
 
@@ -70,7 +73,7 @@ export async function getProgramsByProperty(propertyId: string) {
   }
 }
 
-export async function deleteProgramById(id: string) {
+export async function deleteProgram(id: string) {
   try {
     await prisma.program.delete({
       where: { id },
@@ -79,19 +82,6 @@ export async function deleteProgramById(id: string) {
   } catch (error) {
     console.error("Error deleting program:", error);
     throw new Error("Failed to delete program");
-  }
-}
-
-export async function updateProgram(id: string, updateData: Program) {
-  try {
-    const updatedProgram = await prisma.program.update({
-      where: { id },
-      data: updateData,
-    });
-    return updatedProgram;
-  } catch (error) {
-    console.error("Error updating program:", error);
-    throw new Error("Failed to update program");
   }
 }
 
@@ -125,5 +115,127 @@ export async function joinProgramAndProperty(
   } catch (error) {
     console.error("Error joining program and property:", error);
     throw new Error("Failed to join program and property");
+  }
+}
+
+export async function getPaginatedPrograms(
+  page: number = 1,
+  pageSize: number = 10,
+  searchTerm: string = ""
+) {
+  const skip = (page - 1) * pageSize;
+
+  try {
+    const where: Prisma.ProgramWhereInput = {
+      OR: [
+        { name: { contains: searchTerm } },
+        { duration: { contains: searchTerm } },
+        { desc: { contains: searchTerm } },
+      ],
+    };
+
+    // Fetch programs with pagination and search
+    const programs = await prisma.program.findMany({
+      where,
+      skip,
+      take: pageSize,
+      orderBy: { updatedAt: "desc" },
+      include: {
+        property: {
+          select: {
+            name: true,
+          },
+        },
+        host: {
+          select: {
+            name: true,
+          },
+        },
+      },
+    });
+
+    // Get total count for pagination
+    const totalCount = await prisma.program.count({ where });
+
+    // Calculate total pages
+    const totalPages = Math.ceil(totalCount / pageSize);
+
+    return {
+      programs,
+      totalPages,
+      currentPage: page,
+    };
+  } catch (error) {
+    console.error("Error fetching paginated programs:", error);
+    throw new Error("Failed to fetch programs");
+  }
+}
+
+export async function createProgram(data: {
+  name: string;
+  duration?: string;
+  desc?: string;
+  priceList?: string;
+  sourceUrl?: string;
+  propertyId: string;
+  hostId?: string;
+}) {
+  try {
+    const program = await prisma.program.create({
+      data: {
+        name: data.name,
+        duration: data.duration,
+        desc: data.desc,
+        priceList: data.priceList,
+        sourceUrl: data.sourceUrl,
+        property: { connect: { id: data.propertyId } },
+        host: { connect: { id: data.hostId } },
+      },
+    });
+
+    revalidatePath("/admin/programs");
+    return { success: true, program };
+  } catch (error) {
+    console.error("Failed to create program:", error);
+    return { success: false, error: "Failed to create program" };
+  }
+}
+
+export async function updateProgram(
+  id: string,
+  data: Partial<z.infer<typeof programFormSchema>>
+) {
+  try {
+    const program = await prisma.program.update({
+      where: { id },
+      data,
+    });
+    revalidatePath("/admin/programs");
+    revalidatePath(`/admin/programs/${id}`);
+    return { success: true, program };
+  } catch (error) {
+    console.error("Failed to update program:", error);
+    return { success: false, error: "Failed to update program" };
+  }
+}
+
+export async function getProgram(id: string) {
+  try {
+    const program = await prisma.program.findUnique({
+      where: { id },
+      include: {
+        property: { select: { name: true } },
+        host: { select: { name: true } },
+      },
+    });
+
+    if (!program) {
+      return { success: false, error: "Program not found" };
+    }
+
+    return { success: true, program };
+  } catch (error) {
+    console.error("Failed to fetch program:", error);
+    return { success: false, error: "Failed to fetch program" };
   }
 }

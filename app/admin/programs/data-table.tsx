@@ -2,8 +2,13 @@
 
 import React, { useEffect, useState } from "react";
 import Link from "next/link";
-import { getPaginatedRetreats } from "@/actions/retreat-actions";
-import { CaretSortIcon, ChevronDownIcon } from "@radix-ui/react-icons";
+import { useRouter } from "next/navigation";
+import { deleteProgram, getPaginatedPrograms } from "@/actions/program-actions";
+import {
+  CaretSortIcon,
+  ChevronDownIcon,
+  DotsHorizontalIcon,
+} from "@radix-ui/react-icons";
 import {
   ColumnDef,
   ColumnFiltersState,
@@ -22,6 +27,9 @@ import {
   DropdownMenu,
   DropdownMenuCheckboxItem,
   DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
@@ -34,23 +42,22 @@ import {
   TableRow,
 } from "@/components/ui/table";
 
-type Retreat = {
+import { AdminActionMenu } from "../components";
+
+type Program = {
   id: string;
   name: string | null;
-  bookingType: string | null;
   duration: string | null;
-  date: Date | null;
-  minGuests: number | null;
-  maxGuests: number | null;
-  propertyId: string;
+  desc: string | null;
+  priceList: string | null;
+  sourceUrl: string | null;
+  propertyId: string | null;
   hostId: string | null;
   createdAt: Date;
   updatedAt: Date;
-  propertyName: string;
-  hostName: string | null;
+  verified: Date | null;
 };
-
-const columns: ColumnDef<Retreat>[] = [
+const columns: ColumnDef<Program>[] = [
   {
     accessorKey: "name",
     header: ({ column }) => {
@@ -66,37 +73,50 @@ const columns: ColumnDef<Retreat>[] = [
     },
   },
   {
-    accessorKey: "bookingType",
-    header: "Booking Type",
-  },
-  {
     accessorKey: "duration",
     header: "Duration",
   },
   {
-    accessorKey: "date",
-    header: "Date",
+    accessorKey: "priceList",
+    header: "Price List",
     cell: ({ row }) => {
-      const date = row.getValue("date") as Date | null;
-      return date ? date.toLocaleDateString() : "Not set";
+      const priceList = row.getValue("priceList") as string | null;
+      return priceList ? priceList.split(",")[0] + "..." : "N/A";
     },
   },
   {
-    accessorKey: "guests",
-    header: "Guests",
-    cell: ({ row }) => {
-      const min = row.original.minGuests;
-      const max = row.original.maxGuests;
-      return `${min || 0} - ${max || "unlimited"}`;
-    },
-  },
-  {
-    accessorKey: "propertyName",
+    accessorKey: "propertyId",
     header: "Property",
+    cell: ({ row }) => {
+      const propertyId = row.getValue("propertyId") as string | null;
+      return propertyId ? (
+        <Link
+          href={`/admin/properties/${propertyId}`}
+          className="text-blue-600 hover:underline"
+        >
+          View Property
+        </Link>
+      ) : (
+        "N/A"
+      );
+    },
   },
   {
-    accessorKey: "hostName",
+    accessorKey: "hostId",
     header: "Host",
+    cell: ({ row }) => {
+      const hostId = row.getValue("hostId") as string | null;
+      return hostId ? (
+        <Link
+          href={`/admin/hosts/${hostId}`}
+          className="text-blue-600 hover:underline"
+        >
+          View Host
+        </Link>
+      ) : (
+        "N/A"
+      );
+    },
   },
   {
     accessorKey: "updatedAt",
@@ -108,21 +128,34 @@ const columns: ColumnDef<Retreat>[] = [
   {
     id: "actions",
     cell: ({ row }) => {
-      const retreat = row.original;
+      const program = row.original;
+      const router = useRouter();
+
+      const handleDelete = async () => {
+        if (window.confirm("Are you sure you want to delete this program?")) {
+          try {
+            await deleteProgram(program.id);
+            router.refresh();
+          } catch (error) {
+            console.error("Failed to delete program:", error);
+            alert("Failed to delete program. Please try again.");
+          }
+        }
+      };
+
       return (
-        <Link
-          href={`/admin/retreats/${retreat.id}`}
-          className="text-blue-600 hover:underline"
-        >
-          View Details
-        </Link>
+        <AdminActionMenu
+          editHref={`/admin/programs/${program.id}`}
+          publicHref={`/programs/${program.id}`}
+          handleDelete={handleDelete}
+        />
       );
     },
   },
 ];
 
-export function RetreatDataTable() {
-  const [data, setData] = useState<Retreat[]>([]);
+export function ProgramDataTable() {
+  const [data, setData] = useState<Program[]>([]);
   const [sorting, setSorting] = useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
@@ -133,23 +166,19 @@ export function RetreatDataTable() {
   const [totalPages, setTotalPages] = useState(0);
 
   useEffect(() => {
-    fetchRetreats();
-  }, [pagination.pageIndex, pagination.pageSize, columnFilters]);
+    fetchPrograms();
+  }, [pagination.pageIndex, pagination.pageSize]);
 
-  const fetchRetreats = async () => {
+  const fetchPrograms = async () => {
     try {
-      const searchTerm =
-        (table.getColumn("name")?.getFilterValue() as string) ?? "";
-      const result = await getPaginatedRetreats(
+      const result = await getPaginatedPrograms(
         pagination.pageIndex + 1,
-        pagination.pageSize,
-        searchTerm
+        pagination.pageSize
       );
-      setData(result.retreats);
+      setData(result.programs);
       setTotalPages(result.totalPages);
     } catch (error) {
-      console.error("Failed to fetch retreats:", error);
-      // TODO: Add error handling UI
+      console.error("Failed to fetch programs:", error);
     }
   };
 
@@ -178,7 +207,7 @@ export function RetreatDataTable() {
     <div className="w-full">
       <div className="flex items-center py-4">
         <Input
-          placeholder="Filter retreats..."
+          placeholder="Filter programs..."
           value={(table.getColumn("name")?.getFilterValue() as string) ?? ""}
           onChange={(event) =>
             table.getColumn("name")?.setFilterValue(event.target.value)

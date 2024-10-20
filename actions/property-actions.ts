@@ -2,20 +2,64 @@
 
 import { revalidatePath } from "next/cache";
 import { Prisma, Property } from "@prisma/client";
-
+import { PropertyFormData } from "@/schemas/property-schema";
 import { prisma } from "@/lib/prisma";
 
-export async function createProperty(data: Property) {
-  const property = await prisma.property.create({
-    data: {
-      ...data,
-    },
-  });
 
-  revalidatePath("/properties");
-
-  return property;
+export async function getProperty(id: string) {
+  try {
+    const property = await prisma.property.findUnique({
+      where: { id },
+    });
+    return property;
+  } catch (error) {
+    console.error("Failed to get property:", error);
+    throw new Error("Failed to get property");
+  }
 }
+
+export async function createProperty(data: PropertyFormData) {
+  try {
+    const property = await prisma.property.create({
+      data: {
+        ...data,
+        lat: data.lat ? parseFloat(data.lat.toString()) : null,
+        lng: data.lng ? parseFloat(data.lng.toString()) : null,
+      },
+    });
+    return property;
+  } catch (error) {
+    console.error("Failed to create property:", error);
+    throw new Error("Failed to create property");
+  }
+}
+
+export async function updateProperty(id: string, data: Partial<PropertyFormData>) {
+  try {
+    const property = await prisma.property.update({
+      where: { id },
+      data: {
+        ...data,
+        lat: data.lat ? parseFloat(data.lat.toString()) : undefined,
+        lng: data.lng ? parseFloat(data.lng.toString()) : undefined,
+      },
+    });
+    return property;
+  } catch (error) {
+    console.error("Failed to update property:", error);
+    throw new Error("Failed to update property");
+  }
+}
+
+// export async function getProperties() {
+//   try {
+//     const properties = await prisma.property.findMany();
+//     return properties;
+//   } catch (error) {
+//     console.error("Failed to get properties:", error);
+//     throw new Error("Failed to get properties");
+//   }
+// }
 
 export type PropertiesWithImages = Prisma.PropertyGetPayload<{
   include: {
@@ -125,35 +169,35 @@ type PropertyUpdateInput = Partial<
   Omit<Prisma.PropertyUpdateInput, "id" | "createdAt" | "updatedAt">
 >;
 
-export async function updateProperty(
-  propertyId: string,
-  data: PropertyUpdateInput
-) {
-  try {
-    // Remove any undefined values to avoid Prisma errors
-    const cleanedData = Object.entries(data).reduce((acc, [key, value]) => {
-      if (value !== undefined) {
-        //@ts-ignore
-        acc[key] = value;
-      }
-      return acc;
-    }, {} as PropertyUpdateInput);
+// export async function updateProperty(
+//   propertyId: string,
+//   data: PropertyUpdateInput
+// ) {
+//   try {
+//     // Remove any undefined values to avoid Prisma errors
+//     const cleanedData = Object.entries(data).reduce((acc, [key, value]) => {
+//       if (value !== undefined) {
+//         //@ts-ignore
+//         acc[key] = value;
+//       }
+//       return acc;
+//     }, {} as PropertyUpdateInput);
 
-    const property = await prisma.property.update({
-      where: {
-        id: propertyId,
-      },
-      data: cleanedData,
-    });
+//     const property = await prisma.property.update({
+//       where: {
+//         id: propertyId,
+//       },
+//       data: cleanedData,
+//     });
 
-    revalidatePath(`/admin/property/${propertyId}`);
+//     revalidatePath(`/admin/property/${propertyId}`);
 
-    return property;
-  } catch (error) {
-    console.error("Failed to update property:", error);
-    throw new Error("Failed to update property");
-  }
-}
+//     return property;
+//   } catch (error) {
+//     console.error("Failed to update property:", error);
+//     throw new Error("Failed to update property");
+//   }
+// }
 
 export async function deleteProperty(propertyId: string) {
   const property = await prisma.property.delete({

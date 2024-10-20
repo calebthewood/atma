@@ -55,6 +55,13 @@ module.exports = {
           DEFAULT: "hsl(var(--card))",
           foreground: "hsl(var(--card-foreground))",
         },
+        atma: {
+          red: "#FC5630",
+          turquoise: "#C1EAE6",
+          yellow: "#FEFF97",
+          mint: "#BDFFCB",
+          beige: "#FFDBCD",
+        },
       },
       borderRadius: {
         lg: `var(--radius)`,

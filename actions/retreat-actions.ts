@@ -39,7 +39,7 @@ export async function createRetreat(data: RetreatInput) {
       },
     });
 
-    revalidatePath("/retreats");
+    revalidatePath("/admin/retreats");
     return retreat;
   } catch (error) {
     console.error("Error creating retreat:", error);
@@ -67,7 +67,7 @@ export async function updateRetreat(id: string, data: RetreatInput) {
       },
     });
 
-    revalidatePath("/retreats");
+    revalidatePath("/admin/retreats");
     return retreat;
   } catch (error) {
     console.error("Error updating retreat:", error);
@@ -248,7 +248,7 @@ export async function deleteRetreat(retreatId: string) {
       },
     });
 
-    revalidatePath("/retreats");
+    revalidatePath("/admin/retreats");
 
     return retreat;
   } catch (error) {

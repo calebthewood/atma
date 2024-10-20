@@ -1,20 +1,28 @@
-import { ReactElement } from "react";
+import { ReactNode } from "react";
 
-export function GlassCard({ children }: { children: ReactElement }) {
+import { cn } from "@/lib/utils";
+
+export function GlassCard({
+  children,
+  className,
+}: {
+  children: ReactNode;
+  className?: string;
+}) {
   return (
-    <div className="relative h-[540px] w-[340px] shadow">
-      <div className="absolute inset-0 rounded bg-gradient-to-br from-[#004476] via-[#004476] to-[#006fbe] opacity-10"></div>
+    <div className={cn("relative inline-block max-w-fit", className)}>
+      <div className="absolute inset-0 rounded bg-gradient-to-br from-[#004476] via-[#004476] to-[#006fbe] opacity-30"></div>
 
       <div className="absolute inset-0 overflow-hidden rounded">
-        <div className="absolute inset-0 bg-[url('/img/white-noise-2.webp')] opacity-20"></div>
-        <div className="absolute inset-0 bg-[url('/img/white-noise-1.webp')] opacity-20"></div>
+        <div className="absolute inset-0 bg-[url('/img/white-noise-2.webp')] bg-repeat opacity-50"></div>
+        <div className="absolute inset-0 bg-[url('/img/white-noise-1.webp')] bg-repeat opacity-50"></div>
 
-        <div className="absolute inset-0 rounded bg-gradient-to-br from-white/75 to-white/30 opacity-20 backdrop-blur"></div>
-
-        <div className="relative z-10 p-6 text-white">{children}</div>
+        <div className="absolute inset-0 rounded bg-gradient-to-br from-white/75 to-white/30 opacity-10 "></div>
       </div>
 
-      <div className="pointer-events-none absolute inset-0 rounded border border-white/75 backdrop-blur"></div>
+      <div className="pointer-events-none absolute inset-0 rounded-sm border border-l-transparent rounded-l-none border-white/70 backdrop-blur-sm"></div>
+
+      <div className="relative z-10">{children}</div>
     </div>
   );
 }

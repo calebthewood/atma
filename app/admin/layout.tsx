@@ -4,6 +4,7 @@ import { getUser } from "@/actions/user-actions";
 import { auth } from "@/auth";
 
 import { Separator } from "@/components/ui/separator";
+import { Toaster } from "@/components/ui/toaster";
 
 import { AdminTitle } from "./components";
 import { ClientSidebarNav } from "./sidebar-nav";
@@ -15,13 +16,13 @@ export const metadata: Metadata = {
 
 const sidebarNavItems = [
   { title: "Admin", href: "/admin" },
-  { title: "Users", href: "/admin/user" },
-  { title: "Hosts", href: "/admin/host" },
+  { title: "Users", href: "/admin/users" },
+  { title: "Hosts", href: "/admin/hosts" },
   { title: "Properties", href: "/admin/properties" },
   { title: "Retreats", href: "/admin/retreats" },
   { title: "Programs", href: "/admin/programs" },
-  { title: "Payments", href: "/admin/payment" },
-  { title: "Bookings", href: "/admin/booking" },
+  { title: "Payments", href: "/admin/payments" },
+  { title: "Bookings", href: "/admin/bookings" },
 ];
 
 interface SettingsLayoutProps {
@@ -48,6 +49,7 @@ export default async function SettingsLayout({
             <ClientSidebarNav items={sidebarNavItems} />
           </aside>
           <div className="flex-1 lg:max-w-4xl">{children}</div>
+          <Toaster />
         </div>
       </div>
     </>
