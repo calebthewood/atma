@@ -129,13 +129,11 @@ const columns: ColumnDef<Program>[] = [
     id: "actions",
     cell: ({ row }) => {
       const program = row.original;
-      const router = useRouter();
 
       const handleDelete = async () => {
         if (window.confirm("Are you sure you want to delete this program?")) {
           try {
             await deleteProgram(program.id);
-            router.refresh();
           } catch (error) {
             console.error("Failed to delete program:", error);
             alert("Failed to delete program. Please try again.");

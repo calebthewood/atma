@@ -1,7 +1,8 @@
 "use client";
 
+import { useEffect } from "react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { DotsHorizontalIcon } from "@radix-ui/react-icons";
 
 import { Button } from "@/components/ui/button";
@@ -55,6 +56,10 @@ export function AdminActionMenu({
   handleDelete: () => void;
   publicHref: string;
 }) {
+  const router = useRouter();
+  useEffect(() => {
+    router.refresh();
+  }, [handleDelete]);
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>

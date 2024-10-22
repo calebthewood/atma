@@ -1,7 +1,7 @@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
-import { PropertyDataTable } from "./components";
-import { CreatePropertyForm } from "./create-property-form";
+import { PropertyDataTable } from "./data-table";
+import { PropertyForm } from "./property-form";
 
 export default function Page() {
   return (
@@ -18,7 +18,7 @@ export default function Page() {
           <TabsTrigger value="form">Create Property</TabsTrigger>
         </TabsList>
         <TabsContent value="form">
-          <CreatePropertyForm />
+          <PropertyForm />
         </TabsContent>
         <TabsContent value="list">
           <PropertyDataTable />

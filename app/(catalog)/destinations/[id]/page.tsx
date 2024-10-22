@@ -100,9 +100,8 @@ export default async function Page({ params }: { params: { id: string } }) {
   }
 
   const coverImgPath =
-    property?.coverImg ||
-    property?.images[0]?.filePath ||
-    "/img/iStock-1490140364.jpg"; // move this default to a general config? maybe not needed even.
+    property.images.sort((a, b) => a.order - b.order)[0].filePath ||
+    "/img/iStock-1490140364.jpg";
 
   const [title, subtitle] = property.name.split("|");
 

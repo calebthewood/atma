@@ -12,7 +12,7 @@ import {
   propertyFormSchema,
 } from "@/schemas/property-schema";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Property, Host } from "@prisma/client";
+import { Host, Property } from "@prisma/client";
 import { useForm } from "react-hook-form";
 
 import { cn } from "@/lib/utils";
@@ -38,13 +38,13 @@ import { Textarea } from "@/components/ui/textarea";
 import { toast } from "@/components/ui/use-toast";
 
 type PropertyFormProps = {
-  property?: Property;
+  property?: Property | null;
 };
 
 export function PropertyForm({ property }: PropertyFormProps) {
   const [isLoading, setIsLoading] = useState(false);
   const [hosts, setHosts] = useState<Host[]>([]);
-  const [properties, setProperties] = useState<Property[]>([]);
+
   const form = useForm<PropertyFormData>({
     resolver: zodResolver(propertyFormSchema),
     defaultValues: {
@@ -133,7 +133,6 @@ export function PropertyForm({ property }: PropertyFormProps) {
           getProperties(),
         ]);
         setHosts(fetchedHosts);
-        setProperties(fetchedProperties);
       } catch (error) {
         console.error("Error fetching data:", error);
         toast({
@@ -158,7 +157,7 @@ export function PropertyForm({ property }: PropertyFormProps) {
       "border-atma-red text-atma-red": !isValid && !isSubmitting,
     });
   };
-
+  if (!property) return null;
   return (
     <Form {...form}>
       <form
@@ -176,7 +175,7 @@ export function PropertyForm({ property }: PropertyFormProps) {
               <FormControl>
                 <Input
                   className={getFieldStyles("name")}
-                  placeholder="Amazing Resort"
+                  placeholder="Enter property/resort name"
                   {...field}
                   onBlur={() => handleFieldBlur("name")}
                 />
@@ -197,7 +196,7 @@ export function PropertyForm({ property }: PropertyFormProps) {
                   {...field}
                   className={getFieldStyles("email")}
                   type="email"
-                  placeholder="contact@example.com"
+                  placeholder="enter point of contact email"
                   onBlur={() => handleFieldBlur("email")}
                 />
               </FormControl>
@@ -215,7 +214,7 @@ export function PropertyForm({ property }: PropertyFormProps) {
               <FormControl>
                 <Input
                   className={getFieldStyles("phone")}
-                  placeholder="+1 (123) 456-7890"
+                  placeholder="Enter phone number"
                   {...field}
                   onBlur={() => handleFieldBlur("phone")}
                 />
@@ -250,9 +249,15 @@ export function PropertyForm({ property }: PropertyFormProps) {
           name="address"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Address</FormLabel>
+              <FormLabel className={getFieldStyles("address")}>
+                Address
+              </FormLabel>
               <FormControl>
-                <Input placeholder="123 Ocean Drive" {...field} />
+                <Input
+                  className={getFieldStyles("address")}
+                  placeholder="Enter full address"
+                  {...field}
+                />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -263,68 +268,58 @@ export function PropertyForm({ property }: PropertyFormProps) {
           name="nearbyAirport"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Closest Airport</FormLabel>
+              <FormLabel className={getFieldStyles("nearbyAirport")}>
+                Closest Airport
+              </FormLabel>
               <FormControl>
-                <Input placeholder="JFK" {...field} />
+                <Input
+                  className={getFieldStyles("nearbyAirport")}
+                  placeholder="Enter airport name"
+                  {...field}
+                />
               </FormControl>
               <FormMessage />
             </FormItem>
           )}
         />
-        <FormField
+        {/* <FormField
           control={form.control}
           name="location"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Location</FormLabel>
+              <FormLabel className={getFieldStyles("location")}>
+                Location
+              </FormLabel>
               <FormControl>
-                <Input placeholder="Miami, FL" {...field} />
+                <Input
+                  className={getFieldStyles("location")}
+                  placeholder="Miami, FL"
+                  {...field}
+                />
               </FormControl>
               <FormMessage />
             </FormItem>
           )}
-        />
+        /> */}
         <FormField
           control={form.control}
           name="type"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Property Type</FormLabel>
+              <FormLabel className={getFieldStyles("type")}>
+                Property Type
+              </FormLabel>
               <Select onValueChange={field.onChange} defaultValue={field.value}>
                 <FormControl>
-                  <SelectTrigger>
+                  <SelectTrigger className={getFieldStyles("type")}>
                     <SelectValue placeholder="Select property type" />
                   </SelectTrigger>
                 </FormControl>
                 <SelectContent>
-                  <SelectItem value="apartment">Apartment</SelectItem>
-                  <SelectItem value="house">House</SelectItem>
-                  <SelectItem value="villa">Villa</SelectItem>
+                  <SelectItem value="resort">Resort</SelectItem>
                   <SelectItem value="hotel">Hotel</SelectItem>
-                </SelectContent>
-              </Select>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name="rating"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Rating</FormLabel>
-              <Select onValueChange={field.onChange} defaultValue={field.value}>
-                <FormControl>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select rating" />
-                  </SelectTrigger>
-                </FormControl>
-                <SelectContent>
-                  <SelectItem value="1">1 Star</SelectItem>
-                  <SelectItem value="2">2 Stars</SelectItem>
-                  <SelectItem value="3">3 Stars</SelectItem>
-                  <SelectItem value="4">4 Stars</SelectItem>
-                  <SelectItem value="5">5 Stars</SelectItem>
+                  <SelectItem value="other">Other</SelectItem>
+                  <SelectItem value="more">Add more options?</SelectItem>
                 </SelectContent>
               </Select>
               <FormMessage />
@@ -336,10 +331,10 @@ export function PropertyForm({ property }: PropertyFormProps) {
           name="hostId"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Host</FormLabel>
+              <FormLabel className={getFieldStyles("hostId")}>Host</FormLabel>
               <Select onValueChange={field.onChange} defaultValue={field.value}>
                 <FormControl>
-                  <SelectTrigger>
+                  <SelectTrigger className={getFieldStyles("hostId")}>
                     <SelectValue placeholder="Select a host" />
                   </SelectTrigger>
                 </FormControl>

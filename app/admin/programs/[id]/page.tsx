@@ -13,11 +13,9 @@ export default async function Page({ params }: { params: { id: string } }) {
     <div className="space-y-6">
       <div>
         <h3 className="text-lg font-medium">Edit Program</h3>
-        <p className="text-sm text-muted-foreground">
-          Edit existing program.
-        </p>
+        <p className="text-sm text-muted-foreground">Edit existing program.</p>
       </div>
-      <hr className="max-w-lg"/>
+      <hr className="max-w-lg" />
       <ProgramForm program={result.program} />
     </div>
   );

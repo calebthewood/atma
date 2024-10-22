@@ -1,3 +1,4 @@
+import path from "path";
 import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
 
@@ -14,3 +15,18 @@ export const toUSD = (value: any): string => {
     minimumFractionDigits: 0,
   });
 };
+
+/** Accepts filename or path, returns .ext
+ *
+ * ex: dir/hello-world.jpg --> .jpg
+ */
+export function getFileExtension(filename: string) {
+  try {
+    if (filename.startsWith("http")) {
+      return path.extname(new URL(filename).pathname).toLowerCase();
+    }
+    return path.extname(filename).toLowerCase();
+  } catch {
+    return `.${filename.split(".").pop()?.toLowerCase() || ""}`;
+  }
+}

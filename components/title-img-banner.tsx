@@ -33,9 +33,7 @@ export function TitleImageBanner({
         </div>
         <div className="text-nowrap">
           <blockquote className="space-y-2">
-            <H1 className="text-white text-6xl mb-1">
-              {title}
-            </H1>
+            <H1 className="mb-1 text-6xl text-white">{title}</H1>
           </blockquote>
         </div>
       </GlassCard>

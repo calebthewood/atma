@@ -1,10 +1,10 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import { Prisma, Property } from "@prisma/client";
 import { PropertyFormData } from "@/schemas/property-schema";
-import { prisma } from "@/lib/prisma";
+import { Prisma } from "@prisma/client";
 
+import { prisma } from "@/lib/prisma";
 
 export async function getProperty(id: string) {
   try {
@@ -34,7 +34,10 @@ export async function createProperty(data: PropertyFormData) {
   }
 }
 
-export async function updateProperty(id: string, data: Partial<PropertyFormData>) {
+export async function updateProperty(
+  id: string,
+  data: Partial<PropertyFormData>
+) {
   try {
     const property = await prisma.property.update({
       where: { id },
@@ -99,18 +102,6 @@ export async function getPaginatedProperties(
         take: pageSize,
         orderBy: {
           createdAt: "desc",
-        },
-        select: {
-          id: true,
-          name: true,
-          email: true,
-          phone: true,
-          city: true,
-          type: true,
-          rating: true,
-          verified: true,
-          createdAt: true,
-          updatedAt: true,
         },
       }),
       prisma.property.count(),

@@ -17,10 +17,10 @@ export function GlassCard({
         <div className="absolute inset-0 bg-[url('/img/white-noise-2.webp')] bg-repeat opacity-50"></div>
         <div className="absolute inset-0 bg-[url('/img/white-noise-1.webp')] bg-repeat opacity-50"></div>
 
-        <div className="absolute inset-0 rounded bg-gradient-to-br from-white/75 to-white/30 opacity-10 "></div>
+        <div className="absolute inset-0 rounded bg-gradient-to-br from-white/75 to-white/30 opacity-10"></div>
       </div>
 
-      <div className="pointer-events-none absolute inset-0 rounded-sm border border-l-transparent rounded-l-none border-white/70 backdrop-blur-sm"></div>
+      <div className="pointer-events-none absolute inset-0 rounded-sm rounded-l-none border border-white/70 border-l-transparent backdrop-blur-sm"></div>
 
       <div className="relative z-10">{children}</div>
     </div>
