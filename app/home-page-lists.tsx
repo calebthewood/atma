@@ -97,7 +97,7 @@ export function HomePageLists({
                   <RetreatItem
                     key={h.name + `${i * 2.3}`}
                     retreat={h}
-                    imgUrl={h.images[0].filePath}
+                    imgUrl={h.images[0]?.filePath}
                     segment="partners"
                     className="w-[150px]"
                     aspectRatio="square"
