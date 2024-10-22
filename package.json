@@ -1,6 +1,6 @@
 {
   "name": "next-template",
-  "version": "0.0.2",
+  "version": "0.1.7",
   "private": true,
   "prisma": {
     "seed": "node prisma/seed.js"
