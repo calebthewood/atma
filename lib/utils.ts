@@ -30,3 +30,11 @@ export function getFileExtension(filename: string) {
     return `.${filename.split(".").pop()?.toLowerCase() || ""}`;
   }
 }
+
+export function toKebabCase(str: string) {
+  return str
+    .toLowerCase()
+    .replace(/[^a-z0-9 -]/g, "") // Remove special chars
+    .replace(/\s+/g, "-") // Replace spaces with -
+    .replace(/-+/g, "-"); // Remove consecutive -
+}

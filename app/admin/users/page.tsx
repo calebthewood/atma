@@ -12,10 +12,10 @@ export default function Page() {
         Create user, can be Admin, User, or Host
       </p>
       <Separator className="my-6" />
-      <Tabs defaultValue="form" className="w-[400px]">
+      <Tabs defaultValue="list" className="w-[400px]">
         <TabsList>
-          <TabsTrigger value="form">Create User</TabsTrigger>
           <TabsTrigger value="list">View Users</TabsTrigger>
+          <TabsTrigger value="form">Create User</TabsTrigger>
         </TabsList>
         <TabsContent value="form">
           <CreateUserForm />

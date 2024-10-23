@@ -96,41 +96,60 @@ model Authenticator {
 //  https://medium.com/towards-data-engineering/data-modelling-design-a-data-model-for-a-hotel-booking-system-like-airbnb-2110a6d079c6
 // List denotes a string field of "" separated values.
 model Property {
-    id              String    @id @default(cuid())
-    email           String?
-    phone           String?
-    name            String
-    descShort       String?
-    descList        String?
-    lat             Float?
-    lng             Float?
-    coordType       String? // exact or approximate
-    city            String?
-    address         String? // street address, think about how to show international address types
-    addressRaw      String? // the raw scraped address - think about best way to handle big ugly foreign addresses
-    nearbyAirport   String? // manually pull this from nearbyPlaces field
-    placeList       String? // a list of '\n' separated places
-    policyList      String? // a string/list of misc policies
-    tagList         String? // | separated list of tags
-    location        String? // what is this field?
-    type            String? // Resort || Hotel || etc...
-    amenityHealing  String?
-    amenityCuisine  String?
-    amenityActivity String?
-    amenityFacility String?
-    rating          String? // sum of all ratings / reviewer count, ex: "187 / 842". When displayed, convert to numbers and do expression, when updated, convert to number and increment numerator by rating and denom by 1 (this would be a condensed rating system, real system would track all reviews)
-    coverImg        String? // must be hi-res (think of alternative design for pages with no hires img)
-    hostId          String?
-    createdAt       DateTime  @default(now())
-    updatedAt       DateTime  @updatedAt
-    host            Host?     @relation(fields: [hostId], references: [id])
-    reviews         Review[]
-    images          Image[]
-    retreats        Retreat[]
-    rooms           Room[]
-    programs        Program[]
-    amenities       Amenity[]
-    verified        DateTime? // last date verified by human admin to fix scraping issues
+    id                       String    @id @default(cuid())
+    email                    String?
+    phone                    String?
+    name                     String
+    descShort                String?
+    descList                 String?
+    lat                      Float?
+    lng                      Float?
+    coordType                String? // exact or approximate
+    city                     String?
+    country                  String?
+    address                  String? // street address, think about how to show international address types
+    addressRaw               String? // the raw scraped address - think about best way to handle big ugly foreign addresses
+    nearbyAirport            String? // manually pull this from nearbyPlaces field
+    placeList                String? // a list of '\n' separated places
+    policyList               String? // a string/list of misc policies
+    tagList                  String? // | separated list of tags
+    location                 String? // what is this field?
+    type                     String? // Resort || Hotel || etc...
+    amenityHealing           String?
+    amenityCuisine           String?
+    amenityActivity          String?
+    amenityFacility          String?
+    rating                   String? // sum of all ratings / reviewer count, ex: "187 / 842". When displayed, convert to numbers and do expression, when updated, convert to number and increment numerator by rating and denom by 1 (this would be a condensed rating system, real system would track all reviews)
+    coverImg                 String? // must be hi-res (think of alternative design for pages with no hires img)
+    checkInTime              String? // Check-in Time (Earliest)
+    checkOutTime             String? // Check-out Time (Latest)
+    frontDeskHours           String? // Front Desk Hours
+    childrenAllowed          Boolean? // Children Allowed
+    additionalFeeForChildren Int? // Additional Fees for Children
+    extraBeds                Boolean? // Cribs/Extra Beds Available
+    extraBedFee              String? // Additional Fees for Cribs/Extra Beds
+    breakFastProvided        Boolean? // Breakfast Provided
+    breakfastType            String? // ☐ Buffet, ☐ Gluten-free, ☐ Vegan, ☐ Vegetarian, ☐ Other (Text Field)
+    breakfastFeeAdult        Int? // Breakfast Fee for Adults
+    breakfastFeeChild        Int? // Breakfast Fee for Children
+    breakfastIncluded        Boolean? // Breakfast Included in Room Rate
+    depositRequired          Boolean? // Deposit Required
+    depositMethods           String? // ☐ Credit Card, ☐ Debit Card, ☐ Cash, ☐ Other (Text Field)
+    paymentMethods           String? // ☐ JCB, ☐ Union Pay, ☐ Visa, ☐ Mastercard, ☐ American Express, ☐ Other (Text Field)
+    petsAllowed              Boolean? // Pets Allowed
+    serviceAnimalsAllowed    Boolean? // Service Animals Allowed
+    minAgeForPrimary         Int? // Minimum Age for Primary Guest
+    hostId                   String?
+    createdAt                DateTime  @default(now())
+    updatedAt                DateTime  @updatedAt
+    host                     Host?     @relation(fields: [hostId], references: [id])
+    reviews                  Review[]
+    images                   Image[]
+    retreats                 Retreat[]
+    rooms                    Room[]
+    programs                 Program[]
+    amenities                Amenity[]
+    verified                 DateTime? // last date verified by human admin to fix scraping issues
 }
 
 // The profile for a room type offered by Host, not a record of the room itself

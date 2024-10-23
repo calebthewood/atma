@@ -52,7 +52,7 @@ export function UserListItem({ user }: UserListItemProps) {
       </div>
       <Popover open={open} onOpenChange={setOpen}>
         <PopoverTrigger asChild>
-          <Button variant="outline" className="ml-auto">
+          <Button variant="outline" className="ml-auto w-28 justify-end">
             {value}{" "}
             <ChevronDown className="ml-2 size-4 text-muted-foreground" />
           </Button>
