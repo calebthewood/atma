@@ -248,34 +248,6 @@ export function PropertyForm({ property }: PropertyFormProps) {
     { id: "american-express", label: "American Express" },
   ];
 
-  const CATEGORY_TAGS = [
-    { id: "adventure", label: "Adventure" },
-    { id: "anti-ageing", label: "Anti-Ageing" },
-    { id: "ayurveda", label: "Ayurveda" },
-    { id: "couples", label: "Couples" },
-    { id: "detox", label: "Detox" },
-    { id: "emotional-healing", label: "Emotional Healing" },
-    { id: "fitness", label: "Fitness" },
-    { id: "fitness-retreats", label: "Fitness Retreats" },
-    { id: "health-retreat", label: "Health Retreat" },
-    { id: "holistic-healing", label: "Holistic Healing" },
-    { id: "longevity", label: "Longevity" },
-    { id: "medical", label: "Medical" },
-    { id: "medical-spa", label: "Medical Spa" },
-    { id: "meditation-retreats", label: "Meditation Retreats" },
-    { id: "mens-retreat", label: "Men's Retreat" },
-    { id: "pampering", label: "Pampering" },
-    { id: "sleep-retreats", label: "Sleep Retreats" },
-    { id: "spa-retreat", label: "Spa Retreat" },
-    { id: "spiritual", label: "Spiritual" },
-    { id: "weight-loss-retreat", label: "Weight Loss Retreat" },
-    { id: "womens-retreat", label: "Women's Retreat" },
-    { id: "yoga", label: "Yoga" },
-    { id: "yoga-retreat", label: "Yoga Retreat" },
-    { id: "entrepreneur-retreat", label: "Entrepreneur Retreat" },
-    { id: "mental-health", label: "Mental Health" },
-  ];
-
   if (!property) return null;
   return (
     <Form {...form}>
@@ -451,72 +423,21 @@ export function PropertyForm({ property }: PropertyFormProps) {
             </FormItem>
           )}
         />
-
         <FormField
           control={form.control}
           name="tagList"
-          render={({ field }) => {
-            // Parse existing tags
-            const existingTags =
-              field.value
-                ?.split("|")
-                .map((tag) => tag.trim())
-                .map(toKebabCase) || [];
-
-            // Find uncategorized tags
-            useEffect(() => {
-              const uncategorized = existingTags.filter(
-                (tag) => !CATEGORY_TAGS.some((cat) => cat.id === tag)
-              );
-              setUncategorizedTags(uncategorized);
-            }, [field.value]);
-
-            return (
-              <FormItem className="">
-                <FormLabel>Tags & Keywords</FormLabel>
-                <div className="grid grid-cols-2 gap-4 rounded bg-white/20 p-4 backdrop-blur md:grid-cols-3 lg:grid-cols-4">
-                  {CATEGORY_TAGS.map((category) => (
-                    <FormItem
-                      key={category.id}
-                      className="flex flex-row items-start space-x-3 space-y-0"
-                    >
-                      <FormControl>
-                        <Checkbox
-                          checked={existingTags.includes(category.id)}
-                          onCheckedChange={(checked) => {
-                            const currentTags = new Set(existingTags);
-                            if (checked) {
-                              currentTags.add(category.id);
-                            } else {
-                              currentTags.delete(category.id);
-                            }
-                            // Convert back to pipe-separated string with proper formatting
-                            const newValue = Array.from(currentTags)
-                              .map(
-                                (tag) =>
-                                  CATEGORY_TAGS.find((cat) => cat.id === tag)
-                                    ?.label || tag
-                              )
-                              .join(" | ");
-                            field.onChange(newValue);
-                          }}
-                        />
-                      </FormControl>
-                      <FormLabel className="font-normal">
-                        {category.label}
-                      </FormLabel>
-                    </FormItem>
-                  ))}
-                </div>
-                {uncategorizedTags.length > 0 && (
-                  <FormDescription className="mt-2">
-                    Unmatched tags: {uncategorizedTags.join(", ")}
-                  </FormDescription>
-                )}
-                <FormMessage />
-              </FormItem>
-            );
-          }}
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Tags & Keywords</FormLabel>
+              <FormControl>
+                <CategoryCheckboxes
+                  value={field.value || ""}
+                  onChange={field.onChange}
+                />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
         />
 
         <div className="space-y-4">
@@ -958,3 +879,92 @@ export function PropertyForm({ property }: PropertyFormProps) {
     </Form>
   );
 }
+
+type CategoryCheckboxesProps = {
+  value: string;
+  onChange: (value: string) => void;
+};
+
+const CategoryCheckboxes = ({ value, onChange }: CategoryCheckboxesProps) => {
+  const [uncategorizedTags, setUncategorizedTags] = useState<string[]>([]);
+
+  const CATEGORY_TAGS = [
+    { id: "adventure", label: "Adventure" },
+    { id: "anti-ageing", label: "Anti-Ageing" },
+    { id: "ayurveda", label: "Ayurveda" },
+    { id: "couples", label: "Couples" },
+    { id: "detox", label: "Detox" },
+    { id: "emotional-healing", label: "Emotional Healing" },
+    { id: "fitness", label: "Fitness" },
+    { id: "fitness-retreats", label: "Fitness Retreats" },
+    { id: "health-retreat", label: "Health Retreat" },
+    { id: "holistic-healing", label: "Holistic Healing" },
+    { id: "longevity", label: "Longevity" },
+    { id: "medical", label: "Medical" },
+    { id: "medical-spa", label: "Medical Spa" },
+    { id: "meditation-retreats", label: "Meditation Retreats" },
+    { id: "mens-retreat", label: "Men's Retreat" },
+    { id: "pampering", label: "Pampering" },
+    { id: "sleep-retreats", label: "Sleep Retreats" },
+    { id: "spa-retreat", label: "Spa Retreat" },
+    { id: "spiritual", label: "Spiritual" },
+    { id: "weight-loss-retreat", label: "Weight Loss Retreat" },
+    { id: "womens-retreat", label: "Women's Retreat" },
+    { id: "yoga", label: "Yoga" },
+    { id: "yoga-retreat", label: "Yoga Retreat" },
+    { id: "entrepreneur-retreat", label: "Entrepreneur Retreat" },
+    { id: "mental-health", label: "Mental Health" },
+  ];
+
+  const existingTags =
+    value
+      ?.split("|")
+      .map((tag) => tag.trim())
+      .map(toKebabCase) || [];
+
+  useEffect(() => {
+    const uncategorized = existingTags.filter(
+      (tag) => !CATEGORY_TAGS.some((cat) => cat.id === tag)
+    );
+    setUncategorizedTags(uncategorized);
+  }, [value]);
+
+  return (
+    <>
+      <div className="grid grid-cols-2 gap-4 rounded bg-white/20 p-4 backdrop-blur md:grid-cols-3 lg:grid-cols-4">
+        {CATEGORY_TAGS.map((category) => (
+          <div
+            key={category.id}
+            className="flex flex-row items-start space-x-3 space-y-0"
+          >
+            <Checkbox
+              checked={existingTags.includes(category.id)}
+              onCheckedChange={(checked) => {
+                const currentTags = new Set(existingTags);
+                if (checked) {
+                  currentTags.add(category.id);
+                } else {
+                  currentTags.delete(category.id);
+                }
+                // Convert back to pipe-separated string with proper formatting
+                const newValue = Array.from(currentTags)
+                  .map(
+                    (tag) =>
+                      CATEGORY_TAGS.find((cat) => cat.id === tag)?.label || tag
+                  )
+                  .join(" | ");
+                onChange(newValue);
+              }}
+            />
+            <label className="text-sm font-normal">{category.label}</label>
+          </div>
+        ))}
+      </div>
+      {uncategorizedTags.length > 0 && (
+        <p className="mt-2 text-sm text-muted-foreground">
+          Unmatched tags: {uncategorizedTags.join(", ")}
+        </p>
+      )}
+    </>
+  );
+};
