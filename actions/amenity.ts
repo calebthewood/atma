@@ -3,13 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
 
-
-
 import { prisma } from "@/lib/prisma";
-
-
-
-
 
 export type EntityType = "property" | "host" | "retreat" | "program";
 export type AmenityType = "activity" | "facility";

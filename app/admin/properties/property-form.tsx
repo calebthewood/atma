@@ -617,7 +617,9 @@ export function PropertyForm({ property }: PropertyFormProps) {
             name="amenityFacility"
             render={({ field }) => (
               <FormItem>
-                <FormLabel className="text-xl font-semibold">Facilities</FormLabel>
+                <FormLabel className="text-xl font-semibold">
+                  Facilities
+                </FormLabel>
                 <FormControl>
                   <AmenityCheckboxes
                     entityId={property.id}
