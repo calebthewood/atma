@@ -39,6 +39,8 @@ import {
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "@/components/ui/use-toast";
 
+import { AmenityCheckboxes } from "../amenity-field";
+
 type PropertyFormProps = {
   property?: Property | null;
 };
@@ -253,7 +255,7 @@ export function PropertyForm({ property }: PropertyFormProps) {
     <Form {...form}>
       <form
         onSubmit={form.handleSubmit(onSubmit)}
-        className="max-w-lg space-y-8"
+        className="max-w-xl space-y-8"
       >
         <FormField
           control={form.control}
@@ -363,7 +365,7 @@ export function PropertyForm({ property }: PropertyFormProps) {
           render={({ field }) => (
             <FormItem>
               <FormLabel className={getFieldStyles("descList")}>
-                Property Overview ({field?.value?.length}/500)
+                Description ({field?.value?.length}/500)
               </FormLabel>
               <FormControl>
                 <Textarea
@@ -444,7 +446,78 @@ export function PropertyForm({ property }: PropertyFormProps) {
           <h3 className="text-lg font-semibold">
             Check-in/Check-out Information
           </h3>
-          <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
+            <FormField
+              control={form.control}
+              name="frontDeskHours"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Front Desk Hours</FormLabel>
+                  <FormControl>
+                    <RadioGroup
+                      onValueChange={(value) => {
+                        if (value === "24/7") {
+                          field.onChange("24/7");
+                          setCustomDeskHours(false);
+                        } else {
+                          setCustomDeskHours(true);
+                          // Only reset field value if it's currently 24/7
+                          if (field.value === "24/7") {
+                            field.onChange("");
+                          }
+                        }
+                      }}
+                      value={field.value === "24/7" ? "24/7" : "custom"}
+                      className="mb-4"
+                    >
+                      <div className="flex space-x-4">
+                        <FormItem className="flex items-center space-x-2">
+                          <RadioGroupItem value="24/7" />
+                          <FormLabel className="font-normal">24/7</FormLabel>
+                        </FormItem>
+                        <FormItem className="flex items-center space-x-2">
+                          <RadioGroupItem value="custom" />
+                          <FormLabel className="font-normal">
+                            Custom Hours
+                          </FormLabel>
+                        </FormItem>
+                      </div>
+                    </RadioGroup>
+                  </FormControl>
+                  {customDeskHours && (
+                    <div className="mt-2 grid grid-cols-2 gap-4">
+                      <div>
+                        <Input
+                          type="time"
+                          value={field.value?.split("-")[0] || ""}
+                          onChange={(e) => {
+                            const endTime = field.value?.split("-")[1] || "";
+                            field.onChange(
+                              `${e.target.value}${endTime ? "-" + endTime : ""}`
+                            );
+                          }}
+                          placeholder="Start Time"
+                        />
+                      </div>
+                      <div>
+                        <Input
+                          type="time"
+                          value={field.value?.split("-")[1] || ""}
+                          onChange={(e) => {
+                            const startTime = field.value?.split("-")[0] || "";
+                            field.onChange(
+                              `${startTime}${e.target.value ? "-" + e.target.value : ""}`
+                            );
+                          }}
+                          placeholder="End Time"
+                        />
+                      </div>
+                    </div>
+                  )}
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
             <FormField
               control={form.control}
               name="checkInTime"
@@ -472,73 +545,124 @@ export function PropertyForm({ property }: PropertyFormProps) {
               )}
             />
           </div>
+        </div>
+
+        <div className="space-y-4">
+          <h3 className="text-lg font-semibold">Amenity Tabs</h3>
           <FormField
             control={form.control}
-            name="frontDeskHours"
+            name="amenityHealing"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Front Desk Hours</FormLabel>
+                <FormLabel className={getFieldStyles("amenityHealing")}>
+                  Spa Offerings ({field?.value?.length}/100)
+                </FormLabel>
                 <FormControl>
-                  <RadioGroup
-                    onValueChange={(value) => {
-                      if (value === "24/7") {
-                        field.onChange("24/7");
-                        setCustomDeskHours(false);
-                      } else {
-                        setCustomDeskHours(true);
-                        // Only reset field value if it's currently 24/7
-                        if (field.value === "24/7") {
-                          field.onChange("");
-                        }
-                      }
-                    }}
-                    value={field.value === "24/7" ? "24/7" : "custom"}
-                    className="mb-4"
-                  >
-                    <div className="flex space-x-4">
-                      <FormItem className="flex items-center space-x-2">
-                        <RadioGroupItem value="24/7" />
-                        <FormLabel className="font-normal">24/7</FormLabel>
-                      </FormItem>
-                      <FormItem className="flex items-center space-x-2">
-                        <RadioGroupItem value="custom" />
-                        <FormLabel className="font-normal">
-                          Custom Hours
-                        </FormLabel>
-                      </FormItem>
-                    </div>
-                  </RadioGroup>
+                  <Textarea
+                    maxLength={200}
+                    className={getFieldStyles("amenityHealing")}
+                    placeholder="Enter spa details here"
+                    {...field}
+                    onBlur={() => handleFieldBlur("amenityHealing")}
+                  />
                 </FormControl>
-                {customDeskHours && (
-                  <div className="mt-2 grid grid-cols-2 gap-4">
-                    <div>
-                      <Input
-                        type="time"
-                        value={field.value?.split("-")[0] || ""}
-                        onChange={(e) => {
-                          const endTime = field.value?.split("-")[1] || "";
-                          field.onChange(
-                            `${e.target.value}${endTime ? "-" + endTime : ""}`
-                          );
-                        }}
-                        placeholder="Start Time"
-                      />
-                    </div>
-                    <div>
-                      <Input
-                        type="time"
-                        value={field.value?.split("-")[1] || ""}
-                        onChange={(e) => {
-                          const startTime = field.value?.split("-")[0] || "";
-                          field.onChange(
-                            `${startTime}${e.target.value ? "-" + e.target.value : ""}`
-                          );
-                        }}
-                        placeholder="End Time"
-                      />
-                    </div>
-                  </div>
-                )}
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="amenityCuisine"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel className={getFieldStyles("amenityCuisine")}>
+                  Cuisine Offerings ({field?.value?.length}/100)
+                </FormLabel>
+                <FormControl>
+                  <Textarea
+                    maxLength={200}
+                    className={getFieldStyles("amenityCuisine")}
+                    placeholder="Enter cuisine details"
+                    {...field}
+                    onBlur={() => handleFieldBlur("amenityCuisine")}
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          {/* <FormField
+            control={form.control}
+            name="amenityActivity"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel className={getFieldStyles("amenityActivity")}>
+                  Activities ({field?.value?.length}/100)
+                </FormLabel>
+                <FormControl>
+                  <Textarea
+                    maxLength={200}
+                    className={getFieldStyles("amenityActivity")}
+                    placeholder="A brief description of the property..."
+                    {...field}
+                    onBlur={() => handleFieldBlur("amenityActivity")}
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          /> */}
+          <FormField
+            control={form.control}
+            name="amenityFacility"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel className="text-xl font-semibold">Facilities</FormLabel>
+                <FormControl>
+                  <AmenityCheckboxes
+                    entityId={property.id}
+                    entityType="property"
+                    amenityType="facility"
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="amenityActivity"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Activities</FormLabel>
+                <FormControl>
+                  <AmenityCheckboxes
+                    entityId={property.id}
+                    entityType="property"
+                    amenityType="activity"
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="amenityFacility"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel className={getFieldStyles("amenityFacility")}>
+                  Raw Facilities ({field?.value?.length}/100)
+                </FormLabel>
+                <FormControl>
+                  <Textarea
+                    maxLength={200}
+                    className={getFieldStyles("amenityFacility")}
+                    placeholder="A brief description of the property..."
+                    {...field}
+                    onBlur={() => handleFieldBlur("amenityFacility")}
+                  />
+                </FormControl>
                 <FormMessage />
               </FormItem>
             )}
@@ -933,30 +1057,30 @@ const CategoryCheckboxes = ({ value, onChange }: CategoryCheckboxesProps) => {
     <>
       <div className="grid grid-cols-2 gap-4 rounded bg-white/20 p-4 backdrop-blur md:grid-cols-3 lg:grid-cols-4">
         {CATEGORY_TAGS.map((category) => (
-          <div
-            key={category.id}
-            className="flex flex-row items-start space-x-3 space-y-0"
-          >
-            <Checkbox
-              checked={existingTags.includes(category.id)}
-              onCheckedChange={(checked) => {
-                const currentTags = new Set(existingTags);
-                if (checked) {
-                  currentTags.add(category.id);
-                } else {
-                  currentTags.delete(category.id);
-                }
-                // Convert back to pipe-separated string with proper formatting
-                const newValue = Array.from(currentTags)
-                  .map(
-                    (tag) =>
-                      CATEGORY_TAGS.find((cat) => cat.id === tag)?.label || tag
-                  )
-                  .join(" | ");
-                onChange(newValue);
-              }}
-            />
-            <label className="text-sm font-normal">{category.label}</label>
+          <div key={category.id} className="">
+            <label className="flex flex-row items-center space-x-3 space-y-0 text-sm font-normal">
+              <Checkbox
+                checked={existingTags.includes(category.id)}
+                onCheckedChange={(checked) => {
+                  const currentTags = new Set(existingTags);
+                  if (checked) {
+                    currentTags.add(category.id);
+                  } else {
+                    currentTags.delete(category.id);
+                  }
+                  // Convert back to pipe-separated string with proper formatting
+                  const newValue = Array.from(currentTags)
+                    .map(
+                      (tag) =>
+                        CATEGORY_TAGS.find((cat) => cat.id === tag)?.label ||
+                        tag
+                    )
+                    .join(" | ");
+                  onChange(newValue);
+                }}
+              />
+              <span>{category.label}</span>
+            </label>
           </div>
         ))}
       </div>

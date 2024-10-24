@@ -1,3 +1,5 @@
+import { ImageUpload } from "../../properties/image-form";
+import { ImageGallery } from "../../properties/image-order-form";
 import { RetreatForm } from "../retreat-form";
 
 export default function Page({ params }: { params: { id: string } }) {
@@ -9,6 +11,8 @@ export default function Page({ params }: { params: { id: string } }) {
       </div>
       <hr className="max-w-lg" />
       <RetreatForm />
+      <ImageUpload recordId={params.id} recordType="retreat" />
+      <ImageGallery recordId={params.id} recordType="retreat" />
     </div>
   );
 }

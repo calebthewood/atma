@@ -227,19 +227,24 @@ export function ImageGallery({ recordId, recordType }: ImageGalleryProps) {
   };
 
   return (
-    <div
-      ref={containerRef}
-      className="grid grid-cols-1 gap-4 p-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4"
-    >
-      {images.map((image, index) => (
-        <ImageItem
-          key={image.id}
-          image={image}
-          index={index}
-          onDescriptionChange={handleDescriptionChange}
-          onDelete={handleDelete}
-        />
-      ))}
+    <div>
+      <span>
+        The first image will be the cover image. Drag & drop to reorder.
+      </span>
+      <div
+        ref={containerRef}
+        className="grid grid-cols-1 gap-4 p-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4"
+      >
+        {images.map((image, index) => (
+          <ImageItem
+            key={image.id}
+            image={image}
+            index={index}
+            onDescriptionChange={handleDescriptionChange}
+            onDelete={handleDelete}
+          />
+        ))}
+      </div>
     </div>
   );
 }

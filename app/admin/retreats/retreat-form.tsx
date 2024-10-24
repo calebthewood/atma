@@ -78,7 +78,6 @@ export function RetreatForm() {
       priceList: "",
       minGuests: 1,
       maxGuests: -1,
-      coverImg: "",
       sourceUrl: "",
       hostId: "",
       propertyId: "",
@@ -277,20 +276,6 @@ export function RetreatForm() {
                   {...field}
                   onChange={(e) => field.onChange(parseInt(e.target.value))}
                 />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-
-        <FormField
-          control={form.control}
-          name="coverImg"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Cover Image URL</FormLabel>
-              <FormControl>
-                <Input placeholder="https://example.com/image.jpg" {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
