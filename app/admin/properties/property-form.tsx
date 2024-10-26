@@ -223,9 +223,9 @@ export function PropertyForm({ property }: PropertyFormProps) {
     const isDirty = form.formState.dirtyFields[fieldName];
 
     return cn("transition-colors duration-300", {
-      "border-atma-yellow text-atma-yellow": isSubmitting,
-      "border-atma-mint text-atma-mint": isValid && isDirty && !isSubmitting,
-      "border-atma-red text-atma-red": !isValid && !isSubmitting,
+      "border-atma-yellow": isSubmitting,
+      "border-atma-mint": isValid && isDirty && !isSubmitting,
+      "border-atma-red": !isValid && !isSubmitting,
     });
   };
 
