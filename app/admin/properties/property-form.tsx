@@ -1,6 +1,6 @@
 "use client";
 
-import { FocusEvent, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { getHosts } from "@/actions/host-actions";
 import {
   createProperty,

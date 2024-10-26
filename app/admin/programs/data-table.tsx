@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { deleteProgram, getPaginatedPrograms } from "@/actions/program-actions";
@@ -27,9 +27,6 @@ import {
   DropdownMenu,
   DropdownMenuCheckboxItem,
   DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
@@ -82,23 +79,6 @@ const columns: ColumnDef<Program>[] = [
     cell: ({ row }) => {
       const priceList = row.getValue("priceList") as string | null;
       return priceList ? priceList.split(",")[0] + "..." : "N/A";
-    },
-  },
-  {
-    accessorKey: "propertyId",
-    header: "Property",
-    cell: ({ row }) => {
-      const propertyId = row.getValue("propertyId") as string | null;
-      return propertyId ? (
-        <Link
-          href={`/admin/properties/${propertyId}`}
-          className="text-blue-600 hover:underline"
-        >
-          View Property
-        </Link>
-      ) : (
-        "N/A"
-      );
     },
   },
   {
@@ -163,43 +143,83 @@ export function ProgramDataTable() {
   });
   const [totalPages, setTotalPages] = useState(0);
 
-  useEffect(() => {
-    fetchPrograms();
-  }, [pagination.pageIndex, pagination.pageSize]);
-
-  const fetchPrograms = async () => {
+  // Memoize fetchPrograms to prevent recreation on every render
+  const fetchPrograms = useCallback(async () => {
     try {
+      const searchTerm =
+        (columnFilters.find((f) => f.id === "name")?.value as string) ?? "";
       const result = await getPaginatedPrograms(
         pagination.pageIndex + 1,
-        pagination.pageSize
+        pagination.pageSize,
+        searchTerm
       );
       setData(result.programs);
       setTotalPages(result.totalPages);
     } catch (error) {
       console.error("Failed to fetch programs:", error);
     }
-  };
+  }, [pagination.pageIndex, pagination.pageSize, columnFilters]);
 
-  const table = useReactTable({
-    data,
-    columns,
-    onSortingChange: setSorting,
-    onColumnFiltersChange: setColumnFilters,
-    getCoreRowModel: getCoreRowModel(),
-    getPaginationRowModel: getPaginationRowModel(),
-    getSortedRowModel: getSortedRowModel(),
-    getFilteredRowModel: getFilteredRowModel(),
-    onColumnVisibilityChange: setColumnVisibility,
-    onPaginationChange: setPagination,
-    state: {
-      sorting,
-      columnFilters,
-      columnVisibility,
-      pagination,
+  // Memoize table config
+  const tableConfig = useMemo(
+    () => ({
+      data,
+      columns,
+      onSortingChange: setSorting,
+      onColumnFiltersChange: setColumnFilters,
+      getCoreRowModel: getCoreRowModel(),
+      getPaginationRowModel: getPaginationRowModel(),
+      getSortedRowModel: getSortedRowModel(),
+      getFilteredRowModel: getFilteredRowModel(),
+      onColumnVisibilityChange: setColumnVisibility,
+      onPaginationChange: setPagination,
+      state: {
+        sorting,
+        columnFilters,
+        columnVisibility,
+        pagination,
+      },
+      manualPagination: true,
+      pageCount: totalPages,
+    }),
+    [data, sorting, columnFilters, columnVisibility, pagination, totalPages]
+  );
+
+  const table = useReactTable(tableConfig);
+
+  // Add cleanup and prevent state updates if unmounted
+  useEffect(() => {
+    let mounted = true;
+
+    const doFetch = async () => {
+      await fetchPrograms();
+    };
+
+    if (mounted) {
+      doFetch();
+    }
+
+    return () => {
+      mounted = false;
+    };
+  }, [fetchPrograms]);
+
+  // Memoize the filter handler
+  const handleFilter = useCallback(
+    (event: React.ChangeEvent<HTMLInputElement>) => {
+      table.getColumn("name")?.setFilterValue(event.target.value);
     },
-    manualPagination: true,
-    pageCount: totalPages,
-  });
+    [table]
+  );
+
+  // Memoize pagination handlers
+  const handlePreviousPage = useCallback(() => {
+    table.previousPage();
+  }, [table]);
+
+  const handleNextPage = useCallback(() => {
+    table.nextPage();
+  }, [table]);
 
   return (
     <div className="w-full">
@@ -207,9 +227,7 @@ export function ProgramDataTable() {
         <Input
           placeholder="Filter programs..."
           value={(table.getColumn("name")?.getFilterValue() as string) ?? ""}
-          onChange={(event) =>
-            table.getColumn("name")?.setFilterValue(event.target.value)
-          }
+          onChange={handleFilter}
           className="max-w-sm"
         />
         <DropdownMenu>
@@ -222,20 +240,16 @@ export function ProgramDataTable() {
             {table
               .getAllColumns()
               .filter((column) => column.getCanHide())
-              .map((column) => {
-                return (
-                  <DropdownMenuCheckboxItem
-                    key={column.id}
-                    className="capitalize"
-                    checked={column.getIsVisible()}
-                    onCheckedChange={(value) =>
-                      column.toggleVisibility(!!value)
-                    }
-                  >
-                    {column.id}
-                  </DropdownMenuCheckboxItem>
-                );
-              })}
+              .map((column) => (
+                <DropdownMenuCheckboxItem
+                  key={column.id}
+                  className="capitalize"
+                  checked={column.getIsVisible()}
+                  onCheckedChange={(value) => column.toggleVisibility(!!value)}
+                >
+                  {column.id}
+                </DropdownMenuCheckboxItem>
+              ))}
           </DropdownMenuContent>
         </DropdownMenu>
       </div>

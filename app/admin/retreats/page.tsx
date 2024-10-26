@@ -24,7 +24,7 @@ export default function Page() {
           <RetreatForm />
         </TabsContent>
         <TabsContent value="list">
-          <RetreatDataTable />
+          {/* <RetreatDataTable /> */}
         </TabsContent>
       </Tabs>
     </div>

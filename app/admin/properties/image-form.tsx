@@ -8,6 +8,7 @@ import { imageProcessor } from "@/lib/sharp";
 import { cn } from "@/lib/utils";
 import { Progress } from "@/components/ui/progress";
 import { toast } from "@/components/ui/use-toast";
+import { H2, Lead } from "@/components/typography";
 
 interface ImageUploadProps {
   recordId: string;
@@ -93,6 +94,11 @@ export function ImageUpload({ recordId, recordType }: ImageUploadProps) {
 
   return (
     <div className="w-full max-w-md space-y-4">
+      <H2>Image Upload</H2>
+      <Lead>
+        Images for a program/retreat come from their property. If we want to
+        change this, discuss with dev.
+      </Lead>
       <div
         {...getRootProps()}
         className={cn(

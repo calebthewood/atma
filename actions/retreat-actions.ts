@@ -240,19 +240,16 @@ export async function getRetreatWithPrice(retreatId: string) {
   }
 }
 
-export async function deleteRetreat(retreatId: string) {
+export async function deleteRetreat(id: string) {
   try {
     const retreat = await prisma.retreat.delete({
-      where: {
-        id: retreatId,
-      },
+      where: { id },
     });
-
-    revalidatePath("/admin/retreats");
-
+    revalidatePath("/admin/properties");
+    revalidatePath(`/admin/properties/${id}`);
     return retreat;
   } catch (error) {
-    console.error(`Error deleting retreat with id ${retreatId}:`, error);
-    throw new Error(`Failed to delete retreat with id ${retreatId}`);
+    console.error(`Error deleting retreat with id ${id}:`, error);
+    throw new Error(`Failed to delete retreat with id ${id}`);
   }
 }

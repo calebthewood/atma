@@ -7,7 +7,7 @@
   },
   "scripts": {
     "reseed": "npx prisma db push --force-reset && npx prisma db push && node prisma/seed.js",
-    "dev": "npx prisma db push && next dev --turbo",
+    "dev": "npx prisma db push && next dev",
     "build": "next build",
     "start": "next start",
     "lint": "next lint",

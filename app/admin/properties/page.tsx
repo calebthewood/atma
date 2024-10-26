@@ -12,7 +12,7 @@ export default function Page() {
           Properties belong to Hosts, Retreats & Programs are held at a Property
         </p>
       </div>
-      <Tabs defaultValue="list" className="">
+      <Tabs defaultValue="list">
         <TabsList>
           <TabsTrigger value="list">View Properties</TabsTrigger>
           <TabsTrigger value="form">Create Property</TabsTrigger>
@@ -21,7 +21,7 @@ export default function Page() {
           <PropertyForm />
         </TabsContent>
         <TabsContent value="list">
-          <PropertyDataTable />
+          {/* <PropertyDataTable /> */}
         </TabsContent>
       </Tabs>
     </div>

@@ -1,11 +1,11 @@
 "use client";
 
 import React, { useEffect, useMemo, useState } from "react";
-// import { Amenity } from "@prisma/client";
 import { z } from "zod";
 
 import { Checkbox } from "@/components/ui/checkbox";
 import { toast } from "@/components/ui/use-toast";
+import { H3, Lead } from "@/components/typography";
 
 import {
   Amenity,
@@ -148,26 +148,30 @@ export const AmenityCheckboxes = ({
   }
 
   return (
-    <div className="space-y-6">
-      {Array.from(amenitiesByCategory.entries()).map(([category, items]) => (
-        <div key={category} className="space-y-2">
-          <h3 className="font-medium">{category}</h3>
-          <div className="grid grid-cols-2 gap-4 rounded bg-white/20 p-4 backdrop-blur md:grid-cols-2">
-            {items.map((amenity) => (
-              <div key={amenity.id}>
-                <label className="flex flex-row items-center space-x-3 space-y-0 text-sm font-normal">
-                  <Checkbox
-                    checked={selectedAmenities.has(amenity.id)}
-                    onCheckedChange={() => handleToggle(amenity.id)}
-                    aria-label={`Toggle ${amenity.name}`}
-                  />
-                  <span className="text-nowrap">{amenity.name}</span>
-                </label>
-              </div>
-            ))}
+    <>
+      <H3>Amenities</H3>
+      <Lead>Amenities can be set on Property, Program, or Retreat</Lead>
+      <div className="space-y-6">
+        {Array.from(amenitiesByCategory.entries()).map(([category, items]) => (
+          <div key={category} className="space-y-2">
+            <h3 className="font-medium">{category}</h3>
+            <div className="grid grid-cols-2 gap-4 rounded bg-white/20 p-4 backdrop-blur md:grid-cols-2">
+              {items.map((amenity) => (
+                <div key={amenity.id}>
+                  <label className="flex flex-row items-center space-x-3 space-y-0 text-sm font-normal">
+                    <Checkbox
+                      checked={selectedAmenities.has(amenity.id)}
+                      onCheckedChange={() => handleToggle(amenity.id)}
+                      aria-label={`Toggle ${amenity.name}`}
+                    />
+                    <span className="text-nowrap">{amenity.name}</span>
+                  </label>
+                </div>
+              ))}
+            </div>
           </div>
-        </div>
-      ))}
-    </div>
+        ))}
+      </div>
+    </>
   );
 };

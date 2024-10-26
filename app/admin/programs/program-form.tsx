@@ -30,12 +30,16 @@ import {
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "@/components/ui/use-toast";
+import { H3, Lead } from "@/components/typography";
+
+import { AmenityCheckboxes } from "../amenity-field";
 
 type ProgramFormProps = {
-  program?: Program;
+  program?: Program | null;
 };
 
 export function ProgramForm({ program }: ProgramFormProps) {
+  const [isLoading, setIsLoading] = useState(false);
   const [hosts, setHosts] = useState<Host[]>([]);
   const [properties, setProperties] = useState<Property[]>([]);
 
@@ -74,28 +78,8 @@ export function ProgramForm({ program }: ProgramFormProps) {
     fetchData();
   }, []);
 
-  const handleFieldBlur = async (fieldName: keyof ProgramFormData) => {
-    if (program) {
-      try {
-        const fieldValue = form.getValues(fieldName);
-        await updateProgram(program.id, { [fieldName]: fieldValue });
-        toast({
-          title: "Updated",
-          description: `${fieldName} has been updated.`,
-        });
-      } catch (error) {
-        console.error(`Error updating ${fieldName}:`, error);
-        toast({
-          title: "Error",
-          description: `Failed to update ${fieldName}. Please try again.`,
-          variant: "destructive",
-        });
-        form.setError(fieldName, { type: "manual", message: "Update failed" });
-      }
-    }
-  };
-
   async function onSubmit(values: ProgramFormData) {
+    setIsLoading(true);
     try {
       if (program) {
         await updateProgram(program.id, values);
@@ -118,8 +102,37 @@ export function ProgramForm({ program }: ProgramFormProps) {
         description: "Failed to save program. Please try again.",
         variant: "destructive",
       });
+    } finally {
+      setIsLoading(false);
     }
   }
+
+  const handleFieldBlur = async (fieldName: keyof ProgramFormData) => {
+    if (!program) return;
+
+    try {
+      const fieldValue = form.getValues(fieldName);
+      await updateProgram(program.id, { [fieldName]: fieldValue });
+
+      toast({
+        title: "Updated",
+        description: `${fieldName} has been updated.`,
+      });
+    } catch (error) {
+      console.error(`Error updating ${fieldName}:`, error);
+
+      toast({
+        title: "Error",
+        description: `Failed to update ${fieldName}. Please try again.`,
+        variant: "destructive",
+      });
+
+      form.setError(fieldName, {
+        type: "manual",
+        message: "Update failed",
+      });
+    }
+  };
 
   const getFieldStyles = (fieldName: keyof ProgramFormData) => {
     const isSubmitting = form.formState.isSubmitting;
@@ -128,7 +141,7 @@ export function ProgramForm({ program }: ProgramFormProps) {
 
     return cn("transition-colors duration-300", {
       "border-atma-yellow text-atma-yellow": isSubmitting,
-      "border-atma-amint text-atma-mint": isValid && isDirty && !isSubmitting,
+      "border-atma-mint text-atma-mint": isValid && isDirty && !isSubmitting,
       "border-atma-red text-atma-red": !isValid && !isSubmitting,
     });
   };
@@ -136,9 +149,10 @@ export function ProgramForm({ program }: ProgramFormProps) {
   return (
     <Form {...form}>
       <form
-        className="max-w-lg space-y-8"
         onSubmit={form.handleSubmit(onSubmit)}
+        className="max-w-xl space-y-8"
       >
+        <H3>General</H3>
         <FormField
           control={form.control}
           name="name"
@@ -150,7 +164,7 @@ export function ProgramForm({ program }: ProgramFormProps) {
               <FormControl>
                 <Input
                   className={getFieldStyles("name")}
-                  placeholder="Yoga Retreat"
+                  placeholder="Enter program name"
                   {...field}
                   onBlur={() => handleFieldBlur("name")}
                 />
@@ -171,7 +185,7 @@ export function ProgramForm({ program }: ProgramFormProps) {
               <FormControl>
                 <Input
                   className={getFieldStyles("duration")}
-                  placeholder="7 days"
+                  placeholder="e.g., 7 days"
                   {...field}
                   onBlur={() => handleFieldBlur("duration")}
                 />
@@ -191,8 +205,8 @@ export function ProgramForm({ program }: ProgramFormProps) {
               </FormLabel>
               <FormControl>
                 <Textarea
-                  placeholder="Describe the program..."
                   className={getFieldStyles("desc")}
+                  placeholder="Describe the program..."
                   {...field}
                   onBlur={() => handleFieldBlur("desc")}
                 />
@@ -201,6 +215,7 @@ export function ProgramForm({ program }: ProgramFormProps) {
             </FormItem>
           )}
         />
+
         <FormField
           control={form.control}
           name="priceList"
@@ -212,7 +227,7 @@ export function ProgramForm({ program }: ProgramFormProps) {
               <FormControl>
                 <Input
                   className={getFieldStyles("priceList")}
-                  placeholder="1000,1500,2000"
+                  placeholder="e.g., 1000,1500,2000"
                   {...field}
                   onBlur={() => handleFieldBlur("priceList")}
                 />
@@ -242,6 +257,7 @@ export function ProgramForm({ program }: ProgramFormProps) {
                   onBlur={() => handleFieldBlur("sourceUrl")}
                 />
               </FormControl>
+              <FormDescription>For admin reference only</FormDescription>
               <FormMessage />
             </FormItem>
           )}
@@ -255,13 +271,7 @@ export function ProgramForm({ program }: ProgramFormProps) {
               <FormLabel className={getFieldStyles("propertyId")}>
                 Property
               </FormLabel>
-              <Select
-                onValueChange={(value) => {
-                  field.onChange(value);
-                  handleFieldBlur("propertyId");
-                }}
-                defaultValue={field.value}
-              >
+              <Select onValueChange={field.onChange} defaultValue={field.value}>
                 <FormControl>
                   <SelectTrigger className={getFieldStyles("propertyId")}>
                     <SelectValue placeholder="Select a property" />
@@ -286,13 +296,7 @@ export function ProgramForm({ program }: ProgramFormProps) {
           render={({ field }) => (
             <FormItem>
               <FormLabel className={getFieldStyles("hostId")}>Host</FormLabel>
-              <Select
-                onValueChange={(value) => {
-                  field.onChange(value);
-                  handleFieldBlur("hostId");
-                }}
-                defaultValue={field.value}
-              >
+              <Select onValueChange={field.onChange} defaultValue={field.value}>
                 <FormControl>
                   <SelectTrigger className={getFieldStyles("hostId")}>
                     <SelectValue placeholder="Select a host" />
@@ -310,18 +314,29 @@ export function ProgramForm({ program }: ProgramFormProps) {
             </FormItem>
           )}
         />
+
+        {program && (
+          <FormItem>
+            <FormControl>
+              <AmenityCheckboxes
+                entityId={program.id}
+                entityType="program"
+                amenityType="facility"
+              />
+            </FormControl>
+            <FormMessage />
+          </FormItem>
+        )}
+
         <Button
           type="submit"
-          disabled={form.formState.isSubmitting}
+          disabled={isLoading}
           className={cn({
-            "bg-atma-yellow text-black":
-              form.formState.isSubmitting ||
-              form.formState.isDirty ||
-              form.formState.isLoading,
-            "bg-atma-amint text-black": form.formState.isSubmitSuccessful,
+            "bg-atma-yellow text-black": isLoading || form.formState.isDirty,
+            "bg-atma-mint text-black": form.formState.isSubmitSuccessful,
           })}
         >
-          {form.formState.isSubmitting
+          {isLoading
             ? "Submitting..."
             : program
               ? "Update Program"

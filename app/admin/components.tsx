@@ -56,10 +56,6 @@ export function AdminActionMenu({
   handleDelete: () => void;
   publicHref: string;
 }) {
-  const router = useRouter();
-  useEffect(() => {
-    router.refresh();
-  }, [handleDelete]);
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>

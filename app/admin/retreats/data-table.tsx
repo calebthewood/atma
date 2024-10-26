@@ -1,8 +1,7 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import Link from "next/link";
-import { getPaginatedRetreats } from "@/actions/retreat-actions";
+import { deleteRetreat, getPaginatedRetreats } from "@/actions/retreat-actions";
 import { CaretSortIcon, ChevronDownIcon } from "@radix-ui/react-icons";
 import {
   ColumnDef,
@@ -33,6 +32,8 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+
+import { AdminActionMenu } from "../components";
 
 type Retreat = {
   id: string;
@@ -109,13 +110,24 @@ const columns: ColumnDef<Retreat>[] = [
     id: "actions",
     cell: ({ row }) => {
       const retreat = row.original;
+
+      const handleDelete = async () => {
+        if (window.confirm("Are you sure you want to delete this retreat?")) {
+          try {
+            await deleteRetreat(retreat.id);
+          } catch (error) {
+            console.error("Failed to delete retreat:", error);
+            alert("Failed to delete retreat. Please try again.");
+          }
+        }
+      };
+
       return (
-        <Link
-          href={`/admin/retreats/${retreat.id}`}
-          className="text-blue-600 hover:underline"
-        >
-          View Details
-        </Link>
+        <AdminActionMenu
+          editHref={`/admin/retreats/${retreat.id}`}
+          publicHref={`/retreats/${retreat.id}`}
+          handleDelete={handleDelete}
+        />
       );
     },
   },
@@ -149,7 +161,6 @@ export function RetreatDataTable() {
       setTotalPages(result.totalPages);
     } catch (error) {
       console.error("Failed to fetch retreats:", error);
-      // TODO: Add error handling UI
     }
   };
 

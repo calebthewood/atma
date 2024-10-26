@@ -54,16 +54,6 @@ export async function updateProperty(
   }
 }
 
-// export async function getProperties() {
-//   try {
-//     const properties = await prisma.property.findMany();
-//     return properties;
-//   } catch (error) {
-//     console.error("Failed to get properties:", error);
-//     throw new Error("Failed to get properties");
-//   }
-// }
-
 export type PropertiesWithImages = Prisma.PropertyGetPayload<{
   include: {
     host: {
@@ -155,49 +145,12 @@ export async function getPropertyById(propertyId: string) {
   return nullToUndefined(property);
 }
 
-// Define a type that includes all optional fields from the Property model
-type PropertyUpdateInput = Partial<
-  Omit<Prisma.PropertyUpdateInput, "id" | "createdAt" | "updatedAt">
->;
-
-// export async function updateProperty(
-//   propertyId: string,
-//   data: PropertyUpdateInput
-// ) {
-//   try {
-//     // Remove any undefined values to avoid Prisma errors
-//     const cleanedData = Object.entries(data).reduce((acc, [key, value]) => {
-//       if (value !== undefined) {
-//         //@ts-ignore
-//         acc[key] = value;
-//       }
-//       return acc;
-//     }, {} as PropertyUpdateInput);
-
-//     const property = await prisma.property.update({
-//       where: {
-//         id: propertyId,
-//       },
-//       data: cleanedData,
-//     });
-
-//     revalidatePath(`/admin/property/${propertyId}`);
-
-//     return property;
-//   } catch (error) {
-//     console.error("Failed to update property:", error);
-//     throw new Error("Failed to update property");
-//   }
-// }
-
-export async function deleteProperty(propertyId: string) {
+export async function deleteProperty(id: string) {
   const property = await prisma.property.delete({
-    where: {
-      id: propertyId,
-    },
+    where: { id },
   });
 
-  revalidatePath("/properties");
-
+  revalidatePath("/admin/properties");
+  revalidatePath(`/admin/properties/${id}`);
   return property;
 }

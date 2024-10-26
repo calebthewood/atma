@@ -28,7 +28,7 @@ interface ImageData {
 
 interface ImageGalleryProps {
   recordId: string;
-  recordType: "property" | "retreat" | "host";
+  recordType: "property" | "program" | "host" | "retreat" | "room";
 }
 
 function ImageItem({

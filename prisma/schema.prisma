@@ -382,11 +382,12 @@ model Image {
 }
 
 model Amenity {
-    id           String @id @default(cuid())
-    type         String // activity, facility, etc
-    category     String // mind-body-practices
-    categoryName String // Mind-Body Practices, Recreational Sports, etc
-    name         String // yoga, sauna, wakeboarding, mediation, etc
+    id            String  @id @default(cuid())
+    type          String // activity, facility, etc
+    categoryValue String? // mind-body-practices
+    categoryName  String? // Mind-Body Practices, Recreational Sports, etc
+    name          String? // Tai Chi, Yoga, Sauna
+    value         String? // tai-chi, sauna, etc
 
     property   Property? @relation(fields: [propertyId], references: [id])
     propertyId String?

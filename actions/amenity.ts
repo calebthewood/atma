@@ -10,9 +10,10 @@ export type AmenityType = "activity" | "facility";
 export type Amenity = {
   id: string;
   type: string;
-  category: string;
-  categoryName: string;
-  name: string;
+  categoryValue: string | null;
+  categoryName: string | null;
+  name: string | null;
+  value: string | null;
 };
 
 // Validation schemas
@@ -35,9 +36,10 @@ export async function getAmenitiesByType(type: AmenityType) {
       select: {
         id: true,
         type: true,
-        category: true,
+        categoryValue: true,
         categoryName: true,
         name: true,
+        value: true,
       },
     });
 
@@ -87,9 +89,10 @@ export async function getEntityAmenities(
       select: {
         id: true,
         type: true,
-        category: true,
+        categoryValue: true,
         categoryName: true,
         name: true,
+        value: true,
       },
     });
 
@@ -149,5 +152,70 @@ export async function updateEntityAmenity(
     }
     console.error("Failed to update amenity:", error);
     throw new Error("Failed to update entity amenity");
+  }
+}
+
+/**
+ * Create a new amenity
+ */
+export async function createAmenity(data: {
+  type: string;
+  categoryValue: string;
+  categoryName: string;
+  name: string;
+  value: string;
+}) {
+  try {
+    const amenity = await prisma.amenity.create({
+      data: {
+        type: data.type,
+        categoryValue: data.categoryValue,
+        categoryName: data.categoryName,
+        name: data.name,
+        value: data.value,
+      },
+    });
+
+    return amenity;
+  } catch (error) {
+    console.error("Failed to create amenity:", error);
+    throw new Error("Failed to create amenity");
+  }
+}
+
+/**
+ * Get amenities grouped by category
+ */
+export async function getAmenitiesByCategory(type: AmenityType) {
+  try {
+    const validatedType = amenityTypeSchema.parse(type);
+
+    const amenities = await prisma.amenity.findMany({
+      where: {
+        type: validatedType,
+      },
+      orderBy: [{ categoryName: "asc" }, { name: "asc" }],
+    });
+
+    // Group amenities by category
+    const grouped = amenities.reduce(
+      (acc, amenity) => {
+        const category = amenity.categoryName || "Uncategorized";
+        if (!acc[category]) {
+          acc[category] = [];
+        }
+        acc[category].push(amenity);
+        return acc;
+      },
+      {} as Record<string, typeof amenities>
+    );
+
+    return grouped;
+  } catch (error) {
+    if (error instanceof z.ZodError) {
+      throw new Error(`Invalid amenity type: ${type}`);
+    }
+    console.error("Failed to fetch amenities by category:", error);
+    throw new Error("Failed to fetch amenities by category");
   }
 }
