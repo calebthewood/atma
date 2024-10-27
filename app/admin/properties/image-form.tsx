@@ -93,12 +93,8 @@ export function ImageUpload({ recordId, recordType }: ImageUploadProps) {
   });
 
   return (
-    <div className="w-full max-w-md space-y-4">
-      <H2>Image Upload</H2>
-      <Lead>
-        Images for a program/retreat come from their property. If we want to
-        change this, discuss with dev.
-      </Lead>
+    <div className="w-full max-w-md space-y-4 mx-auto">
+      <h4 className="text-sm font-medium">Upload New Images</h4>
       <div
         {...getRootProps()}
         className={cn(

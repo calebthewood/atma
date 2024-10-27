@@ -5,8 +5,24 @@ import { Prisma, Retreat } from "@prisma/client";
 
 import prisma from "@/lib/prisma";
 
-type RetreatInput = {
-  bookingType: "Flexible" | "Fixed" | "Open";
+// Base type for shared properties
+type RetreatBaseInput = {
+  name: string | null;
+  desc: string | null;
+  duration: string | null;
+  date: string | null;
+  priceList: string | null;
+  minGuests: number | null;
+  maxGuests: number | null;
+  coverImg?: string | null;
+  sourceUrl?: string | null;
+  hostId: string | null;
+  propertyId: string;
+  bookingType: "Flexible" | "Fixed" | "Open" | null;
+};
+
+// Type for creating a new retreat - requires certain fields
+export type CreateRetreatInput = {
   name: string;
   desc: string;
   duration: string;
@@ -14,13 +30,17 @@ type RetreatInput = {
   priceList: string;
   minGuests: number;
   maxGuests: number;
-  coverImg?: string;
-  sourceUrl?: string;
-  hostId: string;
   propertyId: string;
+  bookingType: "Flexible" | "Fixed" | "Open";
+  hostId: string | null;
+  coverImg?: string | null;
+  sourceUrl?: string | null;
 };
 
-export async function createRetreat(data: RetreatInput) {
+// Type for updating a retreat - all fields optional
+export type UpdateRetreatInput = Partial<RetreatBaseInput>;
+
+export async function createRetreat(data: CreateRetreatInput) {
   try {
     const retreat = await prisma.retreat.create({
       data: {
@@ -28,13 +48,17 @@ export async function createRetreat(data: RetreatInput) {
         name: data.name,
         desc: data.desc,
         duration: data.duration,
-        date: new Date(data.date),
+        date: data.date ? new Date(data.date) : null,
         priceList: data.priceList,
         minGuests: data.minGuests,
         maxGuests: data.maxGuests,
-        coverImg: data.coverImg,
-        sourceUrl: data.sourceUrl,
-        host: { connect: { id: data.hostId } },
+        coverImg: data.coverImg || null,
+        sourceUrl: data.sourceUrl || null,
+        ...(data.hostId
+          ? {
+              host: { connect: { id: data.hostId } },
+            }
+          : {}),
         property: { connect: { id: data.propertyId } },
       },
     });
@@ -47,27 +71,35 @@ export async function createRetreat(data: RetreatInput) {
   }
 }
 
-export async function updateRetreat(id: string, data: RetreatInput) {
+export async function updateRetreat(id: string, data: UpdateRetreatInput) {
   try {
+    const updateData: any = { ...data };
+
+    // Handle date conversion if present
+    if (data.date) {
+      updateData.date = new Date(data.date);
+    }
+
+    // Handle relations separately
+    if (data.hostId !== undefined) {
+      updateData.host = data.hostId
+        ? { connect: { id: data.hostId } }
+        : { disconnect: true };
+      delete updateData.hostId;
+    }
+
+    if (data.propertyId) {
+      updateData.property = { connect: { id: data.propertyId } };
+      delete updateData.propertyId;
+    }
+
     const retreat = await prisma.retreat.update({
       where: { id },
-      data: {
-        bookingType: data.bookingType,
-        name: data.name,
-        desc: data.desc,
-        duration: data.duration,
-        date: new Date(data.date),
-        priceList: data.priceList,
-        minGuests: data.minGuests,
-        maxGuests: data.maxGuests,
-        coverImg: data.coverImg,
-        sourceUrl: data.sourceUrl,
-        host: { connect: { id: data.hostId } },
-        property: { connect: { id: data.propertyId } },
-      },
+      data: updateData,
     });
 
     revalidatePath("/admin/retreats");
+    revalidatePath(`/admin/retreats/${id}`);
     return retreat;
   } catch (error) {
     console.error("Error updating retreat:", error);
@@ -85,6 +117,11 @@ export async function getRetreatById(
   try {
     const retreat = await prisma.retreat.findUnique({
       where: { id },
+      include: {
+        amenities: true,
+        host: true,
+        property: true,
+      },
     });
 
     if (!retreat) {
@@ -253,3 +290,55 @@ export async function deleteRetreat(id: string) {
     throw new Error(`Failed to delete retreat with id ${id}`);
   }
 }
+
+
+export async function getRetreat(id: string) {
+  try {
+    const retreat = await prisma.retreat.findUnique({
+      where: { id },
+      include: {
+        property: true,
+        host: true,
+        amenities: true,
+        images: {
+          orderBy: {
+            createdAt: 'asc'
+          }
+        },
+        retreatInstances: {
+          orderBy: {
+            startDate: 'asc'
+          }
+        },
+      }
+    });
+
+    if (!retreat) {
+      return {
+        success: false,
+        error: "Retreat not found"
+      };
+    }
+
+    return {
+      success: true,
+      retreat
+    };
+
+  } catch (error) {
+    console.error("Error fetching retreat:", error);
+    return {
+      success: false,
+      error: "Failed to fetch retreat"
+    };
+  }
+}
+
+// Type for the return value
+export type GetRetreatResult = {
+  success: true;
+  retreat: NonNullable<Awaited<ReturnType<typeof getRetreat>>["retreat"]>;
+} | {
+  success: false;
+  error: string;
+};

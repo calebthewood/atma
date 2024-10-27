@@ -20,6 +20,7 @@ export async function getProperty(id: string) {
 
 export async function createProperty(data: PropertyFormData) {
   try {
+    console.log("data ", data);
     const property = await prisma.property.create({
       data: {
         ...data,

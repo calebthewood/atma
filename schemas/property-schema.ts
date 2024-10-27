@@ -11,6 +11,7 @@ export const propertyFormSchema = z.object({
   lng: z.number().optional(),
   coordType: z.string().optional(),
   city: z.string().optional(),
+  country: z.string().optional(),
   address: z.string().optional(),
   addressRaw: z.string().optional(),
   nearbyAirport: z.string().optional(),
@@ -61,8 +62,8 @@ export const propertyFormSchema = z.object({
     .optional(),
   extraBeds: z.boolean().optional(),
   extraBedFee: z
-    .string()
-    .min(1, { message: "Please specify extra bed fee" })
+    .number()
+    .min(0, { message: "Fee cannot be negative" })
     .optional(),
   breakFastProvided: z.boolean(),
   breakfastType: z
@@ -72,7 +73,10 @@ export const propertyFormSchema = z.object({
       (val) => {
         if (!val) return true;
         const validTypes = ["buffet", "gluten-free", "vegan", "vegetarian"];
-        return val.split(",").every((type) => validTypes.includes(type.trim()));
+        return val
+          .toLowerCase()
+          .split(",")
+          .every((type) => validTypes.includes(type.trim()));
       },
       {
         message: "Invalid breakfast type selection",

@@ -21,7 +21,7 @@ export default function Page() {
           <PropertyForm />
         </TabsContent>
         <TabsContent value="list">
-          {/* <PropertyDataTable /> */}
+          <PropertyDataTable />
         </TabsContent>
       </Tabs>
     </div>

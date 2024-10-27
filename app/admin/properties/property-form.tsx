@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import { getHosts } from "@/actions/host-actions";
 import {
   createProperty,
@@ -13,7 +14,7 @@ import {
 } from "@/schemas/property-schema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Host, Property } from "@prisma/client";
-import { RegisterOptions, useForm } from "react-hook-form";
+import { useForm } from "react-hook-form";
 
 import { cn, toKebabCase } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -38,8 +39,8 @@ import {
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "@/components/ui/use-toast";
-
-import { AmenityCheckboxes } from "../amenity-field";
+import CountrySelect from "@/components/country-select";
+import { Lead } from "@/components/typography";
 
 type PropertyFormProps = {
   property?: Property | null;
@@ -50,7 +51,7 @@ export function PropertyForm({ property }: PropertyFormProps) {
   const [customDeskHours, setCustomDeskHours] = useState(false);
   const [hosts, setHosts] = useState<Host[]>([]);
   const [uncategorizedTags, setUncategorizedTags] = useState<string[]>([]);
-
+  const router = useRouter();
   const form = useForm<PropertyFormData>({
     resolver: zodResolver(propertyFormSchema),
     defaultValues: {
@@ -63,6 +64,7 @@ export function PropertyForm({ property }: PropertyFormProps) {
       lng: property?.lng || undefined,
       coordType: property?.coordType || "",
       city: property?.city || "",
+      country: property?.country || "",
       address: property?.address || property?.addressRaw || "",
       addressRaw: property?.addressRaw || "",
       nearbyAirport: property?.nearbyAirport || "",
@@ -77,14 +79,14 @@ export function PropertyForm({ property }: PropertyFormProps) {
       amenityFacility: property?.amenityFacility || "",
       rating: property?.rating || "",
       coverImg: property?.coverImg || "",
-      hostId: property?.hostId || "",
-      checkInTime: property?.checkInTime || "",
-      checkOutTime: property?.checkOutTime || "",
-      frontDeskHours: property?.frontDeskHours || "",
+      hostId: property?.hostId || hosts?.[0]?.id,
+      checkInTime: property?.checkInTime || undefined,
+      checkOutTime: property?.checkOutTime || undefined,
+      frontDeskHours: property?.frontDeskHours || "24/7",
       childrenAllowed: property?.childrenAllowed ?? false,
       additionalFeeForChildren: property?.additionalFeeForChildren || 0,
       extraBeds: property?.extraBeds ?? false,
-      extraBedFee: property?.extraBedFee || "",
+      extraBedFee: property?.extraBedFee || 0,
       breakFastProvided: property?.breakFastProvided ?? false,
       breakfastType: property?.breakfastType || "",
       breakfastFeeAdult: property?.breakfastFeeAdult || 0,
@@ -100,21 +102,25 @@ export function PropertyForm({ property }: PropertyFormProps) {
   });
 
   async function onSubmit(values: PropertyFormData) {
+    console.log("submitting");
     setIsLoading(true);
     try {
+      let res;
       if (property) {
-        await updateProperty(property.id, values);
+        res = await updateProperty(property.id, values);
         toast({
           title: "Success",
           description: "Property updated successfully.",
         });
       } else {
-        await createProperty(values);
+        res = await createProperty(values);
         toast({
           title: "Success",
           description: "Property created successfully.",
         });
+        router.replace("/admin/properties/" + res.id)
       }
+      console.log("res", res);
       form.reset(values);
     } catch (error) {
       console.error("Error submitting property:", error);
@@ -167,7 +173,6 @@ export function PropertyForm({ property }: PropertyFormProps) {
   ]);
 
   useEffect(() => {
-    console.log("Effect Ran!");
     if (!property) return;
 
     const subscription = form.watch(async (value, { name, type }) => {
@@ -194,7 +199,6 @@ export function PropertyForm({ property }: PropertyFormProps) {
 
     try {
       const fieldValue = form.getValues(fieldName);
-      console.log("Hit");
       await updateProperty(property.id, { [fieldName]: fieldValue });
 
       toast({
@@ -249,8 +253,8 @@ export function PropertyForm({ property }: PropertyFormProps) {
     { id: "mastercard", label: "Mastercard" },
     { id: "american-express", label: "American Express" },
   ];
-
-  if (!property) return null;
+  console.log(form.formState.errors);
+  // if (!property) return null;
   return (
     <Form {...form}>
       <form
@@ -338,6 +342,173 @@ export function PropertyForm({ property }: PropertyFormProps) {
             </FormItem>
           )}
         />
+        <div className="space-y-4">
+          <h3 className="text-lg font-semibold">Location Details</h3>
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+            <FormField
+              control={form.control}
+              name="lat"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Latitude</FormLabel>
+                  <FormControl>
+                    <Input
+                      type="number"
+                      step="any"
+                      {...field}
+                      onChange={(e) =>
+                        field.onChange(parseFloat(e.target.value))
+                      }
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="lng"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Longitude</FormLabel>
+                  <FormControl>
+                    <Input
+                      type="number"
+                      step="any"
+                      {...field}
+                      onChange={(e) =>
+                        field.onChange(parseFloat(e.target.value))
+                      }
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </div>
+
+          <FormField
+            control={form.control}
+            name="coordType"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Coordinate Type</FormLabel>
+                <Select
+                  onValueChange={field.onChange}
+                  defaultValue={field.value}
+                >
+                  <FormControl>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select coordinate type" />
+                    </SelectTrigger>
+                  </FormControl>
+                  <SelectContent>
+                    <SelectItem value="exact">Exact</SelectItem>
+                    <SelectItem value="approximate">Approximate</SelectItem>
+                  </SelectContent>
+                </Select>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+            <FormField
+              control={form.control}
+              name="city"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>City</FormLabel>
+                  <FormControl>
+                    <Input {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="country"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Country</FormLabel>
+                  <FormControl>
+                    <CountrySelect
+                      value={field.value}
+                      onValueChange={field.onChange}
+                      name={field.name}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </div>
+        </div>
+        <div className="space-y-4">
+          <h3 className="text-lg font-semibold">Additional Details</h3>
+          <FormField
+            control={form.control}
+            name="placeList"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Nearby Places</FormLabel>
+                <FormControl>
+                  <Textarea
+                    placeholder="Enter nearby places (one per line)"
+                    {...field}
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={form.control}
+            name="policyList"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Policies</FormLabel>
+                <FormControl>
+                  <Textarea
+                    placeholder="Enter policies (one per line)"
+                    {...field}
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={form.control}
+            name="rating"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Rating</FormLabel>
+                <FormControl>
+                  <Input placeholder="e.g., 187 / 842" {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={form.control}
+            name="coverImg"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Cover Image URL</FormLabel>
+                <FormControl>
+                  <Input type="url" {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+        </div>
         <FormField
           control={form.control}
           name="descShort"
@@ -549,6 +720,10 @@ export function PropertyForm({ property }: PropertyFormProps) {
 
         <div className="space-y-4">
           <h3 className="text-lg font-semibold">Amenity Tabs</h3>
+          <Lead className="text-sm">
+            These Amenities are descriptions for tabs, see Amenity tab above for
+            checkbox/bullet list items
+          </Lead>
           <FormField
             control={form.control}
             name="amenityHealing"
@@ -591,70 +766,13 @@ export function PropertyForm({ property }: PropertyFormProps) {
               </FormItem>
             )}
           />
-          {/* <FormField
-            control={form.control}
-            name="amenityActivity"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel className={getFieldStyles("amenityActivity")}>
-                  Activities ({field?.value?.length}/100)
-                </FormLabel>
-                <FormControl>
-                  <Textarea
-                    maxLength={200}
-                    className={getFieldStyles("amenityActivity")}
-                    placeholder="A brief description of the property..."
-                    {...field}
-                    onBlur={() => handleFieldBlur("amenityActivity")}
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          /> */}
-          <FormField
-            control={form.control}
-            name="amenityFacility"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel className="text-xl font-semibold">
-                  Facilities
-                </FormLabel>
-                <FormControl>
-                  <AmenityCheckboxes
-                    entityId={property.id}
-                    entityType="property"
-                    amenityType="facility"
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="amenityActivity"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Activities</FormLabel>
-                <FormControl>
-                  <AmenityCheckboxes
-                    entityId={property.id}
-                    entityType="property"
-                    amenityType="activity"
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
           <FormField
             control={form.control}
             name="amenityFacility"
             render={({ field }) => (
               <FormItem>
                 <FormLabel className={getFieldStyles("amenityFacility")}>
-                  Raw Facilities ({field?.value?.length}/100)
+                  Facility Offerings ({field?.value?.length}/100)
                 </FormLabel>
                 <FormControl>
                   <Textarea
@@ -669,8 +787,28 @@ export function PropertyForm({ property }: PropertyFormProps) {
               </FormItem>
             )}
           />
+          <FormField
+            control={form.control}
+            name="amenityActivity"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel className={getFieldStyles("amenityActivity")}>
+                  Activity Offerings ({field?.value?.length}/100)
+                </FormLabel>
+                <FormControl>
+                  <Textarea
+                    maxLength={200}
+                    className={getFieldStyles("amenityActivity")}
+                    placeholder="A brief description of the property..."
+                    {...field}
+                    onBlur={() => handleFieldBlur("amenityActivity")}
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
         </div>
-
         <div className="space-y-4">
           <h3 className="text-lg font-semibold">Children & Extra Beds</h3>
           <FormField
@@ -710,6 +848,7 @@ export function PropertyForm({ property }: PropertyFormProps) {
                   <FormControl>
                     <Input
                       type="number"
+                      icon="dollar"
                       min="0"
                       {...field}
                       onChange={(e) => field.onChange(parseInt(e.target.value))}
@@ -721,54 +860,112 @@ export function PropertyForm({ property }: PropertyFormProps) {
             />
           )}
         </div>
-
-        <div className="space-y-4">
-          <h3 className="text-lg font-semibold">Breakfast Options</h3>
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
           <FormField
             control={form.control}
-            name="breakfastType"
+            name="extraBeds"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Breakfast Types Available</FormLabel>
-                <div className="grid grid-cols-2 gap-4">
-                  {breakfastTypes.map((type) => (
-                    <FormField
-                      key={type.id}
-                      control={form.control}
-                      name="breakfastType"
-                      render={({ field }) => (
-                        <FormItem
-                          key={type.id}
-                          className="flex flex-row items-start space-x-3 space-y-0"
-                        >
-                          <FormControl>
-                            <Checkbox
-                              checked={field.value?.includes(type.id)}
-                              onCheckedChange={(checked) => {
-                                const current = field.value?.split(",") || [];
-                                const updated = checked
-                                  ? [...current, type.id]
-                                  : current.filter(
-                                      (value) => value !== type.id
-                                    );
-                                field.onChange(updated.join(","));
-                              }}
-                            />
-                          </FormControl>
-                          <FormLabel className="font-normal">
-                            {type.label}
-                          </FormLabel>
-                        </FormItem>
-                      )}
-                    />
-                  ))}
-                </div>
+                <FormLabel>Extra Beds/Cribs Available?</FormLabel>
+                <FormControl>
+                  <RadioGroup
+                    onValueChange={(value) => field.onChange(value === "true")}
+                    defaultValue={field.value ? "true" : "false"}
+                    className="flex space-x-4"
+                  >
+                    <FormItem className="flex items-center space-x-2">
+                      <RadioGroupItem value="true" />
+                      <FormLabel className="font-normal">Yes</FormLabel>
+                    </FormItem>
+                    <FormItem className="flex items-center space-x-2">
+                      <RadioGroupItem value="false" />
+                      <FormLabel className="font-normal">No</FormLabel>
+                    </FormItem>
+                  </RadioGroup>
+                </FormControl>
                 <FormMessage />
               </FormItem>
             )}
           />
 
-          <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+          <FormField
+            control={form.control}
+            name="extraBedFee"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Extra Bed Fee</FormLabel>
+                <FormControl>
+                  <Input
+                    type="number"
+                    icon="dollar"
+                    min="0"
+                    {...field}
+                    onChange={(e) => field.onChange(parseInt(e.target.value))}
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+        </div>
+
+        <div className="space-y-4">
+          <h3 className="text-lg font-semibold">Breakfast Options</h3>
+
+          <FormField
+            control={form.control}
+            name="breakFastProvided"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Breakfast Provided?</FormLabel>
+                <FormControl>
+                  <RadioGroup
+                    onValueChange={(value) => field.onChange(value === "true")}
+                    defaultValue={field.value ? "true" : "false"}
+                    className="flex space-x-4"
+                  >
+                    <FormItem className="flex items-center space-x-2">
+                      <RadioGroupItem value="true" />
+                      <FormLabel className="font-normal">Yes</FormLabel>
+                    </FormItem>
+                    <FormItem className="flex items-center space-x-2">
+                      <RadioGroupItem value="false" />
+                      <FormLabel className="font-normal">No</FormLabel>
+                    </FormItem>
+                  </RadioGroup>
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={form.control}
+            name="breakfastIncluded"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Breakfast Included in Rate?</FormLabel>
+                <FormControl>
+                  <RadioGroup
+                    onValueChange={(value) => field.onChange(value === "true")}
+                    defaultValue={field.value ? "true" : "false"}
+                    className="flex space-x-4"
+                  >
+                    <FormItem className="flex items-center space-x-2">
+                      <RadioGroupItem value="true" />
+                      <FormLabel className="font-normal">Yes</FormLabel>
+                    </FormItem>
+                    <FormItem className="flex items-center space-x-2">
+                      <RadioGroupItem value="false" />
+                      <FormLabel className="font-normal">No</FormLabel>
+                    </FormItem>
+                  </RadioGroup>
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
             <FormField
               control={form.control}
               name="breakfastFeeAdult"
@@ -778,6 +975,7 @@ export function PropertyForm({ property }: PropertyFormProps) {
                   <FormControl>
                     <Input
                       type="number"
+                      icon="dollar"
                       min="0"
                       {...field}
                       onChange={(e) => field.onChange(parseInt(e.target.value))}
@@ -797,6 +995,7 @@ export function PropertyForm({ property }: PropertyFormProps) {
                   <FormControl>
                     <Input
                       type="number"
+                      icon="dollar"
                       min="0"
                       {...field}
                       onChange={(e) => field.onChange(parseInt(e.target.value))}
@@ -807,6 +1006,60 @@ export function PropertyForm({ property }: PropertyFormProps) {
               )}
             />
           </div>
+          <FormField
+            control={form.control}
+            name="breakfastType"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Breakfast Types Available</FormLabel>
+                <div className="grid grid-cols-2 gap-4">
+                  {breakfastTypes.map((type) => (
+                    <FormItem
+                      key={type.id}
+                      className="flex flex-row items-start space-x-3 space-y-0"
+                    >
+                      <FormControl>
+                        <>
+                          <Checkbox
+                            checked={field.value
+                              ?.split(",")
+                              .filter(Boolean)
+                              .includes(type.id)}
+                            onCheckedChange={(checked) => {
+                              const currentTypes =
+                                field.value?.split(",").filter(Boolean) || [];
+
+                              let newTypes;
+                              if (checked) {
+                                newTypes = [...currentTypes, type.id];
+                              } else {
+                                newTypes = currentTypes.filter(
+                                  (t) => t !== type.id
+                                );
+                              }
+                              const newValue =
+                                newTypes.length > 0 ? newTypes.join(",") : "";
+                              field.onChange(newValue);
+
+                              if (property) {
+                                handleFieldBlur("breakfastType");
+                              }
+                            }}
+                          />
+                          <span className="text-sm font-normal">
+                            {type.label}
+                          </span>
+                        </>
+                      </FormControl>
+                    </FormItem>
+                  ))}
+                </div>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-2"></div>
         </div>
 
         <div className="space-y-4">
@@ -819,86 +1072,78 @@ export function PropertyForm({ property }: PropertyFormProps) {
                 <FormLabel>Accepted Payment Methods</FormLabel>
                 <div className="grid grid-cols-2 gap-4">
                   {paymentMethods.map((method) => (
-                    <FormField
+                    <div
                       key={method.id}
-                      control={form.control}
-                      name="paymentMethods"
-                      render={({ field }) => (
-                        <FormItem
-                          key={method.id}
-                          className="flex flex-row items-start space-x-3 space-y-0"
-                        >
-                          <FormControl>
-                            <Checkbox
-                              checked={field.value?.includes(method.id)}
-                              onCheckedChange={(checked) => {
-                                const current = field.value?.split(",") || [];
-                                const updated = checked
-                                  ? [...current, method.id]
-                                  : current.filter(
-                                      (value) => value !== method.id
-                                    );
-                                field.onChange(updated.join(","));
-                              }}
-                            />
-                          </FormControl>
-                          <FormLabel className="font-normal">
-                            {method.label}
-                          </FormLabel>
-                        </FormItem>
-                      )}
-                    />
-                  ))}
-                </div>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="depositMethods"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Accepted Deposit Methods</FormLabel>
-                <div className="grid grid-cols-2 gap-4">
-                  {depositMethods.map((method) => (
-                    <FormField
-                      key={method.id}
-                      control={form.control}
-                      name="depositMethods"
-                      render={({ field }) => (
-                        <FormItem
-                          key={method.id}
-                          className="flex flex-row items-start space-x-3 space-y-0"
-                        >
-                          <FormControl>
-                            <Checkbox
-                              checked={field.value?.includes(method.id)}
-                              onCheckedChange={(checked) => {
-                                const current = field.value?.split(",") || [];
-                                const updated = checked
-                                  ? [...current, method.id]
-                                  : current.filter(
-                                      (value) => value !== method.id
-                                    );
-                                field.onChange(updated.join(","));
-                              }}
-                            />
-                          </FormControl>
-                          <FormLabel className="font-normal">
-                            {method.label}
-                          </FormLabel>
-                        </FormItem>
-                      )}
-                    />
-                  ))}
-                </div>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-        </div>
+                      className="flex flex-row items-start space-x-3 space-y-0"
+                    >
+                      <Checkbox
+                        checked={field.value
+                          ?.split(",")
+                          .filter(Boolean)
+                          .includes(method.id)}
+                        onCheckedChange={(checked) => {
+                          const current =
+                            field.value?.split(",").filter(Boolean) || [];
+                          const updated = checked
+                            ? [...current, method.id]
+                            : current.filter((value) => value !== method.id);
 
+                          const newValue =
+                            updated.length > 0 ? updated.join(",") : "";
+                          field.onChange(newValue);
+                        }}
+                      />
+                      <FormLabel className="font-normal">
+                        {method.label}
+                      </FormLabel>
+                    </div>
+                  ))}
+                </div>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <div className="space-y-4">
+            <FormLabel>Accepted Deposit Methods</FormLabel>
+            <div className="grid grid-cols-2 gap-4">
+              {depositMethods.map((method) => (
+                <FormField
+                  key={method.id}
+                  control={form.control}
+                  name="depositMethods"
+                  render={({ field }) => (
+                    <FormItem
+                      key={method.id}
+                      className="flex flex-row items-start space-x-3 space-y-0"
+                    >
+                      <FormControl>
+                        <Checkbox
+                          checked={field.value?.includes(method.id)}
+                          onCheckedChange={(checked) => {
+                            const current =
+                              field.value?.split(",").filter(Boolean) || [];
+                            const updated = checked
+                              ? [...current, method.id]
+                              : current.filter((value) => value !== method.id);
+
+                            // Only set value if there are selected items
+                            const newValue =
+                              updated.length > 0 ? updated.join(",") : "";
+                            field.onChange(newValue);
+                          }}
+                        />
+                      </FormControl>
+                      <FormLabel className="font-normal">
+                        {method.label}
+                      </FormLabel>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              ))}
+            </div>
+          </div>
+        </div>
         <div className="space-y-4">
           <h3 className="text-lg font-semibold">Pet Policy</h3>
           <div className="grid grid-cols-1 gap-4 md:grid-cols-2">

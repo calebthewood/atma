@@ -19,7 +19,7 @@ export default function ProgramPage() {
           <TabsTrigger value="list">View Programs</TabsTrigger>
           <TabsTrigger value="form">Create Program</TabsTrigger>
         </TabsList>
-        <TabsContent value="form">
+        <TabsContent value="form"  >
           <ProgramForm />
         </TabsContent>
         <TabsContent value="list">

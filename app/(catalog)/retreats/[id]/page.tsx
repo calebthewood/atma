@@ -1,4 +1,4 @@
-import Image from "next/image";
+
 import { getRetreatWithPrice } from "@/actions/retreat-actions";
 import { auth } from "@/auth";
 import { BedSingle, Navigation, NotepadText, User } from "lucide-react";
@@ -54,9 +54,10 @@ export default async function Page({ params }: { params: { id: string } }) {
     },
   ];
 
+  console.log("retreat ", retreat);
   function RenderBookingType({ type }: { type: string | null }) {
     switch (type) {
-      case "open":
+      case "Open":
         return (
           <OpenBooking
             userId={session?.user?.id}
@@ -64,7 +65,7 @@ export default async function Page({ params }: { params: { id: string } }) {
             events={retreat.retreatInstances}
           />
         );
-      case "fixed_range":
+      case "Fixed":
         return (
           <FixedBooking
             userId={session?.user?.id}
@@ -72,7 +73,7 @@ export default async function Page({ params }: { params: { id: string } }) {
             event={retreat.retreatInstances[0]}
           />
         );
-      case "flexible_range":
+      case "Flexible":
         return (
           <FlexibleBooking
             userId={session?.user?.id}

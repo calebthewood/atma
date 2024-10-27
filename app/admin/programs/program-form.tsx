@@ -30,9 +30,6 @@ import {
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "@/components/ui/use-toast";
-import { H3, Lead } from "@/components/typography";
-
-import { AmenityCheckboxes } from "../amenity-field";
 
 type ProgramFormProps = {
   program?: Program | null;
@@ -152,7 +149,6 @@ export function ProgramForm({ program }: ProgramFormProps) {
         onSubmit={form.handleSubmit(onSubmit)}
         className="max-w-xl space-y-8"
       >
-        <H3>General</H3>
         <FormField
           control={form.control}
           name="name"
@@ -314,19 +310,6 @@ export function ProgramForm({ program }: ProgramFormProps) {
             </FormItem>
           )}
         />
-
-        {program && (
-          <FormItem>
-            <FormControl>
-              <AmenityCheckboxes
-                entityId={program.id}
-                entityType="program"
-                amenityType="facility"
-              />
-            </FormControl>
-            <FormMessage />
-          </FormItem>
-        )}
 
         <Button
           type="submit"

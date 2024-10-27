@@ -25,6 +25,9 @@ import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import { CatalogTabs } from "@/components/catalog-tabs";
 import { LoadingSpinner } from "@/components/loading-spinner";
 import { TitleImageBanner } from "@/components/title-img-banner";
+import { OpenBooking } from "@/components/booking/open-booking";
+import { FixedBooking } from "@/components/booking/fixed-booking";
+import { FlexibleBooking } from "@/components/booking/flexible-booking";
 
 /** Amenity strings are formatted like 'Amenity Title: Name | Value */
 const parseAmenity = (str: string | null | undefined) => {
@@ -36,7 +39,7 @@ const parseAmenity = (str: string | null | undefined) => {
 
 export default async function Page({ params }: { params: { id: string } }) {
   const property = await getPropertyById(params.id);
-  // const session = await auth();
+  const session = await auth();
 
   const tabsData = [
     {
@@ -60,36 +63,36 @@ export default async function Page({ params }: { params: { id: string } }) {
       content: <div>{property?.amenityFacility}</div>,
     },
   ];
-  // function RenderBookingType({ type }: { type: string; }) {
-  //   switch (type) {
-  //     case "open":
-  //       return (
-  //         <OpenBooking
-  //           userId={session?.user?.id}
-  //           retreat={property}
-  //           events={property.retreatInstances}
-  //         />
-  //       );
-  //     case "fixed_range":
-  //       return (
-  //         <FixedBooking
-  //           userId={session?.user?.id}
-  //           retreat={property}
-  //           event={property.retreatInstances[0]}
-  //         />
-  //       );
-  //     case "flexible_range":
-  //       return (
-  //         <FlexibleBooking
-  //           userId={session?.user?.id}
-  //           retreat={property}
-  //           events={property.retreatInstances}
-  //         />
-  //       );
-  //     default:
-  //       return null;
-  //   }
-  // }
+  function RenderBookingType({ type }: { type: string; }) {
+    switch (type) {
+      case "open":
+        return (
+          <OpenBooking
+            userId={session?.user?.id}
+            retreat={property}
+            events={property.retreatInstances}
+          />
+        );
+      case "fixed_range":
+        return (
+          <FixedBooking
+            userId={session?.user?.id}
+            retreat={property}
+            event={property.retreatInstances[0]}
+          />
+        );
+      case "flexible_range":
+        return (
+          <FlexibleBooking
+            userId={session?.user?.id}
+            retreat={property}
+            events={property.retreatInstances}
+          />
+        );
+      default:
+        return null;
+    }
+  }
 
   if (!property) {
     return (
@@ -122,7 +125,7 @@ export default async function Page({ params }: { params: { id: string } }) {
             <CatalogTabs tabs={tabsData} defaultTab="healing" />
           </div>
           <div className="flex-0 mx-8 mb-16 w-96">
-            {/* <RenderBookingType type={property.bookingType} /> */}
+            <RenderBookingType type={property.bookingType} />
 
             <AspectRatio ratio={3 / 4} className="w-[340px]">
               <div className="relative h-[540px] w-[340px]">

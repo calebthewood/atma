@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { getHosts } from "@/actions/host-actions";
 import { getProperties } from "@/actions/property-actions";
@@ -14,10 +14,12 @@ import { Host, Property, Retreat } from "@prisma/client";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 
+import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import {
   Form,
   FormControl,
+  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -32,6 +34,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
+import { toast } from "@/components/ui/use-toast";
 
 const formSchema = z.object({
   bookingType: z.enum(["Flexible", "Fixed", "Open"]),
@@ -49,19 +52,24 @@ const formSchema = z.object({
   coverImg: z
     .string()
     .url({ message: "Invalid URL for cover image." })
-    .optional(),
-  sourceUrl: z.string().url({ message: "Invalid source URL." }).optional(),
-  hostId: z.string().min(1, { message: "Host is required." }),
+    .optional()
+    .nullable(),
+  sourceUrl: z
+    .string()
+    .url({ message: "Invalid source URL." })
+    .optional()
+    .nullable(),
+  hostId: z.string().min(1, { message: "Host is required." }).nullable(),
   propertyId: z.string().min(1, { message: "Property is required." }),
 });
 
 type FormData = z.infer<typeof formSchema>;
 
 export function RetreatForm() {
-  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const [hosts, setHosts] = useState<Host[]>([]);
   const [properties, setProperties] = useState<Property[]>([]);
-  const [isEditing, setIsEditing] = useState(false);
+  const [retreat, setRetreat] = useState<Retreat | null>(null);
 
   const params = useParams();
   const router = useRouter();
@@ -84,6 +92,8 @@ export function RetreatForm() {
     },
   });
 
+  const ON_CHANGE_FIELDS = new Set(["bookingType", "minGuests", "maxGuests"]);
+
   useEffect(() => {
     async function fetchData() {
       try {
@@ -95,73 +105,157 @@ export function RetreatForm() {
         setProperties(fetchedProperties);
 
         if (retreatId) {
-          setIsEditing(true);
-          const retreat = await getRetreatById(retreatId);
-          if (retreat) {
+          const fetchedRetreat = await getRetreatById(retreatId);
+          if (fetchedRetreat) {
+            setRetreat(fetchedRetreat);
             const formData: Partial<FormData> = {
-              bookingType: retreat.bookingType as "Flexible" | "Fixed" | "Open",
-              name: retreat.name || "",
-              desc: retreat.desc || "",
-              duration: retreat.duration || "",
-              date: retreat.date
-                ? retreat.date.toISOString().split("T")[0]
+              bookingType: fetchedRetreat.bookingType as
+                | "Flexible"
+                | "Fixed"
+                | "Open",
+              name: fetchedRetreat.name || "",
+              desc: fetchedRetreat.desc || "",
+              duration: fetchedRetreat.duration || "",
+              date: fetchedRetreat.date
+                ? fetchedRetreat.date.toISOString().split("T")[0]
                 : "",
-              priceList: retreat.priceList || "",
-              minGuests: retreat.minGuests || 1,
-              maxGuests: retreat.maxGuests || -1,
-              coverImg: retreat.coverImg || "",
-              sourceUrl: retreat.sourceUrl || "",
-              hostId: retreat.hostId || "",
-              propertyId: retreat.propertyId,
+              priceList: fetchedRetreat.priceList || "",
+              minGuests: fetchedRetreat.minGuests || 1,
+              maxGuests: fetchedRetreat.maxGuests || -1,
+              coverImg: fetchedRetreat.coverImg || "",
+              sourceUrl: fetchedRetreat.sourceUrl || "",
+              hostId: fetchedRetreat.hostId || "",
+              propertyId: fetchedRetreat.propertyId,
             };
             form.reset(formData);
           }
         }
       } catch (error) {
         console.error("Error fetching data:", error);
-        // TODO: Handle error (e.g., show error message to user)
+        toast({
+          title: "Error",
+          description: "Failed to load form data. Please try again.",
+          variant: "destructive",
+        });
       }
     }
 
     fetchData();
   }, [retreatId, form]);
 
-  async function onSubmit(values: z.infer<typeof formSchema>) {
-    setIsSubmitting(true);
-    try {
-      let retreat;
-      if (isEditing && retreatId) {
-        retreat = await updateRetreat(retreatId, values);
-      } else {
-        retreat = await createRetreat(values);
+  useEffect(() => {
+    if (!retreat) return;
+
+    const subscription = form.watch(async (value, { name, type }) => {
+      if (
+        name &&
+        form.formState.dirtyFields[name] &&
+        !form.formState.isSubmitting &&
+        (type === "blur" || (type === "change" && ON_CHANGE_FIELDS.has(name)))
+      ) {
+        try {
+          await handleFieldBlur(name as keyof FormData);
+        } catch (error) {
+          console.error(`Error updating ${name}:`, error);
+        }
       }
-      console.log(isEditing ? "Retreat updated:" : "Retreat created:", retreat);
-      router.push("/retreats"); // Redirect to retreats list page
+    });
+
+    return () => subscription.unsubscribe();
+  }, [retreat, form]);
+
+  const handleFieldBlur = async (fieldName: keyof FormData) => {
+    if (!retreat) return;
+
+    try {
+      const fieldValue = form.getValues(fieldName);
+      await updateRetreat(retreat.id, { [fieldName]: fieldValue });
+
+      toast({
+        title: "Updated",
+        description: `${fieldName} has been updated.`,
+      });
     } catch (error) {
-      console.error(
-        isEditing ? "Error updating retreat:" : "Error creating retreat:",
-        error
-      );
-      // TODO: Add error message
+      console.error(`Error updating ${fieldName}:`, error);
+
+      toast({
+        title: "Error",
+        description: `Failed to update ${fieldName}. Please try again.`,
+        variant: "destructive",
+      });
+
+      form.setError(fieldName, {
+        type: "manual",
+        message: "Update failed",
+      });
+    }
+  };
+
+  const getFieldStyles = (fieldName: keyof FormData) => {
+    const isSubmitting = form.formState.isSubmitting;
+    const isValid = !form.formState.errors[fieldName];
+    const isDirty = form.formState.dirtyFields[fieldName];
+
+    return cn("transition-colors duration-300", {
+      "border-atma-yellow": isSubmitting,
+      "border-atma-mint": isValid && isDirty && !isSubmitting,
+      "border-atma-red": !isValid && !isSubmitting,
+    });
+  };
+
+  async function onSubmit(values: FormData) {
+    setIsLoading(true);
+    try {
+      if (retreat) {
+        await updateRetreat(retreat.id, values);
+        toast({
+          title: "Success",
+          description: "Retreat updated successfully.",
+        });
+      } else {
+        await createRetreat(values);
+        toast({
+          title: "Success",
+          description: "Retreat created successfully.",
+        });
+      }
+      form.reset(values);
+      router.push("/admin/retreats");
+    } catch (error) {
+      console.error("Error submitting retreat:", error);
+      toast({
+        title: "Error",
+        description: "Failed to save retreat. Please try again.",
+        variant: "destructive",
+      });
     } finally {
-      setIsSubmitting(false);
+      setIsLoading(false);
     }
   }
 
+  // ... render form fields with getFieldStyles and handleFieldBlur
+  // Return JSX remains largely the same but add the style and blur handlers
   return (
     <Form {...form}>
       <form
         onSubmit={form.handleSubmit(onSubmit)}
-        className="max-w-lg space-y-8"
+        className="max-w-xl space-y-8"
       >
         <FormField
           control={form.control}
           name="name"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Retreat Name</FormLabel>
+              <FormLabel className={getFieldStyles("name")}>
+                Retreat Name
+              </FormLabel>
               <FormControl>
-                <Input placeholder="Yoga Retreat 2024" {...field} />
+                <Input
+                  className={getFieldStyles("name")}
+                  placeholder="Enter retreat name"
+                  {...field}
+                  onBlur={() => handleFieldBlur("name")}
+                />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -173,23 +267,39 @@ export function RetreatForm() {
           name="desc"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Description</FormLabel>
+              <FormLabel className={getFieldStyles("desc")}>
+                Description
+              </FormLabel>
               <FormControl>
-                <Textarea placeholder="Describe the retreat..." {...field} />
+                <Textarea
+                  className={getFieldStyles("desc")}
+                  placeholder="Describe the retreat..."
+                  {...field}
+                  onBlur={() => handleFieldBlur("desc")}
+                />
               </FormControl>
               <FormMessage />
             </FormItem>
           )}
         />
+
         <FormField
           control={form.control}
           name="bookingType"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Booking Type</FormLabel>
-              <Select onValueChange={field.onChange} defaultValue={field.value}>
+              <FormLabel className={getFieldStyles("bookingType")}>
+                Booking Type
+              </FormLabel>
+              <Select
+                onValueChange={(value) => {
+                  field.onChange(value);
+                  handleFieldBlur("bookingType");
+                }}
+                defaultValue={field.value || "Flexible"}
+              >
                 <FormControl>
-                  <SelectTrigger>
+                  <SelectTrigger className={getFieldStyles("bookingType")}>
                     <SelectValue placeholder="Select booking type" />
                   </SelectTrigger>
                 </FormControl>
@@ -199,19 +309,30 @@ export function RetreatForm() {
                   <SelectItem value="Open">Open</SelectItem>
                 </SelectContent>
               </Select>
+              <FormDescription>
+                Flexible: Fixed Start Open End. Fixed: Fixed Start Fixed End.
+                Open: Open Start Open End
+              </FormDescription>
               <FormMessage />
             </FormItem>
           )}
         />
-        <div> </div>
+
         <FormField
           control={form.control}
           name="duration"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Duration</FormLabel>
+              <FormLabel className={getFieldStyles("duration")}>
+                Duration
+              </FormLabel>
               <FormControl>
-                <Input placeholder="7 days" {...field} />
+                <Input
+                  className={getFieldStyles("duration")}
+                  placeholder="e.g., 7 days"
+                  {...field}
+                  onBlur={() => handleFieldBlur("duration")}
+                />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -223,9 +344,16 @@ export function RetreatForm() {
           name="date"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Start Date</FormLabel>
+              <FormLabel className={getFieldStyles("date")}>
+                Start Date
+              </FormLabel>
               <FormControl>
-                <Input type="date" {...field} />
+                <Input
+                  type="date"
+                  className={getFieldStyles("date")}
+                  {...field}
+                  onBlur={() => handleFieldBlur("date")}
+                />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -237,60 +365,106 @@ export function RetreatForm() {
           name="priceList"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Price List</FormLabel>
+              <FormLabel className={getFieldStyles("priceList")}>
+                Price List
+              </FormLabel>
               <FormControl>
-                <Input placeholder="1000,1500,2000" {...field} />
+                <Input
+                  className={getFieldStyles("priceList")}
+                  placeholder="1000,1500,2000"
+                  {...field}
+                  onBlur={() => handleFieldBlur("priceList")}
+                />
               </FormControl>
+              <FormDescription>
+                Enter prices separated by commas
+              </FormDescription>
               <FormMessage />
             </FormItem>
           )}
         />
 
-        <FormField
-          control={form.control}
-          name="minGuests"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Minimum Guests</FormLabel>
-              <FormControl>
-                <Input
-                  type="number"
-                  {...field}
-                  onChange={(e) => field.onChange(parseInt(e.target.value))}
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+          <FormField
+            control={form.control}
+            name="minGuests"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel className={getFieldStyles("minGuests")}>
+                  Minimum Guests
+                </FormLabel>
+                <FormControl>
+                  <Input
+                    type="number"
+                    className={getFieldStyles("minGuests")}
+                    min={1}
+                    {...field}
+                    onChange={(e) => {
+                      const value = parseInt(e.target.value);
+                      field.onChange(value);
+                      if (ON_CHANGE_FIELDS.has("minGuests")) {
+                        handleFieldBlur("minGuests");
+                      }
+                    }}
+                    onBlur={() => handleFieldBlur("minGuests")}
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
 
-        <FormField
-          control={form.control}
-          name="maxGuests"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Maximum Guests</FormLabel>
-              <FormControl>
-                <Input
-                  type="number"
-                  {...field}
-                  onChange={(e) => field.onChange(parseInt(e.target.value))}
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
+          <FormField
+            control={form.control}
+            name="maxGuests"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel className={getFieldStyles("maxGuests")}>
+                  Maximum Guests
+                </FormLabel>
+                <FormControl>
+                  <Input
+                    type="number"
+                    className={getFieldStyles("maxGuests")}
+                    min={-1}
+                    {...field}
+                    onChange={(e) => {
+                      const value = parseInt(e.target.value);
+                      field.onChange(value);
+                      if (ON_CHANGE_FIELDS.has("maxGuests")) {
+                        handleFieldBlur("maxGuests");
+                      }
+                    }}
+                    onBlur={() => handleFieldBlur("maxGuests")}
+                  />
+                </FormControl>
+                <FormDescription>Use -1 for unlimited guests</FormDescription>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+        </div>
 
         <FormField
           control={form.control}
           name="sourceUrl"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Source URL</FormLabel>
+              <FormLabel className={getFieldStyles("sourceUrl")}>
+                Source URL
+              </FormLabel>
               <FormControl>
-                <Input placeholder="https://example.com/retreat" {...field} />
+                <Input
+                  className={getFieldStyles("sourceUrl")}
+                  type="url"
+                  placeholder="https://example.com/retreat"
+                  {...field}
+                  onBlur={() => handleFieldBlur("sourceUrl")}
+                />
               </FormControl>
+              <FormDescription>
+                Original source of the retreat information
+              </FormDescription>
               <FormMessage />
             </FormItem>
           )}
@@ -301,10 +475,16 @@ export function RetreatForm() {
           name="hostId"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Host</FormLabel>
-              <Select onValueChange={field.onChange} defaultValue={field.value}>
+              <FormLabel className={getFieldStyles("hostId")}>Host</FormLabel>
+              <Select
+                onValueChange={(value) => {
+                  field.onChange(value);
+                  handleFieldBlur("hostId");
+                }}
+                defaultValue={field.value || ""}
+              >
                 <FormControl>
-                  <SelectTrigger>
+                  <SelectTrigger className={getFieldStyles("hostId")}>
                     <SelectValue placeholder="Select a host" />
                   </SelectTrigger>
                 </FormControl>
@@ -326,10 +506,18 @@ export function RetreatForm() {
           name="propertyId"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Property</FormLabel>
-              <Select onValueChange={field.onChange} defaultValue={field.value}>
+              <FormLabel className={getFieldStyles("propertyId")}>
+                Property
+              </FormLabel>
+              <Select
+                onValueChange={(value) => {
+                  field.onChange(value);
+                  handleFieldBlur("propertyId");
+                }}
+                defaultValue={field.value || ""}
+              >
                 <FormControl>
-                  <SelectTrigger>
+                  <SelectTrigger className={getFieldStyles("propertyId")}>
                     <SelectValue placeholder="Select a property" />
                   </SelectTrigger>
                 </FormControl>
@@ -346,10 +534,17 @@ export function RetreatForm() {
           )}
         />
 
-        <Button type="submit" disabled={isSubmitting}>
-          {isSubmitting
+        <Button
+          type="submit"
+          disabled={isLoading}
+          className={cn({
+            "bg-atma-yellow text-black": isLoading || form.formState.isDirty,
+            "bg-atma-mint text-black": form.formState.isSubmitSuccessful,
+          })}
+        >
+          {isLoading
             ? "Submitting..."
-            : isEditing
+            : retreat
               ? "Update Retreat"
               : "Create Retreat"}
         </Button>

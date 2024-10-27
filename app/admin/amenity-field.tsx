@@ -4,6 +4,7 @@ import React, { useEffect, useMemo, useState } from "react";
 import { z } from "zod";
 
 import { Checkbox } from "@/components/ui/checkbox";
+import { FormLabel } from "@/components/ui/form";
 import { toast } from "@/components/ui/use-toast";
 import { H3, Lead } from "@/components/typography";
 
@@ -38,8 +39,8 @@ export const AmenityCheckboxes = ({
   const amenitiesByCategory = useMemo(() => {
     const grouped = new Map<string, Amenity[]>();
     amenities.forEach((amenity) => {
-      const existing = grouped.get(amenity.categoryName) || [];
-      grouped.set(amenity.categoryName, [...existing, amenity]);
+      const existing = grouped.get(amenity.categoryName ?? "") || [];
+      grouped.set(amenity.categoryName ?? "", [...existing, amenity]);
     });
     return grouped;
   }, [amenities]);
@@ -150,7 +151,9 @@ export const AmenityCheckboxes = ({
   return (
     <>
       <H3>Amenities</H3>
-      <Lead>Amenities can be set on Property, Program, or Retreat</Lead>
+      <Lead className="text-sm">
+        Amenities can be set on Property, Program, or Retreat
+      </Lead>
       <div className="space-y-6">
         {Array.from(amenitiesByCategory.entries()).map(([category, items]) => (
           <div key={category} className="space-y-2">
