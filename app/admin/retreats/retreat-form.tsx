@@ -52,13 +52,8 @@ const formSchema = z.object({
   coverImg: z
     .string()
     .url({ message: "Invalid URL for cover image." })
-    .optional()
-    .nullable(),
-  sourceUrl: z
-    .string()
-    .url({ message: "Invalid source URL." })
-    .optional()
-    .nullable(),
+    .optional(),
+  sourceUrl: z.string().url({ message: "Invalid source URL." }).optional(),
   hostId: z.string().min(1, { message: "Host is required." }).nullable(),
   propertyId: z.string().min(1, { message: "Property is required." }),
 });
@@ -123,7 +118,7 @@ export function RetreatForm() {
               minGuests: fetchedRetreat.minGuests || 1,
               maxGuests: fetchedRetreat.maxGuests || -1,
               coverImg: fetchedRetreat.coverImg || "",
-              sourceUrl: fetchedRetreat.sourceUrl || "",
+              sourceUrl: fetchedRetreat?.sourceUrl ?? "",
               hostId: fetchedRetreat.hostId || "",
               propertyId: fetchedRetreat.propertyId,
             };
@@ -455,10 +450,10 @@ export function RetreatForm() {
               </FormLabel>
               <FormControl>
                 <Input
-                  className={getFieldStyles("sourceUrl")}
-                  type="url"
-                  placeholder="https://example.com/retreat"
                   {...field}
+                  type="url"
+                  className={getFieldStyles("sourceUrl")}
+                  placeholder="https://example.com/retreat"
                   onBlur={() => handleFieldBlur("sourceUrl")}
                 />
               </FormControl>

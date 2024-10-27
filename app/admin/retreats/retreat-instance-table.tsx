@@ -234,7 +234,7 @@ export function RetreatInstancesList({ retreatId }: RetreatInstancesListProps) {
                   colSpan={columns.length}
                   className="h-24 text-center"
                 >
-                  No instances found. Click "Add Instance" to create one.
+                  {`No instances found. Click "Add Instance" to create one.`}
                 </TableCell>
               </TableRow>
             )}

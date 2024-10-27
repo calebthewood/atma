@@ -331,8 +331,7 @@ const CountrySelect = React.forwardRef<HTMLButtonElement, SelectProps>(
   }
 );
 
-// Memoize the entire component
+CountrySelect.displayName = "CountrySelect";
 const MemoizedCountrySelect = React.memo(CountrySelect);
-MemoizedCountrySelect.displayName = "CountrySelect";
 
 export default MemoizedCountrySelect;
