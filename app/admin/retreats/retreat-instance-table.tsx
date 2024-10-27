@@ -188,10 +188,8 @@ export function RetreatInstancesList({ retreatId }: RetreatInstancesListProps) {
     <div className="space-y-4">
       <div className="flex items-center justify-between">
         <h3 className="text-lg font-medium">Retreat Instances</h3>
-        <Button  asChild className="cursor-not-allowed">
-          <Link href={`#`}>
-            Add Instance
-          </Link>
+        <Button asChild className="cursor-not-allowed">
+          <Link href={`#`}>Add Instance</Link>
         </Button>
       </div>
 

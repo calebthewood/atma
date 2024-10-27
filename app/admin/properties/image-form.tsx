@@ -93,7 +93,7 @@ export function ImageUpload({ recordId, recordType }: ImageUploadProps) {
   });
 
   return (
-    <div className="w-full max-w-md space-y-4 mx-auto">
+    <div className="mx-auto w-full max-w-md space-y-4">
       <h4 className="text-sm font-medium">Upload New Images</h4>
       <div
         {...getRootProps()}

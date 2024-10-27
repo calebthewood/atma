@@ -291,7 +291,6 @@ export async function deleteRetreat(id: string) {
   }
 }
 
-
 export async function getRetreat(id: string) {
   try {
     const retreat = await prisma.retreat.findUnique({
@@ -302,43 +301,44 @@ export async function getRetreat(id: string) {
         amenities: true,
         images: {
           orderBy: {
-            createdAt: 'asc'
-          }
+            createdAt: "asc",
+          },
         },
         retreatInstances: {
           orderBy: {
-            startDate: 'asc'
-          }
+            startDate: "asc",
+          },
         },
-      }
+      },
     });
 
     if (!retreat) {
       return {
         success: false,
-        error: "Retreat not found"
+        error: "Retreat not found",
       };
     }
 
     return {
       success: true,
-      retreat
+      retreat,
     };
-
   } catch (error) {
     console.error("Error fetching retreat:", error);
     return {
       success: false,
-      error: "Failed to fetch retreat"
+      error: "Failed to fetch retreat",
     };
   }
 }
 
 // Type for the return value
-export type GetRetreatResult = {
-  success: true;
-  retreat: NonNullable<Awaited<ReturnType<typeof getRetreat>>["retreat"]>;
-} | {
-  success: false;
-  error: string;
-};
+export type GetRetreatResult =
+  | {
+      success: true;
+      retreat: NonNullable<Awaited<ReturnType<typeof getRetreat>>["retreat"]>;
+    }
+  | {
+      success: false;
+      error: string;
+    };

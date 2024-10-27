@@ -22,12 +22,12 @@ import {
 } from "@/components/ui/card";
 import ThumbnailCarousel from "@/components/ui/carousel-thumbnail";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
+import { FixedBooking } from "@/components/booking/fixed-booking";
+import { FlexibleBooking } from "@/components/booking/flexible-booking";
+import { OpenBooking } from "@/components/booking/open-booking";
 import { CatalogTabs } from "@/components/catalog-tabs";
 import { LoadingSpinner } from "@/components/loading-spinner";
 import { TitleImageBanner } from "@/components/title-img-banner";
-import { OpenBooking } from "@/components/booking/open-booking";
-import { FixedBooking } from "@/components/booking/fixed-booking";
-import { FlexibleBooking } from "@/components/booking/flexible-booking";
 
 /** Amenity strings are formatted like 'Amenity Title: Name | Value */
 const parseAmenity = (str: string | null | undefined) => {
@@ -63,7 +63,7 @@ export default async function Page({ params }: { params: { id: string } }) {
       content: <div>{property?.amenityFacility}</div>,
     },
   ];
-  function RenderBookingType({ type }: { type: string; }) {
+  function RenderBookingType({ type }: { type: string }) {
     switch (type) {
       case "open":
         return (

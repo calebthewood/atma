@@ -1,4 +1,3 @@
-
 import { getRetreatWithPrice } from "@/actions/retreat-actions";
 import { auth } from "@/auth";
 import { BedSingle, Navigation, NotepadText, User } from "lucide-react";

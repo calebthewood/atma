@@ -118,7 +118,7 @@ export function PropertyForm({ property }: PropertyFormProps) {
           title: "Success",
           description: "Property created successfully.",
         });
-        router.replace("/admin/properties/" + res.id)
+        router.replace("/admin/properties/" + res.id);
       }
       console.log("res", res);
       form.reset(values);
