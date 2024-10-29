@@ -4,6 +4,7 @@ import {
   Card,
   CardContent,
   CardDescription,
+  CardFooter,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
@@ -13,6 +14,7 @@ import { AmenitiesForm } from "../../amenity-form";
 import { PriceModForm } from "../../price-mod-form";
 import { ImageUpload } from "../../properties/image-form";
 import { ImageGallery } from "../../properties/image-order-form";
+import { RetreatInstanceForm } from "../instance-form";
 import { RetreatForm } from "../retreat-form";
 import { RetreatInstancesList } from "../retreat-instance-table";
 
@@ -117,6 +119,7 @@ export default async function Page({ params }: { params: { id: string } }) {
         </TabsContent>
 
         <TabsContent value="instances">
+          <RetreatInstancesList retreatId={params.id} />
           <Card>
             <CardHeader>
               <CardTitle>Retreat Instances</CardTitle>
@@ -125,8 +128,9 @@ export default async function Page({ params }: { params: { id: string } }) {
                 retreat.
               </CardDescription>
             </CardHeader>
+            <CardContent></CardContent>
             <CardContent>
-              <RetreatInstancesList retreatId={params.id} />
+              <RetreatInstanceForm />
             </CardContent>
           </Card>
         </TabsContent>

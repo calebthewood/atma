@@ -342,3 +342,29 @@ export type GetRetreatResult =
       success: false;
       error: string;
     };
+
+export async function getRetreatPrices(id: string) {
+  try {
+    const prices = await prisma.priceMod.findMany({
+      where: { retreatId: id },
+    });
+
+    if (prices === null) {
+      return {
+        success: false,
+        error: "prices not found",
+      };
+    }
+
+    return {
+      success: true,
+      prices,
+    };
+  } catch (error) {
+    console.error("Error fetching prices:", error);
+    return {
+      success: false,
+      error: "Failed to fetch prices",
+    };
+  }
+}

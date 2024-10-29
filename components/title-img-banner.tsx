@@ -17,15 +17,15 @@ export function TitleImageBanner({
       {/* <div className="absolute inset-0 bg-zinc-900" /> */}
       <Image
         priority
-        // placeholder="blur"
-        sizes="100vw"
         alt="destination cover photo"
         src={href}
+        fill={true}
+        sizes="100vw"
         style={{
           objectFit: "cover",
           objectPosition: "center",
+          width: "100%",
         }}
-        fill={true}
       />
       <GlassCard className="-left-10 z-20 rounded-r py-1 pl-10 pr-8">
         <div className="flex items-center text-lg font-medium text-white">

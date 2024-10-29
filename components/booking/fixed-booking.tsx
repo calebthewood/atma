@@ -48,7 +48,7 @@ interface BookingListProps {
 
 /** This is the variable start, fixed duration picker. So a  user can start any day within the confines of the parent
  * retreat, but the duration is set. So this would be like preset 3-day retreats, or however long is set in the parent
- * retreat. DatePicker here will always have a set length, but you can move around thew start date.
+ * retreat. DatePicker here will always have a set length, but you can move around the start date.
  *
  * Note that the flexible_range retreats need only 1 retreat instance.
  */

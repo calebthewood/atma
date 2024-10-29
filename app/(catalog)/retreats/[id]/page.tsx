@@ -2,6 +2,7 @@ import { getRetreatWithPrice } from "@/actions/retreat-actions";
 import { auth } from "@/auth";
 import { BedSingle, Navigation, NotepadText, User } from "lucide-react";
 
+import prisma from "@/lib/prisma";
 import {
   Card,
   CardContent,
@@ -16,7 +17,6 @@ import { FlexibleBooking } from "@/components/booking/flexible-booking";
 import { OpenBooking } from "@/components/booking/open-booking";
 import { LoadingSpinner } from "@/components/loading-spinner";
 import { TitleImageBanner } from "@/components/title-img-banner";
-import { H1 } from "@/components/typography";
 
 const SLIDES = [
   "/img/iStock-1929812569.jpg",
@@ -29,6 +29,15 @@ const SLIDES = [
 
 export default async function Page({ params }: { params: { id: string } }) {
   const retreat = await getRetreatWithPrice(params.id);
+  const images = await prisma.image.findMany({
+    where: {
+      propertyId: retreat.propertyId,
+    },
+    orderBy: {
+      order: "asc",
+    },
+  });
+
   const session = await auth();
   const details = [
     {
@@ -92,11 +101,8 @@ export default async function Page({ params }: { params: { id: string } }) {
       </>
     );
   }
-  // move this default to a general config? maybe not needed even.
-  const coverImgPath =
-    retreat?.coverImg ||
-    retreat?.images[0]?.filePath ||
-    "/img/iStock-1490140364.jpg";
+
+  const coverImgPath = images[0]?.filePath || "/img/iStock-1490140364.jpg";
 
   const [title, subtitle] = retreat?.name?.split("|") ?? [];
 
@@ -112,9 +118,7 @@ export default async function Page({ params }: { params: { id: string } }) {
         <div className="my-12">
           <ThumbnailCarousel
             slides={
-              retreat.images.length > 0
-                ? retreat.images.map((img) => img.filePath)
-                : SLIDES
+              images.length > 0 ? images.map((img) => img.filePath) : SLIDES
             }
           />
         </div>

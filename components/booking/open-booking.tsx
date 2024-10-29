@@ -1,9 +1,11 @@
 "use client";
 
-import React, { useState } from "react";
-import { Retreat, RetreatInstance } from "@prisma/client";
+import React, { useEffect, useState } from "react";
+import { getRetreatPrices } from "@/actions/retreat-actions";
+import { PriceMod, Retreat, RetreatInstance } from "@prisma/client";
 import { compareAsc, format } from "date-fns";
 
+import prisma from "@/lib/prisma";
 import { toUSD } from "@/lib/utils";
 import {
   Card,
@@ -39,12 +41,23 @@ interface BookingListProps {
  */
 export function OpenBooking({ userId, retreat, events }: BookingListProps) {
   const [guestCount, setGuestCount] = useState(retreat.minGuests);
-  const [date, setDate] = React.useState<Date | undefined>(today);
+  const [date, setDate] = useState<Date | undefined>(today);
+  const [prices, setPrices] = useState<PriceMod[] | null>(null);
 
   const comesAfter = (a: Date, b: Date) => compareAsc(a, b) === 1;
   const displayed = events?.filter((e) =>
     comesAfter(e.startDate, date ?? today)
   );
+
+  useEffect(() => {
+    async function fetchPrices() {
+      const res = await getRetreatPrices(retreat.id);
+      if (res.success && res.prices) {
+        setPrices(res.prices);
+      }
+    }
+    fetchPrices();
+  }, [retreat]);
 
   return (
     <Card className="max-w-md">

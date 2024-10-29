@@ -120,6 +120,7 @@ const ThumbnailCarousel: React.FC<PropType> = (props) => {
                     src={img}
                     alt={`Slide ${i + 1}`}
                     fill
+                    sizes="400px"
                     className="max-w-none flex-[0_0_calc(115%+2rem)] object-cover transition-all hover:scale-105"
                   />
                 </div>
