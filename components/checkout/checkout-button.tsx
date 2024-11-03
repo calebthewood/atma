@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, type JSX } from "react";
 import { redirect } from "next/navigation";
 import { createBooking } from "@/actions/booking-actions";
 import { createCheckoutSession } from "@/actions/stripe";

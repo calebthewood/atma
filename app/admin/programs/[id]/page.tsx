@@ -16,7 +16,8 @@ import { ImageUpload } from "../../properties/image-form";
 import { ImageGallery } from "../../properties/image-order-form";
 import { ProgramForm } from "../program-form";
 
-export default async function Page({ params }: { params: { id: string } }) {
+export default async function Page(props: { params: Promise<{ id: string }> }) {
+  const params = await props.params;
   const result = await getProgram(params.id);
 
   if (!result.success) {

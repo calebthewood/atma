@@ -14,7 +14,7 @@ export async function createCheckoutSession(
     "uiMode"
   ) as Stripe.Checkout.SessionCreateParams.UiMode;
   console.log("booking id: ", bookingId);
-  const origin: string = headers().get("origin") as string;
+  const origin: string = (await headers()).get("origin") as string;
 
   const checkoutSession: Stripe.Checkout.Session =
     await stripe.checkout.sessions.create({

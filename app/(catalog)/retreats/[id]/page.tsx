@@ -20,10 +20,11 @@ const DEFAULT_SLIDES = [
 ] as const;
 
 interface PageProps {
-  params: { id: string };
+  params: Promise<{ id: string }>;
 }
 
-export default async function RetreatPage({ params }: PageProps) {
+export default async function RetreatPage(props: PageProps) {
+  const params = await props.params;
 
   const [retreat, images, session] = await Promise.all([
     getRetreatWithPrice(params.id),
