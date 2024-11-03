@@ -21,6 +21,8 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 
+import { ClickyCounter } from "../counter";
+
 interface Place {
   desc: string;
   place_id: string;
@@ -262,23 +264,11 @@ export function GuestCombobox() {
         </Button>
       </PopoverTrigger>
       <PopoverContent className="w-[200px] p-4">
-        <div className="flex items-center justify-between">
-          <span className="text-sm font-medium">Guest Count</span>
-          <div className="flex items-center space-x-2">
-            <Button
-              size="sm"
-              variant="outline"
-              onClick={decrementGuests}
-              disabled={guestCount === 0}
-            >
-              <Minus className="size-4" />
-            </Button>
-            <span className="text-lg font-bold">{guestCount}</span>
-            <Button size="sm" variant="outline" onClick={incrementGuests}>
-              <Plus className="size-4" />
-            </Button>
-          </div>
-        </div>
+        <ClickyCounter
+          incrementor={incrementGuests}
+          decrementor={decrementGuests}
+          count={guestCount}
+        />
       </PopoverContent>
     </Popover>
   );

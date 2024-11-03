@@ -3,7 +3,13 @@
 import { revalidatePath } from "next/cache";
 import { Prisma, Retreat } from "@prisma/client";
 
+
+
 import prisma from "@/lib/prisma";
+
+
+
+
 
 // Base type for shared properties
 type RetreatBaseInput = {
@@ -257,6 +263,7 @@ export async function getRetreatWithPrice(retreatId: string) {
         id: retreatId,
       },
       include: {
+        priceMods: true,
         retreatInstances: {
           include: {
             priceMods: true,
@@ -347,6 +354,25 @@ export async function getRetreatPrices(id: string) {
   try {
     const prices = await prisma.priceMod.findMany({
       where: { retreatId: id },
+    });
+
+    return {
+      success: true,
+      prices, // Return empty array if no prices found - this is a valid state
+    };
+  } catch (error) {
+    console.error("Error fetching prices:", error);
+    return {
+      success: false,
+      error: "Failed to fetch prices",
+    };
+  }
+}
+
+export async function getInstancePrices(id: string) {
+  try {
+    const prices = await prisma.priceMod.findMany({
+      where: { retreatInstanceId: id },
     });
 
     if (prices === null) {

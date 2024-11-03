@@ -1,11 +1,13 @@
 "use server";
 
+import { cache } from "react";
 import { revalidatePath } from "next/cache";
 import {
   DeleteObjectCommand,
   PutObjectCommand,
   S3Client,
 } from "@aws-sdk/client-s3";
+import { Image, Retreat } from "@prisma/client";
 import { v4 as uuidv4 } from "uuid";
 import { z } from "zod";
 
@@ -203,3 +205,49 @@ export async function deleteImage(id: string) {
     throw new Error("Failed to delete image");
   }
 }
+
+export const getRetreatImages = cache(
+  async (retreatId: string): Promise<Image[]> => {
+    try {
+      // First get the retreat to find its property ID
+      const retreat = await prisma.retreat.findUnique({
+        where: { id: retreatId },
+        select: { propertyId: true },
+      });
+
+      if (!retreat) {
+        return [];
+      }
+
+      // Get both retreat-specific images and property images
+      const images = await prisma.image.findMany({
+        where: {
+          OR: [{ retreatId }, { propertyId: retreat.propertyId }],
+        },
+        orderBy: [{ order: "asc" }, { createdAt: "desc" }],
+      });
+
+      return images;
+    } catch (error) {
+      console.error("Error fetching retreat images:", error);
+      return [];
+    }
+  }
+);
+
+// Optional: If you need specific property images
+export const getPropertyImages = cache(
+  async (propertyId: string): Promise<Image[]> => {
+    try {
+      const images = await prisma.image.findMany({
+        where: { propertyId },
+        orderBy: [{ order: "asc" }, { createdAt: "desc" }],
+      });
+
+      return images;
+    } catch (error) {
+      console.error("Error fetching property images:", error);
+      return [];
+    }
+  }
+);

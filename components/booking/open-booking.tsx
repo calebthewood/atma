@@ -1,156 +1,197 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
-import { getRetreatPrices } from "@/actions/retreat-actions";
+import React from "react";
+import { RetreatWithPrice } from "@/actions/retreat-actions";
 import { PriceMod, Retreat, RetreatInstance } from "@prisma/client";
 import { compareAsc, format } from "date-fns";
 
-import prisma from "@/lib/prisma";
-import { toUSD } from "@/lib/utils";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
+
+
+import { sumPriceList, toUSD } from "@/lib/utils";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+
+
 
 import CheckoutButton from "../checkout/checkout-button";
-import { Large, Lead, Small } from "../typography";
+import { Lead, Small } from "../typography";
 import { DatePicker } from "../ui/date-pickers";
+import { GuestCombobox } from "../ui/location-combobox";
 import { Separator } from "../ui/separator";
-import { GuestSelect } from "./guest-select";
+
 
 const today = new Date();
 
-interface BookingListProps {
-  events: RetreatInstance[];
-  retreat: Retreat;
-  userId: string | undefined;
+interface PriceDisplayProps {
+  prices: PriceMod[] | null;
 }
-/** Component for making open bookings. Any start & any end, within whatever parameters set by parent retreat
- * DatePicker will be a variable range between 2 points. Will need to show unavailable days. Like for example, maybe
- * the user can book any range, but it cant go over a monday.
- */
-export function OpenBooking({ userId, retreat, events }: BookingListProps) {
-  const [guestCount, setGuestCount] = useState(retreat.minGuests);
-  const [date, setDate] = useState<Date | undefined>(today);
-  const [prices, setPrices] = useState<PriceMod[] | null>(null);
 
-  const comesAfter = (a: Date, b: Date) => compareAsc(a, b) === 1;
-  const displayed = events?.filter((e) =>
-    comesAfter(e.startDate, date ?? today)
-  );
-
-  useEffect(() => {
-    async function fetchPrices() {
-      const res = await getRetreatPrices(retreat.id);
-      if (res.success && res.prices) {
-        setPrices(res.prices);
-      }
-    }
-    fetchPrices();
-  }, [retreat]);
-
+function PriceDisplay({ prices }: PriceDisplayProps) {
   return (
-    <Card className="max-w-md">
-      <CardHeader>
-        <CardTitle>
-          $XXXX
-          {/* {toUSD(Number(retreat.price))} <Small>base price</Small> */}
-        </CardTitle>
-        <CardDescription>Event Booking</CardDescription>
-      </CardHeader>
-      <CardContent>
-        <div className="flex items-center space-x-4">
-          <Small>From</Small>
-          <DatePicker date={date} handleDate={setDate} />
-          <GuestSelect
-            guestCount={guestCount ?? 1}
-            handleGuests={(val: string) => setGuestCount(Number(val))}
-            minGuests={retreat.minGuests ?? 1}
-            maxGuests={retreat.maxGuests ?? 16}
-          />
-        </div>
-      </CardContent>
-      {displayed?.map((r, i) => (
-        <CardContent key={i}>
-          <BookingItem
-            userId={userId}
-            guestCount={guestCount ?? 1}
-            retreat={retreat}
-            item={r}
-          />
-        </CardContent>
-      ))}
-      <CardContent>
-        <p>Card Content</p>
-      </CardContent>
-      <CardFooter>
-        <p>Card Footer</p>
-      </CardFooter>
-    </Card>
+    <CardHeader>
+      <CardTitle>
+        {prices ? toUSD(prices[0].value) : "-"} <Small>/ retreat</Small>
+      </CardTitle>
+      <CardDescription>Event Booking</CardDescription>
+    </CardHeader>
+  );
+}
+
+interface DateSelectionProps {
+  date: Date | undefined;
+  onDateChange: (date: Date | undefined) => void;
+}
+
+function DateSelection({ date, onDateChange }: DateSelectionProps) {
+  return (
+    <div className="flex items-center space-x-4">
+      <Small>From</Small>
+      <DatePicker date={date} handleDate={onDateChange} />
+      <GuestCombobox />
+    </div>
+  );
+}
+
+interface PriceItemProps {
+  price: PriceMod;
+}
+
+function PriceItem({ price }: PriceItemProps) {
+  return (
+    <p className="text-sm font-semibold">
+      {toUSD(price.value)} <span className="font-normal">/ {price.name}</span>
+    </p>
+  );
+}
+
+interface PriceSummaryProps {
+  prices: PriceMod[] | null;
+}
+
+function PriceSummary({ prices }: PriceSummaryProps) {
+  return (
+    <TooltipProvider>
+      <Tooltip>
+        <TooltipTrigger>
+          <Small className="">{toUSD(sumPriceList(prices))}</Small>
+          <Lead className="mr-1 inline text-xs"> / pre tax</Lead>
+        </TooltipTrigger>
+        <TooltipContent className="max-w-64">
+          <p>Proceed to checkout to view total cost including taxes & fees</p>
+        </TooltipContent>
+      </Tooltip>
+    </TooltipProvider>
   );
 }
 
 interface BookingItemProps {
   item: RetreatInstance;
-  retreat: Retreat;
+  retreat: RetreatWithPrice;
   guestCount: number;
   userId: string | undefined;
+  prices: PriceMod[] | null;
 }
 
-function BookingItem({ userId, item, retreat, guestCount }: BookingItemProps) {
+function BookingItem({
+  userId,
+  item,
+  retreat,
+  guestCount,
+  prices,
+}: BookingItemProps) {
   const start = format(item.startDate, "EEE, MMM dd");
   const end = format(item.endDate, "EEE, MMM dd");
   const basePrice = 250;
-  // const basePrice = Number(retreat.price);
   const adjustedPrice = basePrice * guestCount;
+
   return (
-    <>
-      <div className="flex flex-row">
-        <div className="flex basis-1/2 flex-col">
-          <Large>{retreat.name}</Large>
-          <Lead className="text-sm">
-            {start} to {end}
-          </Lead>
-          <p className="text-sm font-semibold">
-            {toUSD(basePrice)} <span className="font-normal">/ person</span>
-          </p>
-        </div>
-        <div className="flex basis-1/2 flex-col items-end">
-          <TooltipProvider>
-            <Tooltip>
-              <TooltipTrigger>
-                <Small className="">{toUSD(adjustedPrice)}</Small>
-                <Lead className="mr-1 inline text-xs"> / base price</Lead>
-              </TooltipTrigger>
-              <TooltipContent className="max-w-64">
-                <p>
-                  Proceed to checkout to view total cost including taxes & fees
-                </p>
-              </TooltipContent>
-            </Tooltip>
-          </TooltipProvider>
-          <CheckoutButton
-            uiMode="embedded"
-            price={adjustedPrice}
-            userId={userId}
-            propertyId={retreat.propertyId}
-            checkInDate={item.startDate}
-            checkOutDate={item.endDate}
-            guestCount={guestCount}
-          />
-        </div>
+    <div className="flex flex-row">
+      <div className="flex basis-1/2 flex-col">
+        <Lead className="text-sm">
+          {start} to {end}
+        </Lead>
+        {prices?.map((price, index) => (
+          <PriceItem key={price.id || index} price={price} />
+        ))}
       </div>
-      <Separator className="col-span-5 my-4" />
-    </>
+      <div className="flex basis-1/2 flex-col items-end">
+        <PriceSummary prices={prices} />
+        <CheckoutButton
+          uiMode="embedded"
+          price={adjustedPrice}
+          userId={userId}
+          propertyId={retreat.propertyId}
+          checkInDate={item.startDate}
+          checkOutDate={item.endDate}
+          guestCount={guestCount}
+        />
+      </div>
+    </div>
+  );
+}
+
+interface BookingEventsListProps {
+  events: RetreatInstance[];
+  retreat: RetreatWithPrice;
+  userId: string | undefined;
+  guestCount: number;
+  prices: PriceMod[] | null;
+}
+
+function BookingEventsList({
+  events,
+  retreat,
+  userId,
+  guestCount,
+  prices,
+}: BookingEventsListProps) {
+  return (
+    <CardContent>
+      {events.map((event, index) => (
+        <div key={event.id || index}>
+          <BookingItem
+            userId={userId}
+            guestCount={guestCount}
+            retreat={retreat}
+            item={event}
+            prices={prices}
+          />
+          <Separator className="col-span-5 mx-auto my-6 w-11/12" />
+        </div>
+      ))}
+    </CardContent>
+  );
+}
+
+interface OpenBookingProps {
+  events: RetreatInstance[];
+  retreat: RetreatWithPrice;
+  userId: string | undefined;
+}
+
+export function OpenBooking({ userId, retreat, events }: OpenBookingProps) {
+  const [guestCount, setGuestCount] = React.useState(retreat.minGuests || 1);
+  const [date, setDate] = React.useState<Date | undefined>(today);
+
+
+  const displayed = React.useMemo(
+    () => events?.filter((e) => compareAsc(e.startDate, date ?? today) === 1),
+    [events, date]
+  );
+
+  return (
+    <Card>
+      <PriceDisplay prices={retreat.priceMods} />
+      <CardContent>
+        <DateSelection date={date} onDateChange={setDate} />
+      </CardContent>
+      <BookingEventsList
+        events={displayed}
+        retreat={retreat}
+        userId={userId}
+        guestCount={guestCount}
+        prices={retreat.priceMods}
+      />
+    </Card>
   );
 }

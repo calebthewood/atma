@@ -1,4 +1,5 @@
 import path from "path";
+import { PriceMod } from "@prisma/client";
 import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
 
@@ -37,4 +38,11 @@ export function toKebabCase(str: string) {
     .replace(/[^a-z0-9 -]/g, "") // Remove special chars
     .replace(/\s+/g, "-") // Replace spaces with -
     .replace(/-+/g, "-"); // Remove consecutive -
+}
+
+export function sumPriceList(prices: PriceMod[] | null) {
+  if (prices === null) return 0;
+  let sum = 0;
+  for (const p of prices) if (p.value) sum += p.value;
+  return sum;
 }

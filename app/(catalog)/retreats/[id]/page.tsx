@@ -1,144 +1,65 @@
+import { Suspense } from "react";
+import { notFound } from "next/navigation";
+import { getRetreatImages } from "@/actions/image-actions";
 import { getRetreatWithPrice } from "@/actions/retreat-actions";
 import { auth } from "@/auth";
-import { BedSingle, Navigation, NotepadText, User } from "lucide-react";
 
-import prisma from "@/lib/prisma";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
 import ThumbnailCarousel from "@/components/ui/carousel-thumbnail";
-import { FixedBooking } from "@/components/booking/fixed-booking";
-import { FlexibleBooking } from "@/components/booking/flexible-booking";
-import { OpenBooking } from "@/components/booking/open-booking";
 import { LoadingSpinner } from "@/components/loading-spinner";
+import { BookingSelector } from "./retreat-detail-cards";
+import { RetreatDetailCards } from "./retreat-detail-cards";
 import { TitleImageBanner } from "@/components/title-img-banner";
 
-const SLIDES = [
+const DEFAULT_SLIDES = [
   "/img/iStock-1929812569.jpg",
   "/img/iStock-1812905796.jpg",
   "/img/iStock-1550112895.jpg",
   "/img/iStock-1507078404.jpg",
   "/img/iStock-1490140364.jpg",
   "/img/iStock-1291807006.jpg",
-];
+] as const;
 
-export default async function Page({ params }: { params: { id: string } }) {
-  const retreat = await getRetreatWithPrice(params.id);
-  const images = await prisma.image.findMany({
-    where: {
-      propertyId: retreat.propertyId,
-    },
-    orderBy: {
-      order: "asc",
-    },
-  });
+interface PageProps {
+  params: { id: string };
+}
 
-  const session = await auth();
-  const details = [
-    {
-      name: "Room Type",
-      icon: <BedSingle />,
-      detail: "",
-    },
-    {
-      name: "Excursions",
-      icon: <NotepadText />,
-      detail: "",
-    },
-    {
-      name: "Transportation",
-      icon: <Navigation />,
-      detail: "Car & Boat",
-    },
-    {
-      name: "Tour Guide",
-      icon: <User />,
-      detail: "Not Included",
-    },
-  ];
+export default async function RetreatPage({ params }: PageProps) {
 
-  console.log("retreat ", retreat);
-  function RenderBookingType({ type }: { type: string | null }) {
-    switch (type) {
-      case "Open":
-        return (
-          <OpenBooking
-            userId={session?.user?.id}
-            retreat={retreat}
-            events={retreat.retreatInstances}
-          />
-        );
-      case "Fixed":
-        return (
-          <FixedBooking
-            userId={session?.user?.id}
-            retreat={retreat}
-            event={retreat.retreatInstances[0]}
-          />
-        );
-      case "Flexible":
-        return (
-          <FlexibleBooking
-            userId={session?.user?.id}
-            retreat={retreat}
-            events={retreat.retreatInstances}
-          />
-        );
-      default:
-        return null;
-    }
-  }
+  const [retreat, images, session] = await Promise.all([
+    getRetreatWithPrice(params.id),
+    getRetreatImages(params.id),
+    auth(),
+  ]);
 
   if (!retreat) {
-    return (
-      <>
-        <LoadingSpinner /> Loading...
-      </>
-    );
+    notFound();
   }
 
-  const coverImgPath = images[0]?.filePath || "/img/iStock-1490140364.jpg";
-
-  const [title, subtitle] = retreat?.name?.split("|") ?? [];
+  const [title, subtitle] = retreat.name?.split("|") ?? [];
+  const coverImage = images[0]?.filePath || DEFAULT_SLIDES[4];
+  const imageSlides =
+    images.length > 0 ? images.map((img) => img.filePath) : DEFAULT_SLIDES;
 
   return (
     <div className="mt-4 h-auto min-h-screen">
-      <TitleImageBanner title={title} subtitle={subtitle} href={coverImgPath} />
+      <TitleImageBanner title={title} subtitle={subtitle} href={coverImage} />
       <div className="container">
-        <div className="flex justify-center gap-6 py-12">
-          {details.map((d, i) => (
-            <RetreatDescCard key={d.name} desc={d} />
-          ))}
-        </div>
-        <div className="my-12">
-          <ThumbnailCarousel
-            slides={
-              images.length > 0 ? images.map((img) => img.filePath) : SLIDES
-            }
-          />
-        </div>
-        <div className="grid grid-cols-12">
-          <div className="col-span-4 col-start-2 text-lg">
-            <p className="my-4">
-              Lorem ipsum dolor sit amet, consectetur adipisicing elit. Fuga
-              iste, repudiandae ipsam exercitationem reiciendis ea cumque
-              corporis magni ipsum architecto nobis? Nihil libero rem cum
-              dolorem quas ratione a fuga.
-            </p>
-            <p className="my-4">
-              Lorem ipsum dolor sit amet, consectetur adipisicing elit. Fuga
-              iste, repudiandae ipsam exercitationem reiciendis ea cumque
-              corporis magni ipsum architecto nobis? Nihil libero rem cum
-              dolorem quas ratione a fuga.
-            </p>
+        <RetreatDetailCards />
+
+        <Suspense fallback={<div className="h-96 animate-pulse bg-gray-100" />}>
+          <div className="my-12">
+            <ThumbnailCarousel slides={imageSlides} />
           </div>
-          <div className="col-span-5 col-start-7 mb-16">
-            <RenderBookingType type={retreat.bookingType} />
+        </Suspense>
+
+        <div className="flex flex-row gap-x-4">
+          <RetreatDescription />
+          <div className="mb-16 max-w-md">
+            <BookingSelector
+              type={retreat.bookingType}
+              userId={session?.user?.id}
+              retreat={retreat}
+            />
           </div>
         </div>
       </div>
@@ -146,21 +67,21 @@ export default async function Page({ params }: { params: { id: string } }) {
   );
 }
 
-function RetreatDescCard({
-  desc,
-}: {
-  desc: { name: string; icon: any; detail: string };
-}) {
+function RetreatDescription() {
   return (
-    <Card className="w-56">
-      <CardHeader>
-        <CardDescription className="mx-auto p-4">{desc.icon}</CardDescription>
-        <CardTitle className="mx-auto font-light">{desc.name}</CardTitle>
-      </CardHeader>
-      <CardContent></CardContent>
-      <CardFooter className="justify-center">
-        <p className="text-center">{desc.detail}</p>
-      </CardFooter>
-    </Card>
+    <div className="text-lg">
+      <p className="my-4">
+        Lorem ipsum dolor sit amet, consectetur adipisicing elit. Fuga iste,
+        repudiandae ipsam exercitationem reiciendis ea cumque corporis magni
+        ipsum architecto nobis? Nihil libero rem cum dolorem quas ratione a
+        fuga.
+      </p>
+      <p className="my-4">
+        Lorem ipsum dolor sit amet, consectetur adipisicing elit. Fuga iste,
+        repudiandae ipsam exercitationem reiciendis ea cumque corporis magni
+        ipsum architecto nobis? Nihil libero rem cum dolorem quas ratione a
+        fuga.
+      </p>
+    </div>
   );
 }

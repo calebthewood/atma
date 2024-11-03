@@ -18,8 +18,8 @@ interface GuestSelectProps {
 export function GuestSelect({
   guestCount,
   handleGuests,
-  minGuests,
-  maxGuests,
+  minGuests = 1,
+  maxGuests = 24,
 }: GuestSelectProps) {
   const arrayRange = (start: number, stop: number, step: number) =>
     Array.from({ length: (stop - start) / step + 1 }, (_, index) => {
@@ -28,7 +28,7 @@ export function GuestSelect({
       return { name: `${value} ${name}`, value: String(value) };
     });
 
-  const guests = arrayRange(minGuests, maxGuests, 1);
+  const guests = arrayRange(minGuests, maxGuests === -1 ? 16 : maxGuests, 1);
 
   return (
     <Select onValueChange={handleGuests}>

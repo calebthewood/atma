@@ -89,13 +89,13 @@ export default function CheckoutButton({
             <input type="hidden" name="uiMode" value={uiMode} />
             <input type="hidden" name="price" value={input.price.toString()} />
             <DialogTrigger asChild>
-              <Button className="w-full" type="submit" disabled={loading}>
+              <Button type="submit" disabled={loading}>
                 Book Retreat
               </Button>
             </DialogTrigger>
           </form>
           {clientSecret ? (
-            <DialogContent>
+            <DialogContent className="">
               <DialogHeader>
                 <DialogTitle>Checkout</DialogTitle>
                 <DialogDescription className="rounded">
