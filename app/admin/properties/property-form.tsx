@@ -170,6 +170,7 @@ export function PropertyForm({ property }: PropertyFormProps) {
     "depositMethods",
     "paymentMethods",
     "tagList",
+    "type",
   ]);
 
   useEffect(() => {
@@ -247,11 +248,13 @@ export function PropertyForm({ property }: PropertyFormProps) {
   ];
 
   const paymentMethods = [
+    { id: "american_express", label: "American Express" },
+    { id: "cash", label: "Cash" },
+    { id: "debit_card", label: "Debit Card" },
     { id: "jcb", label: "JCB" },
-    { id: "union-pay", label: "Union Pay" },
-    { id: "visa", label: "Visa" },
     { id: "mastercard", label: "Mastercard" },
-    { id: "american-express", label: "American Express" },
+    { id: "union_pay", label: "Union Pay" },
+    { id: "visa", label: "Visa" },
   ];
   console.log(form.formState.errors);
   // if (!property) return null;
@@ -261,6 +264,7 @@ export function PropertyForm({ property }: PropertyFormProps) {
         onSubmit={form.handleSubmit(onSubmit)}
         className="max-w-xl space-y-8"
       >
+        <h3 className="text-lg font-semibold">General</h3>
         <FormField
           control={form.control}
           name="name"
@@ -272,7 +276,7 @@ export function PropertyForm({ property }: PropertyFormProps) {
               <FormControl>
                 <Input
                   className={getFieldStyles("name")}
-                  placeholder="Enter property/resort name"
+                  placeholder=""
                   {...field}
                   onBlur={() => handleFieldBlur("name")}
                 />
@@ -281,7 +285,61 @@ export function PropertyForm({ property }: PropertyFormProps) {
             </FormItem>
           )}
         />
-
+        <FormField
+          control={form.control}
+          name="type"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel className={getFieldStyles("type")}>
+                Property Type
+              </FormLabel>
+              <Select onValueChange={field.onChange} defaultValue={field.value}>
+                <FormControl>
+                  <SelectTrigger className={getFieldStyles("type")}>
+                    <SelectValue placeholder="Select property type" />
+                  </SelectTrigger>
+                </FormControl>
+                <SelectContent>
+                  <SelectItem value="boutique-hotel">Boutique Hotel</SelectItem>
+                  <SelectItem value="chalet">Chalet</SelectItem>
+                  <SelectItem value="clinic">Clinic</SelectItem>
+                  <SelectItem value="eco-lodge">Eco-Lodge</SelectItem>
+                  <SelectItem value="farm-stay">Farm Stay</SelectItem>
+                  <SelectItem value="heritage-property">
+                    Heritage Property
+                  </SelectItem>
+                  <SelectItem value="hotel">Hotel</SelectItem>
+                  <SelectItem value="resort">Resort</SelectItem>
+                </SelectContent>
+              </Select>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={form.control}
+          name="hostId"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel className={getFieldStyles("hostId")}>Host</FormLabel>
+              <Select onValueChange={field.onChange} defaultValue={field.value}>
+                <FormControl>
+                  <SelectTrigger className={getFieldStyles("hostId")}>
+                    <SelectValue placeholder="Select a host" />
+                  </SelectTrigger>
+                </FormControl>
+                <SelectContent>
+                  {hosts.map((host) => (
+                    <SelectItem key={host.id} value={host.id}>
+                      {host.name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
         <FormField
           control={form.control}
           name="email"
@@ -293,7 +351,7 @@ export function PropertyForm({ property }: PropertyFormProps) {
                   {...field}
                   className={getFieldStyles("email")}
                   type="email"
-                  placeholder="point of contact email"
+                  placeholder="Customer service email"
                   onBlur={() => handleFieldBlur("email")}
                 />
               </FormControl>
@@ -311,7 +369,7 @@ export function PropertyForm({ property }: PropertyFormProps) {
               <FormControl>
                 <Input
                   className={getFieldStyles("phone")}
-                  placeholder="point of contact phone number"
+                  placeholder="Customer service phone number"
                   {...field}
                   onBlur={() => handleFieldBlur("phone")}
                 />
@@ -320,94 +378,23 @@ export function PropertyForm({ property }: PropertyFormProps) {
             </FormItem>
           )}
         />
-        <FormField
-          control={form.control}
-          name="address"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel className={getFieldStyles("address")}>
-                Address
-              </FormLabel>
-              <FormControl>
-                <Input
-                  className={getFieldStyles("address")}
-                  placeholder="Enter full address"
-                  {...field}
-                />
-              </FormControl>
-              <FormDescription>
-                Defaults to the raw address scraped from website
-              </FormDescription>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
         <div className="space-y-4">
-          <h3 className="text-lg font-semibold">Location Details</h3>
-          <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-            <FormField
-              control={form.control}
-              name="lat"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Latitude</FormLabel>
-                  <FormControl>
-                    <Input
-                      type="number"
-                      step="any"
-                      {...field}
-                      onChange={(e) =>
-                        field.onChange(parseFloat(e.target.value))
-                      }
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name="lng"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Longitude</FormLabel>
-                  <FormControl>
-                    <Input
-                      type="number"
-                      step="any"
-                      {...field}
-                      onChange={(e) =>
-                        field.onChange(parseFloat(e.target.value))
-                      }
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-          </div>
-
+          <h3 className="text-lg font-semibold">Location</h3>
           <FormField
             control={form.control}
-            name="coordType"
+            name="address"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Coordinate Type</FormLabel>
-                <Select
-                  onValueChange={field.onChange}
-                  defaultValue={field.value}
-                >
-                  <FormControl>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select coordinate type" />
-                    </SelectTrigger>
-                  </FormControl>
-                  <SelectContent>
-                    <SelectItem value="exact">Exact</SelectItem>
-                    <SelectItem value="approximate">Approximate</SelectItem>
-                  </SelectContent>
-                </Select>
+                <FormLabel className={getFieldStyles("address")}>
+                  Address
+                </FormLabel>
+                <FormControl>
+                  <Input
+                    className={getFieldStyles("address")}
+                    placeholder=""
+                    {...field}
+                  />
+                </FormControl>
                 <FormMessage />
               </FormItem>
             )}
@@ -443,71 +430,98 @@ export function PropertyForm({ property }: PropertyFormProps) {
                 </FormItem>
               )}
             />
+            <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+              <FormField
+                control={form.control}
+                name="lat"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Latitude</FormLabel>
+                    <FormControl>
+                      <Input
+                        type="number"
+                        step="any"
+                        {...field}
+                        onChange={(e) =>
+                          field.onChange(parseFloat(e.target.value))
+                        }
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="lng"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Longitude</FormLabel>
+                    <FormControl>
+                      <Input
+                        type="number"
+                        step="any"
+                        {...field}
+                        onChange={(e) =>
+                          field.onChange(parseFloat(e.target.value))
+                        }
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
+
+            <FormField
+              control={form.control}
+              name="coordType"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Coordinate Type</FormLabel>
+                  <Select
+                    onValueChange={field.onChange}
+                    defaultValue={field.value}
+                  >
+                    <FormControl>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select coordinate type" />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      <SelectItem value="exact">Exact</SelectItem>
+                      <SelectItem value="approximate">Approximate</SelectItem>
+                    </SelectContent>
+                  </Select>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="nearbyAirport"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel className={getFieldStyles("nearbyAirport")}>
+                    Nearest Airport
+                  </FormLabel>
+                  <FormControl>
+                    <Input
+                      className={getFieldStyles("nearbyAirport")}
+                      placeholder="Enter airport name"
+                      {...field}
+                      onBlur={() => handleFieldBlur("nearbyAirport")}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
           </div>
         </div>
         <div className="space-y-4">
-          <h3 className="text-lg font-semibold">Additional Details</h3>
-          <FormField
-            control={form.control}
-            name="placeList"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Nearby Places</FormLabel>
-                <FormControl>
-                  <Textarea
-                    placeholder="Enter nearby places (one per line)"
-                    {...field}
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-
-          <FormField
-            control={form.control}
-            name="policyList"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Policies</FormLabel>
-                <FormControl>
-                  <Textarea
-                    placeholder="Enter policies (one per line)"
-                    {...field}
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-
-          <FormField
-            control={form.control}
-            name="rating"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Rating</FormLabel>
-                <FormControl>
-                  <Input placeholder="e.g., 187 / 842" {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-
-          <FormField
-            control={form.control}
-            name="coverImg"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Cover Image URL</FormLabel>
-                <FormControl>
-                  <Input type="url" {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+          <h3 className="text-lg font-semibold">Details</h3>
         </div>
         <FormField
           control={form.control}
@@ -515,13 +529,13 @@ export function PropertyForm({ property }: PropertyFormProps) {
           render={({ field }) => (
             <FormItem>
               <FormLabel className={getFieldStyles("descShort")}>
-                Property Overview ({field?.value?.length}/200)
+                Healing Focus({field?.value?.length}/200)
               </FormLabel>
               <FormControl>
                 <Textarea
                   maxLength={200}
                   className={getFieldStyles("descShort")}
-                  placeholder="A brief description of the property..."
+                  placeholder="3-5 bullet points highlighting the unique wellness offerings of the retreat."
                   {...field}
                   onBlur={() => handleFieldBlur("descShort")}
                 />
@@ -542,7 +556,8 @@ export function PropertyForm({ property }: PropertyFormProps) {
                 <Textarea
                   maxLength={1000}
                   className={getFieldStyles("descList")}
-                  placeholder="A brief description of the property..."
+                  placeholder="Describe the property’s ambiance, services, and unique qualities.
+"
                   {...field}
                   onBlur={() => handleFieldBlur("descList")}
                 />
@@ -551,57 +566,13 @@ export function PropertyForm({ property }: PropertyFormProps) {
             </FormItem>
           )}
         />
-        <FormField
-          control={form.control}
-          name="nearbyAirport"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel className={getFieldStyles("nearbyAirport")}>
-                Nearest Airport
-              </FormLabel>
-              <FormControl>
-                <Input
-                  className={getFieldStyles("nearbyAirport")}
-                  placeholder="Enter airport name"
-                  {...field}
-                  onBlur={() => handleFieldBlur("nearbyAirport")}
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name="type"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel className={getFieldStyles("type")}>
-                Property Type
-              </FormLabel>
-              <Select onValueChange={field.onChange} defaultValue={field.value}>
-                <FormControl>
-                  <SelectTrigger className={getFieldStyles("type")}>
-                    <SelectValue placeholder="Select property type" />
-                  </SelectTrigger>
-                </FormControl>
-                <SelectContent>
-                  <SelectItem value="resort">Resort</SelectItem>
-                  <SelectItem value="hotel">Hotel</SelectItem>
-                  <SelectItem value="other">Other</SelectItem>
-                  <SelectItem value="more">Add more options?</SelectItem>
-                </SelectContent>
-              </Select>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
+
         <FormField
           control={form.control}
           name="tagList"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Tags & Keywords</FormLabel>
+              <FormLabel>Tags & Keywords (Multi-select)</FormLabel>
               <FormControl>
                 <CategoryCheckboxes
                   value={field.value || ""}
@@ -612,114 +583,8 @@ export function PropertyForm({ property }: PropertyFormProps) {
             </FormItem>
           )}
         />
-
         <div className="space-y-4">
-          <h3 className="text-lg font-semibold">
-            Check-in/Check-out Information
-          </h3>
-          <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
-            <FormField
-              control={form.control}
-              name="frontDeskHours"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Front Desk Hours</FormLabel>
-                  <FormControl>
-                    <RadioGroup
-                      onValueChange={(value) => {
-                        if (value === "24/7") {
-                          field.onChange("24/7");
-                          setCustomDeskHours(false);
-                        } else {
-                          setCustomDeskHours(true);
-                          // Only reset field value if it's currently 24/7
-                          if (field.value === "24/7") {
-                            field.onChange("");
-                          }
-                        }
-                      }}
-                      value={field.value === "24/7" ? "24/7" : "custom"}
-                      className="mb-4"
-                    >
-                      <div className="flex space-x-4">
-                        <FormItem className="flex items-center space-x-2">
-                          <RadioGroupItem value="24/7" />
-                          <FormLabel className="font-normal">24/7</FormLabel>
-                        </FormItem>
-                        <FormItem className="flex items-center space-x-2">
-                          <RadioGroupItem value="custom" />
-                          <FormLabel className="font-normal">
-                            Custom Hours
-                          </FormLabel>
-                        </FormItem>
-                      </div>
-                    </RadioGroup>
-                  </FormControl>
-                  {customDeskHours && (
-                    <div className="mt-2 grid grid-cols-2 gap-4">
-                      <div>
-                        <Input
-                          type="time"
-                          value={field.value?.split("-")[0] || ""}
-                          onChange={(e) => {
-                            const endTime = field.value?.split("-")[1] || "";
-                            field.onChange(
-                              `${e.target.value}${endTime ? "-" + endTime : ""}`
-                            );
-                          }}
-                          placeholder="Start Time"
-                        />
-                      </div>
-                      <div>
-                        <Input
-                          type="time"
-                          value={field.value?.split("-")[1] || ""}
-                          onChange={(e) => {
-                            const startTime = field.value?.split("-")[0] || "";
-                            field.onChange(
-                              `${startTime}${e.target.value ? "-" + e.target.value : ""}`
-                            );
-                          }}
-                          placeholder="End Time"
-                        />
-                      </div>
-                    </div>
-                  )}
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="checkInTime"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Check-in Time</FormLabel>
-                  <FormControl>
-                    <Input type="time" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="checkOutTime"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Check-out Time</FormLabel>
-                  <FormControl>
-                    <Input type="time" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-          </div>
-        </div>
-
-        <div className="space-y-4">
-          <h3 className="text-lg font-semibold">Amenity Tabs</h3>
+          <h3 className="text-lg font-semibold">Offerings</h3>
           <Lead className="text-sm">
             These Amenities are descriptions for tabs, see Amenity tab above for
             checkbox/bullet list items
@@ -734,7 +599,6 @@ export function PropertyForm({ property }: PropertyFormProps) {
                 </FormLabel>
                 <FormControl>
                   <Textarea
-                    maxLength={200}
                     className={getFieldStyles("amenityHealing")}
                     placeholder="Enter spa details here"
                     {...field}
@@ -810,7 +674,7 @@ export function PropertyForm({ property }: PropertyFormProps) {
           />
         </div>
         <div className="space-y-4">
-          <h3 className="text-lg font-semibold">Children & Extra Beds</h3>
+          <h3 className="text-lg font-semibold">Practical Information</h3>
           <FormField
             control={form.control}
             name="childrenAllowed"
@@ -909,243 +773,8 @@ export function PropertyForm({ property }: PropertyFormProps) {
           />
         </div>
 
+        <div className="space-y-4"></div>
         <div className="space-y-4">
-          <h3 className="text-lg font-semibold">Breakfast Options</h3>
-
-          <FormField
-            control={form.control}
-            name="breakFastProvided"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Breakfast Provided?</FormLabel>
-                <FormControl>
-                  <RadioGroup
-                    onValueChange={(value) => field.onChange(value === "true")}
-                    defaultValue={field.value ? "true" : "false"}
-                    className="flex space-x-4"
-                  >
-                    <FormItem className="flex items-center space-x-2">
-                      <RadioGroupItem value="true" />
-                      <FormLabel className="font-normal">Yes</FormLabel>
-                    </FormItem>
-                    <FormItem className="flex items-center space-x-2">
-                      <RadioGroupItem value="false" />
-                      <FormLabel className="font-normal">No</FormLabel>
-                    </FormItem>
-                  </RadioGroup>
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-
-          <FormField
-            control={form.control}
-            name="breakfastIncluded"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Breakfast Included in Rate?</FormLabel>
-                <FormControl>
-                  <RadioGroup
-                    onValueChange={(value) => field.onChange(value === "true")}
-                    defaultValue={field.value ? "true" : "false"}
-                    className="flex space-x-4"
-                  >
-                    <FormItem className="flex items-center space-x-2">
-                      <RadioGroupItem value="true" />
-                      <FormLabel className="font-normal">Yes</FormLabel>
-                    </FormItem>
-                    <FormItem className="flex items-center space-x-2">
-                      <RadioGroupItem value="false" />
-                      <FormLabel className="font-normal">No</FormLabel>
-                    </FormItem>
-                  </RadioGroup>
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
-            <FormField
-              control={form.control}
-              name="breakfastFeeAdult"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Breakfast Fee (Adult)</FormLabel>
-                  <FormControl>
-                    <Input
-                      type="number"
-                      icon="dollar"
-                      min="0"
-                      {...field}
-                      onChange={(e) => field.onChange(parseInt(e.target.value))}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name="breakfastFeeChild"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Breakfast Fee (Child)</FormLabel>
-                  <FormControl>
-                    <Input
-                      type="number"
-                      icon="dollar"
-                      min="0"
-                      {...field}
-                      onChange={(e) => field.onChange(parseInt(e.target.value))}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-          </div>
-          <FormField
-            control={form.control}
-            name="breakfastType"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Breakfast Types Available</FormLabel>
-                <div className="grid grid-cols-2 gap-4">
-                  {breakfastTypes.map((type) => (
-                    <FormItem
-                      key={type.id}
-                      className="flex flex-row items-start space-x-3 space-y-0"
-                    >
-                      <FormControl>
-                        <>
-                          <Checkbox
-                            checked={field.value
-                              ?.split(",")
-                              .filter(Boolean)
-                              .includes(type.id)}
-                            onCheckedChange={(checked) => {
-                              const currentTypes =
-                                field.value?.split(",").filter(Boolean) || [];
-
-                              let newTypes;
-                              if (checked) {
-                                newTypes = [...currentTypes, type.id];
-                              } else {
-                                newTypes = currentTypes.filter(
-                                  (t) => t !== type.id
-                                );
-                              }
-                              const newValue =
-                                newTypes.length > 0 ? newTypes.join(",") : "";
-                              field.onChange(newValue);
-
-                              if (property) {
-                                handleFieldBlur("breakfastType");
-                              }
-                            }}
-                          />
-                          <span className="text-sm font-normal">
-                            {type.label}
-                          </span>
-                        </>
-                      </FormControl>
-                    </FormItem>
-                  ))}
-                </div>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-
-          <div className="grid grid-cols-1 gap-4 md:grid-cols-2"></div>
-        </div>
-
-        <div className="space-y-4">
-          <h3 className="text-lg font-semibold">Payment & Deposit</h3>
-          <FormField
-            control={form.control}
-            name="paymentMethods"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Accepted Payment Methods</FormLabel>
-                <div className="grid grid-cols-2 gap-4">
-                  {paymentMethods.map((method) => (
-                    <div
-                      key={method.id}
-                      className="flex flex-row items-start space-x-3 space-y-0"
-                    >
-                      <Checkbox
-                        checked={field.value
-                          ?.split(",")
-                          .filter(Boolean)
-                          .includes(method.id)}
-                        onCheckedChange={(checked) => {
-                          const current =
-                            field.value?.split(",").filter(Boolean) || [];
-                          const updated = checked
-                            ? [...current, method.id]
-                            : current.filter((value) => value !== method.id);
-
-                          const newValue =
-                            updated.length > 0 ? updated.join(",") : "";
-                          field.onChange(newValue);
-                        }}
-                      />
-                      <FormLabel className="font-normal">
-                        {method.label}
-                      </FormLabel>
-                    </div>
-                  ))}
-                </div>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <div className="space-y-4">
-            <FormLabel>Accepted Deposit Methods</FormLabel>
-            <div className="grid grid-cols-2 gap-4">
-              {depositMethods.map((method) => (
-                <FormField
-                  key={method.id}
-                  control={form.control}
-                  name="depositMethods"
-                  render={({ field }) => (
-                    <FormItem
-                      key={method.id}
-                      className="flex flex-row items-start space-x-3 space-y-0"
-                    >
-                      <FormControl>
-                        <Checkbox
-                          checked={field.value?.includes(method.id)}
-                          onCheckedChange={(checked) => {
-                            const current =
-                              field.value?.split(",").filter(Boolean) || [];
-                            const updated = checked
-                              ? [...current, method.id]
-                              : current.filter((value) => value !== method.id);
-
-                            // Only set value if there are selected items
-                            const newValue =
-                              updated.length > 0 ? updated.join(",") : "";
-                            field.onChange(newValue);
-                          }}
-                        />
-                      </FormControl>
-                      <FormLabel className="font-normal">
-                        {method.label}
-                      </FormLabel>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              ))}
-            </div>
-          </div>
-        </div>
-        <div className="space-y-4">
-          <h3 className="text-lg font-semibold">Pet Policy</h3>
           <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
             <FormField
               control={form.control}
@@ -1209,24 +838,39 @@ export function PropertyForm({ property }: PropertyFormProps) {
 
         <FormField
           control={form.control}
-          name="hostId"
+          name="paymentMethods"
           render={({ field }) => (
             <FormItem>
-              <FormLabel className={getFieldStyles("hostId")}>Host</FormLabel>
-              <Select onValueChange={field.onChange} defaultValue={field.value}>
-                <FormControl>
-                  <SelectTrigger className={getFieldStyles("hostId")}>
-                    <SelectValue placeholder="Select a host" />
-                  </SelectTrigger>
-                </FormControl>
-                <SelectContent>
-                  {hosts.map((host) => (
-                    <SelectItem key={host.id} value={host.id}>
-                      {host.name}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+              <FormLabel>Accepted Payment Methods (Multi-select)</FormLabel>
+              <div className="grid grid-cols-2 gap-4">
+                {paymentMethods.map((method) => (
+                  <div
+                    key={method.id}
+                    className="flex flex-row items-start space-x-3 space-y-0"
+                  >
+                    <Checkbox
+                      checked={field.value
+                        ?.split(",")
+                        .filter(Boolean)
+                        .includes(method.id)}
+                      onCheckedChange={(checked) => {
+                        const current =
+                          field.value?.split(",").filter(Boolean) || [];
+                        const updated = checked
+                          ? [...current, method.id]
+                          : current.filter((value) => value !== method.id);
+
+                        const newValue =
+                          updated.length > 0 ? updated.join(",") : "";
+                        field.onChange(newValue);
+                      }}
+                    />
+                    <FormLabel className="font-normal">
+                      {method.label}
+                    </FormLabel>
+                  </div>
+                ))}
+              </div>
               <FormMessage />
             </FormItem>
           )}
@@ -1263,28 +907,40 @@ const CategoryCheckboxes = ({ value, onChange }: CategoryCheckboxesProps) => {
     { id: "adventure", label: "Adventure" },
     { id: "anti-ageing", label: "Anti-Ageing" },
     { id: "ayurveda", label: "Ayurveda" },
+    { id: "corporate", label: "Corporate" },
     { id: "couples", label: "Couples" },
-    { id: "detox", label: "Detox" },
-    { id: "emotional-healing", label: "Emotional Healing" },
-    { id: "fitness", label: "Fitness" },
-    { id: "fitness-retreats", label: "Fitness Retreats" },
-    { id: "health-retreat", label: "Health Retreat" },
-    { id: "holistic-healing", label: "Holistic Healing" },
-    { id: "longevity", label: "Longevity" },
+    { id: "creative-art", label: "Creative & Art" },
+    { id: "digital-detox", label: "Detox" },
+    { id: "eco-friendly", label: "Eco-Friendly" },
+    { id: "Emotional-wellness", label: "Emotional Wellness" },
+    { id: "entrepreneur", label: "Entrepreneur" },
+    { id: "family-group-wellness", label: "Family & Group" },
+    { id: "fitness-active", label: "Fitness" },
+    { id: "holistic-wellness-longevity", label: "Holistic" },
+    { id: "hydrotherapy", label: "Hydrotherapy" },
+    { id: "leadership", label: "Leadership" },
     { id: "medical", label: "Medical" },
-    { id: "medical-spa", label: "Medical Spa" },
-    { id: "meditation-retreats", label: "Meditation Retreats" },
-    { id: "mens-retreat", label: "Men's Retreat" },
-    { id: "pampering", label: "Pampering" },
-    { id: "sleep-retreats", label: "Sleep Retreats" },
-    { id: "spa-retreat", label: "Spa Retreat" },
-    { id: "spiritual", label: "Spiritual" },
-    { id: "weight-loss-retreat", label: "Weight Loss Retreat" },
-    { id: "womens-retreat", label: "Women's Retreat" },
+    { id: "meditation", label: "Meditation" },
+    { id: "mind-body", label: "Mind-Body" },
+    { id: "mindfulness", label: "Mindfulness" },
+    { id: "motherhood", label: "Motherhood" },
+    { id: "nature", label: "Nature" },
+    { id: "nutritiong", label: "Nutrition" },
+    { id: "optimal-weight", label: "Optimal Weight" },
+    { id: "outdoor", label: "Outdoor" },
+    { id: "personal-growth", label: "Personal Growth" },
+    { id: "plant-medicine", label: "Plant Medicine" },
+    { id: "relaxation", label: "Relaxation" },
+    { id: "romantic", label: "Romantic" },
+    { id: "shamanic", label: "Shamanic" },
+    { id: "sleep-restorative", label: "Sleep & Restorative" },
+    { id: "slow-aging", label: "Slow Aging" },
+    { id: "sound-healing", label: "Sound Healing" },
+    { id: "spa", label: "Spa" },
+    { id: "therapeutic-fasting", label: "Therapeutic Fasting" },
+    { id: "traditional-healing", label: "Traditional Healing" },
+    { id: "womens", label: "Women’s" },
     { id: "yoga", label: "Yoga" },
-    { id: "yoga-retreat", label: "Yoga Retreat" },
-    { id: "entrepreneur-retreat", label: "Entrepreneur Retreat" },
-    { id: "mental-health", label: "Mental Health" },
   ];
 
   const existingTags =
