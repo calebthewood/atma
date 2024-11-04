@@ -256,6 +256,19 @@ export async function getPaginatedRetreats(
     throw new Error("Failed to fetch retreats");
   }
 }
+
+export type RetreatWithPrice = Prisma.RetreatGetPayload<{
+  include: {
+    priceMods: true;
+    retreatInstances: {
+      include: {
+        priceMods: true;
+      };
+    };
+    images: true;
+  };
+}>;
+
 export async function getRetreatWithPrice(retreatId: string) {
   try {
     const retreat = await prisma.retreat.findUnique({

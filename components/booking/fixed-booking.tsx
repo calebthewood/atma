@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { RetreatWithPrice } from "@/actions/retreat-actions";
 import { PriceMod, Retreat, RetreatInstance } from "@prisma/client";
 import {
   addDays,
@@ -42,7 +43,7 @@ interface RetreatIntanceWithMods extends RetreatInstance {
 }
 interface BookingListProps {
   event: RetreatIntanceWithMods;
-  retreat: Retreat;
+  retreat: RetreatWithPrice;
   userId: string | undefined;
 }
 
@@ -53,16 +54,19 @@ interface BookingListProps {
  * Note that the flexible_range retreats need only 1 retreat instance.
  */
 export function FixedBooking({ userId, retreat, event }: BookingListProps) {
-  retreat.duration;
-  const [priceMods, setPriceMods] = useState<PriceMod[]>(event.priceMods || []);
-  const [guestCount, setGuestCount] = useState(retreat.minGuests || 1);
+  console.log("Fixed Booking ", event);
+  const [priceMods, setPriceMods] = useState<PriceMod[]>(
+    event?.priceMods || []
+  );
+  const [guestCount, setGuestCount] = useState(retreat?.minGuests || 1);
   const [date, setDate] = useState<DateRange | undefined>({
     from: today,
-    to: addDays(today, event.minNights),
+    to: addDays(today, event?.minNights),
   });
 
-  const duration = event.minNights;
-
+  const duration = event?.minNights;
+  const prices = retreat.priceMods;
+  const basePrice = prices.find((p) => p.name?.toLowerCase().includes("base"));
   const calculateTotal = () => {
     // let base = Number(retreat.price) * duration; // asssume there will be a guest modfier. Some events will not upcharge for guests some will, and it may not be base * guestCount
     let base = 250 * duration;
@@ -122,38 +126,37 @@ export function FixedBooking({ userId, retreat, event }: BookingListProps) {
         </div>
       </CardContent>
       <CardContent>
-        <P className="flex justify-between text-lg">
+        <Small className="flex justify-between text-lg text-primary/60">
           <span>
-            {/* {guestCount} guests x ${retreat.price} */}
-            {guestCount} guests x $XXXX
+            {guestCount} guests x {toUSD(basePrice?.value)}
           </span>
-          <span>$XXXXX</span>
-          {/* <span>{toUSD(guestCount * Number(retreat.price))}</span> */}
-        </P>
-        <P className="flex justify-between text-lg">
+          <span>{toUSD((guestCount ?? 1) * (basePrice?.value ?? 1))}</span>
+        </Small>
+        <Small className="flex justify-between text-lg text-primary/60">
           <span>
-            $XXXX
-            {/* {dateDiffDisplay()} x ${guestCount * Number(retreat.price)} */}
+            {dateDiffDisplay()} x ${(guestCount ?? 1) * (basePrice?.value ?? 1)}
           </span>
           <span>
-            $XXXX
-            {/* {toUSD(dateDiffNumber() * Number(retreat.price) * duration)} */}
+            {toUSD(duration * (guestCount ?? 1) * (basePrice?.value ?? 1))}
           </span>
-        </P>
+        </Small>
 
         {priceMods?.length > 0 ? (
           priceMods.map((mod, i) => (
-            <Small className="flex justify-between text-primary/60">
+            <Small
+              key={`price-mod-${i}`}
+              className="flex justify-between text-primary/60"
+            >
               <span>{mod.name}</span>
               <span>{toUSD(mod.value)}</span>
             </Small>
           ))
         ) : (
-          <P>No Price modifiers</P>
+          <P>---</P>
         )}
 
-        <P className="flex justify-between text-primary/60">
-          <span>Total</span>
+        <P className="flex justify-between">
+          <span className="text-primary/60">Total / pre-tax</span>
           <span>{toUSD(calculateTotal())}</span>
         </P>
       </CardContent>

@@ -1,24 +1,17 @@
-// Components/retreat/booking-selector.tsx
-import { Retreat, RetreatInstance } from "@prisma/client";
+import { RetreatWithPrice } from "@/actions/retreat-actions";
+import { RetreatInstance } from "@prisma/client";
 import { BedSingle, Navigation, NotepadText, User } from "lucide-react";
 
 import {
   Card,
-  CardContent,
   CardDescription,
   CardFooter,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import {
-  FixedBooking,
-} from "@/components/booking/fixed-booking";
-import {
-  FlexibleBooking,
-} from "@/components/booking/flexible-booking";
-import {
-  OpenBooking,
-} from "@/components/booking/open-booking"
+import { FixedBooking } from "@/components/booking/fixed-booking";
+import { FlexibleBooking } from "@/components/booking/flexible-booking";
+import { OpenBooking } from "@/components/booking/open-booking";
 
 const RETREAT_DETAILS = [
   {
@@ -76,7 +69,7 @@ export function RetreatDetailCards() {
 interface BookingSelectorProps {
   type: string | null;
   userId?: string;
-  retreat: Retreat & { retreatInstances: RetreatInstance[] };
+  retreat: RetreatWithPrice & { retreatInstances: RetreatInstance[] };
 }
 
 export function BookingSelector({
@@ -84,8 +77,8 @@ export function BookingSelector({
   userId,
   retreat,
 }: BookingSelectorProps) {
+  console.log("type", type);
   if (!type) return null;
-
   const bookingTypes = {
     Open: () => (
       <OpenBooking

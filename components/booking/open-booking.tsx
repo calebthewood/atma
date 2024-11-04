@@ -5,20 +5,26 @@ import { RetreatWithPrice } from "@/actions/retreat-actions";
 import { PriceMod, Retreat, RetreatInstance } from "@prisma/client";
 import { compareAsc, format } from "date-fns";
 
-
-
 import { sumPriceList, toUSD } from "@/lib/utils";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
-
-
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 import CheckoutButton from "../checkout/checkout-button";
 import { Lead, Small } from "../typography";
 import { DatePicker } from "../ui/date-pickers";
 import { GuestCombobox } from "../ui/location-combobox";
 import { Separator } from "../ui/separator";
-
 
 const today = new Date();
 
@@ -172,7 +178,6 @@ interface OpenBookingProps {
 export function OpenBooking({ userId, retreat, events }: OpenBookingProps) {
   const [guestCount, setGuestCount] = React.useState(retreat.minGuests || 1);
   const [date, setDate] = React.useState<Date | undefined>(today);
-
 
   const displayed = React.useMemo(
     () => events?.filter((e) => compareAsc(e.startDate, date ?? today) === 1),

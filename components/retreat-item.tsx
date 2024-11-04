@@ -31,7 +31,7 @@ const imagePaths = [
   "/img/wellness-practices-self-care-world-health-day.jpg",
   "/img/woman-sits-pool-with-palm-trees-background.jpg",
 ];
-
+const rIsx = 0;
 interface RetreatCardProps extends React.HTMLAttributes<HTMLDivElement> {
   retreat: Retreat | Host | Property | Program;
   aspectRatio?: "portrait" | "square";
@@ -51,7 +51,6 @@ export function RetreatItem({
   segment,
   ...props
 }: RetreatCardProps) {
-  console.log("images ", imgUrl);
   return (
     <div className={cn("space-y-3", className)} {...props}>
       <Link href={`/${segment}/${retreat.id}`}>
@@ -59,10 +58,7 @@ export function RetreatItem({
           <ContextMenuTrigger>
             <div className="overflow-hidden rounded-md">
               <Image
-                src={
-                  imgUrl ??
-                  imagePaths[Math.floor(Math.random() * imagePaths.length)]
-                }
+                src={imgUrl ?? imagePaths[rIsx]}
                 alt={retreat.name || "n/a"}
                 width={width}
                 height={height}

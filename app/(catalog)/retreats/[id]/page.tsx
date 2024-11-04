@@ -6,9 +6,9 @@ import { auth } from "@/auth";
 
 import ThumbnailCarousel from "@/components/ui/carousel-thumbnail";
 import { LoadingSpinner } from "@/components/loading-spinner";
-import { BookingSelector } from "./retreat-detail-cards";
-import { RetreatDetailCards } from "./retreat-detail-cards";
 import { TitleImageBanner } from "@/components/title-img-banner";
+
+import { BookingSelector, RetreatDetailCards } from "./retreat-detail-cards";
 
 const DEFAULT_SLIDES = [
   "/img/iStock-1929812569.jpg",
@@ -17,7 +17,7 @@ const DEFAULT_SLIDES = [
   "/img/iStock-1507078404.jpg",
   "/img/iStock-1490140364.jpg",
   "/img/iStock-1291807006.jpg",
-] as const;
+];
 
 interface PageProps {
   params: Promise<{ id: string }>;
@@ -40,7 +40,7 @@ export default async function RetreatPage(props: PageProps) {
   const coverImage = images[0]?.filePath || DEFAULT_SLIDES[4];
   const imageSlides =
     images.length > 0 ? images.map((img) => img.filePath) : DEFAULT_SLIDES;
-
+  console.log("Booking type   ", retreat.bookingType);
   return (
     <div className="mt-4 h-auto min-h-screen">
       <TitleImageBanner title={title} subtitle={subtitle} href={coverImage} />

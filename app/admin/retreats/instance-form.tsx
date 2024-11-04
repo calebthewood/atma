@@ -154,7 +154,7 @@ export function RetreatInstanceForm({
     <Form {...form}>
       <form
         onSubmit={form.handleSubmit(onSubmit)}
-        className="max-w-lg space-y-8 mx-auto"
+        className="mx-auto max-w-lg space-y-8"
       >
         <FormField
           control={form.control}

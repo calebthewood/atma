@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { RetreatWithPrice } from "@/actions/retreat-actions";
 import { PriceMod, Retreat, RetreatInstance } from "@prisma/client";
 import {
   addDays,
@@ -35,6 +36,7 @@ import {
 } from "@/components/ui/tooltip";
 
 import CheckoutButton from "../checkout/checkout-button";
+import { ClickyCounter } from "../counter";
 import { Large, Lead, P, Small } from "../typography";
 import { DatePickerWithRange } from "../ui/date-pickers";
 import { Separator } from "../ui/separator";
@@ -47,7 +49,7 @@ interface RetreatIntanceWithMods extends RetreatInstance {
 }
 interface BookingListProps {
   events: RetreatIntanceWithMods[];
-  retreat: Retreat;
+  retreat: RetreatWithPrice;
   userId: string | undefined;
 }
 
@@ -61,7 +63,7 @@ export function FlexibleBooking({ userId, retreat, events }: BookingListProps) {
   const [priceMods, setPriceMods] = useState<PriceMod[]>(
     events[0]?.priceMods || []
   );
-  const [guestCount, setGuestCount] = useState(retreat.minGuests);
+  const [guestCount, setGuestCount] = useState(retreat.minGuests ?? 1);
   const [date, setDate] = useState<DateRange | undefined>({
     from: new Date(),
     to: addDays(new Date(), 3),
@@ -73,7 +75,6 @@ export function FlexibleBooking({ userId, retreat, events }: BookingListProps) {
     let total = 0;
     for (const mod of priceMods) {
       total += mod.value ?? 0;
-      // this will likely be more complex as price mods can be %, flat rate, daily, etc
     }
     return total;
   };
@@ -82,18 +83,20 @@ export function FlexibleBooking({ userId, retreat, events }: BookingListProps) {
     if (!date || !date.to || !date.from) return -1;
     return formatDistance(date.to, date.from);
   };
+
   const dateDiffNumber = () => {
     if (!date || !date.to || !date.from) return -1;
     return differenceInCalendarDays(date?.to, date?.from);
   };
 
   const duration = dateDiffNumber();
+  const prices = retreat.priceMods;
+  const basePrice = prices.find((p) => p.name?.toLowerCase().includes("base"));
 
   const calculateTotal = () => {
-    let base = 250;
-    // let base = Number(retreat.price); // asssume there will be a guest modfier. Some events will not upcharge for guests some will, and it may not be base * guestCount
+    let base = basePrice?.value ?? 0; // asssume there will be a guest modfier. Some events will not upcharge for guests some will, and it may not be base * guestCount
     let priceMod = sumPriceMods();
-    // return base * guestCount * duration + priceMod;
+
     return base * 1 * duration + priceMod;
   };
 
@@ -101,8 +104,7 @@ export function FlexibleBooking({ userId, retreat, events }: BookingListProps) {
     <Card className="max-w-md">
       <CardHeader>
         <CardTitle>
-          $XXXX <Small>night</Small>
-          {/* {toUSD(Number(retreat.price))} <Small>night</Small> */}
+          {toUSD(basePrice?.value)} <Small> / night</Small>
         </CardTitle>
         <CardDescription>Flexible Booking</CardDescription>
       </CardHeader>
@@ -115,6 +117,11 @@ export function FlexibleBooking({ userId, retreat, events }: BookingListProps) {
           />
         </div>
         <div className="mt-2 flex w-full">
+          {/* <ClickyCounter
+            incrementor={(val) => setGuestCount(Number(val) + 1)}
+            decrementor={(val) => setGuestCount(Number(val) - 1)}
+            count={guestCount ?? 1}
+          /> */}
           <GuestSelect
             guestCount={guestCount ?? 1}
             handleGuests={(val: string) => setGuestCount(Number(val))}
@@ -124,22 +131,20 @@ export function FlexibleBooking({ userId, retreat, events }: BookingListProps) {
         </div>
       </CardContent>
       <CardContent>
-        <P className="flex justify-between text-lg">
+        <Small className="flex justify-between text-lg text-primary/60">
           <span>
-            {guestCount} guests x $$XXXX
-            {/* {guestCount} guests x ${Number(retreat.price)} */}
+            {guestCount} guests x {toUSD(basePrice?.value)}
           </span>
-          <span>$XXXX</span>
-          {/* <span>{toUSD(guestCount * Number(retreat.price) * guestCount)}</span> */}
-        </P>
-        <P className="flex justify-between text-lg">
+          <span>{toUSD((guestCount ?? 1) * (basePrice?.value ?? 1))}</span>
+        </Small>
+        <Small className="flex justify-between text-lg text-primary/60">
           <span>
-            $XXXX
-            {/* {dateDiffDisplay()} x ${guestCount * Number(retreat.price)} */}
+            {dateDiffDisplay()} x ${(guestCount ?? 1) * (basePrice?.value ?? 1)}
           </span>
-          <span>$XXXX</span>
-          {/* <span>{toUSD(duration * Number(retreat.price) * guestCount)}</span> */}
-        </P>
+          <span>
+            {toUSD(duration * (guestCount ?? 1) * (basePrice?.value ?? 1))}
+          </span>
+        </Small>
 
         {priceMods?.length > 0 ? (
           priceMods.map((mod, i) => (
@@ -152,11 +157,11 @@ export function FlexibleBooking({ userId, retreat, events }: BookingListProps) {
             </Small>
           ))
         ) : (
-          <P>No Price modifiers</P>
+          <P>---</P>
         )}
 
-        <P className="flex justify-between text-primary/60">
-          <span>Total</span>
+        <P className="flex justify-between">
+          <span className="text-primary/60">Total / pre-tax</span>
           <span>{toUSD(calculateTotal())}</span>
         </P>
       </CardContent>
