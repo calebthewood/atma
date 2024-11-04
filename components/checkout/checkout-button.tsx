@@ -104,7 +104,7 @@ export default function CheckoutButton({
                     options={{ clientSecret }}
                   >
                     {/* <ScrollArea className="h-[600px]"> */}
-                      <EmbeddedCheckout />
+                    <EmbeddedCheckout />
                     {/* </ScrollArea> */}
                   </EmbeddedCheckoutProvider>
                 </DialogDescription>

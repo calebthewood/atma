@@ -3,13 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { Prisma, Retreat } from "@prisma/client";
 
-
-
 import prisma from "@/lib/prisma";
-
-
-
-
 
 // Base type for shared properties
 type RetreatBaseInput = {
