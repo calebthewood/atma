@@ -1,6 +1,7 @@
 import Image from "next/image";
 import { getPropertyById } from "@/actions/property-actions";
 import { auth } from "@/auth";
+import { Separator } from "@radix-ui/react-separator";
 import {
   BedSingle,
   Flower,
@@ -22,12 +23,11 @@ import {
 } from "@/components/ui/card";
 import ThumbnailCarousel from "@/components/ui/carousel-thumbnail";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
-import { FixedBooking } from "@/components/booking/fixed-booking";
-import { FlexibleBooking } from "@/components/booking/flexible-booking";
-import { OpenBooking } from "@/components/booking/open-booking";
 import { CatalogTabs } from "@/components/catalog-tabs";
 import { LoadingSpinner } from "@/components/loading-spinner";
+import { RetreatItem } from "@/components/retreat-item";
 import { TitleImageBanner } from "@/components/title-img-banner";
+import { H3 } from "@/components/typography";
 
 /** Amenity strings are formatted like 'Amenity Title: Name | Value */
 const parseAmenity = (str: string | null | undefined) => {
@@ -36,6 +36,15 @@ const parseAmenity = (str: string | null | undefined) => {
   const string = str.split(":")[1];
   return string.split("|");
 };
+
+const DEFAULT_SLIDES = [
+  "/img/iStock-1929812569.jpg",
+  "/img/iStock-1812905796.jpg",
+  "/img/iStock-1550112895.jpg",
+  "/img/iStock-1507078404.jpg",
+  "/img/iStock-1490140364.jpg",
+  "/img/iStock-1291807006.jpg",
+];
 
 export default async function Page(props: { params: Promise<{ id: string }> }) {
   const params = await props.params;
@@ -64,43 +73,12 @@ export default async function Page(props: { params: Promise<{ id: string }> }) {
       content: <div>{property?.amenityFacility}</div>,
     },
   ];
-  // function RenderBookingType({ type }: { type: string }) {
-  //   if (property === null) return null
-  //   switch (type) {
-  //     case "Open":
-  //       return (
-  //         <OpenBooking
-  //           userId={session?.user?.id}
-  //           retreat={property}
-  //           events={property?.retreatInstances}
-  //         />
-  //       );
-  //     case "Fixed":
-  //       return (
-  //         <FixedBooking
-  //           userId={session?.user?.id}
-  //           retreat={property}
-  //           event={property.retreatInstances[0]}
-  //         />
-  //       );
-  //     case "Flexible":
-  //       return (
-  //         <FlexibleBooking
-  //           userId={session?.user?.id}
-  //           retreat={property}
-  //           events={property.retreatInstances}
-  //         />
-  //       );
-  //     default:
-  //       return null;
-  //   }
-  // }
 
   if (!property) {
     return (
-      <>
+      <div className="flex size-full items-center justify-center">
         <LoadingSpinner /> Loading...
-      </>
+      </div>
     );
   }
 
@@ -110,48 +88,74 @@ export default async function Page(props: { params: Promise<{ id: string }> }) {
 
   const [title, subtitle] = property.name.split("|");
 
+  const slides =
+    property.images.length > 0
+      ? property.images.map((img) => img.filePath)
+      : DEFAULT_SLIDES;
+
+  const focusRetreat = property.retreats[0];
+
   return (
     <div className="mt-4 h-auto min-h-screen">
       <TitleImageBanner title={title} subtitle={subtitle} href={coverImgPath} />
-      <div className="container">
+      <div className="md:container">
         <div className="flex justify-center gap-6 py-12">
           <PlaceList placeList={property.placeList} />
         </div>
         <div className="my-12">
-          <ThumbnailCarousel
-            slides={property.images.map((img) => img.filePath)}
-          />
+          <ThumbnailCarousel slides={slides} />
         </div>
         <div className="flex flex-col flex-wrap justify-center md:flex-row">
-          <div className="max-w-xl flex-1 text-lg">
+          <div className="w-full max-w-xl flex-1 p-1 text-lg">
             <CatalogTabs tabs={tabsData} defaultTab="healing" />
           </div>
-          <div className="flex-0 mx-8 mb-16 w-96">
-            {/* <RenderBookingType type={property.bookingType} /> */}
-
-            <AspectRatio ratio={3 / 4} className="w-[340px]">
-              <div className="relative h-[540px] w-[340px]">
-                <div className="absolute inset-0 rounded bg-gradient-to-br from-[#004476] via-[#004476] to-[#006fbe] opacity-10"></div>
-
-                {/* <div className="absolute rounded inset-0 bg-[url('/img/iStock-1291807006.jpg')] bg-cover bg-center opacity-70 mix-blend-overlay"></div> */}
-
-                <div className="absolute inset-0 overflow-hidden rounded">
-                  <div className="absolute inset-0 bg-[url('/img/white-noise-2.webp')] opacity-20"></div>
-                  <div className="absolute inset-0 bg-[url('/img/white-noise-1.webp')] opacity-20"></div>
-
-                  <div className="absolute inset-0 rounded bg-gradient-to-br from-white/75 to-white/30 opacity-20 backdrop-blur-sm"></div>
-
-                  <div className="relative z-10 p-6 text-white">
-                    {/* children */}
-                  </div>
-                </div>
-
-                <div className="pointer-events-none absolute inset-0 rounded border border-white/75 backdrop-blur"></div>
-              </div>
-            </AspectRatio>
+          <div className="mx-16 w-10/12 md:hidden">
+            <Separator
+              orientation="horizontal"
+              className="my-16 h-px w-full bg-primary/80"
+            />
+          </div>
+          <div className="flex-0 mx-8 mb-16 gap-4">
+            <H3 className="mb-4 mt-6 border-b font-light">Upcoming Retreat</H3>
+            <RetreatItem
+              retreat={focusRetreat}
+              imgUrl={slides[0]}
+              segment="retreats"
+              className="w-[300px]"
+              aspectRatio="portrait"
+              width={250}
+              height={330}
+            />
           </div>
         </div>
+        {property.retreats.length > 1 && (
+          <div className="relative">
+            <H3 className="mb-2 font-light">Other Retreats at this Location</H3>
+            <ScrollArea>
+              <div className="flex space-x-4 pb-4">
+                {property.retreats.map((r, i) => (
+                  <RetreatItem
+                    key={r.name + `${i * 3.7}`}
+                    retreat={r}
+                    imgUrl={
+                      property.images[
+                        Math.floor((i % property.images.length) - 1)
+                      ]?.filePath
+                    }
+                    segment="retreats"
+                    className="w-[250px]"
+                    aspectRatio="portrait"
+                    width={250}
+                    height={330}
+                  />
+                ))}
+              </div>
+              <ScrollBar orientation="horizontal" />
+            </ScrollArea>
+          </div>
+        )}
       </div>
+      <div className="mb-32"></div>
     </div>
   );
 }

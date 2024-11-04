@@ -158,7 +158,7 @@ export function LocationCombobox() {
           variant="outline"
           role="combobox"
           aria-expanded={open}
-          className="h-12 w-full justify-between rounded border-transparent bg-transparent pl-2 text-foreground"
+          className="h-12 w-full justify-between rounded border-transparent bg-transparent pl-2 text-foreground shadow-none"
         >
           {value ? (
             value.name
@@ -248,15 +248,13 @@ export function GuestCombobox() {
           variant="outline"
           role="combobox"
           aria-expanded={open}
-          className="h-12 w-full justify-between rounded border-transparent bg-transparent pl-2"
+          className="h-12 w-full justify-between rounded border-transparent bg-transparent pl-2 shadow-none"
         >
           {guestCount > 0 ? (
-            <span className="flex flex-col items-start">
-              <span className="text-sm font-medium">GUESTS</span>
-              <span className="text-xs">
-                {guestCount} guest{guestCount !== 1 ? "s" : ""}
-              </span>
-            </span>
+            <Placeholder
+              title="GUESTS"
+              subtitle={`${guestCount} guest${guestCount !== 1 ? "s" : ""}`}
+            />
           ) : (
             <Placeholder title="GUESTS" subtitle="ADD GUESTS" />
           )}

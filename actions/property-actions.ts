@@ -17,6 +17,102 @@ export async function getProperty(id: string) {
     throw new Error("Failed to get property");
   }
 }
+export type PropertyWithRelations = Prisma.PropertyGetPayload<{
+  include: {
+    host: true;
+    amenities: true;
+    images: true;
+    reviews: {
+      include: {
+        user: true;
+      };
+    };
+    rooms: true;
+    retreats: true;
+    programs: true;
+  };
+}>;
+
+// Response types for different operations
+export type GetPropertyResponse =
+  | {
+      success: true;
+      property: PropertyWithRelations;
+    }
+  | {
+      success: false;
+      error: string;
+    };
+
+export type GetPaginatedPropertiesResponse =
+  | {
+      success: true;
+      properties: PropertyWithRelations[];
+      totalPages: number;
+      currentPage: number;
+      totalProperties: number;
+    }
+  | {
+      success: false;
+      error: string;
+    };
+
+// Type for property search/filter parameters
+export type PropertyFilterParams = {
+  search?: string;
+  hostId?: string;
+  verified?: boolean;
+  type?: string;
+  country?: string;
+  minRating?: number;
+  amenities?: string[];
+};
+
+// Main actions
+export async function getPropertyWithId(
+  id: string
+): Promise<GetPropertyResponse> {
+  try {
+    const property = await prisma.property.findUnique({
+      where: { id },
+      include: {
+        host: true,
+        amenities: true,
+        images: {
+          orderBy: {
+            createdAt: "asc",
+          },
+        },
+        reviews: {
+          include: {
+            user: true,
+          },
+        },
+        rooms: true,
+        retreats: true,
+        programs: true,
+      },
+    });
+
+    if (!property) {
+      return {
+        success: false,
+        error: "Property not found",
+      };
+    }
+
+    return {
+      success: true,
+      property,
+    };
+  } catch (error) {
+    console.error("Error fetching property:", error);
+    return {
+      success: false,
+      error: "Failed to fetch property",
+    };
+  }
+}
 
 export async function createProperty(data: PropertyFormData) {
   try {
@@ -77,6 +173,15 @@ export async function getProperties(): Promise<PropertiesWithImages[]> {
         },
       },
       images: true,
+    },
+  });
+  return properties;
+}
+
+export async function getPropertyIds() {
+  const properties = await prisma.property.findMany({
+    select: {
+      id: true,
     },
   });
   return properties;

@@ -17,14 +17,11 @@ import {
 } from "@/components/ui/dropdown-menu";
 import {
   NavigationMenu,
-  NavigationMenuContent,
   NavigationMenuItem,
   NavigationMenuLink,
   NavigationMenuList,
-  NavigationMenuTrigger,
   navigationMenuTriggerStyle,
 } from "@/components/ui/navigation-menu";
-import { Icons } from "@/components/icons";
 
 import { Separator } from "./ui/separator";
 
@@ -34,14 +31,14 @@ interface MainNavProps {
 
 export function HeroTitle() {
   return (
-    <Link href="/" className="W-[373] hover: mt-16 hover:brightness-200">
+    <Link href="/" className="hover: mt-16 hover:brightness-200">
       <h1 className="flex w-full justify-between font-title text-6xl leading-6 tracking-[100%] transition-all hover:scale-[97%]">
         <span>A</span>
         <span>T</span>
         <span>M</span>
         <span>A</span>
       </h1>
-      <p className="font-tagline leading-[56px]">
+      <p className="font-tagline text-sm leading-[56px]">
         THE WORLD&apos;S DESTINATION FOR FINEST RETREATS
       </p>
     </Link>
@@ -51,7 +48,7 @@ export function HeroTitle() {
 export function MainNav({ items }: MainNavProps) {
   return (
     <DropdownMenu>
-      <DropdownMenuTrigger>
+      <DropdownMenuTrigger className="hidden md:block">
         <Menu className="stroke-foreground" strokeWidth={0.5} />
       </DropdownMenuTrigger>
       <DropdownMenuContent>
@@ -83,6 +80,7 @@ export function MainNavigationMenu() {
             <NavigationMenuLink
               className={cn(
                 navigationMenuTriggerStyle(),
+                "px-2 md:px-4",
                 "bg-transparent font-title text-xs leading-6 opacity-50 hover:opacity-100",
                 path === "destinations" && "opacity-100"
               )}
@@ -102,6 +100,7 @@ export function MainNavigationMenu() {
             <NavigationMenuLink
               className={cn(
                 navigationMenuTriggerStyle(),
+                "px-2 md:px-4",
                 "bg-transparent font-title text-xs leading-6 opacity-50 hover:opacity-100",
                 path === "retreats" && "opacity-100"
               )}
@@ -121,11 +120,13 @@ export function MainNavigationMenu() {
             <NavigationMenuLink
               className={cn(
                 navigationMenuTriggerStyle(),
+                "px-2 md:px-4",
                 "bg-transparent font-title text-xs leading-6 opacity-50 hover:opacity-100",
                 path === "programs" && "opacity-100"
               )}
             >
-              SPECIAL PROGRAMMES
+              <span className="hidden md:inline-block">SPECIAL PROGRAMMES</span>
+              <span className="md:hidden">PROGRAMMES</span>
             </NavigationMenuLink>
           </Link>
           <Separator

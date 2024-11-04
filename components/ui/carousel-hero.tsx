@@ -39,7 +39,7 @@ const HeroCarousel = ({ slides }: { slides: { [val: string]: string }[] }) => {
         className="size-full"
         opts={{
           loop: true,
-        }} //@ts-ignore
+        }}
         plugins={[Fade()]}
       >
         <CarouselContent>
@@ -57,7 +57,7 @@ const HeroCarousel = ({ slides }: { slides: { [val: string]: string }[] }) => {
                   }}
                 />
                 <div className="absolute inset-0 flex flex-col items-center justify-end bg-black/50 p-8 pb-24">
-                  <h2 className="mb-4 font-title text-3xl text-white">
+                  <h2 className="mb-4 font-title text-2xl text-white md:text-3xl">
                     {slide.title}
                   </h2>
                   <p className="mb-6 text-xl text-white">{slide.description}</p>

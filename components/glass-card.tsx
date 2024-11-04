@@ -10,7 +10,7 @@ export function GlassCard({
   className?: string;
 }) {
   return (
-    <div className={cn("relative inline-block max-w-fit", className)}>
+    <div className={cn("relative inline-block w-full md:max-w-fit", className)}>
       <div className="absolute inset-0 rounded bg-gradient-to-br from-[#004476] via-[#004476] to-[#006fbe] opacity-30"></div>
 
       <div className="absolute inset-0 overflow-hidden rounded">

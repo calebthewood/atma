@@ -73,6 +73,60 @@ export async function getProgramsByProperty(propertyId: string) {
   }
 }
 
+export type ProgramWithRelations = Prisma.ProgramGetPayload<{
+  include: {
+    property: true;
+    images: true;
+  };
+}>;
+
+// Define response type
+export type GetProgramResponse =
+  | {
+      success: true;
+      program: ProgramWithRelations;
+    }
+  | {
+      success: false;
+      error: string;
+    };
+
+export async function getProgramsWithProperty(
+  propertyId: string
+): Promise<GetProgramResponse> {
+  try {
+    const program = await prisma.program.findFirst({
+      where: { propertyId },
+      include: {
+        property: true,
+        images: {
+          orderBy: {
+            createdAt: "asc",
+          },
+        },
+      },
+    });
+
+    if (!program) {
+      return {
+        success: false,
+        error: "Program not found",
+      };
+    }
+
+    return {
+      success: true,
+      program,
+    };
+  } catch (error) {
+    console.error("Error finding programs:", error);
+    return {
+      success: false,
+      error: "Failed to find programs",
+    };
+  }
+}
+
 export async function deleteProgram(id: string) {
   try {
     await prisma.program.delete({

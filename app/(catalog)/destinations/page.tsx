@@ -1,14 +1,14 @@
-import { getProperties } from "@/actions/property-actions";
+import { getPropertyIds } from "@/actions/property-actions";
 
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import { Separator } from "@/components/ui/separator";
-import { RetreatItem } from "@/components/retreat-item";
+import { LazyRetreatItem } from "@/components/retreat-item";
 
 export default async function Page() {
-  const properties = await getProperties();
+  const properties = await getPropertyIds();
 
   return (
-    <div className="h-full px-4 py-6 lg:px-8">
+    <div className="h-full py-6 md:px-4 lg:px-8">
       <div className="flex items-center justify-between">
         <div className="space-y-1">
           <h2 className="text-2xl font-semibold tracking-tight">
@@ -24,10 +24,9 @@ export default async function Page() {
         <ScrollArea>
           <div className="flex space-x-4 pb-4">
             {properties.map((r, i) => (
-              <RetreatItem
-                key={r.name + `${i * 3.7}`}
-                retreat={r}
-                imgUrl={r.images[0]?.filePath}
+              <LazyRetreatItem
+                key={i + r.id}
+                id={r.id}
                 segment="destinations"
                 className="w-[250px]"
                 aspectRatio="portrait"
@@ -54,10 +53,9 @@ export default async function Page() {
         <ScrollArea>
           <div className="flex space-x-4 pb-4">
             {properties.map((r, i) => (
-              <RetreatItem
-                key={r.name + `${i * 3.7}`}
-                retreat={r}
-                imgUrl={r.images[0]?.filePath}
+              <LazyRetreatItem
+                key={i * 1.23 + r.id}
+                id={r.id}
                 segment="destinations"
                 className="w-[250px]"
                 aspectRatio="portrait"
@@ -81,15 +79,14 @@ export default async function Page() {
       </div>
       <Separator className="my-4" />
       <div className="relative">
-        <ScrollArea>
+        {/* <ScrollArea>
           <div className="flex space-x-4 pb-4">
             {properties
               .filter((p) => p.city?.toLowerCase().includes("london"))
               .map((r, i) => (
-                <RetreatItem
-                  key={r.name + `${i * 3.7}`}
-                  retreat={r}
-                  imgUrl={r.images[0]?.filePath}
+                <LazyRetreatItem
+                  key={i + r.id}
+                  id={r.id}
                   segment="destinations"
                   className="w-[250px]"
                   aspectRatio="portrait"
@@ -99,7 +96,7 @@ export default async function Page() {
               ))}
           </div>
           <ScrollBar orientation="horizontal" />
-        </ScrollArea>
+        </ScrollArea> */}
       </div>
     </div>
   );

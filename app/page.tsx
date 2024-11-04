@@ -1,7 +1,7 @@
 import { Metadata } from "next";
 import { getHosts } from "@/actions/host-actions";
-import { getProperties } from "@/actions/property-actions";
-import { getRetreats } from "@/actions/retreat-actions";
+import { getProperties, getPropertyIds } from "@/actions/property-actions";
+import { getRetreatIds, getRetreats } from "@/actions/retreat-actions";
 import { auth } from "@/auth";
 
 import { BookingBar } from "@/components/booking-bar";
@@ -16,8 +16,8 @@ export const metadata: Metadata = {
 export default async function Page() {
   const session = await auth();
   const hosts = await getHosts();
-  const properties = await getProperties();
-  const retreats = await getRetreats();
+  const properties = await getPropertyIds();
+  const retreats = await getRetreatIds();
 
   return (
     <>
