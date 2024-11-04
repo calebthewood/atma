@@ -29,7 +29,8 @@ const SLIDES = [
   "/img/iStock-1291807006.jpg",
 ];
 
-export default async function Page({ params }: { params: { id: string } }) {
+export default async function Page(props: { params: Promise<{ id: string }> }) {
+  const params = await props.params;
   const program = await getProgramById(params.id);
   const session = await auth();
   const details = [

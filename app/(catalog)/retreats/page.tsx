@@ -6,7 +6,7 @@ import { RetreatItem } from "@/components/retreat-item";
 
 export default async function Page() {
   const retreats = await getRetreats();
-// get 10 retreat id's, map them out, let each retreat item get it's own details
+  // get 10 retreat id's, map them out, let each retreat item get it's own details
   return (
     <div className="h-full px-4 py-6 lg:px-8">
       <div className="flex items-center justify-between">

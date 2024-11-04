@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, type JSX } from "react";
 import { redirect } from "next/navigation";
 import { createBooking } from "@/actions/booking-actions";
 import { createCheckoutSession } from "@/actions/stripe";
@@ -103,9 +103,9 @@ export default function CheckoutButton({
                     stripe={getStripe()}
                     options={{ clientSecret }}
                   >
-                    <ScrollArea className="h-[600px]">
+                    {/* <ScrollArea className="h-[600px]"> */}
                       <EmbeddedCheckout />
-                    </ScrollArea>
+                    {/* </ScrollArea> */}
                   </EmbeddedCheckoutProvider>
                 </DialogDescription>
               </DialogHeader>

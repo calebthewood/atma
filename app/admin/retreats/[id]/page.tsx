@@ -18,7 +18,8 @@ import { RetreatInstanceForm } from "../instance-form";
 import { RetreatForm } from "../retreat-form";
 import { RetreatInstancesList } from "../retreat-instance-table";
 
-export default async function Page({ params }: { params: { id: string } }) {
+export default async function Page(props: { params: Promise<{ id: string }> }) {
+  const params = await props.params;
   const result = await getRetreat(params.id);
 
   if (!result.success) {

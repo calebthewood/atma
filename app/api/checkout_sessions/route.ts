@@ -3,8 +3,8 @@ import { NextRequest, NextResponse } from "next/server";
 
 import { stripe } from "@/lib/stripe";
 
-export async function POST(req: NextRequest, res: NextResponse) {
-  const headersList = headers();
+export async function POST(req: NextRequest) {
+  const headersList = await headers();
   const { cartDetails } = await req.json();
   const cartDetailsArray: any[] = Object.values(cartDetails) as any[];
 
