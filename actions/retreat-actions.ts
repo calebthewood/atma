@@ -73,6 +73,9 @@ export async function createRetreat(data: CreateRetreatInput) {
 
 export async function getRetreatIds() {
   const properties = await prisma.retreat.findMany({
+    where: {
+      status: "published",
+    },
     select: {
       id: true,
     },
@@ -335,10 +338,16 @@ type GetRetreatError = {
 
 export type GetRetreatResponse = GetRetreatSuccess | GetRetreatError;
 
-export async function getRetreat(id: string): Promise<GetRetreatResponse> {
+export async function getRetreat(
+  id: string,
+  publishedOnly: boolean = true
+): Promise<GetRetreatResponse> {
   try {
     const retreat = await prisma.retreat.findUnique({
-      where: { id },
+      where: {
+        id,
+        ...(publishedOnly && { status: "published" }),
+      },
       include: {
         property: true,
         host: true,

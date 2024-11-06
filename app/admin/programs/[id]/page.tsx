@@ -10,7 +10,7 @@ import {
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { H2, H3 } from "@/components/typography";
 
-import { AmenitiesForm } from "../../amenity-form";
+import { AmenitiesEntityForm } from "../../amenities-entity-form";
 import { PriceModForm } from "../../price-mod-form";
 import { ImageUpload } from "../../properties/image-form";
 import { ImageGallery } from "../../properties/image-order-form";
@@ -36,6 +36,7 @@ export default async function Page(props: { params: Promise<{ id: string }> }) {
           <TabsTrigger value="images">Images</TabsTrigger>
           <TabsTrigger value="prices">Pricing</TabsTrigger>
           <TabsTrigger value="amenities">Amenitites</TabsTrigger>
+          <TabsTrigger value="activities">Activities</TabsTrigger>
         </TabsList>
 
         <TabsContent value="general">
@@ -89,28 +90,35 @@ export default async function Page(props: { params: Promise<{ id: string }> }) {
         <TabsContent value="amenities">
           <Card>
             <CardHeader>
-              <CardTitle>Amenities</CardTitle>
+              <CardTitle>Property Amenities</CardTitle>
               <CardDescription>
-                Manage facilities and activities for this property.
+                Manage available facilities and amenities for this property.
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <div className="space-y-4">
-                <h3 className="text-lg font-medium">Facilities</h3>
-                <AmenitiesForm
-                  recordId={params.id}
-                  recordType="program"
-                  amenityType="facility"
-                />
-              </div>
-              <div className="mt-8 space-y-4">
-                <h3 className="text-lg font-medium">Activities</h3>
-                <AmenitiesForm
-                  recordId={params.id}
-                  recordType="program"
-                  amenityType="activity"
-                />
-              </div>
+              <AmenitiesEntityForm
+                recordId={params.id}
+                recordType="property"
+                amenityType="amenity"
+              />
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        <TabsContent value="activities">
+          <Card>
+            <CardHeader>
+              <CardTitle>Property Activities</CardTitle>
+              <CardDescription>
+                Manage available activities and experiences for this property.
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <AmenitiesEntityForm
+                recordId={params.id}
+                recordType="property"
+                amenityType="activity"
+              />
             </CardContent>
           </Card>
         </TabsContent>

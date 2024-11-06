@@ -23,6 +23,7 @@ const sidebarNavItems = [
   { title: "Programs", href: "/admin/programs" },
   { title: "Payments", href: "/admin/payments" },
   { title: "Bookings", href: "/admin/bookings" },
+  { title: "Offerings", href: "/admin/offerings" },
 ];
 
 interface SettingsLayoutProps {

@@ -10,7 +10,7 @@ import {
 } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
-import { AmenitiesForm } from "../../amenity-form";
+import { AmenitiesEntityForm } from "../../amenities-entity-form";
 import { PriceModForm } from "../../price-mod-form";
 import { ImageUpload } from "../../properties/image-form";
 import { ImageGallery } from "../../properties/image-order-form";
@@ -20,7 +20,7 @@ import { RetreatInstancesList } from "../retreat-instance-table";
 
 export default async function Page(props: { params: Promise<{ id: string }> }) {
   const params = await props.params;
-  const result = await getRetreat(params.id);
+  const result = await getRetreat(params.id, false);
 
   if (!result.success) {
     return <div>Error: {result.error}</div>;
@@ -39,6 +39,7 @@ export default async function Page(props: { params: Promise<{ id: string }> }) {
           <TabsTrigger value="images">Images</TabsTrigger>
           <TabsTrigger value="prices">Pricing</TabsTrigger>
           <TabsTrigger value="amenities">Amenities</TabsTrigger>
+          <TabsTrigger value="activities">Activities</TabsTrigger>
           <TabsTrigger value="instances">Instances</TabsTrigger>
         </TabsList>
 
@@ -93,28 +94,35 @@ export default async function Page(props: { params: Promise<{ id: string }> }) {
         <TabsContent value="amenities">
           <Card>
             <CardHeader>
-              <CardTitle>Amenities</CardTitle>
+              <CardTitle>Property Amenities</CardTitle>
               <CardDescription>
-                Manage facilities and activities for this retreat.
+                Manage available facilities and amenities for this property.
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <div className="space-y-4">
-                <h3 className="text-lg font-medium">Facilities</h3>
-                <AmenitiesForm
-                  recordId={params.id}
-                  recordType="retreat"
-                  amenityType="facility"
-                />
-              </div>
-              <div className="mt-8 space-y-4">
-                <h3 className="text-lg font-medium">Activities</h3>
-                <AmenitiesForm
-                  recordId={params.id}
-                  recordType="retreat"
-                  amenityType="activity"
-                />
-              </div>
+              <AmenitiesEntityForm
+                recordId={params.id}
+                recordType="retreat"
+                amenityType="amenity"
+              />
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        <TabsContent value="activities">
+          <Card>
+            <CardHeader>
+              <CardTitle>Property Activities</CardTitle>
+              <CardDescription>
+                Manage available activities and experiences for this property.
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <AmenitiesEntityForm
+                recordId={params.id}
+                recordType="retreat"
+                amenityType="activity"
+              />
             </CardContent>
           </Card>
         </TabsContent>

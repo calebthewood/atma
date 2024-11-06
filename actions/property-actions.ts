@@ -33,7 +33,6 @@ export type PropertyWithRelations = Prisma.PropertyGetPayload<{
   };
 }>;
 
-// Response types for different operations
 export type GetPropertyResponse =
   | {
       success: true;
@@ -74,7 +73,7 @@ export async function getPropertyWithId(
 ): Promise<GetPropertyResponse> {
   try {
     const property = await prisma.property.findUnique({
-      where: { id },
+      where: { id, status: "published" },
       include: {
         host: true,
         amenities: true,
@@ -180,6 +179,9 @@ export async function getProperties(): Promise<PropertiesWithImages[]> {
 
 export async function getPropertyIds() {
   const properties = await prisma.property.findMany({
+    where: {
+      status: "published",
+    },
     select: {
       id: true,
     },

@@ -96,7 +96,7 @@ export async function getProgramsWithProperty(
 ): Promise<GetProgramResponse> {
   try {
     const program = await prisma.program.findFirst({
-      where: { propertyId },
+      where: { propertyId, status: "published" },
       include: {
         property: true,
         images: {

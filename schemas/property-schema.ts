@@ -2,6 +2,7 @@ import { z } from "zod";
 
 export const propertyFormSchema = z.object({
   id: z.string().optional(),
+  status: z.string().optional(),
   email: z.string().email().optional().or(z.literal("")),
   phone: z.string().optional(),
   name: z.string().min(2, { message: "Name must be at least 2 characters." }),

@@ -3,6 +3,7 @@ import * as z from "zod";
 export const retreatInstanceFormSchema = z
   .object({
     retreatId: z.string().min(1, "Retreat is required"),
+    status: z.string().optional(),
     startDate: z.date({
       required_error: "Start date is required",
     }),
