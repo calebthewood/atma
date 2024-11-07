@@ -66,7 +66,7 @@ export function RetreatItem({
 }: RetreatCardProps) {
   return (
     <div className={cn("space-y-3", className)} {...props}>
-      <Link href={`/${segment}/${retreat.id}`}>
+      <Link href={`/${segment}/${retreat?.id}`}>
         <ContextMenu>
           <ContextMenuTrigger>
             <div className="overflow-hidden rounded-md">
@@ -134,7 +134,7 @@ interface LazyRetreatCardProps {
   width: number;
   height: number;
   className?: string;
-  segment: "retreats" | "destinations" | "programs";
+  segment: "retreats" | "destinations" | "programs" | "hosts";
 }
 type ItemType =
   | RetreatWithRelations

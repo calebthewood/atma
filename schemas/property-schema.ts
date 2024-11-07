@@ -6,7 +6,7 @@ export const propertyFormSchema = z.object({
   email: z.string().email().optional().or(z.literal("")),
   phone: z.string().optional(),
   name: z.string().min(2, { message: "Name must be at least 2 characters." }),
-  descShort: z.string().max(200, { message: "Max Length is 200" }),
+  descShort: z.string(),
   descList: z.string().optional(),
   lat: z.number().optional(),
   lng: z.number().optional(),

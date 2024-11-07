@@ -86,13 +86,14 @@ export function HomePageLists({
             Resorts, Hotels, and Indepenant partners
           </p>
         </div>
+        {/* Add back once hosts are implemented
         <Separator className="my-4" />
         <div className="relative">
           <ScrollArea>
             <div className="flex space-x-4 pb-4">
               {hosts
                 .map((h, i) => (
-                  <RetreatItem
+                  <LazyRetreatItem
                     key={h.name + `${i * 2.3}`}
                     retreat={h}
                     imgUrl={h.images[0]?.filePath}
@@ -107,7 +108,7 @@ export function HomePageLists({
             </div>
             <ScrollBar orientation="horizontal" />
           </ScrollArea>
-        </div>
+        </div> */}
       </div>
     </div>
   );

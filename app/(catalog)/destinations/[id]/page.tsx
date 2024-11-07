@@ -25,7 +25,7 @@ import ThumbnailCarousel from "@/components/ui/carousel-thumbnail";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import { CatalogTabs } from "@/components/catalog-tabs";
 import { LoadingSpinner } from "@/components/loading-spinner";
-import { RetreatItem } from "@/components/retreat-item";
+import { LazyRetreatItem } from "@/components/retreat-item";
 import { TitleImageBanner } from "@/components/title-img-banner";
 import { H3 } from "@/components/typography";
 
@@ -94,7 +94,7 @@ export default async function Page(props: { params: Promise<{ id: string }> }) {
       : DEFAULT_SLIDES;
 
   const focusRetreat = property.retreats[0];
-
+  console.log(property);
   return (
     <div className="mt-4 h-auto min-h-screen">
       <TitleImageBanner title={title} subtitle={subtitle} href={coverImgPath} />
@@ -117,9 +117,8 @@ export default async function Page(props: { params: Promise<{ id: string }> }) {
           </div>
           <div className="flex-0 mx-8 mb-16 gap-4">
             <H3 className="mb-4 mt-6 border-b font-light">Upcoming Retreat</H3>
-            <RetreatItem
-              retreat={focusRetreat}
-              imgUrl={slides[0]}
+            <LazyRetreatItem
+              id={focusRetreat?.id}
               segment="retreats"
               className="w-[300px]"
               aspectRatio="portrait"
@@ -134,14 +133,9 @@ export default async function Page(props: { params: Promise<{ id: string }> }) {
             <ScrollArea>
               <div className="flex space-x-4 pb-4">
                 {property.retreats.map((r, i) => (
-                  <RetreatItem
+                  <LazyRetreatItem
                     key={r.name + `${i * 3.7}`}
-                    retreat={r}
-                    imgUrl={
-                      property.images[
-                        Math.floor((i % property.images.length) - 1)
-                      ]?.filePath
-                    }
+                    id={r.id}
                     segment="retreats"
                     className="w-[250px]"
                     aspectRatio="portrait"
@@ -162,7 +156,15 @@ export default async function Page(props: { params: Promise<{ id: string }> }) {
 
 function PlaceList({ placeList }: { placeList: string | null | undefined }) {
   // placeList example: HARNN SAMUI AIRPORT | 1.1 miles;Samui Florist Shop | 1.1 miles;SAMUI 333 LATEX | 1.2 miles;Nicky Fashion | 1.2 miles
-  const places = placeList?.split(";").map((plc) => plc.split("|"));
+  const places = placeList
+    ? placeList.split(";").map((plc) => plc.split("|"))
+    : [
+        ["HARNN SAMUI AIRPORT", "1.1 miles"],
+        ["Samui Florist Shop", "1.1 miles"],
+        ["SAMUI 333 LATEX", "1.2 miles"],
+        ["Nicky Fashion", "1.2 miles"],
+        ["Royal King International Suits", "1.2 miles"],
+      ];
   const icons = [
     <Plane size={48} strokeWidth={0.5} />,
     <BedSingle size={48} strokeWidth={0.5} />,
@@ -172,7 +174,7 @@ function PlaceList({ placeList }: { placeList: string | null | undefined }) {
     <Flower size={48} strokeWidth={0.5} />,
     <LayoutGrid size={48} strokeWidth={0.5} />,
   ];
-  if (!placeList) return <LoadingSpinner />;
+  if (placeList === null || placeList === undefined) return <LoadingSpinner />;
   /* HARNN SAMUI AIRPORT | 1.1 miles;Samui Florist Shop | 1.1 miles;SAMUI 333 LATEX | 1.2 miles;Nicky Fashion | 1.2 miles;Royal King International Suits | 1.6 miles;Outlet Village SaMui | 1.7 miles;Classic International suits | 1.9 miles;Oscars Fashion | 1.9 miles;Central Festival (FESTIVAL SAMUI) | 2.1 miles;セントラルフェスティバル サムイ | 2.1 miles;Samui Party Pro | 2.2 miles;Living Plaza | 2.3 miles;Paul's Fashion | 2.3 miles;Big C Supercenter - Samui | 2.7 miles;Makro | 2.8 miles;Modern Suit | 2.9 miles;Tommy's master tailor | 3.0 miles;Fisherman's Village Walking Street | 3.0 miles;Ash Tailor Samui | 3.6 miles;Walking street Maenam | 5.5 miles;Yodyut Muaythai | 1250  ft;Baan Jakawan | 1550  ft;Lamborghini Villa | 1650  ft;Koh Samui Events | 2100  ft;Rock beach | 2200  ft;Samui Crocodile Farm | 3600  ft;Art-samui | 3700  ft;Seatran Discovery Company Limited | 1.1 miles;Bangrak Market | 1.1 miles;Choengmon Beach | 1.1 miles;Wat Plai Laem | 1.2 miles;Wat Laem Suwannaram | 1.2 miles;Hat Bang Rak beach | 1.4 miles;Samui Pier Beach front Resort | 1.4 miles;Wat Phra Yai | 1.5 miles;Chaweng Boxing Stadium | 1.9 miles;Fisherman's Village | 3.2 miles;Bo Phut Beach | 3.4 miles;Chaweng Beach | 4.0 miles;Samui Island | 5.4 miles;The Love Kitchen | 100  ft;Coffee bear cafè | 800  ft;Fisherman's Reggae Bar | 800  ft;Pui Relax Restaurant & Bar | 1850  ft;THE COCOON - SAMUI VIEWPOINT | 2600  ft;Seoul korean restaurant | 3000  ft;BAY LEAF Restaurant & Bar Choengmon kohsamui | 3350  ft;Krua Choeng Mon - Thai Restaurant | 3650  ft;DAWN Korean Restaurant | 3800  ft;Burger House Samui 24 Hours Delivery and Restaurant | 3900  ft;Panya Cafe | 4050  ft;DAO Sushi | 4300  ft;Krua thai | 4400  ft;The Jumping Bean Samui | 4600  ft;หนานหยวน เชิงมน Nanyuan Noodle ( Choengmon beach) | 4650  ft;The Mother Restaurant | 5000  ft;Carnival Beach Village - Beach Club | 1.0 mile;Supattra Thai Dining | 1.0 mile;Mr. Eung Seafood | 1.0 mile;Khao Horm | 1.1 miles*/
   return (
     <ScrollArea className="w-full whitespace-nowrap rounded-md border">

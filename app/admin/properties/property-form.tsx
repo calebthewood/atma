@@ -50,9 +50,9 @@ type PropertyFormProps = {
 
 export function PropertyForm({ property }: PropertyFormProps) {
   const [isLoading, setIsLoading] = useState(false);
-  const [customDeskHours, setCustomDeskHours] = useState(false);
+
   const [hosts, setHosts] = useState<Host[]>([]);
-  const [uncategorizedTags, setUncategorizedTags] = useState<string[]>([]);
+
   const router = useRouter();
   const form = useForm<PropertyFormData>({
     resolver: zodResolver(propertyFormSchema),

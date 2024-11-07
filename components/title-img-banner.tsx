@@ -13,7 +13,7 @@ export function TitleImageBanner({
   href: string;
 }) {
   return (
-    <div className="relative flex h-3/4 min-h-[500px] flex-col justify-end bg-muted p-0 text-white dark:border-r md:p-10 md:pb-10">
+    <div className="relative flex h-3/4 min-h-[500px] flex-col justify-end bg-muted p-0 text-white dark:border-r md:p-10">
       <Image
         priority
         alt="destination cover photo"
