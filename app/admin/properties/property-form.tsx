@@ -42,6 +42,8 @@ import { toast } from "@/components/ui/use-toast";
 import CountrySelect from "@/components/country-select";
 import { Lead } from "@/components/typography";
 
+import { StatusField } from "../status-form-field";
+
 type PropertyFormProps = {
   property?: Property | null;
 };
@@ -56,6 +58,7 @@ export function PropertyForm({ property }: PropertyFormProps) {
     resolver: zodResolver(propertyFormSchema),
     defaultValues: {
       name: property?.name || "",
+      status: property?.status || "draft",
       email: property?.email || "",
       phone: property?.phone || "",
       descShort: property?.descShort || "",
@@ -102,7 +105,6 @@ export function PropertyForm({ property }: PropertyFormProps) {
   });
 
   async function onSubmit(values: PropertyFormData) {
-    console.log("submitting");
     setIsLoading(true);
     try {
       let res;
@@ -171,6 +173,7 @@ export function PropertyForm({ property }: PropertyFormProps) {
     "paymentMethods",
     "tagList",
     "type",
+    "status",
   ]);
 
   useEffect(() => {
@@ -234,19 +237,6 @@ export function PropertyForm({ property }: PropertyFormProps) {
     });
   };
 
-  const breakfastTypes = [
-    { id: "buffet", label: "Buffet" },
-    { id: "gluten-free", label: "Gluten-free" },
-    { id: "vegan", label: "Vegan" },
-    { id: "vegetarian", label: "Vegetarian" },
-  ];
-
-  const depositMethods = [
-    { id: "credit-card", label: "Credit Card" },
-    { id: "debit-card", label: "Debit Card" },
-    { id: "cash", label: "Cash" },
-  ];
-
   const paymentMethods = [
     { id: "american_express", label: "American Express" },
     { id: "cash", label: "Cash" },
@@ -264,6 +254,8 @@ export function PropertyForm({ property }: PropertyFormProps) {
         onSubmit={form.handleSubmit(onSubmit)}
         className="max-w-xl space-y-8"
       >
+        <h3 className="text-lg font-semibold">General</h3>
+        <StatusField form={form} />
         <FormField
           control={form.control}
           name="name"

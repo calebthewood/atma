@@ -73,7 +73,7 @@ export function BookingBarCalendar() {
               id="date"
               variant={"outline"}
               className={cn(
-                "size-full rounded border-transparent bg-transparent text-left font-normal",
+                "size-full rounded border-transparent bg-transparent text-left font-normal shadow-none",
                 !date && "text-muted-foreground"
               )}
             >
@@ -91,7 +91,7 @@ export function BookingBarCalendar() {
               id="date"
               variant={"outline"}
               className={cn(
-                "size-full rounded border-transparent bg-transparent text-left font-normal",
+                "size-full rounded border-transparent bg-transparent text-left font-normal shadow-none",
                 !date && "text-muted-foreground"
               )}
             >
@@ -134,8 +134,10 @@ function DatePlaceholder({ checkIn = true }: { checkIn?: boolean }) {
 function DateDisplay({ date, to = false }: { date: Date; to?: boolean }) {
   return (
     <div className="w-full text-start">
-      <Small className="block">{to ? "TO" : "FROM"}</Small>
-      {format(date, "LLL dd, y")}
+      <div className="font-title text-xs">{to ? "TO" : "FROM"}</div>
+      <div className="font-tagline font-light opacity-70">
+        {format(date, "LLL dd, y")}
+      </div>
     </div>
   );
 }

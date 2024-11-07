@@ -1,6 +1,8 @@
 import "@/styles/globals.css";
 
 import { Metadata, Viewport } from "next";
+import { getPropertyIds } from "@/actions/property-actions";
+import { getRetreatIds } from "@/actions/retreat-actions";
 
 import { siteConfig } from "@/config/site";
 import { fontSans } from "@/lib/fonts";
@@ -33,7 +35,9 @@ interface RootLayoutProps {
   children: React.ReactNode;
 }
 
-export default function RootLayout({ children }: RootLayoutProps) {
+export default async function RootLayout({ children }: RootLayoutProps) {
+  const properties = await getPropertyIds();
+  const retreats = await getRetreatIds();
   return (
     <>
       <html lang="en" suppressHydrationWarning>
@@ -48,7 +52,7 @@ export default function RootLayout({ children }: RootLayoutProps) {
             <div className="relative flex min-h-screen flex-col">
               <SiteHeader />
 
-              <div className="container">{children}</div>
+              <div className="md:container">{children}</div>
             </div>
             <TailwindIndicator />
           </ThemeProvider>

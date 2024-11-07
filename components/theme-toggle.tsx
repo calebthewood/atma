@@ -13,6 +13,7 @@ export function ThemeToggle() {
     <Button
       variant="ghost"
       size="icon"
+      className="hidden md:inline-flex"
       onClick={() => setTheme(theme === "light" ? "dark" : "light")}
     >
       <Sun strokeWidth={0.5} className="h-6 w-[1.3rem] dark:hidden" />

@@ -1,11 +1,11 @@
-import { getRetreats } from "@/actions/retreat-actions";
+import { getRetreatIds } from "@/actions/retreat-actions";
 
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import { Separator } from "@/components/ui/separator";
-import { RetreatItem } from "@/components/retreat-item";
+import { LazyRetreatItem, RetreatItem } from "@/components/retreat-item";
 
 export default async function Page() {
-  const retreats = await getRetreats();
+  const retreats = await getRetreatIds();
   // get 10 retreat id's, map them out, let each retreat item get it's own details
   return (
     <div className="h-full px-4 py-6 lg:px-8">
@@ -23,11 +23,10 @@ export default async function Page() {
       <div className="relative">
         <ScrollArea>
           <div className="flex space-x-4 pb-4">
-            {retreats.map((r, i) => (
-              <RetreatItem
-                key={r.name + `${i * 3.7}`}
-                retreat={r}
-                imgUrl={r.property.images[0]?.filePath}
+            {retreats?.map((r, i) => (
+              <LazyRetreatItem
+                key={i + r.id}
+                id={r.id}
                 segment="retreats"
                 className="w-[250px]"
                 aspectRatio="portrait"
@@ -54,10 +53,9 @@ export default async function Page() {
         <ScrollArea>
           <div className="flex space-x-4 pb-4">
             {retreats.map((r, i) => (
-              <RetreatItem
-                key={r.name + `${i * 3.7}`}
-                retreat={r}
-                imgUrl={r.property.images[0]?.filePath}
+              <LazyRetreatItem
+                key={i + r.id}
+                id={r.id}
                 segment="retreats"
                 className="w-[250px]"
                 aspectRatio="portrait"
@@ -81,10 +79,10 @@ export default async function Page() {
       </div>
       <Separator className="my-4" />
       <div className="relative">
-        <ScrollArea>
+        {/* <ScrollArea>
           <div className="flex space-x-4 pb-4">
             {retreats
-              .filter((r) => r.property.city?.toLowerCase().includes("york"))
+              .filter((r) => r?.property.city?.toLowerCase().includes("york"))
               .map((r, i) => (
                 <RetreatItem
                   key={r.name + `${i * 3.7}`}
@@ -99,7 +97,7 @@ export default async function Page() {
               ))}
           </div>
           <ScrollBar orientation="horizontal" />
-        </ScrollArea>
+        </ScrollArea> */}
       </div>
     </div>
   );

@@ -6,43 +6,95 @@ import { z } from "zod";
 import { prisma } from "@/lib/prisma";
 
 export type EntityType = "property" | "host" | "retreat" | "program";
-export type AmenityType = "activity" | "facility";
+export type AmenityType = "activity" | "amenity";
 export type Amenity = {
   id: string;
   type: string;
   categoryValue: string | null;
   categoryName: string | null;
-  name: string | null;
-  value: string | null;
+  name: string;
+  value: string;
+  custom: boolean;
 };
 
 // Validation schemas
-const amenityTypeSchema = z.enum(["activity", "facility"]);
+const amenityTypeSchema = z.enum(["activity", "amenity"]);
 const entityTypeSchema = z.enum(["property", "host", "retreat", "program"]);
 const actionSchema = z.enum(["connect", "disconnect"]);
+
+/**
+ * CRUD Operations for base Amenity table
+ */
+export async function createAmenity(data: {
+  type: string;
+  categoryValue?: string;
+  categoryName?: string;
+  name: string;
+  value: string;
+  custom?: boolean;
+}) {
+  try {
+    const amenity = await prisma.amenity.create({
+      data: {
+        type: data.type,
+        categoryValue: data.categoryValue,
+        categoryName: data.categoryName,
+        name: data.name,
+        value: data.value,
+        custom: data.custom ?? false,
+      },
+    });
+    return amenity;
+  } catch (error) {
+    console.error("Failed to create amenity:", error);
+    throw new Error("Failed to create amenity");
+  }
+}
+
+export async function updateAmenity(
+  id: string,
+  data: {
+    type?: string;
+    categoryValue?: string | null;
+    categoryName?: string | null;
+    name?: string;
+    value?: string;
+    custom?: boolean;
+  }
+) {
+  try {
+    const amenity = await prisma.amenity.update({
+      where: { id },
+      data,
+    });
+    return amenity;
+  } catch (error) {
+    console.error("Failed to update amenity:", error);
+    throw new Error("Failed to update amenity");
+  }
+}
+
+export async function deleteAmenity(id: string) {
+  try {
+    await prisma.amenity.delete({
+      where: { id },
+    });
+  } catch (error) {
+    console.error("Failed to delete amenity:", error);
+    throw new Error("Failed to delete amenity");
+  }
+}
 
 /**
  * Get all amenities of a specific type
  */
 export async function getAmenitiesByType(type: AmenityType) {
   try {
-    // Validate input
     const validatedType = amenityTypeSchema.parse(type);
-
     const amenities = await prisma.amenity.findMany({
-      where: {
-        type: validatedType,
-      },
-      select: {
-        id: true,
-        type: true,
-        categoryValue: true,
-        categoryName: true,
-        name: true,
-        value: true,
-      },
+      where: { type: validatedType },
+      orderBy: [{ categoryName: "asc" }, { name: "asc" }],
     });
-
     return amenities;
   } catch (error) {
     if (error instanceof z.ZodError) {
@@ -50,59 +102,6 @@ export async function getAmenitiesByType(type: AmenityType) {
     }
     console.error("Failed to fetch amenities:", error);
     throw new Error("Failed to fetch amenities");
-  }
-}
-
-/**
- * Get amenities for a specific entity
- */
-export async function getEntityAmenities(
-  entityType: EntityType,
-  entityId: string,
-  amenityType: AmenityType
-) {
-  try {
-    // Validate inputs
-    const validatedEntityType = entityTypeSchema.parse(entityType);
-    const validatedAmenityType = amenityTypeSchema.parse(amenityType);
-
-    // Ensure entityId exists
-    if (!entityId) throw new Error("Entity ID is required");
-
-    const amenities = await prisma.amenity.findMany({
-      where: {
-        type: validatedAmenityType,
-        OR: [
-          {
-            propertyId:
-              validatedEntityType === "property" ? entityId : undefined,
-          },
-          { hostId: validatedEntityType === "host" ? entityId : undefined },
-          {
-            retreatId: validatedEntityType === "retreat" ? entityId : undefined,
-          },
-          {
-            programId: validatedEntityType === "program" ? entityId : undefined,
-          },
-        ],
-      },
-      select: {
-        id: true,
-        type: true,
-        categoryValue: true,
-        categoryName: true,
-        name: true,
-        value: true,
-      },
-    });
-
-    return amenities;
-  } catch (error) {
-    if (error instanceof z.ZodError) {
-      throw new Error(`Invalid input parameters: ${error.message}`);
-    }
-    console.error("Failed to fetch entity amenities:", error);
-    throw new Error("Failed to fetch entity amenities");
   }
 }
 
@@ -116,70 +115,172 @@ export async function updateEntityAmenity(
   action: "connect" | "disconnect"
 ) {
   try {
-    // Validate inputs
     const validatedEntityType = entityTypeSchema.parse(entityType);
     const validatedAction = actionSchema.parse(action);
 
-    // Ensure required IDs exist
     if (!entityId) throw new Error("Entity ID is required");
     if (!amenityId) throw new Error("Amenity ID is required");
 
-    // Create the update data based on the entity type
-    const updateData = {
-      [validatedEntityType]: {
-        [validatedAction]: {
-          id: entityId,
-        },
-      },
-    };
+    // Handle each entity type explicitly
+    switch (validatedEntityType) {
+      case "property":
+        if (validatedAction === "connect") {
+          await prisma.propertyAmenity.create({
+            data: {
+              propertyId: entityId,
+              amenityId: amenityId,
+            },
+          });
+        } else {
+          await prisma.propertyAmenity.delete({
+            where: {
+              propertyId_amenityId: {
+                propertyId: entityId,
+                amenityId: amenityId,
+              },
+            },
+          });
+        }
+        break;
 
-    // Update the amenity
-    const updatedAmenity = await prisma.amenity.update({
-      where: {
-        id: amenityId,
-      },
-      data: updateData,
-    });
+      case "host":
+        if (validatedAction === "connect") {
+          await prisma.hostAmenity.create({
+            data: {
+              hostId: entityId,
+              amenityId: amenityId,
+            },
+          });
+        } else {
+          await prisma.hostAmenity.delete({
+            where: {
+              hostId_amenityId: {
+                hostId: entityId,
+                amenityId: amenityId,
+              },
+            },
+          });
+        }
+        break;
+
+      case "retreat":
+        if (validatedAction === "connect") {
+          await prisma.retreatAmenity.create({
+            data: {
+              retreatId: entityId,
+              amenityId: amenityId,
+            },
+          });
+        } else {
+          await prisma.retreatAmenity.delete({
+            where: {
+              retreatId_amenityId: {
+                retreatId: entityId,
+                amenityId: amenityId,
+              },
+            },
+          });
+        }
+        break;
+
+      case "program":
+        if (validatedAction === "connect") {
+          await prisma.programAmenity.create({
+            data: {
+              programId: entityId,
+              amenityId: amenityId,
+            },
+          });
+        } else {
+          await prisma.programAmenity.delete({
+            where: {
+              programId_amenityId: {
+                programId: entityId,
+                amenityId: amenityId,
+              },
+            },
+          });
+        }
+        break;
+    }
 
     // Revalidate the paths that might show this data
     revalidatePath(`/admin/${validatedEntityType}s/${entityId}`);
     revalidatePath(`/${validatedEntityType}s/${entityId}`);
-
-    return updatedAmenity;
   } catch (error) {
     if (error instanceof z.ZodError) {
       throw new Error(`Invalid input parameters: ${error.message}`);
     }
-    console.error("Failed to update amenity:", error);
+    console.error("Failed to update entity amenity:", error);
     throw new Error("Failed to update entity amenity");
   }
 }
 
 /**
- * Create a new amenity
+ * Get amenities for a specific entity
  */
-export async function createAmenity(data: {
-  type: string;
-  categoryValue: string;
-  categoryName: string;
-  name: string;
-  value: string;
-}) {
+export async function getEntityAmenities(
+  entityType: EntityType,
+  entityId: string,
+  amenityType: AmenityType
+) {
   try {
-    const amenity = await prisma.amenity.create({
-      data: {
-        type: data.type,
-        categoryValue: data.categoryValue,
-        categoryName: data.categoryName,
-        name: data.name,
-        value: data.value,
-      },
-    });
+    const validatedEntityType = entityTypeSchema.parse(entityType);
+    const validatedAmenityType = amenityTypeSchema.parse(amenityType);
 
-    return amenity;
+    if (!entityId) throw new Error("Entity ID is required");
+
+    // Handle each entity type explicitly
+    switch (validatedEntityType) {
+      case "property":
+        return await prisma.amenity.findMany({
+          where: {
+            type: validatedAmenityType,
+            propertyAmenities: {
+              some: { propertyId: entityId },
+            },
+          },
+        });
+
+      case "host":
+        return await prisma.amenity.findMany({
+          where: {
+            type: validatedAmenityType,
+            hostAmenities: {
+              some: { hostId: entityId },
+            },
+          },
+        });
+
+      case "retreat":
+        return await prisma.amenity.findMany({
+          where: {
+            type: validatedAmenityType,
+            retreatAmenities: {
+              some: { retreatId: entityId },
+            },
+          },
+        });
+
+      case "program":
+        return await prisma.amenity.findMany({
+          where: {
+            type: validatedAmenityType,
+            programAmenities: {
+              some: { programId: entityId },
+            },
+          },
+        });
+
+      default:
+        throw new Error(`Unsupported entity type: ${validatedEntityType}`);
+    }
   } catch (error) {
-    console.error("Failed to create amenity:", error);
-    throw new Error("Failed to create amenity");
+    if (error instanceof z.ZodError) {
+      throw new Error(`Invalid input parameters: ${error.message}`);
+    }
+    console.error("Failed to fetch entity amenities:", error);
+    throw new Error("Failed to fetch entity amenities");
   }
 }
 
@@ -197,7 +298,6 @@ export async function getAmenitiesByCategory(type: AmenityType) {
       orderBy: [{ categoryName: "asc" }, { name: "asc" }],
     });
 
-    // Group amenities by category
     const grouped = amenities.reduce(
       (acc, amenity) => {
         const category = amenity.categoryName || "Uncategorized";

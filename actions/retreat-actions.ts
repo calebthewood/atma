@@ -71,6 +71,18 @@ export async function createRetreat(data: CreateRetreatInput) {
   }
 }
 
+export async function getRetreatIds() {
+  const properties = await prisma.retreat.findMany({
+    where: {
+      status: "published",
+    },
+    select: {
+      id: true,
+    },
+  });
+  return properties;
+}
+
 export async function updateRetreat(id: string, data: UpdateRetreatInput) {
   try {
     const updateData: any = { ...data };
@@ -107,7 +119,7 @@ export async function updateRetreat(id: string, data: UpdateRetreatInput) {
   }
 }
 
-type RetreatWithoutNulls = {
+export type RetreatWithoutNulls = {
   [K in keyof Retreat]: Retreat[K] extends null ? undefined : Retreat[K];
 };
 
@@ -304,11 +316,38 @@ export async function deleteRetreat(id: string) {
     throw new Error(`Failed to delete retreat with id ${id}`);
   }
 }
+export type RetreatWithRelations = Prisma.RetreatGetPayload<{
+  include: {
+    property: true;
+    host: true;
+    amenities: true;
+    images: true;
+    retreatInstances: true;
+  };
+}>;
 
-export async function getRetreat(id: string) {
+type GetRetreatSuccess = {
+  success: true;
+  retreat: RetreatWithRelations;
+};
+
+type GetRetreatError = {
+  success: false;
+  error: string;
+};
+
+export type GetRetreatResponse = GetRetreatSuccess | GetRetreatError;
+
+export async function getRetreat(
+  id: string,
+  publishedOnly: boolean = true
+): Promise<GetRetreatResponse> {
   try {
     const retreat = await prisma.retreat.findUnique({
-      where: { id },
+      where: {
+        id,
+        ...(publishedOnly && { status: "published" }),
+      },
       include: {
         property: true,
         host: true,
@@ -345,17 +384,6 @@ export async function getRetreat(id: string) {
     };
   }
 }
-
-// Type for the return value
-export type GetRetreatResult =
-  | {
-      success: true;
-      retreat: NonNullable<Awaited<ReturnType<typeof getRetreat>>["retreat"]>;
-    }
-  | {
-      success: false;
-      error: string;
-    };
 
 export async function getRetreatPrices(id: string) {
   try {

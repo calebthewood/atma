@@ -1,6 +1,4 @@
-import Image from "next/image";
 import { getProgramById } from "@/actions/program-actions";
-import { getRetreatById } from "@/actions/retreat-actions";
 import { auth } from "@/auth";
 import { BedSingle, Navigation, NotepadText, User } from "lucide-react";
 
@@ -13,12 +11,8 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import ThumbnailCarousel from "@/components/ui/carousel-thumbnail";
-import { FixedBooking } from "@/components/booking/fixed-booking";
-import { FlexibleBooking } from "@/components/booking/flexible-booking";
-import { OpenBooking } from "@/components/booking/open-booking";
 import { LoadingSpinner } from "@/components/loading-spinner";
 import { TitleImageBanner } from "@/components/title-img-banner";
-import { H1 } from "@/components/typography";
 
 const SLIDES = [
   "/img/iStock-1929812569.jpg",

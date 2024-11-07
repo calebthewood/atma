@@ -2,6 +2,7 @@ import { z } from "zod";
 
 export const programFormSchema = z.object({
   name: z.string().min(2, { message: "Name must be at least 2 characters." }),
+  status: z.string().optional(),
   duration: z.string().min(1, { message: "Duration is required." }),
   desc: z.string().optional(),
   priceList: z.string().optional(),

@@ -36,8 +36,11 @@ import {
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "@/components/ui/use-toast";
 
+import { StatusField } from "../status-form-field";
+
 const formSchema = z.object({
   bookingType: z.enum(["Flexible", "Fixed", "Open"]),
+  status: z.string().optional(),
   name: z.string().min(2, { message: "Name must be at least 2 characters." }),
   desc: z
     .string()
@@ -75,6 +78,7 @@ export function RetreatForm() {
     defaultValues: {
       bookingType: "Flexible",
       name: "",
+      status: retreat?.status || "draft",
       desc: "",
       duration: "",
       date: "",
@@ -236,6 +240,7 @@ export function RetreatForm() {
         onSubmit={form.handleSubmit(onSubmit)}
         className="max-w-xl space-y-8"
       >
+        <StatusField form={form} />
         <FormField
           control={form.control}
           name="name"

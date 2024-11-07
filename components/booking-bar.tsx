@@ -19,24 +19,41 @@ export function BookingBar() {
   }, [searchParams]);
 
   return (
-    <div className="mt-6 flex w-full flex-row justify-between">
-      <div className="flex h-16 grow flex-row items-center justify-evenly rounded border bg-white/20 p-2 shadow backdrop-blur">
-        <div className="basis-3/12">
+    <div className="mt-6 flex w-full flex-col gap-2 px-2 md:flex-row md:justify-between md:px-0">
+      <div className="flex min-h-[16rem] w-full flex-col gap-2 rounded border bg-white/20 p-4 shadow backdrop-blur md:min-h-16 md:flex-row md:items-center md:gap-0 md:p-2">
+        <div className="w-full md:basis-3/12">
           <LocationCombobox />
         </div>
-        <Separator orientation="vertical" className="mx-2 h-full w-[0.5px]" />
-        <div className="basis-6/12">
+        <Separator
+          orientation="horizontal"
+          className="my-2 h-[0.5px] w-full md:hidden"
+        />
+        <Separator
+          orientation="vertical"
+          className="mx-2 hidden h-full w-[0.5px] md:block"
+        />
+        <div className="w-full md:basis-6/12">
           <BookingBarCalendar />
         </div>
-        <Separator orientation="vertical" className="mx-2 h-full w-[0.5px]" />
-        <div className="basis-2/12">
+        <Separator
+          orientation="horizontal"
+          className="my-2 h-[0.5px] w-full md:hidden"
+        />
+        <Separator
+          orientation="vertical"
+          className="mx-2 hidden h-full w-[0.5px] md:block"
+        />
+
+        <div className="w-full md:basis-3/12">
           <GuestCombobox />
         </div>
       </div>
+
+      {/* Search Button */}
       <Button
         variant={"outline"}
         asChild
-        className="align-center ml-2 flex h-16 w-20 cursor-pointer items-center justify-center rounded border p-4 shadow backdrop-blur dark:bg-white/20 dark:hover:bg-white/10 dark:hover:stroke-white"
+        className="flex h-16 w-full cursor-pointer items-center justify-center rounded border p-4 shadow backdrop-blur dark:bg-white/20 dark:hover:bg-white/10 dark:hover:stroke-white md:ml-2 md:w-20"
       >
         <Link href={constructSearchUrl()}>
           <Search className="" size={32} strokeWidth={0.75} />

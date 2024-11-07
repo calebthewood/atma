@@ -43,6 +43,8 @@ import {
 } from "@/components/ui/select";
 import { toast } from "@/components/ui/use-toast";
 
+import { StatusField } from "../status-form-field";
+
 type RetreatInstanceFormProps = {
   retreatInstance?: RetreatInstance;
 };

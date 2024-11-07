@@ -7,11 +7,11 @@ import { RetreatItems } from "@/actions/retreat-actions";
 import HeroCarousel from "@/components/ui/carousel-hero";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import { Separator } from "@/components/ui/separator";
-import { RetreatItem } from "@/components/retreat-item";
+import { LazyRetreatItem, RetreatItem } from "@/components/retreat-item";
 
 interface HomePageListsProps {
-  retreats: RetreatItems[];
-  properties: PropertiesWithImages[];
+  retreats: { id: string }[];
+  properties: { id: string }[];
   hosts: HostWithImages[];
 }
 
@@ -39,10 +39,9 @@ export function HomePageLists({
           <ScrollArea>
             <div className="flex space-x-4 pb-4">
               {retreats.map((r, i) => (
-                <RetreatItem
-                  key={r.name + `${i * 3.7}`}
-                  retreat={r}
-                  imgUrl={r.images[0]?.filePath}
+                <LazyRetreatItem
+                  key={i + r.id}
+                  id={r.id}
                   segment="retreats"
                   className="w-[250px]"
                   aspectRatio="portrait"
@@ -67,10 +66,9 @@ export function HomePageLists({
           <ScrollArea>
             <div className="flex space-x-4 pb-4">
               {properties.map((p, i) => (
-                <RetreatItem
-                  key={p.name + `${i * 2}`}
-                  retreat={p}
-                  imgUrl={p.images[0]?.filePath}
+                <LazyRetreatItem
+                  key={i + p.id}
+                  id={p.id}
                   segment="destinations"
                   className="w-[150px]"
                   aspectRatio="square"

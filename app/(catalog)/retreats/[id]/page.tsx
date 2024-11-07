@@ -44,7 +44,7 @@ export default async function RetreatPage(props: PageProps) {
   return (
     <div className="mt-4 h-auto min-h-screen">
       <TitleImageBanner title={title} subtitle={subtitle} href={coverImage} />
-      <div className="container">
+      <div className="p-0 md:container">
         <RetreatDetailCards />
 
         <Suspense fallback={<div className="h-96 animate-pulse bg-gray-100" />}>
@@ -53,8 +53,8 @@ export default async function RetreatPage(props: PageProps) {
           </div>
         </Suspense>
 
-        <div className="flex flex-row gap-x-4">
-          <RetreatDescription />
+        <div className="flex flex-row flex-wrap justify-center gap-x-4">
+          <RetreatDescription copy={retreat.desc} />
           <div className="mb-16 max-w-md">
             <BookingSelector
               type={retreat.bookingType}
@@ -68,21 +68,11 @@ export default async function RetreatPage(props: PageProps) {
   );
 }
 
-function RetreatDescription() {
+function RetreatDescription({ copy }: { copy: string | null }) {
+  if (copy === null) return null;
   return (
-    <div className="text-lg">
-      <p className="my-4">
-        Lorem ipsum dolor sit amet, consectetur adipisicing elit. Fuga iste,
-        repudiandae ipsam exercitationem reiciendis ea cumque corporis magni
-        ipsum architecto nobis? Nihil libero rem cum dolorem quas ratione a
-        fuga.
-      </p>
-      <p className="my-4">
-        Lorem ipsum dolor sit amet, consectetur adipisicing elit. Fuga iste,
-        repudiandae ipsam exercitationem reiciendis ea cumque corporis magni
-        ipsum architecto nobis? Nihil libero rem cum dolorem quas ratione a
-        fuga.
-      </p>
+    <div className="max-w-lg text-lg">
+      <p className="my-4 p-2">{copy}</p>
     </div>
   );
 }

@@ -31,6 +31,8 @@ import {
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "@/components/ui/use-toast";
 
+import { StatusField } from "../status-form-field";
+
 type ProgramFormProps = {
   program?: Program | null;
 };
@@ -44,6 +46,7 @@ export function ProgramForm({ program }: ProgramFormProps) {
     resolver: zodResolver(programFormSchema),
     defaultValues: {
       name: program?.name || "",
+      status: program?.status || "draft",
       duration: program?.duration || "",
       desc: program?.desc || "",
       priceList: program?.priceList || "",
@@ -149,6 +152,7 @@ export function ProgramForm({ program }: ProgramFormProps) {
         onSubmit={form.handleSubmit(onSubmit)}
         className="max-w-xl space-y-8"
       >
+        <StatusField form={form} />
         <FormField
           control={form.control}
           name="name"

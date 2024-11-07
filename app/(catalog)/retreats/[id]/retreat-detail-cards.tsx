@@ -9,6 +9,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import { FixedBooking } from "@/components/booking/fixed-booking";
 import { FlexibleBooking } from "@/components/booking/flexible-booking";
 import { OpenBooking } from "@/components/booking/open-booking";
@@ -44,7 +45,7 @@ interface DetailCardProps {
 
 function DetailCard({ name, icon, detail }: DetailCardProps) {
   return (
-    <Card className="w-56">
+    <Card className="md:w-42 w-42">
       <CardHeader>
         <CardDescription className="mx-auto p-4">{icon}</CardDescription>
         <CardTitle className="mx-auto font-light">{name}</CardTitle>
@@ -58,11 +59,14 @@ function DetailCard({ name, icon, detail }: DetailCardProps) {
 
 export function RetreatDetailCards() {
   return (
-    <div className="flex justify-center gap-6 py-12">
-      {RETREAT_DETAILS.map((detail) => (
-        <DetailCard key={detail.name} {...detail} />
-      ))}
-    </div>
+    <ScrollArea className="my-6 w-full whitespace-nowrap rounded-md border">
+      <div className="flex w-max space-x-4 p-4 bg-blend-darken">
+        {RETREAT_DETAILS.map((detail) => (
+          <DetailCard key={detail.name} {...detail} />
+        ))}
+      </div>
+      <ScrollBar orientation="horizontal" />
+    </ScrollArea>
   );
 }
 
@@ -77,8 +81,8 @@ export function BookingSelector({
   userId,
   retreat,
 }: BookingSelectorProps) {
-  console.log("type", type);
   if (!type) return null;
+
   const bookingTypes = {
     Open: () => (
       <OpenBooking
