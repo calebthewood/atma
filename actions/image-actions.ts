@@ -72,7 +72,7 @@ export async function uploadImage(formData: FormData) {
         order: newOrder,
       },
     });
-
+    // revalidatePath(getImageRoute(image));
     return { success: true, image };
   } catch (error) {
     console.error("Error uploading to S3:", error);
@@ -80,7 +80,15 @@ export async function uploadImage(formData: FormData) {
   }
 }
 
-type RecordType = "property" | "program" | "host" | "retreat" | "room";
+function getImageRoute(img: Image) {
+  let path = "admin/";
+  if (img.programId) path += "programs/" + img.programId;
+  if (img.propertyId) path += "properties/" + img.propertyId;
+  if (img.retreatId) path += "retreat/" + img.retreatId;
+  return path + "/images";
+}
+
+export type RecordType = "property" | "program" | "host" | "retreat" | "room";
 
 const ImageSchema = z.object({
   id: z.string(),

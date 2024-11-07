@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useState } from "react";
+import { useRouter } from "next/navigation";
 import { uploadImage } from "@/actions/image-actions";
 import { useDropzone } from "react-dropzone";
 
@@ -18,6 +19,7 @@ interface ImageUploadProps {
 export function ImageUpload({ recordId, recordType }: ImageUploadProps) {
   const [uploading, setUploading] = useState(false);
   const [progress, setProgress] = useState(0);
+  const router = useRouter();
 
   const processAndUploadFiles = async (files: File[]) => {
     try {
@@ -54,6 +56,8 @@ export function ImageUpload({ recordId, recordType }: ImageUploadProps) {
             variant: "destructive",
           });
           return;
+        } finally {
+          router.refresh();
         }
       }
 
