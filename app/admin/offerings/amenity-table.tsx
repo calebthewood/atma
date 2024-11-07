@@ -51,7 +51,7 @@ function AmenityListItem({ amenity, onEdit, onDelete }: AmenityListItemProps) {
           variant="ghost"
           size="sm"
           onClick={() => onEdit?.(amenity)}
-          className="h-8 w-8 p-0"
+          className="size-8 p-0"
         >
           <span className="sr-only">Edit</span>
           <Pencil className="size-4" />
@@ -66,7 +66,7 @@ function AmenityListItem({ amenity, onEdit, onDelete }: AmenityListItemProps) {
               onDelete?.(amenity);
             }
           }}
-          className="h-8 w-8 p-0"
+          className="size-8 p-0"
         >
           <span className="sr-only">Delete</span>
           <Trash className="size-4" />

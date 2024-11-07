@@ -421,7 +421,7 @@ function ImageItem({
           className="absolute right-2 top-2 z-10 opacity-0 transition-opacity group-hover:opacity-100"
           onClick={() => onDelete(image.id)}
         >
-          <X className="h-4 w-4" />
+          <X className="size-4" />
         </Button>
         <Image
           src={image.filePath}
