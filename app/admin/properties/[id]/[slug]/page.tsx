@@ -15,8 +15,6 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { AmenitiesEntityForm } from "../../../amenities-entity-form";
 import { PriceModForm } from "../../../price-mod-form";
 import { ImageManagement } from "../../image-management";
-// import { ImageUpload } from "../../image-form";
-// import { ImageGallery } from "../../image-order-form";
 import { PropertyForm } from "../../property-form";
 
 // Loading placeholder for forms
