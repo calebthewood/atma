@@ -520,11 +520,11 @@ export function PropertyForm({ property }: PropertyFormProps) {
           render={({ field }) => (
             <FormItem>
               <FormLabel className={getFieldStyles("descShort")}>
-                Healing Focus({field?.value?.length}/200)
+                Healing Focus({field?.value?.length}/300)
               </FormLabel>
               <FormControl>
                 <Textarea
-                  maxLength={200}
+                  maxLength={300}
                   className={getFieldStyles("descShort")}
                   placeholder="3-5 bullet points highlighting the unique wellness offerings of the retreat."
                   {...field}

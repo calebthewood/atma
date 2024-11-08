@@ -48,16 +48,25 @@ type AmenityFormProps = {
 // BB can change these!!
 const CATEGORIES = {
   activity: [
-    { value: "mind-body-practices", name: "Mind-Body Practices" },
-    { value: "recreational-sports", name: "Recreational Sports" },
-    { value: "wellness-activities", name: "Wellness Activities" },
-    { value: "outdoor-adventures", name: "Outdoor Adventures" },
+    { value: "cultural-creative-activities", name: "Cultural & Creative Activities" },
+    { value: "fitness-physical-activities", name: "Fitness & Physical Activities" },
+    { value: "mind-body-practice", name: "Mind-Body Practice" },
+    { value: "outdoor-adventure-activities", name: "Outdoor & Adventure Activities" },
   ],
   amenity: [
-    { value: "wellness-spaces", name: "Wellness Spaces" },
-    { value: "recreational-facilities", name: "Recreational Facilities" },
-    { value: "healing-centers", name: "Healing Centers" },
-    { value: "accommodation", name: "Accommodation" },
+    { value: "business-conference-services", name: "Business & Conference Services" },
+    { value: "connectivity-technology", name: "Connectivity & Technology" },
+    { value: "event-celebration-spaces", name: "Event & Celebration Spaces" },
+    { value: "family-children-facilities", name: "Family & Children Facilities" },
+    { value: "fitness-sports-facilities", name: "Fitness & Sports Facilities" },
+    { value: "food-drink", name: "Food & Drink" },
+    { value: "guest-services-concierge", name: "Guest Services & Concierge" },
+    { value: "parking-transportation", name: "Parking & Transportation" },
+    { value: "public-areas-leisure", name: "Public Areas & Leisure" },
+    { value: "safety-security", name: "Safety & Security" },
+    { value: "sleep-amenities", name: "Sleep Amenities" },
+    { value: "swimming-water-facilities", name: "Swimming & Water Facilities" },
+    { value: "wellness-spa", name: "Wellness & Spa" }
   ],
 } as const;
 
