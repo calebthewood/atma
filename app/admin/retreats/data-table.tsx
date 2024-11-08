@@ -124,7 +124,7 @@ const columns: ColumnDef<Retreat>[] = [
 
       return (
         <AdminActionMenu
-          editHref={`/admin/retreats/${retreat.id}`}
+          editHref={`/admin/retreats/${retreat.id}/general`}
           publicHref={`/retreats/${retreat.id}`}
           handleDelete={handleDelete}
         />

@@ -48,16 +48,31 @@ type AmenityFormProps = {
 // BB can change these!!
 const CATEGORIES = {
   activity: [
-    { value: "cultural-creative-activities", name: "Cultural & Creative Activities" },
-    { value: "fitness-physical-activities", name: "Fitness & Physical Activities" },
+    {
+      value: "cultural-creative-activities",
+      name: "Cultural & Creative Activities",
+    },
+    {
+      value: "fitness-physical-activities",
+      name: "Fitness & Physical Activities",
+    },
     { value: "mind-body-practice", name: "Mind-Body Practice" },
-    { value: "outdoor-adventure-activities", name: "Outdoor & Adventure Activities" },
+    {
+      value: "outdoor-adventure-activities",
+      name: "Outdoor & Adventure Activities",
+    },
   ],
   amenity: [
-    { value: "business-conference-services", name: "Business & Conference Services" },
+    {
+      value: "business-conference-services",
+      name: "Business & Conference Services",
+    },
     { value: "connectivity-technology", name: "Connectivity & Technology" },
     { value: "event-celebration-spaces", name: "Event & Celebration Spaces" },
-    { value: "family-children-facilities", name: "Family & Children Facilities" },
+    {
+      value: "family-children-facilities",
+      name: "Family & Children Facilities",
+    },
     { value: "fitness-sports-facilities", name: "Fitness & Sports Facilities" },
     { value: "food-drink", name: "Food & Drink" },
     { value: "guest-services-concierge", name: "Guest Services & Concierge" },
@@ -66,7 +81,7 @@ const CATEGORIES = {
     { value: "safety-security", name: "Safety & Security" },
     { value: "sleep-amenities", name: "Sleep Amenities" },
     { value: "swimming-water-facilities", name: "Swimming & Water Facilities" },
-    { value: "wellness-spa", name: "Wellness & Spa" }
+    { value: "wellness-spa", name: "Wellness & Spa" },
   ],
 } as const;
 

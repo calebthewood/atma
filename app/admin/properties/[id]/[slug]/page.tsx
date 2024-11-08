@@ -110,13 +110,6 @@ export default async function Page(props: {
             <CardContent className="space-y-6">
               <TabContentWrapper>
                 <ImageManagement recordId={params.id} recordType="property" />
-                {/* <div className="space-y-4">
-                  <ImageUpload recordId={params.id} recordType="property" />
-                  <div>
-                    <h4 className="text-sm font-medium">Image Gallery</h4>
-                    <ImageGallery recordId={params.id} recordType="property" />
-                  </div>
-                </div> */}
               </TabContentWrapper>
             </CardContent>
           </Card>

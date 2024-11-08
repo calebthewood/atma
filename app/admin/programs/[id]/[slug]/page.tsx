@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { getProgram } from "@/actions/program-actions";
 
 import {
@@ -8,15 +9,16 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { H2, H3 } from "@/components/typography";
+import { H3 } from "@/components/typography";
 
-import { AmenitiesEntityForm } from "../../amenities-entity-form";
-import { PriceModForm } from "../../price-mod-form";
-import { ImageUpload } from "../../properties/image-form";
-import { ImageGallery } from "../../properties/image-order-form";
-import { ProgramForm } from "../program-form";
+import { AmenitiesEntityForm } from "../../../amenities-entity-form";
+import { PriceModForm } from "../../../price-mod-form";
+import { ImageManagement } from "../../../properties/image-management";
+import { ProgramForm } from "../../program-form";
 
-export default async function Page(props: { params: Promise<{ id: string }> }) {
+export default async function Page(props: {
+  params: Promise<{ id: string; slug: string }>;
+}) {
   const params = await props.params;
   const result = await getProgram(params.id);
 
@@ -24,19 +26,49 @@ export default async function Page(props: { params: Promise<{ id: string }> }) {
     return <div>Error: {result.error}</div>;
   }
 
+  const tabs = [
+    {
+      value: "general",
+      label: "General",
+      href: `/admin/programs/${params.id}/general`,
+    },
+    {
+      value: "images",
+      label: "Images",
+      href: `/admin/programs/${params.id}/images`,
+    },
+    {
+      value: "prices",
+      label: "Pricing",
+      href: `/admin/programs/${params.id}/prices`,
+    },
+    {
+      value: "amenities",
+      label: "Amenities",
+      href: `/admin/programs/${params.id}/amenities`,
+    },
+    {
+      value: "activities",
+      label: "Activities",
+      href: `/admin/programs/${params.id}/activities`,
+    },
+  ];
+
   return (
     <div className="space-y-6">
       <div>
         <H3>Edit Program</H3>
         <p className="text-sm text-muted-foreground">Edit existing program.</p>
       </div>
-      <Tabs defaultValue="general" className="w-full max-w-2xl">
+      <Tabs defaultValue={params.slug} className="w-full max-w-2xl">
         <TabsList>
-          <TabsTrigger value="general">General</TabsTrigger>
-          <TabsTrigger value="images">Images</TabsTrigger>
-          <TabsTrigger value="prices">Pricing</TabsTrigger>
-          <TabsTrigger value="amenities">Amenitites</TabsTrigger>
-          <TabsTrigger value="activities">Activities</TabsTrigger>
+          {tabs.map((tab) => (
+            <TabsTrigger key={tab.value} asChild value={tab.value}>
+              <Link href={tab.href} className="relative" scroll={false}>
+                {tab.label}
+              </Link>
+            </TabsTrigger>
+          ))}
         </TabsList>
 
         <TabsContent value="general">
@@ -62,13 +94,7 @@ export default async function Page(props: { params: Promise<{ id: string }> }) {
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-6">
-              <div className="space-y-4">
-                <ImageUpload recordId={params.id} recordType="program" />
-                <div>
-                  <h4 className="text-sm font-medium">Image Gallery</h4>
-                  <ImageGallery recordId={params.id} recordType="program" />
-                </div>
-              </div>
+              <ImageManagement recordId={params.id} recordType="program" />
             </CardContent>
           </Card>
         </TabsContent>

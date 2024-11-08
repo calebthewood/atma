@@ -36,7 +36,6 @@ export function AmenitiesEntityForm({
   const [connectedAmenityIds, setConnectedAmenityIds] = useState<Set<string>>(
     new Set()
   );
-  const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   // Group amenities by category
@@ -56,7 +55,6 @@ export function AmenitiesEntityForm({
 
   const loadData = async () => {
     try {
-      setLoading(true);
       setError(null);
 
       // Fetch all amenities of the specified type and the ones connected to this entity
@@ -81,7 +79,6 @@ export function AmenitiesEntityForm({
         variant: "destructive",
       });
     } finally {
-      setLoading(false);
     }
   };
 
@@ -121,16 +118,6 @@ export function AmenitiesEntityForm({
     }
   };
 
-  if (loading) {
-    return (
-      <div className="flex items-center justify-center p-4">
-        <div className="text-sm text-muted-foreground">
-          Loading amenities...
-        </div>
-      </div>
-    );
-  }
-
   if (error) {
     return (
       <div className="rounded-md bg-destructive/10 p-4">
@@ -139,15 +126,7 @@ export function AmenitiesEntityForm({
     );
   }
 
-  if (amenities.length === 0) {
-    return (
-      <div className="rounded-md bg-muted p-4">
-        <div className="text-sm text-muted-foreground">
-          No amenities found. Please create some amenities first.
-        </div>
-      </div>
-    );
-  }
+  if (amenities.length === 0) return null;
 
   return (
     <div className="space-y-6">

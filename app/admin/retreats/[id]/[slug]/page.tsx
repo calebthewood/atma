@@ -1,22 +1,21 @@
+import Link from "next/link";
 import { getRetreat } from "@/actions/retreat-actions";
 
 import {
   Card,
   CardContent,
   CardDescription,
-  CardFooter,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
-import { AmenitiesEntityForm } from "../../amenities-entity-form";
-import { PriceModForm } from "../../price-mod-form";
-import { ImageUpload } from "../../properties/image-form";
-import { ImageGallery } from "../../properties/image-order-form";
-import { RetreatInstanceForm } from "../instance-form";
-import { RetreatForm } from "../retreat-form";
-import { RetreatInstancesList } from "../retreat-instance-table";
+import { AmenitiesEntityForm } from "../../../amenities-entity-form";
+import { PriceModForm } from "../../../price-mod-form";
+import { ImageManagement } from "../../../properties/image-management";
+import { RetreatInstanceForm } from "../../instance-form";
+import { RetreatForm } from "../../retreat-form";
+import { RetreatInstancesList } from "../../retreat-instance-table";
 
 export default async function Page(props: { params: Promise<{ id: string }> }) {
   const params = await props.params;
@@ -25,6 +24,34 @@ export default async function Page(props: { params: Promise<{ id: string }> }) {
   if (!result.success) {
     return <div>Error: {result.error}</div>;
   }
+
+  const tabs = [
+    {
+      value: "general",
+      label: "General",
+      href: `/admin/retreats/${params.id}/general`,
+    },
+    {
+      value: "images",
+      label: "Images",
+      href: `/admin/retreats/${params.id}/images`,
+    },
+    {
+      value: "prices",
+      label: "Pricing",
+      href: `/admin/retreats/${params.id}/prices`,
+    },
+    {
+      value: "amenities",
+      label: "Amenities",
+      href: `/admin/retreats/${params.id}/amenities`,
+    },
+    {
+      value: "activities",
+      label: "Activities",
+      href: `/admin/retreats/${params.id}/activities`,
+    },
+  ];
 
   return (
     <div className="space-y-6">
@@ -35,12 +62,13 @@ export default async function Page(props: { params: Promise<{ id: string }> }) {
 
       <Tabs defaultValue="general" className="w-full max-w-2xl">
         <TabsList>
-          <TabsTrigger value="general">General</TabsTrigger>
-          <TabsTrigger value="images">Images</TabsTrigger>
-          <TabsTrigger value="prices">Pricing</TabsTrigger>
-          <TabsTrigger value="amenities">Amenities</TabsTrigger>
-          <TabsTrigger value="activities">Activities</TabsTrigger>
-          <TabsTrigger value="instances">Instances</TabsTrigger>
+          {tabs.map((tab) => (
+            <TabsTrigger key={tab.value} asChild value={tab.value}>
+              <Link href={tab.href} className="relative" scroll={false}>
+                {tab.label}
+              </Link>
+            </TabsTrigger>
+          ))}
         </TabsList>
 
         <TabsContent value="general">
@@ -66,13 +94,7 @@ export default async function Page(props: { params: Promise<{ id: string }> }) {
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-6">
-              <div className="space-y-4">
-                <ImageUpload recordId={params.id} recordType="retreat" />
-                <div>
-                  <h4 className="text-sm font-medium">Image Gallery</h4>
-                  <ImageGallery recordId={params.id} recordType="retreat" />
-                </div>
-              </div>
+              <ImageManagement recordId={params.id} recordType="retreat" />
             </CardContent>
           </Card>
         </TabsContent>

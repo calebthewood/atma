@@ -123,7 +123,7 @@ const columns: ColumnDef<Program>[] = [
 
       return (
         <AdminActionMenu
-          editHref={`/admin/programs/${program.id}`}
+          editHref={`/admin/programs/${program.id}/general`}
           publicHref={`/programs/${program.id}`}
           handleDelete={handleDelete}
         />
