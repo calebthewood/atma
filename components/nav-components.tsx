@@ -32,13 +32,21 @@ interface MainNavProps {
 export function HeroTitle() {
   return (
     <Link href="/" className="hover: mt-16 hover:brightness-200">
-      <h1 className="flex w-full justify-between font-title text-6xl leading-6 tracking-[100%] transition-all hover:scale-[97%]">
-        <span>A</span>
-        <span>T</span>
-        <span>M</span>
-        <span>A</span>
+      <h1 className="flex w-full justify-between font-title transition-all hover:scale-[97%] text-6xl">
+        <span className="flex size-14 flex-col items-center justify-center pl-2 md:size-16">
+          A
+        </span>
+        <span className="flex size-14 flex-col items-center justify-center md:size-16">
+          T
+        </span>
+        <span className="flex size-14 flex-col items-center justify-center md:size-16">
+          M
+        </span>
+        <span className="flex size-14 flex-col items-center justify-center md:size-16">
+          A
+        </span>
       </h1>
-      <p className="font-tagline text-sm leading-[56px]">
+      <p className="font-tagline text-sm leading-10 md:leading-[56px]">
         THE WORLD&apos;S DESTINATION FOR FINEST RETREATS
       </p>
     </Link>
@@ -80,7 +88,7 @@ export function MainNavigationMenu() {
             <NavigationMenuLink
               className={cn(
                 navigationMenuTriggerStyle(),
-                "px-2 md:px-4",
+                "px-1 sm:px-2 md:px-4",
                 "bg-transparent font-title text-xs leading-6 opacity-50 hover:opacity-100",
                 path === "destinations" && "opacity-100"
               )}
@@ -100,7 +108,7 @@ export function MainNavigationMenu() {
             <NavigationMenuLink
               className={cn(
                 navigationMenuTriggerStyle(),
-                "px-2 md:px-4",
+                "px-1 sm:px-2 md:px-4",
                 "bg-transparent font-title text-xs leading-6 opacity-50 hover:opacity-100",
                 path === "retreats" && "opacity-100"
               )}
@@ -120,7 +128,7 @@ export function MainNavigationMenu() {
             <NavigationMenuLink
               className={cn(
                 navigationMenuTriggerStyle(),
-                "px-2 md:px-4",
+                "px-1 sm:px-2 md:px-4",
                 "bg-transparent font-title text-xs leading-6 opacity-50 hover:opacity-100",
                 path === "programs" && "opacity-100"
               )}

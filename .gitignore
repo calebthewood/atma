@@ -37,5 +37,9 @@ yarn-error.log*
 
 # dev db setup
 ingest/
-dev.db
-prod.db
+# SQLite database files
+*.db
+*.sqlite
+*.sqlite3
+*.sqlite-journal
+*.sqlite3-journal
