@@ -520,11 +520,10 @@ export function PropertyForm({ property }: PropertyFormProps) {
           render={({ field }) => (
             <FormItem>
               <FormLabel className={getFieldStyles("descShort")}>
-                Healing Focus({field?.value?.length}/300)
+                Healing Focus({field?.value?.length}/350)
               </FormLabel>
               <FormControl>
                 <Textarea
-                  maxLength={300}
                   className={getFieldStyles("descShort")}
                   placeholder="3-5 bullet points highlighting the unique wellness offerings of the retreat."
                   {...field}
@@ -541,14 +540,12 @@ export function PropertyForm({ property }: PropertyFormProps) {
           render={({ field }) => (
             <FormItem>
               <FormLabel className={getFieldStyles("descList")}>
-                Description ({field?.value?.length}/500)
+                Description ({field?.value?.length}/550)
               </FormLabel>
               <FormControl>
                 <Textarea
-                  maxLength={1000}
                   className={getFieldStyles("descList")}
-                  placeholder="Describe the property’s ambiance, services, and unique qualities.
-"
+                  placeholder="Describe the property’s ambiance, services, and unique qualities."
                   {...field}
                   onBlur={() => handleFieldBlur("descList")}
                 />
@@ -586,7 +583,7 @@ export function PropertyForm({ property }: PropertyFormProps) {
             render={({ field }) => (
               <FormItem>
                 <FormLabel className={getFieldStyles("amenityHealing")}>
-                  Spa Offerings ({field?.value?.length}/100)
+                  Spa Offerings ({field?.value?.length})
                 </FormLabel>
                 <FormControl>
                   <Textarea
@@ -606,11 +603,10 @@ export function PropertyForm({ property }: PropertyFormProps) {
             render={({ field }) => (
               <FormItem>
                 <FormLabel className={getFieldStyles("amenityCuisine")}>
-                  Cuisine Offerings ({field?.value?.length}/100)
+                  Cuisine Offerings ({field?.value?.length})
                 </FormLabel>
                 <FormControl>
                   <Textarea
-                    maxLength={200}
                     className={getFieldStyles("amenityCuisine")}
                     placeholder="Enter cuisine details"
                     {...field}
@@ -627,11 +623,10 @@ export function PropertyForm({ property }: PropertyFormProps) {
             render={({ field }) => (
               <FormItem>
                 <FormLabel className={getFieldStyles("amenityFacility")}>
-                  Facility Offerings ({field?.value?.length}/100)
+                  Facility Offerings ({field?.value?.length})
                 </FormLabel>
                 <FormControl>
                   <Textarea
-                    maxLength={200}
                     className={getFieldStyles("amenityFacility")}
                     placeholder="A brief description of the property..."
                     {...field}
@@ -648,11 +643,10 @@ export function PropertyForm({ property }: PropertyFormProps) {
             render={({ field }) => (
               <FormItem>
                 <FormLabel className={getFieldStyles("amenityActivity")}>
-                  Activity Offerings ({field?.value?.length}/100)
+                  Activity Offerings ({field?.value?.length})
                 </FormLabel>
                 <FormControl>
                   <Textarea
-                    maxLength={200}
                     className={getFieldStyles("amenityActivity")}
                     placeholder="A brief description of the property..."
                     {...field}

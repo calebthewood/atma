@@ -20,7 +20,7 @@ export function BookingBar() {
 
   return (
     <div className="mt-6 flex w-full flex-col gap-2 px-2 md:flex-row md:justify-between md:px-0">
-      <div className="flex min-h-64 w-full flex-col gap-2 rounded border bg-white/20 p-4 shadow backdrop-blur md:min-h-16 md:flex-row md:items-center md:gap-0 md:p-2">
+      <div className="flex w-full flex-col gap-2 rounded border bg-white/20 p-4 shadow backdrop-blur md:min-h-16 md:flex-row md:items-center md:gap-0 md:p-2">
         <div className="w-full md:basis-3/12">
           <LocationCombobox />
         </div>
