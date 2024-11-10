@@ -62,12 +62,13 @@ const formSchema = z.object({
 });
 
 type FormData = z.infer<typeof formSchema>;
-
-export function RetreatForm() {
+type RetreatFormProps = {
+  retreat?: Retreat | null;
+};
+export function RetreatForm({ retreat }: RetreatFormProps) {
   const [isLoading, setIsLoading] = useState(false);
   const [hosts, setHosts] = useState<Host[]>([]);
   const [properties, setProperties] = useState<Property[]>([]);
-  const [retreat, setRetreat] = useState<Retreat | null>(null);
 
   const params = useParams();
   const router = useRouter();
@@ -76,72 +77,30 @@ export function RetreatForm() {
   const form = useForm<FormData>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      bookingType: "Flexible",
-      name: "",
-      status: retreat?.status || "draft",
-      desc: "",
-      duration: "",
-      date: "",
-      priceList: "",
-      minGuests: 1,
-      maxGuests: -1,
-      sourceUrl: "",
-      hostId: "",
-      propertyId: "",
+      bookingType: retreat?.bookingType as "Flexible" | "Fixed" | "Open",
+      name: retreat?.name || "",
+      status: retreat?.status,
+      desc: retreat?.desc || "",
+      duration: retreat?.duration || "",
+      date: retreat?.date ? retreat?.date.toISOString().split("T")[0] : "",
+      priceList: retreat?.priceList || "",
+      minGuests: retreat?.minGuests || 1,
+      maxGuests: retreat?.maxGuests || -1,
+      coverImg: retreat?.coverImg || "",
+      sourceUrl: retreat?.sourceUrl ?? "",
+      hostId: retreat?.hostId || "",
+      propertyId: retreat?.propertyId,
     },
   });
 
-  const ON_CHANGE_FIELDS = new Set(["bookingType", "minGuests", "maxGuests"]);
+  const ON_CHANGE_FIELDS = new Set([
+    "status",
+    "bookingType",
+    "minGuests",
+    "maxGuests",
+  ]);
 
-  useEffect(() => {
-    async function fetchData() {
-      try {
-        const [fetchedHosts, fetchedProperties] = await Promise.all([
-          getHosts(),
-          getProperties(),
-        ]);
-        setHosts(fetchedHosts);
-        setProperties(fetchedProperties);
-
-        if (retreatId) {
-          const fetchedRetreat = await getRetreatById(retreatId);
-          if (fetchedRetreat) {
-            setRetreat(fetchedRetreat);
-            const formData: Partial<FormData> = {
-              bookingType: fetchedRetreat.bookingType as
-                | "Flexible"
-                | "Fixed"
-                | "Open",
-              name: fetchedRetreat.name || "",
-              desc: fetchedRetreat.desc || "",
-              duration: fetchedRetreat.duration || "",
-              date: fetchedRetreat.date
-                ? fetchedRetreat.date.toISOString().split("T")[0]
-                : "",
-              priceList: fetchedRetreat.priceList || "",
-              minGuests: fetchedRetreat.minGuests || 1,
-              maxGuests: fetchedRetreat.maxGuests || -1,
-              coverImg: fetchedRetreat.coverImg || "",
-              sourceUrl: fetchedRetreat?.sourceUrl ?? "",
-              hostId: fetchedRetreat.hostId || "",
-              propertyId: fetchedRetreat.propertyId,
-            };
-            form.reset(formData);
-          }
-        }
-      } catch (error) {
-        console.error("Error fetching data:", error);
-        toast({
-          title: "Error",
-          description: "Failed to load form data. Please try again.",
-          variant: "destructive",
-        });
-      }
-    }
-
-    fetchData();
-  }, [retreatId, form]);
-
+  /** Updates field on blur */
   useEffect(() => {
     if (!retreat) return;
 

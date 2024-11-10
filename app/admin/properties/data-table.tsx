@@ -101,7 +101,7 @@ const columns: ColumnDef<Property>[] = [
       return (
         <AdminActionMenu
           editHref={`/admin/properties/${property.id}/general`}
-          publicHref={`/properties/${property.id}`}
+          publicHref={`/destinations/${property.id}`}
           handleDelete={handleDelete}
         />
       );

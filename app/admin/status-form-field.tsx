@@ -33,8 +33,6 @@ type StatusFieldProps = {
 };
 
 export function StatusField({ form }: StatusFieldProps) {
-  const currentStatus = form.watch("status");
-
   return (
     <FormField
       control={form.control}

@@ -268,12 +268,12 @@ export function PropertyForm({ property }: PropertyFormProps) {
   };
 
   const paymentMethods = [
-    { id: "american_express", label: "American Express" },
+    { id: "american-express", label: "American Express" },
     { id: "cash", label: "Cash" },
-    { id: "debit_card", label: "Debit Card" },
+    { id: "debit-card", label: "Debit Card" },
     { id: "jcb", label: "JCB" },
     { id: "mastercard", label: "Mastercard" },
-    { id: "union_pay", label: "Union Pay" },
+    { id: "union-pay", label: "Union Pay" },
     { id: "visa", label: "Visa" },
   ];
 
@@ -549,7 +549,7 @@ export function PropertyForm({ property }: PropertyFormProps) {
           render={({ field }) => (
             <FormItem>
               <FormLabel className={getFieldStyles("descShort")}>
-                Healing Focus({field?.value?.length}/350)
+                Healing Focus ({field?.value?.length}/350)
               </FormLabel>
               <FormControl>
                 <Textarea
