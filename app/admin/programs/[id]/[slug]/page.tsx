@@ -11,7 +11,6 @@ import {
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { H3 } from "@/components/typography";
 
-import { AmenitiesEntityForm } from "../../../amenities-entity-form";
 import { PriceModForm } from "../../../price-mod-form";
 import { ImageManagement } from "../../../properties/image-management";
 import { ProgramForm } from "../../program-form";
@@ -41,16 +40,6 @@ export default async function Page(props: {
       value: "prices",
       label: "Pricing",
       href: `/admin/programs/${params.id}/prices`,
-    },
-    {
-      value: "amenities",
-      label: "Amenities",
-      href: `/admin/programs/${params.id}/amenities`,
-    },
-    {
-      value: "activities",
-      label: "Activities",
-      href: `/admin/programs/${params.id}/activities`,
     },
   ];
 
@@ -109,42 +98,6 @@ export default async function Page(props: {
             </CardHeader>
             <CardContent>
               <PriceModForm recordId={params.id} recordType="program" />
-            </CardContent>
-          </Card>
-        </TabsContent>
-
-        <TabsContent value="amenities">
-          <Card>
-            <CardHeader>
-              <CardTitle>Property Amenities</CardTitle>
-              <CardDescription>
-                Manage available facilities and amenities for this property.
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <AmenitiesEntityForm
-                recordId={params.id}
-                recordType="property"
-                amenityType="amenity"
-              />
-            </CardContent>
-          </Card>
-        </TabsContent>
-
-        <TabsContent value="activities">
-          <Card>
-            <CardHeader>
-              <CardTitle>Property Activities</CardTitle>
-              <CardDescription>
-                Manage available activities and experiences for this property.
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <AmenitiesEntityForm
-                recordId={params.id}
-                recordType="property"
-                amenityType="activity"
-              />
             </CardContent>
           </Card>
         </TabsContent>

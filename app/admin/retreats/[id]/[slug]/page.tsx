@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { getRetreat } from "@/actions/retreat-actions";
+import { getRetreat, getRetreatById } from "@/actions/retreat-actions";
 import { Retreat } from "@prisma/client";
 
 import {
@@ -17,12 +17,11 @@ import { RetreatInstanceForm } from "../../instance-form";
 import { RetreatForm } from "../../retreat-form";
 import { RetreatInstancesList } from "../../retreat-instance-table";
 
-
 export default async function Page(props: {
   params: Promise<{ id: string; slug: string }>;
 }) {
   const params = await props.params;
-  const result = await getRetreat(params.id, false);
+  const result = await getRetreatById(params.id);
 
   const tabs = [
     {
@@ -38,7 +37,7 @@ export default async function Page(props: {
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <RetreatForm />
+            <RetreatForm retreat={result} />
           </CardContent>
         </Card>
       ),
@@ -122,7 +121,6 @@ export default async function Page(props: {
             </TabsTrigger>
           ))}
         </TabsList>
-
         <TabsContent value={params.slug}>
           <Output />
         </TabsContent>

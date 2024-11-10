@@ -7,6 +7,8 @@ import { getProperties } from "@/actions/property-actions";
 import {
   createRetreat,
   getRetreatById,
+  GetRetreatResponse,
+  RetreatWithoutNulls,
   updateRetreat,
 } from "@/actions/retreat-actions";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -36,8 +38,6 @@ import {
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "@/components/ui/use-toast";
 
-import { StatusField } from "../status-form-field";
-
 const formSchema = z.object({
   bookingType: z.enum(["Flexible", "Fixed", "Open"]),
   status: z.string().optional(),
@@ -62,9 +62,11 @@ const formSchema = z.object({
 });
 
 type FormData = z.infer<typeof formSchema>;
+
 type RetreatFormProps = {
-  retreat?: Retreat | null;
+  retreat?: RetreatWithoutNulls | null;
 };
+
 export function RetreatForm({ retreat }: RetreatFormProps) {
   const [isLoading, setIsLoading] = useState(false);
   const [hosts, setHosts] = useState<Host[]>([]);
@@ -79,7 +81,7 @@ export function RetreatForm({ retreat }: RetreatFormProps) {
     defaultValues: {
       bookingType: retreat?.bookingType as "Flexible" | "Fixed" | "Open",
       name: retreat?.name || "",
-      status: retreat?.status,
+      status: retreat?.status ?? "draft",
       desc: retreat?.desc || "",
       duration: retreat?.duration || "",
       date: retreat?.date ? retreat?.date.toISOString().split("T")[0] : "",
@@ -93,6 +95,7 @@ export function RetreatForm({ retreat }: RetreatFormProps) {
     },
   });
 
+  console.log("Pop ID", retreat?.propertyId);
   const ON_CHANGE_FIELDS = new Set([
     "status",
     "bookingType",
@@ -100,10 +103,31 @@ export function RetreatForm({ retreat }: RetreatFormProps) {
     "maxGuests",
   ]);
 
+  useEffect(() => {
+    async function fetchData() {
+      try {
+        const [fetchedHosts, fetchedProperties] = await Promise.all([
+          getHosts(),
+          getProperties(),
+        ]);
+        setHosts(fetchedHosts);
+        setProperties(fetchedProperties);
+      } catch (error) {
+        console.error("Error fetching data:", error);
+        toast({
+          title: "Error",
+          description: "Failed to load form data. Please try again.",
+          variant: "destructive",
+        });
+      }
+    }
+
+    fetchData();
+  }, []);
+
   /** Updates field on blur */
   useEffect(() => {
     if (!retreat) return;
-
     const subscription = form.watch(async (value, { name, type }) => {
       if (
         name &&
@@ -199,7 +223,75 @@ export function RetreatForm({ retreat }: RetreatFormProps) {
         onSubmit={form.handleSubmit(onSubmit)}
         className="max-w-xl space-y-8"
       >
-        <StatusField form={form} />
+        <FormField
+          control={form.control}
+          name="status"
+          render={({ field }) => {
+            const statusConfig = {
+              draft: {
+                label: "Draft",
+                bgColor: "bg-background text-muted-foreground",
+                description: "Only visible to admins",
+              },
+              published: {
+                label: "Published",
+                bgColor: "bg-primary text-primary-foreground",
+                description: "Visible to all users",
+              },
+              archived: {
+                label: "Archived",
+                bgColor: "bg-muted text-muted-foreground",
+                description: "Hidden from all views",
+              },
+            };
+            return (
+              <div className="flex flex-col space-y-2 border-l-4 p-2">
+                <div className="flex items-center justify-between">
+                  <label className="text-sm font-medium leading-none">
+                    Status
+                  </label>
+                  <div
+                    className={cn(
+                      "rounded-full px-2 py-1 text-xs font-medium",
+                      statusConfig[field.value as keyof typeof statusConfig]
+                        ?.bgColor
+                    )}
+                  >
+                    {
+                      statusConfig[field.value as keyof typeof statusConfig]
+                        ?.label
+                    }
+                  </div>
+                </div>
+                <Select
+                  defaultValue={field.value || ""}
+                  onValueChange={(value) => {
+                    field.onChange(value);
+                    handleFieldBlur("status");
+                  }}
+                >
+                  <SelectTrigger className="w-full">
+                    <SelectValue placeholder="Select status" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {Object.entries(statusConfig).map(([value, config]) => (
+                      <SelectItem
+                        key={value}
+                        value={value}
+                        className="items-center gap-x-4"
+                      >
+                        <span>{config.label}</span>
+                        <span className="ml-2 text-xs text-muted-foreground">
+                          {config.description}
+                        </span>
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+            );
+          }}
+        />
         <FormField
           control={form.control}
           name="name"

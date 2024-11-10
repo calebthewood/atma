@@ -31,8 +31,6 @@ import {
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "@/components/ui/use-toast";
 
-import { StatusField } from "../status-form-field";
-
 type ProgramFormProps = {
   program?: Program | null;
 };
@@ -152,7 +150,75 @@ export function ProgramForm({ program }: ProgramFormProps) {
         onSubmit={form.handleSubmit(onSubmit)}
         className="max-w-xl space-y-8"
       >
-        <StatusField form={form} />
+        <FormField
+          control={form.control}
+          name="status"
+          render={({ field }) => {
+            const statusConfig = {
+              draft: {
+                label: "Draft",
+                bgColor: "bg-background text-muted-foreground",
+                description: "Only visible to admins",
+              },
+              published: {
+                label: "Published",
+                bgColor: "bg-primary text-primary-foreground",
+                description: "Visible to all users",
+              },
+              archived: {
+                label: "Archived",
+                bgColor: "bg-muted text-muted-foreground",
+                description: "Hidden from all views",
+              },
+            };
+            return (
+              <div className="flex flex-col space-y-2 border-l-4 p-2">
+                <div className="flex items-center justify-between">
+                  <label className="text-sm font-medium leading-none">
+                    Status
+                  </label>
+                  <div
+                    className={cn(
+                      "rounded-full px-2 py-1 text-xs font-medium",
+                      statusConfig[field.value as keyof typeof statusConfig]
+                        ?.bgColor
+                    )}
+                  >
+                    {
+                      statusConfig[field.value as keyof typeof statusConfig]
+                        ?.label
+                    }
+                  </div>
+                </div>
+                <Select
+                  defaultValue={field.value || ""}
+                  onValueChange={(value) => {
+                    field.onChange(value);
+                    handleFieldBlur("status");
+                  }}
+                >
+                  <SelectTrigger className="w-full">
+                    <SelectValue placeholder="Select status" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {Object.entries(statusConfig).map(([value, config]) => (
+                      <SelectItem
+                        key={value}
+                        value={value}
+                        className="items-center gap-x-4"
+                      >
+                        <span>{config.label}</span>
+                        <span className="ml-2 text-xs text-muted-foreground">
+                          {config.description}
+                        </span>
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+            );
+          }}
+        />
         <FormField
           control={form.control}
           name="name"
