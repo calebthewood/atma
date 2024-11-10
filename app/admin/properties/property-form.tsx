@@ -17,6 +17,7 @@ import { Host, Property } from "@prisma/client";
 import { useForm } from "react-hook-form";
 
 import { cn, toKebabCase } from "@/lib/utils";
+import { usePlaceDetails } from "@/hooks/use-places";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import {
@@ -50,9 +51,9 @@ type PropertyFormProps = {
 
 export function PropertyForm({ property }: PropertyFormProps) {
   const [isLoading, setIsLoading] = useState(false);
-
+  const place = usePlaceDetails(property?.addressRaw);
   const [hosts, setHosts] = useState<Host[]>([]);
-
+  console.table(place);
   const router = useRouter();
   const form = useForm<PropertyFormData>({
     resolver: zodResolver(propertyFormSchema),
@@ -175,6 +176,37 @@ export function PropertyForm({ property }: PropertyFormProps) {
     "type",
     "status",
   ]);
+
+  useEffect(() => {
+    if (!property?.addressRaw) return;
+    let changed = false;
+    if (!property?.city && place.city) {
+      form.setValue("city", place.city);
+      handleFieldBlur("city");
+      changed = true;
+    }
+    if (!property?.country && place.countryCode) {
+      form.setValue("country", place.countryCode);
+      handleFieldBlur("country");
+      changed = true;
+    }
+    if (!property?.city && place.city) {
+      form.setValue("city", place.city);
+      handleFieldBlur("city");
+      changed = true;
+    }
+    if (!property?.lat && place.lat && place.lng) {
+      form.setValue("lat", place.lat);
+      form.setValue("lng", place.lng);
+      handleFieldBlur("lat");
+      handleFieldBlur("lng");
+      changed = true;
+    }
+    if (changed && place.streetAddress) {
+      form.setValue("address", place.streetAddress);
+      handleFieldBlur("address");
+    }
+  }, [place, property]);
 
   useEffect(() => {
     if (!property) return;
