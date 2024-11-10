@@ -53,7 +53,7 @@ export function PropertyForm({ property }: PropertyFormProps) {
   const [isLoading, setIsLoading] = useState(false);
   const place = usePlaceDetails(property?.addressRaw);
   const [hosts, setHosts] = useState<Host[]>([]);
-  console.table(place);
+
   const router = useRouter();
   const form = useForm<PropertyFormData>({
     resolver: zodResolver(propertyFormSchema),
@@ -123,7 +123,6 @@ export function PropertyForm({ property }: PropertyFormProps) {
         });
         router.replace("/admin/properties/" + res.id);
       }
-      console.log("res", res);
       form.reset(values);
     } catch (error) {
       console.error("Error submitting property:", error);
@@ -212,7 +211,6 @@ export function PropertyForm({ property }: PropertyFormProps) {
     if (!property) return;
 
     const subscription = form.watch(async (value, { name, type }) => {
-      console.log("type", type);
       if (
         name &&
         form.formState.dirtyFields[name] &&
@@ -278,8 +276,7 @@ export function PropertyForm({ property }: PropertyFormProps) {
     { id: "union_pay", label: "Union Pay" },
     { id: "visa", label: "Visa" },
   ];
-  console.log(form.formState.errors);
-  // if (!property) return null;
+
   return (
     <Form {...form}>
       <form

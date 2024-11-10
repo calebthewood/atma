@@ -86,7 +86,8 @@ export default async function Page(props: { params: Promise<{ id: string }> }) {
     property?.images.sort((a, b) => a.order - b.order)[0]?.filePath ||
     "/img/iStock-1490140364.jpg";
 
-  const [title, subtitle] = property.name.split("|");
+  const [title, _] = property.name.split("|");
+  const subtitle = property.type ?? "";
 
   const slides =
     property.images.length > 0

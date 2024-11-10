@@ -120,6 +120,8 @@ export const propertyFormSchema = z.object({
           "visa",
           "mastercard",
           "american-express",
+          "cash",
+          "debit-card",
         ];
         return val
           .split(",")
