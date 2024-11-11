@@ -210,30 +210,40 @@ model HostUser {
 }
 
 model Retreat {
-    id               String            @id @default(cuid())
-    status           String            @default("draft") // 'published', 'draft', 'archived'
-    bookingType      String? // Flexible: Fixed Start Open End. Fixed: Fixed Start Fixed End. Open: Open Start Open End
-    name             String?
-    desc             String?
-    duration         String?
-    date             DateTime?
-    priceList        String?
-    minGuests        Int?              @default(1)
-    maxGuests        Int?              @default(-1)
-    coverImg         String?
-    sourceUrl        String?
-    images           Image[]
-    host             Host?             @relation(fields: [hostId], references: [id])
-    hostId           String?
-    property         Property          @relation(fields: [propertyId], references: [id])
-    propertyId       String
-    createdAt        DateTime          @default(now())
-    updatedAt        DateTime          @updatedAt
-    reviews          Review[]
-    retreatInstances RetreatInstance[]
-    verified         DateTime? // last date verified by human admin to fix scraping issues
-    priceMods        PriceMod[]
-    amenities        RetreatAmenity[]
+    id                       String            @id @default(cuid())
+    status                   String            @default("draft") // 'published', 'draft', 'archived'
+    bookingType              String? // Flexible: Fixed Start Open End. Fixed: Fixed Start Fixed End. Open: Open Start Open End
+    name                     String?
+    // new fields
+    category                 String            @default("") // Ayurveda, Couples & Relationships, Creative & Artistic, Detox & Cleanse, Detoxification, Emotional Healing, Family & Group Wellness, Fitness & Active, Healthy Aging, Holistic Wellness & Longevity, Hydrotherapy, Luxury Adventure, Medical Wellness, Meditation, Mental Health & Emotional Wellness, Mindfulness, Motherhood, Nutrition & Wellness Coaching, Optimal Weight, Relaxation, Sleep & Restorative Wellness, Spa, Spiritual & Self-Discovery, Traditional Healing, Therapeutic Fasting
+    desc                     String            @default("Overview text") // overview
+    keyBenefits              String            @default("Key benefits text")
+    programApproach          String            @default("Program approach")
+    whoIsthisFor             String            @default("Who is this for")
+    programOptions           String            @default("Program options")
+    policyCancel             String            @default("Policy cancel")
+    transportationAndParking String            @default("Transportation and parking")
+    policyPet                String            @default("Pet policy")
+    // end new fields
+    duration                 String            @default("1 Night")
+    date                     DateTime?
+    priceList                String?
+    minGuests                Int?              @default(1)
+    maxGuests                Int?              @default(-1)
+    coverImg                 String?
+    sourceUrl                String?
+    images                   Image[]
+    host                     Host?             @relation(fields: [hostId], references: [id])
+    hostId                   String?
+    property                 Property          @relation(fields: [propertyId], references: [id])
+    propertyId               String
+    createdAt                DateTime          @default(now())
+    updatedAt                DateTime          @updatedAt
+    reviews                  Review[]
+    retreatInstances         RetreatInstance[]
+    verified                 DateTime? // last date verified by human admin to fix scraping issues
+    priceMods                PriceMod[]
+    amenities                RetreatAmenity[]
 }
 
 model Program {

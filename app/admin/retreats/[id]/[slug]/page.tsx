@@ -29,7 +29,7 @@ export default async function Page(props: {
       label: "General",
       href: `/admin/retreats/${params.id}/general`,
       component: () => (
-        <Card>
+        <>
           <CardHeader>
             <CardTitle>General Information</CardTitle>
             <CardDescription>
@@ -39,7 +39,7 @@ export default async function Page(props: {
           <CardContent>
             <RetreatForm retreat={result} />
           </CardContent>
-        </Card>
+        </>
       ),
     },
     {
