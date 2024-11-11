@@ -61,10 +61,10 @@ export function FixedBooking({ userId, retreat, event }: BookingListProps) {
   const [guestCount, setGuestCount] = useState(retreat?.minGuests || 1);
   const [date, setDate] = useState<DateRange | undefined>({
     from: today,
-    to: addDays(today, event?.minNights),
+    to: addDays(today, event?.duration),
   });
 
-  const duration = event?.minNights;
+  const duration = event.duration;
   const prices = retreat.priceMods;
   const basePrice = prices.find((p) => p.name?.toLowerCase().includes("base"));
   const calculateTotal = () => {

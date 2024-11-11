@@ -12,7 +12,6 @@ type ActionResponse<T> = {
   error?: string;
 };
 
-// Helper function to check auth and wrap in try-catch
 async function withErrorHandler<T>(
   action: () => Promise<T>
 ): Promise<ActionResponse<T>> {
@@ -108,21 +107,14 @@ export async function updateRetreatInstance(
       }
     }
 
-    // If updating nights, ensure they're valid
-    if (data.minNights && data.maxNights && data.maxNights !== -1) {
-      if (data.maxNights < data.minNights) {
-        throw new Error("Maximum nights must be greater than minimum nights");
-      }
-    }
-
     // Update the instance
     const updatedInstance = await prisma.retreatInstance.update({
       where: { id },
       data: {
         ...data,
-        // Ensure dates are properly converted
         startDate: data.startDate ? new Date(data.startDate) : undefined,
         endDate: data.endDate ? new Date(data.endDate) : undefined,
+        isFull: data.availableSlots === 0 ? true : data.isFull,
       },
     });
 
@@ -150,8 +142,8 @@ export async function createRetreatInstance(data: RetreatInstanceFormData) {
         retreatId: data.retreatId,
         startDate: new Date(data.startDate),
         endDate: new Date(data.endDate),
-        minNights: data.minNights,
-        maxNights: data.maxNights,
+        duration: data.duration,
+        itinerary: data.itinerary,
         availableSlots: data.availableSlots,
         isFull: data.isFull || data.availableSlots === 0,
       },
@@ -177,7 +169,6 @@ export async function deleteRetreatInstance(id: string) {
   });
 }
 
-// Helper function to get all instances for a specific retreat
 export async function getRetreatInstances(retreatId: string) {
   return withErrorHandler(async () => {
     const instances = await prisma.retreatInstance.findMany({
