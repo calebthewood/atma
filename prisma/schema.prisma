@@ -267,10 +267,10 @@ model RetreatInstance {
     id             String     @id @default(cuid())
     retreat        Retreat    @relation(fields: [retreatId], references: [id])
     retreatId      String
-    startDate      DateTime
+    startDate      DateTime // start and end date can both be the window of time within which a retreat may be booked, or the specific length of the retreat
     endDate        DateTime
-    minNights      Int        @default(-1) // ignore negative numbers
-    maxNights      Int        @default(-1)
+    duration       Int        @default(0) // length in nights, using start, end, and duration to accomodate multiple booking methods.
+    itinerary      String     @default("Bulleted list of items, end each point with a semicolon;") // most retreat details are in the retreat record, itinerary lists the specific differences variable length versions of a retreat
     availableSlots Int
     isFull         Boolean    @default(false)
     createdAt      DateTime   @default(now())

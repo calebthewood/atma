@@ -13,7 +13,7 @@ import {
 } from "@/schemas/retreat-instance";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Retreat, RetreatInstance } from "@prisma/client";
-import { addDays, startOfDay } from "date-fns";
+import { addDays, addYears, startOfDay } from "date-fns";
 import { useForm } from "react-hook-form";
 
 import { cn } from "@/lib/utils";
@@ -41,15 +41,17 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { Textarea } from "@/components/ui/textarea";
 import { toast } from "@/components/ui/use-toast";
 
 type RetreatInstanceFormProps = {
   retreatInstance?: RetreatInstance;
 };
-
 export function RetreatInstanceForm({
   retreatInstance,
-}: RetreatInstanceFormProps) {
+}: {
+  retreatInstance?: RetreatInstance;
+}) {
   const [retreats, setRetreats] = useState<Retreat[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const params = useParams();
@@ -58,11 +60,13 @@ export function RetreatInstanceForm({
   const form = useForm<RetreatInstanceFormData>({
     resolver: zodResolver(retreatInstanceFormSchema),
     defaultValues: {
-      retreatId: retreatId, // Set from URL params
+      retreatId: retreatId,
       startDate: retreatInstance?.startDate || new Date(),
       endDate: retreatInstance?.endDate || addDays(new Date(), 7),
-      minNights: retreatInstance?.minNights || 1,
-      maxNights: retreatInstance?.maxNights || -1,
+      duration: retreatInstance?.duration || 0,
+      itinerary:
+        retreatInstance?.itinerary ||
+        "Bulleted list of items, end each point with a semicolon;",
       availableSlots: retreatInstance?.availableSlots || 0,
       isFull: retreatInstance?.isFull || false,
     },
@@ -144,9 +148,9 @@ export function RetreatInstanceForm({
     const isDirty = form.formState.dirtyFields[fieldName];
 
     return cn("transition-colors duration-300", {
-      "border-atma-yellow text-atma-yellow": isSubmitting,
-      "border-atma-mint text-atma-mint": isValid && isDirty && !isSubmitting,
-      "border-atma-red text-atma-red": !isValid && !isSubmitting,
+      "border-yellow-500": isSubmitting,
+      "border-green-500": isValid && isDirty && !isSubmitting,
+      "border-red-500": !isValid && !isSubmitting,
     });
   };
 
@@ -230,6 +234,9 @@ export function RetreatInstanceForm({
                     />
                   </PopoverContent>
                 </Popover>
+                <FormDescription>
+                  The first available date for this item
+                </FormDescription>
                 <FormMessage />
               </FormItem>
             )}
@@ -268,7 +275,7 @@ export function RetreatInstanceForm({
                       selected={new Date(field.value)}
                       onSelect={(date) => {
                         field.onChange(
-                          startOfDay(date || addDays(new Date(), 7))
+                          startOfDay(date || addYears(new Date(), 2))
                         );
                         handleFieldBlur("endDate");
                       }}
@@ -279,63 +286,63 @@ export function RetreatInstanceForm({
                     />
                   </PopoverContent>
                 </Popover>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-        </div>
-
-        <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-          <FormField
-            control={form.control}
-            name="minNights"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel className={getFieldStyles("minNights")}>
-                  Minimum Nights
-                </FormLabel>
-                <FormControl>
-                  <Input
-                    type="number"
-                    min="1"
-                    className={getFieldStyles("minNights")}
-                    {...field}
-                    onChange={(e) => field.onChange(parseInt(e.target.value))}
-                    onBlur={() => handleFieldBlur("minNights")}
-                  />
-                </FormControl>
                 <FormDescription>
-                  Minimum number of nights required
+                  The last available date for this item
                 </FormDescription>
                 <FormMessage />
               </FormItem>
             )}
           />
-
-          <FormField
-            control={form.control}
-            name="maxNights"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel className={getFieldStyles("maxNights")}>
-                  Maximum Nights
-                </FormLabel>
-                <FormControl>
-                  <Input
-                    type="number"
-                    min="-1"
-                    className={getFieldStyles("maxNights")}
-                    {...field}
-                    onChange={(e) => field.onChange(parseInt(e.target.value))}
-                    onBlur={() => handleFieldBlur("maxNights")}
-                  />
-                </FormControl>
-                <FormDescription>-1 for unlimited nights</FormDescription>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
         </div>
+        <FormField
+          control={form.control}
+          name="duration"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel className={getFieldStyles("duration")}>
+                Duration (nights)
+              </FormLabel>
+              <FormControl>
+                <Input
+                  type="number"
+                  min="0"
+                  className={getFieldStyles("duration")}
+                  {...field}
+                  onChange={(e) => field.onChange(parseInt(e.target.value))}
+                  onBlur={() => handleFieldBlur("duration")}
+                />
+              </FormControl>
+              <FormDescription>
+                Number of nights for this retreat instance
+              </FormDescription>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        <FormField
+          control={form.control}
+          name="itinerary"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel className={getFieldStyles("itinerary")}>
+                Itinerary
+              </FormLabel>
+              <FormControl>
+                <Textarea
+                  className={getFieldStyles("itinerary")}
+                  {...field}
+                  onBlur={() => handleFieldBlur("itinerary")}
+                  placeholder="Enter itinerary points, end each with a semicolon;"
+                />
+              </FormControl>
+              <FormDescription>
+                Enter each itinerary item followed by a semicolon <b>;</b>
+              </FormDescription>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
 
         <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
           <FormField
@@ -355,7 +362,6 @@ export function RetreatInstanceForm({
                     onChange={(e) => {
                       const value = parseInt(e.target.value);
                       field.onChange(value);
-                      // Automatically update isFull based on availableSlots
                       form.setValue("isFull", value === 0);
                     }}
                     onBlur={() => handleFieldBlur("availableSlots")}

@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import Link from "next/link";
 import {
   deleteRetreatInstance,
   getPaginatedRetreatInstances,
@@ -27,9 +26,6 @@ import {
   DropdownMenu,
   DropdownMenuCheckboxItem,
   DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import {
@@ -287,13 +283,7 @@ export function RetreatInstancesList({ retreatId }: RetreatInstancesListProps) {
     <div className="space-y-4">
       <div className="flex items-center justify-between">
         <h3 className="text-lg font-medium">Retreat Instances</h3>
-        <Button asChild>
-          <Link href={`/admin/retreats/${retreatId}/instances/new`}>
-            Add Instance
-          </Link>
-        </Button>
       </div>
-
       <div className="flex items-center justify-between">
         <div className="flex flex-1 items-center space-x-2">
           <DropdownMenu>
