@@ -27,13 +27,15 @@ export type CreateRetreatInput = {
   desc: string;
   duration: string;
   date: string;
-  priceList: string;
   minGuests: number;
   maxGuests: number;
+  keyBenefits: string;
+  programApproach: string;
+  whoIsthisFor: string;
+  policyCancel: string;
   propertyId: string;
   bookingType: "Flexible" | "Fixed" | "Open";
   hostId: string | null;
-  coverImg?: string | null;
   sourceUrl?: string | null;
 };
 
@@ -49,10 +51,12 @@ export async function createRetreat(data: CreateRetreatInput) {
         desc: data.desc,
         duration: data.duration,
         date: data.date ? new Date(data.date) : null,
-        priceList: data.priceList,
         minGuests: data.minGuests,
         maxGuests: data.maxGuests,
-        coverImg: data.coverImg || null,
+        keyBenefits: data.keyBenefits,
+        programApproach: data.programApproach,
+        whoIsthisFor: data.whoIsthisFor,
+        policyCancel: data.policyCancel,
         sourceUrl: data.sourceUrl || null,
         ...(data.hostId
           ? {

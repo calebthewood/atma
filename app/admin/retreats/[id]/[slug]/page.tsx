@@ -114,8 +114,13 @@ export default async function Page(props: {
       <Tabs defaultValue={params.slug} className="w-full max-w-2xl">
         <TabsList>
           {tabs.map((tab) => (
-            <TabsTrigger key={tab.value} asChild value={tab.value}>
-              <Link href={tab.href} className="relative" scroll={false}>
+            <TabsTrigger key={tab.value} value={tab.value}>
+              <Link
+                href={tab.href}
+                className="relative"
+                scroll={false}
+                prefetch
+              >
                 {tab.label}
               </Link>
             </TabsTrigger>
