@@ -1,14 +1,12 @@
 "use client";
 
-import { useEffect } from "react";
 import Link from "next/link";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname } from "next/navigation";
 import { DotsHorizontalIcon } from "@radix-ui/react-icons";
 
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
-  DropdownMenuCheckboxItem,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuLabel,
@@ -19,11 +17,11 @@ import {
 const sidebarNavItems = [
   { title: "Users", href: "/admin/users" },
   { title: "Hosts", href: "/admin/hosts" },
-  { title: "Properties", href: "/admin/properties" },
-  { title: "Retreats", href: "/admin/retreats" },
-  { title: "Programs", href: "/admin/programs" },
-  { title: "Payments", href: "/admin/payments" },
-  { title: "Bookings", href: "/admin/bookings" },
+  { title: "Properties", href: "/admin/property" },
+  { title: "Retreats", href: "/admin/retreat" },
+  { title: "Programs", href: "/admin/program" },
+  { title: "Payments", href: "/admin/payment" },
+  { title: "Bookings", href: "/admin/booking" },
   { title: "Admin", href: "/admin" },
 ];
 

@@ -67,7 +67,7 @@ export async function createRetreat(data: CreateRetreatInput) {
       },
     });
 
-    revalidatePath("/admin/retreats");
+    revalidatePath("/admin/retreat");
     return retreat;
   } catch (error) {
     console.error("Error creating retreat:", error);
@@ -114,8 +114,8 @@ export async function updateRetreat(id: string, data: UpdateRetreatInput) {
       data: updateData,
     });
 
-    revalidatePath("/admin/retreats");
-    revalidatePath(`/admin/retreats/${id}`);
+    revalidatePath("/admin/retreat");
+    revalidatePath(`/admin/retreat/${id}`);
     return retreat;
   } catch (error) {
     console.error("Error updating retreat:", error);
@@ -312,8 +312,8 @@ export async function deleteRetreat(id: string) {
     const retreat = await prisma.retreat.delete({
       where: { id },
     });
-    revalidatePath("/admin/properties");
-    revalidatePath(`/admin/properties/${id}`);
+    revalidatePath("/admin/property");
+    revalidatePath(`/admin/property/${id}`);
     return retreat;
   } catch (error) {
     console.error(`Error deleting retreat with id ${id}:`, error);

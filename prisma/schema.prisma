@@ -300,15 +300,19 @@ model Booking {
 
 model PriceMod {
     id                String           @id @default(cuid())
-    name              String? // Low Season, High Season, Guest Surcharge, Fancy Package, etc
-    desc              String? // any additional info or terms if needed...
-    type              String? // type: 'FIXED', 'PERCENT'
-    value             Int? //
-    dateRange         String? // "yyyy-mm-dd,yyyy-mm-dd" or "all"
-    guestRange        String? // "min,max" or "all"
-    roomType          String? // "single", "double", "suite", etc, or "all"
-    createdAt         DateTime?        @default(now())
-    updatedAt         DateTime?        @updatedAt
+    name              String           @default("Price") // Low Season, High Season, Guest Surcharge, Fancy Package, etc
+    desc              String           @default("Additional description to show in a tooltip") // any additional info or terms if needed...
+    type              String           @default("BASE_PRICE") // BASE_PRICE, DISCOUNT, FEE, TAX, ADDON, BASE_MOD (BASE_MOD is for seasonal pricing that is added to the base by default, addons show as separate line items in the UI)
+    currency           String           @default("USD")
+    value             Int              @default(0) // negative for discount, positive for additional cost
+    unit              String           @default("FIXED") // type: 'FIXED', 'PERCENT'
+    dateStart         DateTime? // if both null, apply to all
+    dateEnd           DateTime?
+    guestMin          Int? // if both null, apply to all
+    guestMax          Int?
+    roomType          String           @default("all") // "single", "double", "suite", etc, or "all"
+    createdAt         DateTime         @default(now())
+    updatedAt         DateTime         @updatedAt
     retreatInstance   RetreatInstance? @relation(fields: [retreatInstanceId], references: [id])
     retreatInstanceId String?
     program           Program?         @relation(fields: [programId], references: [id])

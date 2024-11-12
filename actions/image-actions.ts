@@ -82,10 +82,10 @@ export async function uploadImage(formData: FormData) {
 
 function getImageRoute(img: Image) {
   let path = "admin/";
-  if (img.programId) path += "programs/" + img.programId;
-  if (img.propertyId) path += "properties/" + img.propertyId;
+  if (img.programId) path += "program/" + img.programId;
+  if (img.propertyId) path += "property/" + img.propertyId;
   if (img.retreatId) path += "retreat/" + img.retreatId;
-  return path + "/images";
+  return path + "/image";
 }
 
 export type RecordType = "property" | "program" | "host" | "retreat" | "room";

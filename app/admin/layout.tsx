@@ -16,14 +16,14 @@ export const metadata: Metadata = {
 
 const sidebarNavItems = [
   { title: "Admin", href: "/admin" },
-  { title: "Users", href: "/admin/users" },
-  { title: "Hosts", href: "/admin/hosts" },
-  { title: "Properties", href: "/admin/properties" },
-  { title: "Retreats", href: "/admin/retreats" },
-  { title: "Programs", href: "/admin/programs" },
-  { title: "Payments", href: "/admin/payments" },
-  { title: "Bookings", href: "/admin/bookings" },
-  { title: "Offerings", href: "/admin/offerings" },
+  { title: "Users", href: "/admin/user" },
+  { title: "Hosts", href: "/admin/host" },
+  { title: "Properties", href: "/admin/property" },
+  { title: "Retreats", href: "/admin/retreat" },
+  { title: "Programs", href: "/admin/program" },
+  { title: "Payments", href: "/admin/payment" },
+  { title: "Bookings", href: "/admin/booking" },
+  { title: "Offerings", href: "/admin/offering" },
 ];
 
 interface SettingsLayoutProps {

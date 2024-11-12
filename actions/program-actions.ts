@@ -132,8 +132,8 @@ export async function deleteProgram(id: string) {
     await prisma.program.delete({
       where: { id },
     });
-    revalidatePath("/admin/programs");
-    revalidatePath(`/admin/programs/${id}`);
+    revalidatePath("/admin/program");
+    revalidatePath(`/admin/program/${id}`);
     return { success: true, message: "Program deleted successfully" };
   } catch (error) {
     console.error("Error deleting program:", error);

@@ -1,37 +1,43 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import { z } from "zod";
+import { PriceModInput, priceModSchema } from "@/schemas/price-mods";
+import { Prisma } from "@prisma/client";
 
 import { prisma } from "@/lib/prisma";
 
-const priceModSchema = z.object({
-  name: z.string().min(2),
-  desc: z.string().optional(),
-  type: z.enum(["FIXED", "PERCENT"]),
-  // category: z.string().min(1),
-  value: z.number().int(),
-  dateRange: z.string(),
-  guestRange: z.string(),
-  roomType: z.string(),
-  hostId: z.string().nullable().optional(),
-  propertyId: z.string().nullable().optional(),
-  programId: z.string().nullable().optional(),
-  retreatId: z.string().nullable().optional(),
-  retreatInstanceId: z.string().nullable().optional(),
-});
+// Type Definitions
+export type PriceModWithRelations = Prisma.PriceModGetPayload<{
+  include: {
+    host: true;
+    property: true;
+    program: true;
+    retreat: true;
+    retreatInstance: true;
+  };
+}>;
 
-type PriceModInput = z.infer<typeof priceModSchema>;
+export type PriceModResponse = {
+  success: boolean;
+  error?: string;
+  data?: PriceModWithRelations;
+};
+
+export type PriceModListResponse = {
+  success: boolean;
+  error?: string;
+  data?: PriceModWithRelations[];
+};
 
 /**
  * Create a new price modification
  */
-export async function createPriceMod(data: PriceModInput) {
+export async function createPriceMod(
+  data: PriceModInput
+): Promise<PriceModResponse> {
   try {
-    // Validate input data
     const validatedData = priceModSchema.parse(data);
 
-    // Create relations object based on provided IDs
     const relations: any = {};
     if (validatedData.hostId) {
       relations.host = { connect: { id: validatedData.hostId } };
@@ -51,7 +57,6 @@ export async function createPriceMod(data: PriceModInput) {
       };
     }
 
-    // Remove relation IDs from the main data object
     const {
       hostId,
       propertyId,
@@ -66,25 +71,37 @@ export async function createPriceMod(data: PriceModInput) {
         ...priceModData,
         ...relations,
       },
+      include: {
+        host: true,
+        property: true,
+        program: true,
+        retreat: true,
+        retreatInstance: true,
+      },
     });
 
-    // Revalidate all potential paths
     revalidateRelatedPaths(relations);
 
-    return { success: true, data: priceMod };
+    return {
+      success: true,
+      data: priceMod,
+    };
   } catch (error) {
     console.error("Error creating price modification:", error);
-    if (error instanceof z.ZodError) {
-      throw new Error(`Validation error: ${error.message}`);
-    }
-    throw new Error("Failed to create price modification");
+    return {
+      success: false,
+      error:
+        error instanceof Error
+          ? error.message
+          : "Failed to create price modification",
+    };
   }
 }
 
 /**
  * Get a price modification by ID
  */
-export async function getPriceMod(id: string) {
+export async function getPriceMod(id: string): Promise<PriceModResponse> {
   try {
     const priceMod = await prisma.priceMod.findUnique({
       where: { id },
@@ -98,25 +115,67 @@ export async function getPriceMod(id: string) {
     });
 
     if (!priceMod) {
-      throw new Error("Price modification not found");
+      return {
+        success: false,
+        error: "Price modification not found",
+      };
     }
 
-    return priceMod;
+    return {
+      success: true,
+      data: priceMod,
+    };
   } catch (error) {
     console.error("Error fetching price modification:", error);
-    throw new Error("Failed to fetch price modification");
+    return {
+      success: false,
+      error: "Failed to fetch price modification",
+    };
+  }
+}
+
+/**
+ * Get price modifications for a retreat instance
+ */
+export async function getPriceModsByRetreatInstance(
+  retreatInstanceId: string
+): Promise<PriceModListResponse> {
+  try {
+    const priceMods = await prisma.priceMod.findMany({
+      where: { retreatInstanceId },
+      orderBy: { createdAt: "desc" },
+      include: {
+        host: true,
+        property: true,
+        program: true,
+        retreat: true,
+        retreatInstance: true,
+      },
+    });
+
+    return {
+      success: true,
+      data: priceMods,
+    };
+  } catch (error) {
+    console.error("Error fetching price modifications:", error);
+    return {
+      success: false,
+      error: "Failed to fetch price modifications",
+    };
   }
 }
 
 /**
  * Update a price modification
  */
-export async function updatePriceMod(id: string, data: Partial<PriceModInput>) {
+export async function updatePriceMod(
+  id: string,
+  data: Partial<PriceModInput>
+): Promise<PriceModResponse> {
   try {
-    // Validate the update data
     const validatedData = priceModSchema.partial().parse(data);
 
-    // Handle relations
     const relations: any = {};
     if (validatedData.hostId !== undefined) {
       relations.host = validatedData.hostId
@@ -144,7 +203,6 @@ export async function updatePriceMod(id: string, data: Partial<PriceModInput>) {
         : { disconnect: true };
     }
 
-    // Remove relation IDs from the main data object
     const {
       hostId,
       propertyId,
@@ -160,18 +218,53 @@ export async function updatePriceMod(id: string, data: Partial<PriceModInput>) {
         ...priceModData,
         ...relations,
       },
+      include: {
+        host: true,
+        property: true,
+        program: true,
+        retreat: true,
+        retreatInstance: true,
+      },
     });
 
-    // Revalidate all potential paths
     revalidateRelatedPaths(relations);
 
-    return { success: true, data: priceMod };
+    return {
+      success: true,
+      data: priceMod,
+    };
   } catch (error) {
     console.error("Error updating price modification:", error);
-    if (error instanceof z.ZodError) {
-      throw new Error(`Validation error: ${error.message}`);
-    }
-    throw new Error("Failed to update price modification");
+    return {
+      success: false,
+      error:
+        error instanceof Error
+          ? error.message
+          : "Failed to update price modification",
+    };
+  }
+}
+
+/**
+ * Delete a price modification
+ */
+export async function deletePriceMod(
+  id: string
+): Promise<{ success: boolean; error?: string }> {
+  try {
+    await prisma.priceMod.delete({
+      where: { id },
+    });
+
+    return {
+      success: true,
+    };
+  } catch (error) {
+    console.error("Error deleting price modification:", error);
+    return {
+      success: false,
+      error: "Failed to delete price modification",
+    };
   }
 }
 
@@ -180,35 +273,27 @@ export async function updatePriceMod(id: string, data: Partial<PriceModInput>) {
  */
 function revalidateRelatedPaths(relations: Record<string, any>) {
   if (relations.host) {
-    revalidatePath("/admin/hosts");
+    revalidatePath("/admin/host");
     if (relations.host.connect) {
-      revalidatePath(`/admin/hosts/${relations.host.connect.id}`);
+      revalidatePath(`/admin/host/${relations.host.connect.id}`);
     }
   }
   if (relations.property) {
-    revalidatePath("/admin/properties");
+    revalidatePath("/admin/property");
     if (relations.property.connect) {
-      revalidatePath(`/admin/properties/${relations.property.connect.id}`);
+      revalidatePath(`/admin/property/${relations.property.connect.id}`);
     }
   }
   if (relations.program) {
-    revalidatePath("/admin/programs");
+    revalidatePath("/admin/program");
     if (relations.program.connect) {
-      revalidatePath(`/admin/programs/${relations.program.connect.id}`);
+      revalidatePath(`/admin/program/${relations.program.connect.id}`);
     }
   }
   if (relations.retreat) {
-    revalidatePath("/admin/retreats");
+    revalidatePath("/admin/retreat");
     if (relations.retreat.connect) {
-      revalidatePath(`/admin/retreats/${relations.retreat.connect.id}`);
-    }
-  }
-  if (relations.retreatInstance) {
-    revalidatePath("/admin/retreat-instances");
-    if (relations.retreatInstance.connect) {
-      revalidatePath(
-        `/admin/retreat-instances/${relations.retreatInstance.connect.id}`
-      );
+      revalidatePath(`/admin/retreat/${relations.retreat.connect.id}`);
     }
   }
 }

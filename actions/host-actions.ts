@@ -99,7 +99,7 @@ export async function updateHost(
       data,
     });
 
-    revalidatePath(`/hosts/${hostId}`);
+    revalidatePath(`/host/${hostId}`);
 
     return host;
   } catch (error) {

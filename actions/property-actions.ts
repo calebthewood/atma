@@ -258,7 +258,7 @@ export async function deleteProperty(id: string) {
     where: { id },
   });
 
-  revalidatePath("/admin/properties");
-  revalidatePath(`/admin/properties/${id}`);
+  revalidatePath("/admin/property");
+  revalidatePath(`/admin/property/${id}`);
   return property;
 }
