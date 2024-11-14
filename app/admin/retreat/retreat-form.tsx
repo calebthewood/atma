@@ -74,7 +74,7 @@ const categories = [
 ];
 
 const formSchema = z.object({
-  bookingType: z.enum(["Flexible", "Fixed", "Open"]),
+  bookingType: z.string(),
   status: z.string().optional(),
   name: z.string().min(2, { message: "Name must be at least 2 characters." }),
   category: z.string(),
@@ -85,19 +85,13 @@ const formSchema = z.object({
   programApproach: z.string(),
   whoIsthisFor: z.string(),
   policyCancel: z.string(),
-  transportationAndParking: z.string(),
-  policyPet: z.string(),
   duration: z.string().min(1, { message: "Duration is required." }),
   date: z.string().refine((val) => !isNaN(Date.parse(val)), {
     message: "Invalid date format.",
   }),
   minGuests: z.number().int().min(1),
   maxGuests: z.number().int().min(-1),
-  coverImg: z
-    .string()
-    .url({ message: "Invalid URL for cover image." })
-    .optional(),
-  sourceUrl: z.string().url({ message: "Invalid source URL." }).optional(),
+  sourceUrl: z.string().optional(),
   hostId: z.string().min(1, { message: "Host is required." }).nullable(),
   propertyId: z.string().min(1, { message: "Property is required." }),
 });
@@ -118,7 +112,7 @@ export function RetreatForm({ retreat }: RetreatFormProps) {
   const form = useForm<FormData>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      bookingType: retreat?.bookingType as "Flexible" | "Fixed" | "Open",
+      bookingType: retreat?.bookingType || "Fixed",
       name: retreat?.name || "",
       category: retreat?.category || "",
       status: retreat?.status ?? "draft",
@@ -127,19 +121,16 @@ export function RetreatForm({ retreat }: RetreatFormProps) {
       programApproach: retreat?.programApproach,
       whoIsthisFor: retreat?.whoIsthisFor,
       policyCancel: retreat?.policyCancel,
-      policyPet: retreat?.policyPet,
-      transportationAndParking: retreat?.transportationAndParking,
       duration: retreat?.duration || "",
       date: retreat?.date ? retreat?.date.toISOString().split("T")[0] : "",
       minGuests: retreat?.minGuests || 1,
       maxGuests: retreat?.maxGuests || -1,
-      sourceUrl: retreat?.sourceUrl ?? "",
+      sourceUrl: retreat?.sourceUrl ?? undefined,
       hostId: retreat?.hostId || "",
       propertyId: retreat?.propertyId,
     },
   });
 
-  console.log("Pop ID", retreat?.propertyId);
   const ON_CHANGE_FIELDS = new Set([
     "status",
     "bookingType",
@@ -258,7 +249,7 @@ export function RetreatForm({ retreat }: RetreatFormProps) {
       setIsLoading(false);
     }
   }
-
+  console.log(form.formState.errors);
   // ... render form fields with getFieldStyles and handleFieldBlur
   // Return JSX remains largely the same but add the style and blur handlers
   return (
