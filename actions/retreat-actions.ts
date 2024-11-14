@@ -18,7 +18,7 @@ type RetreatBaseInput = {
   sourceUrl?: string | null;
   hostId: string | null;
   propertyId: string;
-  bookingType: "Flexible" | "Fixed" | "Open" | null;
+  bookingType: string;
 };
 
 // Type for creating a new retreat - requires certain fields
@@ -34,7 +34,7 @@ export type CreateRetreatInput = {
   whoIsthisFor: string;
   policyCancel: string;
   propertyId: string;
-  bookingType: "Flexible" | "Fixed" | "Open";
+  bookingType: string;
   hostId: string | null;
   sourceUrl?: string | null;
 };
