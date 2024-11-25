@@ -238,9 +238,6 @@ export function GuestCombobox() {
     router.push(`${window.location.pathname}${query}`, { scroll: false });
   }, [guestCount, router, searchParams]);
 
-  const incrementGuests = () => setGuestCount((prev) => prev + 1);
-  const decrementGuests = () => setGuestCount((prev) => Math.max(0, prev - 1));
-
   return (
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
@@ -261,12 +258,8 @@ export function GuestCombobox() {
           {/* <ChevronsUpDown className="ml-2 size-4 shrink-0 opacity-50" /> */}
         </Button>
       </PopoverTrigger>
-      <PopoverContent className="w-[200px] p-4">
-        <ClickyCounter
-          incrementor={incrementGuests}
-          decrementor={decrementGuests}
-          count={guestCount}
-        />
+      <PopoverContent className="w-[260px] p-4">
+        <ClickyCounter />
       </PopoverContent>
     </Popover>
   );
