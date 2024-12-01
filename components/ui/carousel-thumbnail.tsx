@@ -31,17 +31,16 @@ const ThumbnailCarousel: React.FC<PropType> = (props) => {
 
   const onThumbClick = useCallback(
     (index: number) => {
-      if (!mainApi || !thumbsApi) return;
+      if (!mainApi) return;
       mainApi.scrollTo(index);
     },
-    [mainApi, thumbsApi]
+    [mainApi]
   );
 
   const onSelect = useCallback(() => {
-    if (!mainApi || !thumbsApi) return;
+    if (!mainApi) return;
     setSelectedIndex(mainApi.selectedScrollSnap());
-    thumbsApi.scrollTo(mainApi.selectedScrollSnap());
-  }, [mainApi, thumbsApi]);
+  }, [mainApi]);
 
   const parallaxEffect = useCallback(
     (api: CarouselApi) => {
@@ -98,64 +97,89 @@ const ThumbnailCarousel: React.FC<PropType> = (props) => {
       mainApi.off("select", onSelect);
     };
   }, [mainApi, onSelect, parallaxEffect]);
-  if (!slides) return null;
-  return (
-    <div className="mx-auto max-w-3xl">
-      <Carousel
-        setApi={setMainApi} //@ts-ignore
-        opts={{ ...options, loop: true }}
-        className="overflow-hidden"
-      >
-        <CarouselContent className="-ml-4 flex">
-          {slides.map((img, i) => (
-            <CarouselItem key={i} className="flex-[0_0_80%] pl-1">
-              <div className="h-[19rem] overflow-hidden rounded">
-                <div
-                  ref={(el) => {
-                    parallaxLayers.current[i] = el;
-                  }}
-                  className="relative flex size-full justify-center"
-                >
-                  <Image
-                    src={img}
-                    alt={`Slide ${i + 1}`}
-                    fill
-                    sizes="400px"
-                    className="max-w-none flex-[0_0_calc(115%+2rem)] object-cover transition-all hover:scale-105"
-                  />
-                </div>
-              </div>
-            </CarouselItem>
-          ))}
-        </CarouselContent>
-        <CarouselPrevious />
-        <CarouselNext />
-      </Carousel>
 
-      <div className="mt-7">
-        <Carousel
-          setApi={setThumbsApi}
-          opts={{
-            containScroll: "keepSnaps",
-            dragFree: true,
-          }}
-          className="overflow-hidden"
-        >
-          <CarouselContent className="-ml-3 flex">
-            {slides.map((img, idx) => (
-              <CarouselItem
-                key={`thumb-${idx}`}
-                className="flex-[0_0_22%] pl-3 sm:flex-[0_0_15%]"
+  if (!slides) return null;
+
+  return (
+    <div className="mx-auto max-w-[90rem]">
+      <div className="lg:flex lg:gap-6">
+        {/* Main Carousel */}
+        <div className="lg:w-3/4">
+          <Carousel
+            setApi={setMainApi}
+            opts={{ ...options, loop: true }}
+            className="overflow-hidden"
+          >
+            <CarouselContent className="-ml-4 flex">
+              {slides.map((img, i) => (
+                <CarouselItem key={i} className="flex-[0_0_100%] pl-4">
+                  <div className="h-[19rem] overflow-hidden rounded lg:h-[30rem]">
+                    <div
+                      ref={(el) => {
+                        parallaxLayers.current[i] = el;
+                      }}
+                      className="relative flex size-full justify-center"
+                    >
+                      <Image
+                        src={img}
+                        alt={`Slide ${i + 1}`}
+                        fill
+                        sizes="(max-width: 1024px) 100vw, 75vw"
+                        className="object-cover transition-all hover:scale-105"
+                      />
+                    </div>
+                  </div>
+                </CarouselItem>
+              ))}
+            </CarouselContent>
+            <CarouselPrevious />
+            <CarouselNext />
+          </Carousel>
+        </div>
+
+        {/* Thumbnails */}
+        <div className="mt-7 lg:mt-0 lg:w-1/4">
+          <div className="lg:h-[30rem] lg:overflow-y-auto lg:pr-2">
+            {/* Mobile Carousel */}
+            <div className="lg:hidden">
+              <Carousel
+                setApi={setThumbsApi}
+                opts={{
+                  containScroll: "keepSnaps",
+                  dragFree: true,
+                }}
+                className="overflow-hidden"
               >
+                <CarouselContent className="-ml-3 flex justify-evenly">
+                  {slides.map((img, idx) => (
+                    <CarouselItem
+                      key={`mobile-thumb-${idx}`}
+                      className="flex-[0_0_22%] pl-3 sm:flex-[0_0_15%]"
+                    >
+                      <Thumb
+                        onClick={() => onThumbClick(idx)}
+                        selected={idx === selectedIndex}
+                        img={img}
+                      />
+                    </CarouselItem>
+                  ))}
+                </CarouselContent>
+              </Carousel>
+            </div>
+
+            {/* Desktop Grid */}
+            <div className="hidden lg:grid lg:grid-cols-2 lg:gap-3">
+              {slides.map((img, idx) => (
                 <Thumb
+                  key={`desktop-thumb-${idx}`}
                   onClick={() => onThumbClick(idx)}
                   selected={idx === selectedIndex}
                   img={img}
                 />
-              </CarouselItem>
-            ))}
-          </CarouselContent>
-        </Carousel>
+              ))}
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   );
@@ -176,7 +200,7 @@ const Thumb: React.FC<ThumbProps> = (props) => {
       variant="outline"
       size="sm"
       className={cn(
-        "relative size-24 overflow-hidden rounded-xl p-0",
+        "relative min-h-24 min-w-24 size-full aspect-square overflow-hidden rounded-xl p-0",
         "shadow-[inset_0_0_0_0.2rem_var(--detail-medium-contrast)]",
         "cursor-pointer appearance-none bg-transparent",
         "touch-manipulation focus:outline-none",

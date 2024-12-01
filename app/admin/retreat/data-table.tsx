@@ -1,7 +1,12 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { deleteRetreat, getPaginatedRetreats } from "@/actions/retreat-actions";
+import { useRouter } from "next/navigation";
+import {
+  deleteRetreat,
+  getPaginatedRetreats,
+  type RetreatWithBasicRelations,
+} from "@/actions/retreat-actions";
 import { CaretSortIcon, ChevronDownIcon } from "@radix-ui/react-icons";
 import {
   ColumnDef,
@@ -32,26 +37,11 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { toast } from "@/components/ui/use-toast";
 
 import { AdminActionMenu } from "../components";
 
-type Retreat = {
-  id: string;
-  name: string | null;
-  bookingType: string | null;
-  duration: string | null;
-  date: Date | null;
-  minGuests: number | null;
-  maxGuests: number | null;
-  propertyId: string;
-  hostId: string | null;
-  createdAt: Date;
-  updatedAt: Date;
-  propertyName: string;
-  hostName: string | null;
-};
-
-const columns: ColumnDef<Retreat>[] = [
+const columns: ColumnDef<RetreatWithBasicRelations>[] = [
   {
     accessorKey: "name",
     header: ({ column }) => {
@@ -88,16 +78,18 @@ const columns: ColumnDef<Retreat>[] = [
     cell: ({ row }) => {
       const min = row.original.minGuests;
       const max = row.original.maxGuests;
-      return `${min || 0} - ${max || "unlimited"}`;
+      return `${min ?? 0} - ${max ?? "unlimited"}`;
     },
   },
   {
-    accessorKey: "propertyName",
+    accessorKey: "property",
     header: "Property",
+    cell: ({ row }) => row.original.property?.name ?? "N/A",
   },
   {
-    accessorKey: "hostName",
+    accessorKey: "host",
     header: "Host",
+    cell: ({ row }) => row.original.host?.name ?? "N/A",
   },
   {
     accessorKey: "updatedAt",
@@ -109,15 +101,31 @@ const columns: ColumnDef<Retreat>[] = [
   {
     id: "actions",
     cell: ({ row }) => {
+      const router = useRouter();
       const retreat = row.original;
 
       const handleDelete = async () => {
         if (window.confirm("Are you sure you want to delete this retreat?")) {
           try {
-            await deleteRetreat(retreat.id);
+            const response = await deleteRetreat(retreat.id);
+            if (!response.success) {
+              throw new Error(response.error);
+            }
+            toast({
+              title: "Success",
+              description: "Retreat deleted successfully",
+            });
+            router.refresh();
           } catch (error) {
             console.error("Failed to delete retreat:", error);
-            alert("Failed to delete retreat. Please try again.");
+            toast({
+              title: "Error",
+              description:
+                error instanceof Error
+                  ? error.message
+                  : "Failed to delete retreat. Please try again.",
+              variant: "destructive",
+            });
           }
         }
       };
@@ -134,7 +142,7 @@ const columns: ColumnDef<Retreat>[] = [
 ];
 
 export function RetreatDataTable() {
-  const [data, setData] = useState<Retreat[]>([]);
+  const [data, setData] = useState<RetreatWithBasicRelations[]>([]);
   const [sorting, setSorting] = useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
@@ -142,8 +150,8 @@ export function RetreatDataTable() {
     pageIndex: 0,
     pageSize: 10,
   });
-  const [totalPages, setTotalPages] = useState(0);
 
+  const [totalPages, setTotalPages] = useState(0);
   useEffect(() => {
     fetchRetreats();
   }, [pagination.pageIndex, pagination.pageSize, columnFilters]);
@@ -157,10 +165,29 @@ export function RetreatDataTable() {
         pagination.pageSize,
         searchTerm
       );
-      setData(result.retreats);
-      setTotalPages(result.totalPages);
+
+      if (!result.success || !result.data) {
+        toast({
+          title: "Error",
+          description: result.error || "Failed to fetch retreats",
+          variant: "destructive",
+        });
+        setData([]); // Set empty data when there's an error
+        setTotalPages(0);
+        return;
+      }
+      setData(result.data.retreats ?? []); // Ensure we have retreats before setting the data
+      setTotalPages(result.data.totalPages);
     } catch (error) {
       console.error("Failed to fetch retreats:", error);
+      toast({
+        title: "Error",
+        description: "An unexpected error occurred while fetching retreats",
+        variant: "destructive",
+      });
+
+      setData([]); // Set empty data on error
+      setTotalPages(0);
     }
   };
 

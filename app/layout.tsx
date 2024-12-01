@@ -2,7 +2,7 @@ import "@/styles/globals.css";
 
 import { Metadata, Viewport } from "next";
 import { getPropertyIds } from "@/actions/property-actions";
-import { getRetreatIds } from "@/actions/retreat-actions";
+import { getRetreats } from "@/actions/retreat-actions";
 
 import { siteConfig } from "@/config/site";
 import { fontSans } from "@/lib/fonts";
@@ -37,7 +37,7 @@ interface RootLayoutProps {
 
 export default async function RootLayout({ children }: RootLayoutProps) {
   const properties = await getPropertyIds();
-  const retreats = await getRetreatIds();
+  const retreats = await getRetreats();
   return (
     <>
       <html lang="en" suppressHydrationWarning>
@@ -51,8 +51,7 @@ export default async function RootLayout({ children }: RootLayoutProps) {
           <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
             <div className="relative flex min-h-screen flex-col">
               <SiteHeader />
-
-              <div className="md:container">{children}</div>
+              {children}
             </div>
             <TailwindIndicator />
           </ThemeProvider>

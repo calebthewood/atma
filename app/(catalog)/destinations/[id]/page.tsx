@@ -99,7 +99,7 @@ export default async function Page(props: { params: Promise<{ id: string }> }) {
   return (
     <div className="mt-4 h-auto min-h-screen">
       <TitleImageBanner title={title} subtitle={subtitle} href={coverImgPath} />
-      <div className="md:container">
+      <div className="">
         <div className="flex justify-center gap-6 py-12">
           <PlaceList placeList={property.placeList} />
         </div>

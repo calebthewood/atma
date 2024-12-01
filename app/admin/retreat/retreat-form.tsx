@@ -6,13 +6,13 @@ import { getHosts } from "@/actions/host-actions";
 import { getProperties } from "@/actions/property-actions";
 import {
   createRetreat,
-  RetreatWithoutNulls,
+  RetreatWithRelations,
   updateRetreat,
 } from "@/actions/retreat-actions";
+import { RetreatFormData, retreatFormSchema } from "@/schemas/retreat-schema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Host, Property } from "@prisma/client";
 import { useForm } from "react-hook-form";
-import { z } from "zod";
 
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -65,33 +65,8 @@ const categories = [
   "Therapeutic Fasting",
 ];
 
-const formSchema = z.object({
-  bookingType: z.string(),
-  status: z.string().optional(),
-  name: z.string().min(2, { message: "Name must be at least 2 characters." }),
-  category: z.string(),
-  desc: z
-    .string()
-    .min(10, { message: "Description must be at least 10 characters." }),
-  keyBenefits: z.string(),
-  programApproach: z.string(),
-  whoIsthisFor: z.string(),
-  policyCancel: z.string(),
-  duration: z.string().min(1, { message: "Duration is required." }),
-  date: z.string().refine((val) => !isNaN(Date.parse(val)), {
-    message: "Invalid date format.",
-  }),
-  minGuests: z.number().int().min(1),
-  maxGuests: z.number().int().min(-1),
-  sourceUrl: z.string().optional(),
-  hostId: z.string().min(1, { message: "Host is required." }).nullable(),
-  propertyId: z.string().min(1, { message: "Property is required." }),
-});
-
-type FormData = z.infer<typeof formSchema>;
-
 type RetreatFormProps = {
-  retreat?: RetreatWithoutNulls | null;
+  retreat?: RetreatWithRelations | null;
 };
 
 export function RetreatForm({ retreat }: RetreatFormProps) {
@@ -101,25 +76,25 @@ export function RetreatForm({ retreat }: RetreatFormProps) {
 
   const router = useRouter();
 
-  const form = useForm<FormData>({
-    resolver: zodResolver(formSchema),
+  const form = useForm<RetreatFormData>({
+    resolver: zodResolver(retreatFormSchema),
     defaultValues: {
       bookingType: retreat?.bookingType || "Fixed",
       name: retreat?.name || "",
       category: retreat?.category || "",
       status: retreat?.status ?? "draft",
       desc: retreat?.desc || "",
-      keyBenefits: retreat?.keyBenefits,
-      programApproach: retreat?.programApproach,
-      whoIsthisFor: retreat?.whoIsthisFor,
-      policyCancel: retreat?.policyCancel,
+      keyBenefits: retreat?.keyBenefits || "",
+      programApproach: retreat?.programApproach || "",
+      whoIsthisFor: retreat?.whoIsthisFor || "",
+      policyCancel: retreat?.policyCancel || "",
       duration: retreat?.duration || "",
       date: retreat?.date ? retreat?.date.toISOString().split("T")[0] : "",
-      minGuests: retreat?.minGuests || 1,
-      maxGuests: retreat?.maxGuests || -1,
-      sourceUrl: retreat?.sourceUrl ?? undefined,
+      minGuests: retreat?.minGuests ?? 1,
+      maxGuests: retreat?.maxGuests ?? -1,
+      sourceUrl: retreat?.sourceUrl || "",
       hostId: retreat?.hostId || "",
-      propertyId: retreat?.propertyId,
+      propertyId: retreat?.propertyId || "",
     },
   });
 
@@ -130,6 +105,7 @@ export function RetreatForm({ retreat }: RetreatFormProps) {
     "maxGuests",
   ]);
 
+  /** Fetches Data */
   useEffect(() => {
     async function fetchData() {
       try {
@@ -155,6 +131,7 @@ export function RetreatForm({ retreat }: RetreatFormProps) {
   /** Updates field on blur */
   useEffect(() => {
     if (!retreat) return;
+
     const subscription = form.watch(async (value, { name, type }) => {
       if (
         name &&
@@ -163,7 +140,7 @@ export function RetreatForm({ retreat }: RetreatFormProps) {
         (type === "blur" || (type === "change" && ON_CHANGE_FIELDS.has(name)))
       ) {
         try {
-          await handleFieldBlur(name as keyof FormData);
+          await handleFieldBlur(name as keyof RetreatFormData);
         } catch (error) {
           console.error(`Error updating ${name}:`, error);
         }
@@ -173,12 +150,18 @@ export function RetreatForm({ retreat }: RetreatFormProps) {
     return () => subscription.unsubscribe();
   }, [retreat, form]);
 
-  const handleFieldBlur = async (fieldName: keyof FormData) => {
+  const handleFieldBlur = async (fieldName: keyof RetreatFormData) => {
     if (!retreat) return;
 
     try {
       const fieldValue = form.getValues(fieldName);
-      await updateRetreat(retreat.id, { [fieldName]: fieldValue });
+      const response = await updateRetreat(retreat.id, {
+        [fieldName]: fieldValue,
+      });
+
+      if (!response.success) {
+        throw new Error(response.error);
+      }
 
       toast({
         title: "Updated",
@@ -200,7 +183,7 @@ export function RetreatForm({ retreat }: RetreatFormProps) {
     }
   };
 
-  const getFieldStyles = (fieldName: keyof FormData) => {
+  const getFieldStyles = (fieldName: keyof RetreatFormData) => {
     const isSubmitting = form.formState.isSubmitting;
     const isValid = !form.formState.errors[fieldName];
     const isDirty = form.formState.dirtyFields[fieldName];
@@ -212,29 +195,36 @@ export function RetreatForm({ retreat }: RetreatFormProps) {
     });
   };
 
-  async function onSubmit(values: FormData) {
+  async function onSubmit(values: RetreatFormData) {
     setIsLoading(true);
     try {
+      let response;
+
       if (retreat) {
-        await updateRetreat(retreat.id, values);
-        toast({
-          title: "Success",
-          description: "Retreat updated successfully.",
-        });
+        response = await updateRetreat(retreat.id, values);
       } else {
-        await createRetreat(values);
-        toast({
-          title: "Success",
-          description: "Retreat created successfully.",
-        });
+        response = await createRetreat(values);
       }
+
+      if (!response.success) {
+        throw new Error(response.error);
+      }
+
+      toast({
+        title: "Success",
+        description: `Retreat ${retreat ? "updated" : "created"} successfully.`,
+      });
+
       form.reset(values);
       router.push("/admin/retreat");
     } catch (error) {
       console.error("Error submitting retreat:", error);
       toast({
         title: "Error",
-        description: "Failed to save retreat. Please try again.",
+        description:
+          error instanceof Error
+            ? error.message
+            : "Failed to save retreat. Please try again.",
         variant: "destructive",
       });
     } finally {

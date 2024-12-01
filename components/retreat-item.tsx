@@ -131,11 +131,11 @@ export function RetreatItem({
 
 interface LazyRetreatCardProps {
   id: string;
-  aspectRatio?: "portrait" | "square";
+  aspectRatio?: "portrait" | "landscape" | "square";
   width: number;
   height: number;
   className?: string;
-  segment: "retreats" | "destinations" | "programs" | "hosts";
+  segment: string; //"retreats" | "destinations" | "programs" | "hosts";
 }
 type ItemType =
   | RetreatWithRelations
@@ -164,7 +164,7 @@ export function LazyRetreatItem({
         switch (segment) {
           case "retreats":
             response = await getRetreat(id);
-            if (response.success) setItem(response.retreat);
+            if (response.success) setItem(response.data);
             break;
           case "destinations":
             response = await getPropertyWithId(id);
