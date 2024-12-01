@@ -4,8 +4,9 @@ import { useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import {
-  getProgramsWithProperty,
-  ProgramWithRelations,
+  getProgram,
+  type ActionResponse,
+  type ProgramWithRelations,
 } from "@/actions/program-actions";
 import {
   getPropertyWithId,
@@ -170,8 +171,10 @@ export function LazyRetreatItem({
             if (response.success) setItem(response.property);
             break;
           case "programs":
-            response = await getProgramsWithProperty(id);
-            if (response.success) setItem(response.program);
+            response = await getProgram(id); // Using the new getProgram action
+            if (response.success && response.data) {
+              setItem(response.data);
+            }
             break;
         }
       } catch (error) {

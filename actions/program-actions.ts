@@ -7,32 +7,235 @@ import { z } from "zod";
 
 import prisma from "@/lib/prisma";
 
-export async function getProgramById(id: string) {
+// ============================================================================
+// Types
+// ============================================================================
+
+export type BaseProgram = Program & {
+  property?: { name: string };
+  host?: { name: string | null };
+};
+
+export type ProgramWithRelations = Prisma.ProgramGetPayload<{
+  include: {
+    property: { select: { images: true; city: true; country: true } };
+    host: true;
+    amenities: true;
+    images: true;
+    programs: true;
+  };
+}>;
+
+export type ActionResponse<T = void> = Promise<{
+  success: boolean;
+  data?: T;
+  error?: string;
+}>;
+
+export type ProgramFormData = z.infer<typeof programFormSchema>;
+
+export type ProgramWithPropertyGroup = {
+  propertyId: string;
+  propertyName: string;
+  images: any[]; // Replace with proper Image type if available
+  programs: Program[];
+};
+
+// Define types that exactly match what Prisma returns
+export type ProgramWithBasicRelations = Prisma.ProgramGetPayload<{
+  include: {
+    property: { select: { name: true } };
+    host: { select: { name: true } };
+  };
+}>;
+
+export type PaginatedProgramsResponse = {
+  programs: ProgramWithBasicRelations[];
+  totalPages: number;
+  currentPage: number;
+};
+
+// ============================================================================
+// Core CRUD Operations
+// ============================================================================
+
+export async function createProgram(
+  data: ProgramFormData
+): ActionResponse<Program> {
+  try {
+    // Destructure the properties we need to handle specially
+    const { hostId, propertyId, date, ...restData } = data;
+
+    // Create the program with properly structured input
+    const program = await prisma.program.create({
+      data: {
+        ...restData,
+        date: date ? new Date(date) : null,
+        property: {
+          connect: { id: propertyId },
+        },
+        ...(hostId
+          ? {
+              host: {
+                connect: { id: hostId },
+              },
+            }
+          : {}),
+      },
+    });
+
+    revalidatePath("/admin/program");
+    return { success: true, data: program };
+  } catch (error) {
+    console.error("Error creating program:", error);
+    return { success: false, error: "Failed to create program" };
+  }
+}
+
+// The function implementation
+export async function getProgram(
+  id: string
+): ActionResponse<ProgramWithRelations> {
   try {
     const program = await prisma.program.findUnique({
       where: { id },
-      include: { property: { include: { images: true } } },
+      include: {
+        property: { select: { images: true, city: true, country: true } },
+        host: true,
+        amenities: true,
+        images: true,
+        programs: true,
+      },
     });
-    return program;
+
+    if (!program) {
+      return { success: false, error: "Program not found" };
+    }
+
+    return { success: true, data: program };
   } catch (error) {
-    console.error("Error finding program:", error);
-    throw new Error("Failed to find program");
+    console.error("Failed to fetch program:", error);
+    return { success: false, error: "Failed to fetch program" };
   }
 }
 
-export async function getPrograms() {
+export async function updateProgram(
+  id: string,
+  data: Partial<ProgramFormData>
+): ActionResponse<Program> {
+  try {
+    const program = await prisma.program.update({
+      where: { id },
+      data,
+    });
+
+    revalidatePath("/admin/programs");
+    revalidatePath(`/admin/programs/${id}`);
+    return { success: true, data: program };
+  } catch (error) {
+    console.error("Failed to update program:", error);
+    return { success: false, error: "Failed to update program" };
+  }
+}
+
+export async function deleteProgram(id: string): ActionResponse {
+  try {
+    await prisma.program.delete({
+      where: { id },
+    });
+
+    revalidatePath("/admin/program");
+    revalidatePath(`/admin/program/${id}`);
+    return { success: true };
+  } catch (error) {
+    console.error("Error deleting program:", error);
+    return { success: false, error: "Failed to delete program" };
+  }
+}
+
+// ============================================================================
+// List & Query Operations
+// ============================================================================
+
+export async function getPrograms(): ActionResponse<BaseProgram[]> {
   try {
     const programs = await prisma.program.findMany({
-      include: { property: true },
+      include: { property: { select: { name: true } } },
     });
-    return programs;
+    return { success: true, data: programs };
   } catch (error) {
-    console.error("Error finding program:", error);
-    throw new Error("Failed to find program");
+    console.error("Error finding programs:", error);
+    return { success: false, error: "Failed to find programs" };
   }
 }
 
-export async function getProgramsGroupedByProperty() {
+export async function getPaginatedPrograms(
+  page: number = 1,
+  pageSize: number = 10,
+  searchTerm: string = ""
+): ActionResponse<PaginatedProgramsResponse> {
+  try {
+    const skip = (page - 1) * pageSize;
+    const where: Prisma.ProgramWhereInput = searchTerm
+      ? {
+          OR: [
+            { name: { contains: searchTerm } },
+            { duration: { contains: searchTerm } },
+            { desc: { contains: searchTerm } },
+          ],
+        }
+      : {};
+
+    const [programs, totalCount] = await Promise.all([
+      prisma.program.findMany({
+        where,
+        skip,
+        take: pageSize,
+        orderBy: { updatedAt: "desc" },
+        include: {
+          property: { select: { name: true } },
+          host: { select: { name: true } },
+        },
+      }),
+      prisma.program.count({ where }),
+    ]);
+
+    return {
+      success: true,
+      data: {
+        programs,
+        totalPages: Math.ceil(totalCount / pageSize),
+        currentPage: page,
+      },
+    };
+  } catch (error) {
+    console.error("Error fetching paginated programs:", error);
+    return { success: false, error: "Failed to fetch programs" };
+  }
+}
+
+// ============================================================================
+// Property-Related Operations
+// ============================================================================
+
+export async function getProgramsByProperty(
+  propertyId: string
+): ActionResponse<BaseProgram[]> {
+  try {
+    const programs = await prisma.program.findMany({
+      where: { propertyId },
+      include: { property: true },
+    });
+    return { success: true, data: programs };
+  } catch (error) {
+    console.error("Error finding programs:", error);
+    return { success: false, error: "Failed to find programs" };
+  }
+}
+
+export async function getProgramsGroupedByProperty(): ActionResponse<
+  ProgramWithPropertyGroup[]
+> {
   try {
     const propertiesWithPrograms = await prisma.property.findMany({
       include: {
@@ -53,245 +256,48 @@ export async function getProgramsGroupedByProperty() {
       programs: property.programs,
     }));
 
-    return groupedPrograms;
+    return { success: true, data: groupedPrograms };
   } catch (error) {
     console.error("Error finding programs grouped by property:", error);
-    throw new Error("Failed to find programs grouped by property");
-  }
-}
-
-export async function getProgramsByProperty(propertyId: string) {
-  try {
-    const programs = await prisma.program.findMany({
-      where: { propertyId },
-      include: { property: true },
-    });
-    return programs;
-  } catch (error) {
-    console.error("Error finding programs:", error);
-    throw new Error("Failed to find programs");
-  }
-}
-
-export type ProgramWithRelations = Prisma.ProgramGetPayload<{
-  include: {
-    property: true;
-    images: true;
-  };
-}>;
-
-// Define response type
-export type GetProgramResponse =
-  | {
-      success: true;
-      program: ProgramWithRelations;
-    }
-  | {
-      success: false;
-      error: string;
-    };
-
-export async function getProgramsWithProperty(
-  propertyId: string
-): Promise<GetProgramResponse> {
-  try {
-    const program = await prisma.program.findFirst({
-      where: { propertyId, status: "published" },
-      include: {
-        property: true,
-        images: {
-          orderBy: {
-            createdAt: "asc",
-          },
-        },
-      },
-    });
-
-    if (!program) {
-      return {
-        success: false,
-        error: "Program not found",
-      };
-    }
-
-    return {
-      success: true,
-      program,
-    };
-  } catch (error) {
-    console.error("Error finding programs:", error);
     return {
       success: false,
-      error: "Failed to find programs",
+      error: "Failed to find programs grouped by property",
     };
   }
 }
 
-export async function deleteProgram(id: string) {
-  try {
-    await prisma.program.delete({
-      where: { id },
-    });
-    revalidatePath("/admin/program");
-    revalidatePath(`/admin/program/${id}`);
-    return { success: true, message: "Program deleted successfully" };
-  } catch (error) {
-    console.error("Error deleting program:", error);
-    throw new Error("Failed to delete program");
-  }
-}
-
-export async function getProgramsWithNoProperty() {
+export async function getProgramsWithNoProperty(): ActionResponse<Program[]> {
   try {
     const programs = await prisma.program.findMany({
       where: {
         propertyId: undefined,
       },
     });
-    return programs;
+    return { success: true, data: programs };
   } catch (error) {
     console.error("Error finding programs with no property:", error);
-    throw new Error("Failed to find programs with no property");
+    return {
+      success: false,
+      error: "Failed to find programs with no property",
+    };
   }
 }
 
 export async function joinProgramAndProperty(
   programId: string,
   propertyId: string
-) {
+): ActionResponse<Program> {
   try {
-    const updatedProgram = await prisma.program.update({
+    const program = await prisma.program.update({
       where: { id: programId },
       data: {
         property: { connect: { id: propertyId } },
       },
       include: { property: true },
     });
-    return updatedProgram;
+    return { success: true, data: program };
   } catch (error) {
     console.error("Error joining program and property:", error);
-    throw new Error("Failed to join program and property");
-  }
-}
-
-export async function getPaginatedPrograms(
-  page: number = 1,
-  pageSize: number = 10,
-  searchTerm: string = ""
-) {
-  const skip = (page - 1) * pageSize;
-
-  try {
-    const where: Prisma.ProgramWhereInput = {
-      OR: [
-        { name: { contains: searchTerm } },
-        { duration: { contains: searchTerm } },
-        { desc: { contains: searchTerm } },
-      ],
-    };
-
-    // Fetch programs with pagination and search
-    const programs = await prisma.program.findMany({
-      where,
-      skip,
-      take: pageSize,
-      orderBy: { updatedAt: "desc" },
-      include: {
-        property: {
-          select: {
-            name: true,
-          },
-        },
-        host: {
-          select: {
-            name: true,
-          },
-        },
-      },
-    });
-
-    // Get total count for pagination
-    const totalCount = await prisma.program.count({ where });
-
-    // Calculate total pages
-    const totalPages = Math.ceil(totalCount / pageSize);
-
-    return {
-      programs,
-      totalPages,
-      currentPage: page,
-    };
-  } catch (error) {
-    console.error("Error fetching paginated programs:", error);
-    throw new Error("Failed to fetch programs");
-  }
-}
-
-export async function createProgram(data: {
-  name: string;
-  duration?: string;
-  desc?: string;
-  priceList?: string;
-  sourceUrl?: string;
-  propertyId: string;
-  hostId?: string;
-}) {
-  try {
-    const program = await prisma.program.create({
-      data: {
-        name: data.name,
-        duration: data.duration,
-        desc: data.desc,
-        priceList: data.priceList,
-        sourceUrl: data.sourceUrl,
-        property: { connect: { id: data.propertyId } },
-        host: { connect: { id: data.hostId } },
-      },
-    });
-
-    revalidatePath("/admin/programs");
-    return { success: true, program };
-  } catch (error) {
-    console.error("Failed to create program:", error);
-    return { success: false, error: "Failed to create program" };
-  }
-}
-
-export async function updateProgram(
-  id: string,
-  data: Partial<z.infer<typeof programFormSchema>>
-) {
-  try {
-    const program = await prisma.program.update({
-      where: { id },
-      data,
-    });
-    revalidatePath("/admin/programs");
-    revalidatePath(`/admin/programs/${id}`);
-    return { success: true, program };
-  } catch (error) {
-    console.error("Failed to update program:", error);
-    return { success: false, error: "Failed to update program" };
-  }
-}
-
-export async function getProgram(id: string) {
-  try {
-    const program = await prisma.program.findUnique({
-      where: { id },
-      include: {
-        property: { select: { name: true } },
-        host: { select: { name: true } },
-      },
-    });
-
-    if (!program) {
-      return { success: false, error: "Program not found" };
-    }
-
-    return { success: true, program };
-  } catch (error) {
-    console.error("Failed to fetch program:", error);
-    return { success: false, error: "Failed to fetch program" };
+    return { success: false, error: "Failed to join program and property" };
   }
 }

@@ -69,7 +69,7 @@ export default async function Page(props: {
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <ProgramForm program={result.program} />
+              <ProgramForm program={result.data} />
             </CardContent>
           </Card>
         </TabsContent>

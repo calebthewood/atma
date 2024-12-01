@@ -1,18 +1,26 @@
 import { z } from "zod";
 
 export const programFormSchema = z.object({
-  name: z.string().min(2, { message: "Name must be at least 2 characters." }),
+  bookingType: z.string(),
   status: z.string().optional(),
-  duration: z.string().min(1, { message: "Duration is required." }),
-  desc: z.string().optional(),
-  priceList: z.string().optional(),
-  sourceUrl: z
+  name: z.string().min(2, { message: "Name must be at least 2 characters." }),
+  category: z.string(),
+  desc: z
     .string()
-    .url({ message: "Invalid URL." })
-    .optional()
-    .or(z.literal("")),
+    .min(10, { message: "Description must be at least 10 characters." }),
+  keyBenefits: z.string(),
+  programApproach: z.string(),
+  whoIsthisFor: z.string(),
+  policyCancel: z.string(),
+  duration: z.string().min(1, { message: "Duration is required." }),
+  date: z.string().refine((val) => !isNaN(Date.parse(val)), {
+    message: "Invalid date format.",
+  }),
+  minGuests: z.number().int().min(1),
+  maxGuests: z.number().int().min(-1),
+  sourceUrl: z.string().optional(),
+  hostId: z.string().min(1, { message: "Host is required." }).nullable(),
   propertyId: z.string().min(1, { message: "Property is required." }),
-  hostId: z.string().optional(),
 });
 
 export type ProgramFormData = z.infer<typeof programFormSchema>;

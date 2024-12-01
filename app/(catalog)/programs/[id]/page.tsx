@@ -1,4 +1,5 @@
-import { getProgramById } from "@/actions/program-actions";
+import { getProgram } from "@/actions/program-actions";
+import { getProperty } from "@/actions/property-actions";
 import { auth } from "@/auth";
 import { BedSingle, Navigation, NotepadText, User } from "lucide-react";
 
@@ -25,8 +26,8 @@ const SLIDES = [
 
 export default async function Page(props: { params: Promise<{ id: string }> }) {
   const params = await props.params;
-  const program = await getProgramById(params.id);
-  const session = await auth();
+  const result = await getProgram(params.id);
+  // const session = await auth();
   const details = [
     {
       name: "Room Type",
@@ -81,16 +82,17 @@ export default async function Page(props: { params: Promise<{ id: string }> }) {
   //   }
   // }
 
-  if (!program) {
+  if (!result.success) {
     return (
       <>
         <LoadingSpinner /> Loading...
       </>
     );
   }
+  const program = result.data;
   // move this default to a general config? maybe not needed even.
   const coverImgPath =
-    program?.property?.images[0]?.filePath || "/img/iStock-1490140364.jpg";
+    program?.images[0]?.filePath || "/img/iStock-1490140364.jpg";
 
   const [title, subtitle] = program?.name?.split("|") ?? [];
 
@@ -105,12 +107,12 @@ export default async function Page(props: { params: Promise<{ id: string }> }) {
         </div>
         <div className="my-12">
           <ThumbnailCarousel
-            slides={program.property?.images.map((i) => i.filePath)}
+            slides={program?.property?.images.map((i) => i.filePath)}
           />
         </div>
         <div className="grid grid-cols-12">
           <div className="col-span-4 col-start-2 text-lg">
-            <p className="my-4">{program.desc}</p>
+            <p className="my-4">{program?.desc}</p>
           </div>
           <div className="col-span-5 col-start-7 mb-16">
             {/* <RenderBookingType type={retreat.bookingType} /> */}

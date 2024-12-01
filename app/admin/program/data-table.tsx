@@ -2,8 +2,11 @@
 
 import { useCallback, useEffect, useMemo, useState } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
-import { deleteProgram, getPaginatedPrograms } from "@/actions/program-actions";
+import {
+  deleteProgram,
+  getPaginatedPrograms,
+  type ProgramWithBasicRelations,
+} from "@/actions/program-actions";
 import {
   CaretSortIcon,
   ChevronDownIcon,
@@ -38,6 +41,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { toast } from "@/components/ui/use-toast";
 
 import { AdminActionMenu } from "../components";
 
@@ -54,86 +58,9 @@ type Program = {
   updatedAt: Date;
   verified: Date | null;
 };
-const columns: ColumnDef<Program>[] = [
-  {
-    accessorKey: "name",
-    header: ({ column }) => {
-      return (
-        <Button
-          variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
-          Name
-          <CaretSortIcon className="ml-2 size-4" />
-        </Button>
-      );
-    },
-  },
-  {
-    accessorKey: "duration",
-    header: "Duration",
-  },
-  {
-    accessorKey: "priceList",
-    header: "Price List",
-    cell: ({ row }) => {
-      const priceList = row.getValue("priceList") as string | null;
-      return priceList ? priceList.split(",")[0] + "..." : "N/A";
-    },
-  },
-  {
-    accessorKey: "hostId",
-    header: "Host",
-    cell: ({ row }) => {
-      const hostId = row.getValue("hostId") as string | null;
-      return hostId ? (
-        <Link
-          href={`/admin/hosts/${hostId}`}
-          className="text-blue-600 hover:underline"
-        >
-          View Host
-        </Link>
-      ) : (
-        "N/A"
-      );
-    },
-  },
-  {
-    accessorKey: "updatedAt",
-    header: "Updated At",
-    cell: ({ row }) => {
-      return (row.getValue("updatedAt") as Date).toLocaleDateString();
-    },
-  },
-  {
-    id: "actions",
-    cell: ({ row }) => {
-      const program = row.original;
-
-      const handleDelete = async () => {
-        if (window.confirm("Are you sure you want to delete this program?")) {
-          try {
-            await deleteProgram(program.id);
-          } catch (error) {
-            console.error("Failed to delete program:", error);
-            alert("Failed to delete program. Please try again.");
-          }
-        }
-      };
-
-      return (
-        <AdminActionMenu
-          editHref={`/admin/program/${program.id}/general`}
-          publicHref={`/program/${program.id}`}
-          handleDelete={handleDelete}
-        />
-      );
-    },
-  },
-];
 
 export function ProgramDataTable() {
-  const [data, setData] = useState<Program[]>([]);
+  const [data, setData] = useState<ProgramWithBasicRelations[]>([]);
   const [sorting, setSorting] = useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
@@ -142,9 +69,13 @@ export function ProgramDataTable() {
     pageSize: 10,
   });
   const [totalPages, setTotalPages] = useState(0);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
-  // Memoize fetchPrograms to prevent recreation on every render
   const fetchPrograms = useCallback(async () => {
+    setIsLoading(true);
+    setError(null);
+
     try {
       const searchTerm =
         (columnFilters.find((f) => f.id === "name")?.value as string) ?? "";
@@ -153,12 +84,126 @@ export function ProgramDataTable() {
         pagination.pageSize,
         searchTerm
       );
-      setData(result.programs);
-      setTotalPages(result.totalPages);
+
+      if (!result.success) {
+        setError(result.error ?? "An unknown error occurred");
+        return;
+      }
+
+      if (!result.data) {
+        setError("No data received");
+        return;
+      }
+
+      setData(result.data.programs);
+      setTotalPages(result.data.totalPages);
     } catch (error) {
+      setError(
+        error instanceof Error ? error.message : "An unknown error occurred"
+      );
       console.error("Failed to fetch programs:", error);
+    } finally {
+      setIsLoading(false);
     }
   }, [pagination.pageIndex, pagination.pageSize, columnFilters]);
+
+  const handleDelete = async (id: string) => {
+    if (window.confirm("Are you sure you want to delete this program?")) {
+      try {
+        const result = await deleteProgram(id);
+
+        if (!result.success) {
+          throw new Error(result.error);
+        }
+
+        // Refresh the data
+        fetchPrograms();
+
+        toast({
+          title: "Success",
+          description: "Program deleted successfully",
+        });
+      } catch (error) {
+        console.error("Failed to delete program:", error);
+        toast({
+          title: "Error",
+          description: "Failed to delete program. Please try again.",
+          variant: "destructive",
+        });
+      }
+    }
+  };
+
+  const columns = useMemo<ColumnDef<ProgramWithBasicRelations>[]>(
+    () => [
+      {
+        accessorKey: "name",
+        header: ({ column }) => {
+          return (
+            <Button
+              variant="ghost"
+              onClick={() =>
+                column.toggleSorting(column.getIsSorted() === "asc")
+              }
+            >
+              Name
+              <CaretSortIcon className="ml-2 size-4" />
+            </Button>
+          );
+        },
+      },
+      {
+        accessorKey: "duration",
+        header: "Duration",
+      },
+      {
+        accessorKey: "priceList",
+        header: "Price List",
+        cell: ({ row }) => {
+          const priceList = row.getValue("priceList") as string | null;
+          return priceList ? priceList.split(",")[0] + "..." : "N/A";
+        },
+      },
+      {
+        accessorKey: "hostId",
+        header: "Host",
+        cell: ({ row }) => {
+          const hostId = row.getValue("hostId") as string | null;
+          return hostId ? (
+            <Link
+              href={`/admin/hosts/${hostId}`}
+              className="text-blue-600 hover:underline"
+            >
+              View Host
+            </Link>
+          ) : (
+            "N/A"
+          );
+        },
+      },
+      {
+        accessorKey: "updatedAt",
+        header: "Updated At",
+        cell: ({ row }) => {
+          return (row.getValue("updatedAt") as Date).toLocaleDateString();
+        },
+      },
+      {
+        id: "actions",
+        cell: ({ row }) => {
+          const program = row.original;
+          return (
+            <AdminActionMenu
+              editHref={`/admin/program/${program.id}/general`}
+              publicHref={`/program/${program.id}`}
+              handleDelete={() => handleDelete(program.id)}
+            />
+          );
+        },
+      },
+    ],
+    []
+  );
 
   // Memoize table config
   const tableConfig = useMemo(
@@ -220,6 +265,10 @@ export function ProgramDataTable() {
   const handleNextPage = useCallback(() => {
     table.nextPage();
   }, [table]);
+
+  if (error) {
+    return <div className="p-4 text-red-500">Error: {error}</div>;
+  }
 
   return (
     <div className="w-full">

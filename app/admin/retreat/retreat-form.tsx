@@ -1,30 +1,22 @@
 "use client";
 
-import React, { useCallback, useEffect, useState } from "react";
-import { useParams, useRouter } from "next/navigation";
+import React, { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import { getHosts } from "@/actions/host-actions";
 import { getProperties } from "@/actions/property-actions";
 import {
   createRetreat,
-  getRetreatById,
-  GetRetreatResponse,
   RetreatWithoutNulls,
   updateRetreat,
 } from "@/actions/retreat-actions";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Host, Property, Retreat } from "@prisma/client";
+import { Host, Property } from "@prisma/client";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   Form,
   FormControl,
@@ -249,9 +241,7 @@ export function RetreatForm({ retreat }: RetreatFormProps) {
       setIsLoading(false);
     }
   }
-  console.log(form.formState.errors);
-  // ... render form fields with getFieldStyles and handleFieldBlur
-  // Return JSX remains largely the same but add the style and blur handlers
+
   return (
     <Form {...form}>
       <form

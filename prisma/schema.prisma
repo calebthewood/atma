@@ -243,30 +243,58 @@ model Retreat {
 }
 
 model Program {
-    id        String  @id @default(cuid())
-    status    String  @default("draft") // 'published', 'draft', 'archived'
-    name      String?
-    duration  String?
-    desc      String?
-    priceList String?
-    sourceUrl String? // for admin use, not for linking on page
-
-    property   Property?        @relation(fields: [propertyId], references: [id])
-    propertyId String?
-    host       Host?            @relation(fields: [hostId], references: [id])
-    hostId     String?
-    images     Image[]
-    createdAt  DateTime         @default(now())
-    updatedAt  DateTime         @updatedAt
-    verified   DateTime? // last date verified by human admin to fix scraping issues
-    priceMods  PriceMod[]
-    amenities  ProgramAmenity[]
+    id                       String            @id @default(cuid())
+    status                   String            @default("draft") // 'published', 'draft', 'archived'
+    bookingType              String? // Flexible: Fixed Start Open End. Fixed: Fixed Start Fixed End. Open: Open Start Open End
+    name                     String?
+    category                 String            @default("") // Ayurveda, Couples & Relationships, Creative & Artistic, Detox & Cleanse, Detoxification, Emotional Healing, Family & Group Wellness, Fitness & Active, Healthy Aging, Holistic Wellness & Longevity, Hydrotherapy, Luxury Adventure, Medical Wellness, Meditation, Mental Health & Emotional Wellness, Mindfulness, Motherhood, Nutrition & Wellness Coaching, Optimal Weight, Relaxation, Sleep & Restorative Wellness, Spa, Spiritual & Self-Discovery, Traditional Healing, Therapeutic Fasting
+    desc                     String            @default("Overview text") // overview
+    keyBenefits              String            @default("Key benefits text")
+    programApproach          String            @default("Program approach")
+    whoIsthisFor             String            @default("Who is this for")
+    programOptions           String            @default("Program options")
+    policyCancel             String            @default("Policy cancel")
+    transportationAndParking String            @default("Transportation and parking")
+    policyPet                String            @default("Pet policy")
+    duration                 String            @default("1 Night")
+    date                     DateTime?
+    minGuests                Int?              @default(1)
+    maxGuests                Int?              @default(-1)
+    sourceUrl                String?
+    images                   Image[]
+    host                     Host?             @relation(fields: [hostId], references: [id])
+    hostId                   String?
+    property                 Property          @relation(fields: [propertyId], references: [id])
+    propertyId               String
+    createdAt                DateTime          @default(now())
+    updatedAt                DateTime          @updatedAt
+    reviews                  Review[]
+    verified                 DateTime? // last date verified by human admin to fix scraping issues
+    priceMods                PriceMod[]
+    amenities                ProgramAmenity[]
+    programs                 ProgramInstance[]
 }
 
 model RetreatInstance {
     id             String     @id @default(cuid())
     retreat        Retreat    @relation(fields: [retreatId], references: [id])
     retreatId      String
+    startDate      DateTime // start and end date can both be the window of time within which a retreat may be booked, or the specific length of the retreat
+    endDate        DateTime
+    duration       Int        @default(0) // length in nights, using start, end, and duration to accomodate multiple booking methods.
+    itinerary      String     @default("Bulleted list of items, end each point with a semicolon;") // most retreat details are in the retreat record, itinerary lists the specific differences variable length versions of a retreat
+    availableSlots Int
+    isFull         Boolean    @default(false)
+    createdAt      DateTime   @default(now())
+    updatedAt      DateTime   @updatedAt
+    bookings       Booking[]
+    priceMods      PriceMod[]
+}
+
+model ProgramInstance {
+    id             String     @id @default(cuid())
+    program        Program    @relation(fields: [programId], references: [id])
+    programId      String
     startDate      DateTime // start and end date can both be the window of time within which a retreat may be booked, or the specific length of the retreat
     endDate        DateTime
     duration       Int        @default(0) // length in nights, using start, end, and duration to accomodate multiple booking methods.
@@ -296,6 +324,8 @@ model Booking {
     notification      Notification?
     retreatInstance   RetreatInstance? @relation(fields: [retreatInstanceId], references: [id])
     retreatInstanceId String?
+    ProgramInstance   ProgramInstance? @relation(fields: [programInstanceId], references: [id])
+    programInstanceId String?
 }
 
 model PriceMod {
@@ -303,7 +333,7 @@ model PriceMod {
     name              String           @default("Price") // Low Season, High Season, Guest Surcharge, Fancy Package, etc
     desc              String           @default("Additional description to show in a tooltip") // any additional info or terms if needed...
     type              String           @default("BASE_PRICE") // BASE_PRICE, DISCOUNT, FEE, TAX, ADDON, BASE_MOD (BASE_MOD is for seasonal pricing that is added to the base by default, addons show as separate line items in the UI)
-    currency           String           @default("USD")
+    currency          String           @default("USD")
     value             Int              @default(0) // negative for discount, positive for additional cost
     unit              String           @default("FIXED") // type: 'FIXED', 'PERCENT'
     dateStart         DateTime? // if both null, apply to all
@@ -323,6 +353,8 @@ model PriceMod {
     retreatId         String?
     property          Property?        @relation(fields: [propertyId], references: [id])
     propertyId        String?
+    ProgramInstance   ProgramInstance? @relation(fields: [programInstanceId], references: [id])
+    programInstanceId String?
 }
 
 model Payment {
@@ -350,6 +382,8 @@ model Review {
     hostId     String?
     retreat    Retreat?  @relation(fields: [retreatId], references: [id])
     retreatId  String?
+    Program    Program?  @relation(fields: [programId], references: [id])
+    programId  String?
 }
 
 model Message {
