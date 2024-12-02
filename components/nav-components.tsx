@@ -98,7 +98,7 @@ export function MainNavigationMenu() {
           </Link>
           <Separator
             className={cn(
-              "mx-auto h-0.5 w-0 bg-richBeige transition-all duration-300",
+              "mx-auto h-0.5 w-0 bg-richBlack transition-all duration-300 dark:bg-richBeige",
               path === "destinations" && "w-4 opacity-100"
             )}
           />
@@ -118,7 +118,7 @@ export function MainNavigationMenu() {
           </Link>
           <Separator
             className={cn(
-              "mx-auto h-0.5 w-0 bg-richBeige transition-all duration-300",
+              "mx-auto h-0.5 w-0 bg-richBlack transition-all duration-300 dark:bg-richBeige",
               path === "retreats" && "w-4 opacity-100"
             )}
           />
@@ -139,7 +139,7 @@ export function MainNavigationMenu() {
           </Link>
           <Separator
             className={cn(
-              "mx-auto h-0.5 w-0 bg-richBeige transition-all duration-300",
+              "mx-auto h-0.5 w-0 bg-richBlack transition-all duration-300 dark:bg-richBeige",
               path === "programs" && "w-4 opacity-100"
             )}
           />

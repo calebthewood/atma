@@ -6,10 +6,14 @@ import { getRetreat } from "@/actions/retreat-actions";
 import { auth } from "@/auth";
 
 import { cn } from "@/lib/utils";
+import { CardTitle } from "@/components/ui/card";
 import ThumbnailCarousel from "@/components/ui/carousel-thumbnail";
 import { toast } from "@/components/ui/use-toast";
+import { CatalogTabs } from "@/components/catalog-tabs";
+import { RetreatInstancesList } from "@/app/admin/retreat/retreat-instance-table";
 
 import { BookingSelector, RetreatDetailCards } from "./retreat-detail-cards";
+import RetreatInstances from "./retreat-instance-list";
 
 const DEFAULT_SLIDES = [
   "/img/iStock-1929812569.jpg",
@@ -39,13 +43,31 @@ export default async function RetreatPage({
     }
 
     const retreat = retreatResponse.data;
+
     const [title, subtitle] = retreat.name?.split("|") ?? [];
-    const coverImage = retreat.images[0]?.filePath || DEFAULT_SLIDES[4];
+    const coverImage = retreat.images[0]?.filePath || DEFAULT_SLIDES[0];
     const imageSlides =
       retreat.images.length > 0
         ? retreat.images.map((img) => img.filePath)
         : DEFAULT_SLIDES;
-    console.log("Retreat, ", retreat);
+
+    const tabsData = [
+      {
+        value: "keyBenefits",
+        label: "Benefits",
+        content: <div>{retreat?.keyBenefits}</div>,
+      },
+      {
+        value: "programApproach",
+        label: "Approach",
+        content: <div>{retreat?.programApproach}</div>,
+      },
+      {
+        value: "whoIsthisFor",
+        label: "Who is this for?",
+        content: <div>{retreat?.whoIsthisFor}</div>,
+      },
+    ];
     return (
       <div className="relative min-h-screen border">
         {/* Fixed Background Image with fade-in */}
@@ -58,7 +80,7 @@ export default async function RetreatPage({
             sizes="100vw"
             className="-z-20 object-cover"
           />
-          <div className="absolute inset-0 bg-black/10" />
+          <div className="bg-richWhite/40 absolute inset-0 dark:bg-richBlack/40" />
         </div>
 
         {/* Scrollable Content */}
@@ -70,7 +92,7 @@ export default async function RetreatPage({
         >
           {/* Title Section */}
           <div className="mt-56 flex items-end pb-20">
-            <GlassCard className="w-full rounded-r py-8 pl-4 md:-left-10 md:max-w-3xl md:pl-10 md:pr-8">
+            <GlassCard className="w-full rounded-r py-8 pl-4 md:-left-10 md:max-w-3xl md:pl-10 md:pr-8 xl:left-0">
               <div className="flex items-center text-lg font-medium">
                 {subtitle}
               </div>
@@ -90,7 +112,7 @@ export default async function RetreatPage({
                 {/* Image Carousel */}
                 <Suspense
                   fallback={
-                    <div className="h-96 animate-pulse rounded-lg bg-gray-100/20" />
+                    <div className="h-96 w-full animate-pulse rounded-lg bg-gray-100/20" />
                   }
                 >
                   <GlassCard className="rounded-lg p-6">
@@ -99,20 +121,46 @@ export default async function RetreatPage({
                 </Suspense>
 
                 {/* Description and Booking Section */}
-                <div className="flex flex-col justify-center gap-8 md:flex-row">
-                  <GlassCard className="flex-1 rounded-lg p-6">
-                    <RetreatDescription copy={retreat.desc} />
-                  </GlassCard>
+                {/* Description and Booking Section */}
+                <div className="container relative mx-auto">
+                  <div className="flex flex-col gap-8 lg:flex-row">
+                    {/* Left Column - Content */}
+                    <div className="flex w-full flex-col gap-y-6 lg:w-2/3">
+                      <GlassCard className="rounded-lg p-6">
+                        <CardTitle>Overview</CardTitle>
+                        <RetreatDescription copy={retreat.desc} />
+                      </GlassCard>
 
-                  <GlassCard className="rounded-lg p-6 md:w-96">
-                    Booking component to go here
-                    {/* <BookingSelector
-                      type={retreat.bookingType ?? "Fixed"}
-                      userId={session?.user?.id}
-                      retreat={retreat}
-                    /> */}
-                  </GlassCard>
+                      <GlassCard className="w-full">
+                        <CatalogTabs
+                          tabs={tabsData}
+                          defaultTab="whoIsthisFor"
+                        />
+                      </GlassCard>
+
+                      <GlassCard className="rounded-lg p-6">
+                        <RetreatInstances
+                          instances={retreat.retreatInstances}
+                        />
+                      </GlassCard>
+                    </div>
+
+                    {/* Right Column - Booking */}
+                    <div className="w-full lg:w-1/3">
+                      <div className="sticky top-24">
+                        <GlassCard className="rounded-lg p-6">
+                          Booking component to go here
+                          {/* <BookingSelector
+            type={retreat.bookingType ?? "Fixed"}
+            userId={session?.user?.id}
+            retreat={retreat}
+          /> */}
+                        </GlassCard>
+                      </div>
+                    </div>
+                  </div>
                 </div>
+                <div className="mb-96"></div>
               </div>
             </div>
           </div>
@@ -148,19 +196,13 @@ function GlassCard({
   className?: string;
 }) {
   return (
-    <div className={cn("relative", className)}>
-      {/* div adds blue tint */}
-      {/* <div className="absolute inset-0 rounded bg-gradient-to-br from-[#004476]/80 via-[#004476]/80 to-[#006fbe]/80 opacity-30" /> */}
-
-      <div className="absolute inset-0 overflow-hidden rounded">
-        <div className="absolute inset-0 bg-[url('/img/white-noise-2.webp')] bg-repeat opacity-50" />
-        <div className="absolute inset-0 bg-[url('/img/white-noise-1.webp')] bg-repeat opacity-50" />
-        <div className="absolute inset-0 rounded bg-gradient-to-br from-white/20 to-white/10 opacity-10" />
-      </div>
-
-      <div className="absolute inset-0 rounded border border-white/20 backdrop-blur-sm" />
-
-      <div className="relative z-10">{children}</div>
+    <div
+      className={cn(
+        "relative rounded border bg-white/20 p-4 shadow backdrop-blur",
+        className
+      )}
+    >
+      {children}
     </div>
   );
 }

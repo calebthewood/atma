@@ -5,13 +5,7 @@ import { retreatFormSchema } from "@/schemas/retreat-schema";
 import { Prisma, Retreat } from "@prisma/client";
 import { z } from "zod";
 
-
-
 import prisma from "@/lib/prisma";
-
-
-
-
 
 // ============================================================================
 // Types
@@ -32,7 +26,7 @@ export type RetreatWithRelations = Prisma.RetreatGetPayload<{
         name: true;
       };
     };
-    priceMods: true
+    priceMods: true;
     host: true;
     amenities: true;
     images: true;

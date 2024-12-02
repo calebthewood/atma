@@ -33,7 +33,11 @@ export function CatalogTabs({ tabs, defaultTab }: CatalogTabsProps) {
         ))}
       </TabsList>
       {tabs.map((tab) => (
-        <TabsContent key={tab.value} value={tab.value} className="p-2">
+        <TabsContent
+          key={tab.value}
+          value={tab.value}
+          className="h-56 overflow-y-scroll px-6 pb-6 pt-2"
+        >
           {tab.content}
         </TabsContent>
       ))}

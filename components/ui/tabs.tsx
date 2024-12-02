@@ -47,7 +47,7 @@ export const CustomTabsTrigger = React.forwardRef<
     <TabsTrigger
       ref={ref}
       className={cn(
-        "relative flex h-8 w-24 flex-col items-center px-4 text-opacity-80",
+        "relative flex h-8 w-24 flex-col items-center px-4 text-opacity-80 dark:text-white",
         "after:absolute after:bottom-0 after:left-1/2 after:-translate-x-1/2",
         "after:h-0.5 after:w-0 after:bg-richBlack after:transition-all after:duration-300 dark:after:bg-richBeige",
         "data-[state=active]:bg-transparent data-[state=active]:text-opacity-100 data-[state=active]:shadow-none data-[state=active]:after:w-4",
@@ -69,7 +69,7 @@ const TabsContent = React.forwardRef<
   <TabsPrimitive.Content
     ref={ref}
     className={cn(
-      "mt-2 ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
+      "mt-2 ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 data-[state=active]:animate-fade-in",
       className
     )}
     {...props}
