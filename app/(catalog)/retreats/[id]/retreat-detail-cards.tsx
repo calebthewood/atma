@@ -86,17 +86,17 @@ export function RetreatDetailCards({ retreat }: RetreatDetailCardsProps) {
     {
       name: "Date",
       icon: <Calendar className="h-6 w-6" />,
-      value: retreat.date?.toLocaleDateString() ?? "Flexible Dates",
+      value: retreat?.date?.toLocaleDateString() ?? "Flexible Dates",
     },
     {
       name: "Duration",
       icon: <Clock className="h-6 w-6" />,
-      value: retreat.duration || "Contact for details",
+      value: retreat?.duration || "Contact for details",
     },
     {
       name: "Group Size",
       icon: <Users className="h-6 w-6" />,
-      value: formatGroupSize(retreat.minGuests, retreat.maxGuests),
+      value: formatGroupSize(retreat?.minGuests, retreat?.maxGuests),
     },
     {
       name: "Room Type",
@@ -111,7 +111,7 @@ export function RetreatDetailCards({ retreat }: RetreatDetailCardsProps) {
     {
       name: "Transportation",
       icon: <Navigation className="h-6 w-6" />,
-      value: retreat.transportationAndParking || "Contact for details",
+      value: retreat?.transportationAndParking || "Contact for details",
     },
     {
       name: "Excursions",
@@ -121,7 +121,7 @@ export function RetreatDetailCards({ retreat }: RetreatDetailCardsProps) {
     {
       name: "Guide",
       icon: <User className="h-6 w-6" />,
-      value: retreat.host?.name || "Contact for details",
+      value: retreat?.host?.name || "Contact for details",
     },
   ];
 
