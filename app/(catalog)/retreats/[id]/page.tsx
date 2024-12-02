@@ -47,7 +47,7 @@ export default async function RetreatPage({
       retreat.images.length > 0
         ? retreat.images.map((img) => img.filePath)
         : DEFAULT_SLIDES;
-
+console.log("Retreat, ", retreat)
     return (
       <div className="relative min-h-screen border">
         {/* Fixed Background Image with fade-in */}
@@ -108,7 +108,7 @@ export default async function RetreatPage({
 
                   <GlassCard className="rounded-lg p-6 md:w-96">
                     <BookingSelector
-                      type={retreat.bookingType}
+                      type={retreat.bookingType ?? "Fixed"}
                       userId={session?.user?.id}
                       retreat={retreat}
                     />

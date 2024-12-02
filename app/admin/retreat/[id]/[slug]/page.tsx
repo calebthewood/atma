@@ -1,23 +1,14 @@
 import Link from "next/link";
-import { getRetreatById } from "@/actions/retreat-actions";
-import { getPaginatedRetreatInstances } from "@/actions/retreat-instance";
-import { RetreatInstance } from "@prisma/client";
+import { getRetreat } from "@/actions/retreat-actions";
+import { getPaginatedInstances } from "@/actions/retreat-instance-actions";
+
+
 
 import { cn } from "@/lib/utils";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import {
-  NavigationMenu,
-  NavigationMenuItem,
-  NavigationMenuLink,
-  NavigationMenuList,
-  navigationMenuTriggerStyle,
-} from "@/components/ui/navigation-menu";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { NavigationMenu, NavigationMenuItem, NavigationMenuLink, NavigationMenuList, navigationMenuTriggerStyle } from "@/components/ui/navigation-menu";
+
+
 
 import { PriceModForm } from "../../../price-form";
 import { ImageManagement } from "../../../property/image-management";
@@ -26,25 +17,30 @@ import { PriceModsTable } from "../../instance-pricing-table";
 import { RetreatForm } from "../../retreat-form";
 import { RetreatInstancesList } from "../../retreat-instance-table";
 
+
 interface PageProps {
   params: Promise<{ id: string; slug: string }>;
 }
 
 export default async function Page({ params }: PageProps) {
   const resolvedParams = await params;
-  const result = await getRetreatById(resolvedParams.id);
+  const result = await getRetreat(resolvedParams.id);
 
-  // Updated to handle the new response type
-  const retreatInstancesResponse = await getPaginatedRetreatInstances(
+  // Use new instance actions with proper error handling
+  const instancesResponse = await getPaginatedInstances(
     1, // Start with first page
     10, // Page size
     resolvedParams.id
   );
 
-  // Handle the response based on success/error
-  const retreatInstances = retreatInstancesResponse.success
-    ? retreatInstancesResponse.data
-    : { instances: [], total: 0, totalPages: 0, currentPage: 1 };
+  if (!instancesResponse.success) {
+    console.error("Failed to load instances:", instancesResponse.error);
+  }
+
+  // Safely access data using the new response structure
+  const instances = instancesResponse.success
+    ? instancesResponse.data
+    : { instances: [], totalPages: 0, currentPage: 1, totalInstances: 0 };
 
   const tabs = [
     {
@@ -60,7 +56,7 @@ export default async function Page({ params }: PageProps) {
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <RetreatForm retreat={result} />
+            <RetreatForm retreat={result.data} />
           </CardContent>
         </>
       ),
@@ -92,7 +88,10 @@ export default async function Page({ params }: PageProps) {
       href: `/admin/retreat/${resolvedParams.id}/instances`,
       component: () => (
         <>
-          <RetreatInstancesList retreatId={resolvedParams.id} />
+          <RetreatInstancesList
+            retreatId={resolvedParams.id}
+            initialInstances={instances}
+          />
           <RetreatInstanceForm />
         </>
       ),
@@ -110,7 +109,10 @@ export default async function Page({ params }: PageProps) {
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <RetreatInstancesList retreatId={resolvedParams.id} />
+            <RetreatInstancesList
+              retreatId={resolvedParams.id}
+              initialInstances={instances}
+            />
           </CardContent>
           <CardContent>
             <PriceModsTable />

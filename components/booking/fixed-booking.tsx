@@ -1,9 +1,15 @@
 "use client";
+"use client";
 
 import { useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { RetreatWithPrice } from "@/actions/retreat-actions";
-import { PriceMod, RetreatInstance } from "@prisma/client";
+import { type ProgramWithBasicRelations } from "@/actions/program-actions";
+import { type RetreatWithRelations } from "@/actions/retreat-actions";
+import {
+  PriceMod,
+  type ProgramInstance,
+  type RetreatInstance,
+} from "@prisma/client";
 import { addDays, format, parseISO } from "date-fns";
 import { DateRange } from "react-day-picker";
 
@@ -30,31 +36,30 @@ import { DatePickerFixedRange } from "../ui/date-pickers";
 
 const today = new Date();
 
-interface RetreatInstanceWithMods extends RetreatInstance {
+interface BookingItemInstance extends RetreatInstance, ProgramInstance {
   priceMods: PriceMod[];
 }
 
-interface BookingListProps {
-  event: RetreatInstanceWithMods;
-  retreat: RetreatWithPrice;
+interface BookingProps {
+  type: "program" | "retreat";
+  item: ProgramWithBasicRelations | RetreatWithRelations;
+  instance: BookingItemInstance;
   userId: string | undefined;
 }
 
-export function FixedBooking({ userId, retreat, event }: BookingListProps) {
+export function FixedBooking({ userId, type, item, instance }: BookingProps) {
   const router = useRouter();
   const searchParams = useSearchParams();
 
-  // Initialize maxGuests
-  const maxGuests =
-    retreat.maxGuests && retreat.maxGuests > 0 ? retreat.maxGuests : 16;
+  // Initialize maxGuests (fallback to 16 if not specified)
+  const maxGuests = item?.maxGuests && item?.maxGuests > 0 ? item.maxGuests : 16;
 
   // Get prices and base price
-  const prices = retreat.priceMods;
+  const priceMods = instance?.priceMods || [];
   const basePrice =
-    prices.find((p) => p.name?.toLowerCase().includes("base")) ?? prices[0];
+    priceMods.find((p) => p.type === "BASE_PRICE") ?? priceMods[0];
 
-  // Initialize state from URL or defaults
-  const [priceMods] = useState<PriceMod[]>(event?.priceMods || []);
+  // Initialize date state from URL or defaults
   const [date, setDate] = useState<DateRange | undefined>(() => {
     const fromParam = searchParams.get("from");
     const toParam = searchParams.get("to");
@@ -68,7 +73,7 @@ export function FixedBooking({ userId, retreat, event }: BookingListProps) {
 
     return {
       from: today,
-      to: addDays(today, event?.duration),
+      to: addDays(today, instance?.duration || 1),
     };
   });
 
@@ -83,27 +88,14 @@ export function FixedBooking({ userId, retreat, event }: BookingListProps) {
     }
   }, [date, maxGuests, router, searchParams]);
 
-  type ModifierType =
-    | "BASE_PRICE"
-    | "DISCOUNT"
-    | "FEE"
-    | "TAX"
-    | "ADDON"
-    | "BASE_MOD";
-
-  type ModifierUnit = "FIXED" | "PERCENT";
-
   const calculateTotal = () => {
     const guestCount = parseInt(searchParams.get("guests") || "1");
-
-    // Get base price from price mods
     const basePriceMod = priceMods.find((mod) => mod.type === "BASE_PRICE");
-    const basePrice = basePriceMod?.value ?? 250; // fallback to 250 if no base price mod
+    const basePrice = basePriceMod?.value ?? 250;
 
-    // Calculate initial base total (per guest per night)
     let baseTotal = basePrice * guestCount;
 
-    // Add any BASE_MOD modifications (seasonal adjustments, etc.)
+    // Apply base modifications (seasonal adjustments)
     const baseMods = sumPriceMods("BASE_MOD", baseTotal, guestCount);
     baseTotal += baseMods;
 
@@ -117,15 +109,13 @@ export function FixedBooking({ userId, retreat, event }: BookingListProps) {
   };
 
   const sumPriceMods = (
-    type: ModifierType,
+    type: "BASE_PRICE" | "DISCOUNT" | "FEE" | "TAX" | "ADDON" | "BASE_MOD",
     baseTotal: number,
     guestCount: number
   ): number => {
     const applicableMods = priceMods.filter((mod) => {
-      // Check if this is the type we're calculating
       if (mod.type !== type) return false;
 
-      // Check date range if specified
       const currentDate = date?.from ?? new Date();
       if (mod.dateStart && mod.dateEnd) {
         if (currentDate < mod.dateStart || currentDate > mod.dateEnd) {
@@ -133,7 +123,6 @@ export function FixedBooking({ userId, retreat, event }: BookingListProps) {
         }
       }
 
-      // Check guest count constraints
       if (mod.guestMin && guestCount < mod.guestMin) return false;
       if (mod.guestMax && guestCount > mod.guestMax) return false;
 
@@ -142,27 +131,25 @@ export function FixedBooking({ userId, retreat, event }: BookingListProps) {
 
     return applicableMods.reduce((total, mod) => {
       if (mod.unit === "FIXED") {
-        // For fixed amounts, just add the value
         return total + mod.value;
       } else if (mod.unit === "PERCENT") {
-        // For percentages, calculate based on base total
         const percentValue = (baseTotal * mod.value) / 100;
         return total + percentValue;
       }
       return total;
     }, 0);
   };
-
-  console.log("pm ", priceMods);
   return (
     <Card className="max-w-md">
       <CardHeader>
         <CardTitle className="text-lg">
-          {toUSD(basePrice.value)}
+          {basePrice ? toUSD(basePrice.value) : "Price on request"}
           <Lead className="inline text-sm"> / </Lead>
-          <Small>{event.duration} nights</Small>
+          <Small>{instance.duration} nights</Small>
         </CardTitle>
-        <CardDescription>Fixed Booking</CardDescription>
+        <CardDescription>
+          Fixed {type === "program" ? "Program" : "Retreat"}
+        </CardDescription>
       </CardHeader>
       <CardContent>
         <div className="flex items-center space-x-4">
@@ -170,7 +157,7 @@ export function FixedBooking({ userId, retreat, event }: BookingListProps) {
             className="w-full"
             selectedRange={date}
             setSelectedRange={setDate}
-            duration={event.duration}
+            duration={instance.duration}
           />
         </div>
         <div className="mt-2 flex w-full">
@@ -179,49 +166,52 @@ export function FixedBooking({ userId, retreat, event }: BookingListProps) {
       </CardContent>
       <CardContent>
         <TooltipProvider>
-          {priceMods?.length > 0 ? (
-            priceMods.map((mod, i) => (
-              <Tooltip key={`price-mod-tt-${i}`}>
-                <TooltipTrigger className="w-full">
-                  <Small className="flex w-full cursor-help justify-between text-primary/60">
-                    <span>{mod.name}</span>
-                    <span>{toUSD(mod.value)}</span>
-                  </Small>
-                </TooltipTrigger>
-                <TooltipContent side="top" className="max-w-[200px] text-sm">
-                  {mod.desc || "No description available"}
-                </TooltipContent>
-              </Tooltip>
-            ))
-          ) : (
-            <P>---</P>
-          )}
+          {priceMods.map((mod, i) => (
+            <Tooltip key={`price-mod-tt-${i}`}>
+              <TooltipTrigger className="w-full">
+                <Small className="flex w-full cursor-help justify-between text-primary/60">
+                  <span>{mod.name}</span>
+                  <span>{toUSD(mod.value)}</span>
+                </Small>
+              </TooltipTrigger>
+              <TooltipContent side="top" className="max-w-[200px] text-sm">
+                {mod.desc || "No description available"}
+              </TooltipContent>
+            </Tooltip>
+          ))}
+
+          <div className="mt-4 border-t pt-4">
+            <Small className="flex justify-between text-lg text-primary/60">
+              <span>
+                {searchParams.get("guests") || "1"} guests x{" "}
+                {basePrice ? toUSD(basePrice.value) : "TBD"}
+              </span>
+              <span>
+                {basePrice
+                  ? toUSD(
+                      parseInt(searchParams.get("guests") || "1") *
+                        basePrice.value
+                    )
+                  : "TBD"}
+              </span>
+            </Small>
+
+            <P className="mt-2 flex justify-between font-semibold">
+              <span className="text-primary/60">Total (pre-tax)</span>
+              <span>{toUSD(calculateTotal())}</span>
+            </P>
+          </div>
         </TooltipProvider>
-
-        <Small className="flex justify-between text-lg text-primary/60">
-          <span>
-            {searchParams.get("guests") || "1"} guests x{" "}
-            {toUSD(basePrice?.value)}
-          </span>
-          <span>
-            {toUSD(
-              parseInt(searchParams.get("guests") || "1") *
-                (basePrice?.value ?? 1)
-            )}
-          </span>
-        </Small>
-
-        <P className="flex justify-between">
-          <span className="text-primary/60">Total / pre-tax</span>
-          <span>{toUSD(calculateTotal())}</span>
-        </P>
       </CardContent>
       <CardFooter className="justify-end">
         <CheckoutButton
           uiMode="embedded"
-          price={250}
+          price={calculateTotal()}
           userId={userId}
-          propertyId={retreat.propertyId}
+          propertyId={item.propertyId}
+          // type={type}
+          // itemId={item.id}
+          // instanceId={instance.id}
           checkInDate={date?.from}
           checkOutDate={date?.to}
           guestCount={parseInt(searchParams.get("guests") || "1")}

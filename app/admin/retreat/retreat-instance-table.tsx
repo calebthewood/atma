@@ -3,10 +3,11 @@
 import { useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import {
-  deleteRetreatInstance,
-  getPaginatedRetreatInstances,
-} from "@/actions/retreat-instance";
-import { RetreatInstance } from "@prisma/client";
+  deleteInstance,
+  getPaginatedInstances,
+  type InstanceWithRelations,
+  type PaginatedInstancesResponse,
+} from "@/actions/retreat-instance-actions";
 import { CaretSortIcon, ChevronDownIcon } from "@radix-ui/react-icons";
 import {
   ColumnDef,
@@ -43,19 +44,27 @@ import { AdminActionMenu } from "../components";
 
 interface RetreatInstancesListProps {
   retreatId: string;
+  initialInstances?: PaginatedInstancesResponse;
 }
 
-export function RetreatInstancesList({ retreatId }: RetreatInstancesListProps) {
+export function RetreatInstancesList({
+  retreatId,
+  initialInstances,
+}: RetreatInstancesListProps) {
   const router = useRouter();
   const searchParams = useSearchParams();
   const updateSearchParams = useUpdateSearchParam();
 
-  const [data, setData] = useState<RetreatInstance[]>([]);
+  const [data, setData] = useState<InstanceWithRelations[]>(
+    initialInstances?.instances || []
+  );
   const [sorting, setSorting] = useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
-  const [loading, setLoading] = useState(true);
-  const [totalPages, setTotalPages] = useState(0);
+  const [loading, setLoading] = useState(!initialInstances);
+  const [totalPages, setTotalPages] = useState(
+    initialInstances?.totalPages || 0
+  );
   const [pagination, setPagination] = useState({
     pageIndex: 0,
     pageSize: 10,
@@ -65,7 +74,7 @@ export function RetreatInstancesList({ retreatId }: RetreatInstancesListProps) {
     updateSearchParams("edit", instanceId);
   };
 
-  const columns: ColumnDef<RetreatInstance>[] = [
+  const columns: ColumnDef<InstanceWithRelations>[] = [
     {
       accessorKey: "startDate",
       header: ({ column }) => {
@@ -168,10 +177,9 @@ export function RetreatInstancesList({ retreatId }: RetreatInstancesListProps) {
             window.confirm("Are you sure you want to delete this instance?")
           ) {
             try {
-              const response = await deleteRetreatInstance(instance.id);
+              const response = await deleteInstance(instance.id);
 
               if (response.success) {
-                // Clear edit param if deleting the currently edited instance
                 if (searchParams.get("edit") === instance.id) {
                   updateSearchParams("edit", null);
                 }
@@ -230,7 +238,7 @@ export function RetreatInstancesList({ retreatId }: RetreatInstancesListProps) {
   const fetchInstances = async () => {
     try {
       setLoading(true);
-      const result = await getPaginatedRetreatInstances(
+      const result = await getPaginatedInstances(
         pagination.pageIndex + 1,
         pagination.pageSize,
         retreatId
@@ -259,8 +267,10 @@ export function RetreatInstancesList({ retreatId }: RetreatInstancesListProps) {
   };
 
   useEffect(() => {
-    fetchInstances();
-  }, [pagination.pageIndex, pagination.pageSize, retreatId]);
+    if (!initialInstances) {
+      fetchInstances();
+    }
+  }, [pagination.pageIndex, pagination.pageSize, retreatId, initialInstances]);
 
   if (loading && !data.length) {
     return <div>Loading instances...</div>;

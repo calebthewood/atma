@@ -2,15 +2,15 @@
 
 import { useEffect, useState } from "react";
 import { useParams, useRouter, useSearchParams } from "next/navigation";
-import { getRetreats } from "@/actions/retreat-actions";
+import { BaseRetreat, getRetreats } from "@/actions/retreat-actions";
 import {
-  createRetreatInstance,
-  getRetreatInstance,
-  updateRetreatInstance,
-} from "@/actions/retreat-instance";
+  createInstance,
+  getInstance,
+  updateInstance,
+} from "@/actions/retreat-instance-actions";
 import {
-  RetreatInstanceFormData,
-  retreatInstanceFormSchema,
+  InstanceFormData,
+  instanceFormSchema,
 } from "@/schemas/retreat-instance";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Retreat, RetreatInstance } from "@prisma/client";
@@ -53,7 +53,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { toast } from "@/components/ui/use-toast";
 
 export function RetreatInstanceForm() {
-  const [retreats, setRetreats] = useState<Retreat[]>([]);
+  const [retreats, setRetreats] = useState<BaseRetreat[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [currentInstance, setCurrentInstance] =
     useState<RetreatInstance | null>(null);
@@ -64,8 +64,8 @@ export function RetreatInstanceForm() {
   const retreatId = params.id as string;
   const editId = searchParams.get("edit");
 
-  const form = useForm<RetreatInstanceFormData>({
-    resolver: zodResolver(retreatInstanceFormSchema),
+  const form = useForm<InstanceFormData>({
+    resolver: zodResolver(instanceFormSchema),
     defaultValues: {
       retreatId: retreatId,
       startDate: new Date(),
@@ -95,7 +95,7 @@ export function RetreatInstanceForm() {
       }
 
       try {
-        const response = await getRetreatInstance(editId);
+        const response = await getInstance(editId);
         if (response.success && response.data) {
           const instance = response.data;
           setCurrentInstance(instance);
@@ -131,8 +131,16 @@ export function RetreatInstanceForm() {
   useEffect(() => {
     async function fetchRetreats() {
       try {
-        const fetchedRetreats = await getRetreats();
-        setRetreats(fetchedRetreats);
+        const response = await getRetreats();
+        if (response.success && response.data) {
+          setRetreats(response.data);
+        } else {
+          toast({
+            title: "Error",
+            description: response.error || "Failed to load retreats",
+            variant: "destructive",
+          });
+        }
       } catch (error) {
         console.error("Error fetching retreats:", error);
         toast({
@@ -146,11 +154,11 @@ export function RetreatInstanceForm() {
     fetchRetreats();
   }, []);
 
-  const handleFieldBlur = async (fieldName: keyof RetreatInstanceFormData) => {
+  const handleFieldBlur = async (fieldName: keyof InstanceFormData) => {
     if (currentInstance) {
       try {
         const fieldValue = form.getValues(fieldName);
-        const response = await updateRetreatInstance(currentInstance.id, {
+        const response = await updateInstance(currentInstance.id, {
           [fieldName]: fieldValue,
         });
 
@@ -174,14 +182,11 @@ export function RetreatInstanceForm() {
     }
   };
 
-  async function onSubmit(values: RetreatInstanceFormData) {
+  async function onSubmit(values: InstanceFormData) {
     setIsLoading(true);
     try {
       if (currentInstance) {
-        const response = await updateRetreatInstance(
-          currentInstance.id,
-          values
-        );
+        const response = await updateInstance(currentInstance.id, values);
         if (response.success) {
           toast({
             title: "Success",
@@ -192,7 +197,7 @@ export function RetreatInstanceForm() {
           throw new Error(response.error);
         }
       } else {
-        const response = await createRetreatInstance(values);
+        const response = await createInstance(values);
         if (response.success) {
           toast({
             title: "Success",
@@ -216,7 +221,7 @@ export function RetreatInstanceForm() {
     }
   }
 
-  const getFieldStyles = (fieldName: keyof RetreatInstanceFormData) => {
+  const getFieldStyles = (fieldName: keyof InstanceFormData) => {
     const isSubmitting = form.formState.isSubmitting;
     const isValid = !form.formState.errors[fieldName];
     const isDirty = form.formState.dirtyFields[fieldName];
