@@ -105,11 +105,12 @@ export default async function RetreatPage({
                   </GlassCard>
 
                   <GlassCard className="rounded-lg p-6 md:w-96">
-                    <BookingSelector
+                    Booking component to go here
+                    {/* <BookingSelector
                       type={retreat.bookingType ?? "Fixed"}
                       userId={session?.user?.id}
                       retreat={retreat}
-                    />
+                    /> */}
                   </GlassCard>
                 </div>
               </div>
