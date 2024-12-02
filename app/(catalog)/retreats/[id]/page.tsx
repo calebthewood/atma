@@ -2,10 +2,7 @@ import { ReactNode, Suspense } from "react";
 import Image from "next/image";
 import { notFound } from "next/navigation";
 import { getRetreatImages } from "@/actions/image-actions";
-import {
-  getRetreat,
-  type RetreatWithRelations,
-} from "@/actions/retreat-actions";
+import { getRetreat } from "@/actions/retreat-actions";
 import { auth } from "@/auth";
 
 import { cn } from "@/lib/utils";
@@ -26,12 +23,13 @@ const DEFAULT_SLIDES = [
 export default async function RetreatPage({
   params,
 }: {
-  params: { id: string };
+  params: Promise<{ id: string }>;
 }) {
+  const parameters = await params;
   try {
     const [retreatResponse, images, session] = await Promise.all([
-      getRetreat(params.id),
-      getRetreatImages(params.id),
+      getRetreat(parameters.id),
+      getRetreatImages(parameters.id),
       auth(),
     ]);
 
@@ -47,11 +45,11 @@ export default async function RetreatPage({
       retreat.images.length > 0
         ? retreat.images.map((img) => img.filePath)
         : DEFAULT_SLIDES;
-console.log("Retreat, ", retreat)
+    console.log("Retreat, ", retreat);
     return (
       <div className="relative min-h-screen border">
         {/* Fixed Background Image with fade-in */}
-        <div className="animate-fade-in fixed inset-0 h-screen w-full">
+        <div className="fixed inset-0 h-screen w-full animate-fade-in">
           <Image
             priority
             alt="destination cover photo"
@@ -66,7 +64,7 @@ console.log("Retreat, ", retreat)
         {/* Scrollable Content */}
         <div
           className={cn(
-            "relative md:container",
+            "relative md:container"
             // "dark:before:to-gradient-richBlack before:pointer-events-none before:absolute before:inset-0 before:bg-gradient-to-b before:from-transparent before:to-richBeige"
           )}
         >

@@ -1,13 +1,16 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import {
-  InstanceFormData,
-  instanceFormSchema,
-} from "@/schemas/program-instance";
+import { InstanceFormData, instanceFormSchema } from "@/schemas/program-instance";
 import { PriceMod, type Program, type ProgramInstance } from "@prisma/client";
 
+
+
 import { prisma } from "@/lib/prisma";
+
+
+
+
 
 // ============================================================================
 // Types
@@ -36,8 +39,8 @@ export type InstanceWithRelations = ProgramInstance & {
   program: {
     id: string;
     name: string | null;
-    category: string;
     propertyId: string;
+    category: string;
     images: {
       id: string;
       programId: string | null;
@@ -258,13 +261,31 @@ export async function getPaginatedInstances(
         include: {
           program: {
             select: {
+              id: true,
               name: true,
               propertyId: true,
-              images: true,
               category: true,
+              images: {
+                select: {
+                  id: true,
+                  programId: true,
+                  filePath: true,
+                  desc: true,
+                  hostId: true,
+                  createdAt: true,
+                  updatedAt: true,
+                  order: true,
+                },
+              },
             },
           },
-          bookings: true,
+          bookings: {
+            select: {
+              id: true,
+              guestCount: true,
+              status: true,
+            },
+          },
           priceMods: true,
         },
       }),
@@ -274,7 +295,7 @@ export async function getPaginatedInstances(
     return {
       success: true,
       data: {
-        instances,
+        instances: instances as InstanceWithRelations[],
         totalPages: Math.ceil(totalCount / pageSize),
         currentPage: page,
         totalInstances: totalCount,

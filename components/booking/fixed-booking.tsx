@@ -52,7 +52,8 @@ export function FixedBooking({ userId, type, item, instance }: BookingProps) {
   const searchParams = useSearchParams();
 
   // Initialize maxGuests (fallback to 16 if not specified)
-  const maxGuests = item?.maxGuests && item?.maxGuests > 0 ? item.maxGuests : 16;
+  const maxGuests =
+    item?.maxGuests && item?.maxGuests > 0 ? item.maxGuests : 16;
 
   // Get prices and base price
   const priceMods = instance?.priceMods || [];

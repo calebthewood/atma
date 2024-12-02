@@ -1,7 +1,6 @@
 "use client";
 
 import { RetreatWithRelations } from "@/actions/retreat-actions";
-import { RetreatInstance } from "@prisma/client";
 import {
   BedSingle,
   Calendar,
@@ -9,14 +8,12 @@ import {
   MapPin,
   Navigation,
   NotepadText,
-  Star,
   User,
   Users,
 } from "lucide-react";
 
 import {
   Card,
-  CardContent,
   CardDescription,
   CardFooter,
   CardHeader,
@@ -103,7 +100,7 @@ export function RetreatDetailCards({ retreat }: RetreatDetailCardsProps) {
     },
     {
       name: "Room Type",
-      icon: <BedSingle className="h-6 w-6" />,
+      icon: <BedSingle className="h-6 w-6" />, // @ts-ignore
       value: retreat.property?.rooms?.[0]?.type || "Contact for details",
     },
     {
@@ -157,7 +154,7 @@ export function BookingSelector({
     ),
     Fixed: () => (
       <FixedBooking
-        userId={userId}
+        userId={userId} // @ts-ignore
         retreat={retreat}
         event={retreat.retreatInstances[0]}
       />

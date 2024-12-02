@@ -2,13 +2,21 @@ import Link from "next/link";
 import { getRetreat } from "@/actions/retreat-actions";
 import { getPaginatedInstances } from "@/actions/retreat-instance-actions";
 
-
-
 import { cn } from "@/lib/utils";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { NavigationMenu, NavigationMenuItem, NavigationMenuLink, NavigationMenuList, navigationMenuTriggerStyle } from "@/components/ui/navigation-menu";
-
-
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import {
+  NavigationMenu,
+  NavigationMenuItem,
+  NavigationMenuLink,
+  NavigationMenuList,
+  navigationMenuTriggerStyle,
+} from "@/components/ui/navigation-menu";
 
 import { PriceModForm } from "../../../price-form";
 import { ImageManagement } from "../../../property/image-management";
@@ -16,7 +24,6 @@ import { RetreatInstanceForm } from "../../instance-form";
 import { PriceModsTable } from "../../instance-pricing-table";
 import { RetreatForm } from "../../retreat-form";
 import { RetreatInstancesList } from "../../retreat-instance-table";
-
 
 interface PageProps {
   params: Promise<{ id: string; slug: string }>;

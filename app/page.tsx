@@ -24,7 +24,7 @@ export default async function Page() {
     await getPrograms(),
   ]);
 
-console.log("Retreats ",retreats)
+  console.log("Retreats ", retreats);
 
   const sections = [
     {

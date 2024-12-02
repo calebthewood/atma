@@ -17,12 +17,12 @@ import {
   NavigationMenuList,
   navigationMenuTriggerStyle,
 } from "@/components/ui/navigation-menu";
+import { PriceModsTable } from "@/app/admin/retreat/instance-pricing-table";
 
 import { PriceModForm } from "../../../price-form";
 import { ImageManagement } from "../../../property/image-management";
-import { ProgramInstanceForm } from "../../program-instance-form";
-import { PriceModsTable } from "@/app/admin/retreat/instance-pricing-table";
 import { ProgramForm } from "../../program-form";
+import { ProgramInstanceForm } from "../../program-instance-form";
 import { ProgramInstancesList } from "../../program-instance-table";
 
 interface PageProps {

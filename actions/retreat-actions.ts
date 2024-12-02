@@ -5,14 +5,20 @@ import { retreatFormSchema } from "@/schemas/retreat-schema";
 import { Prisma, Retreat } from "@prisma/client";
 import { z } from "zod";
 
+
+
 import prisma from "@/lib/prisma";
+
+
+
+
 
 // ============================================================================
 // Types
 // ============================================================================
 
 export type BaseRetreat = Retreat & {
-  property?: { name: string };
+  property?: { name: string; city: string | null; location: string | null };
   host?: { name: string | null };
 };
 
@@ -26,6 +32,7 @@ export type RetreatWithRelations = Prisma.RetreatGetPayload<{
         name: true;
       };
     };
+    priceMods: true
     host: true;
     amenities: true;
     images: true;
@@ -138,6 +145,7 @@ export async function getRetreat(
             name: true,
           },
         },
+        priceMods: true,
         host: true,
         amenities: true,
         images: true,

@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import {
   deleteRetreat,
@@ -41,106 +41,6 @@ import { toast } from "@/components/ui/use-toast";
 
 import { AdminActionMenu } from "../components";
 
-const columns: ColumnDef<RetreatWithBasicRelations>[] = [
-  {
-    accessorKey: "name",
-    header: ({ column }) => {
-      return (
-        <Button
-          variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
-          Name
-          <CaretSortIcon className="ml-2 size-4" />
-        </Button>
-      );
-    },
-  },
-  {
-    accessorKey: "bookingType",
-    header: "Booking Type",
-  },
-  {
-    accessorKey: "duration",
-    header: "Duration",
-  },
-  {
-    accessorKey: "date",
-    header: "Date",
-    cell: ({ row }) => {
-      const date = row.getValue("date") as Date | null;
-      return date ? date.toLocaleDateString() : "Not set";
-    },
-  },
-  {
-    accessorKey: "guests",
-    header: "Guests",
-    cell: ({ row }) => {
-      const min = row.original.minGuests;
-      const max = row.original.maxGuests;
-      return `${min ?? 0} - ${max ?? "unlimited"}`;
-    },
-  },
-  {
-    accessorKey: "property",
-    header: "Property",
-    cell: ({ row }) => row.original.property?.name ?? "N/A",
-  },
-  {
-    accessorKey: "host",
-    header: "Host",
-    cell: ({ row }) => row.original.host?.name ?? "N/A",
-  },
-  {
-    accessorKey: "updatedAt",
-    header: "Updated At",
-    cell: ({ row }) => {
-      return (row.getValue("updatedAt") as Date).toLocaleDateString();
-    },
-  },
-  {
-    id: "actions",
-    cell: ({ row }) => {
-      const router = useRouter();
-      const retreat = row.original;
-
-      const handleDelete = async () => {
-        if (window.confirm("Are you sure you want to delete this retreat?")) {
-          try {
-            const response = await deleteRetreat(retreat.id);
-            if (!response.success) {
-              throw new Error(response.error);
-            }
-            toast({
-              title: "Success",
-              description: "Retreat deleted successfully",
-            });
-            router.refresh();
-          } catch (error) {
-            console.error("Failed to delete retreat:", error);
-            toast({
-              title: "Error",
-              description:
-                error instanceof Error
-                  ? error.message
-                  : "Failed to delete retreat. Please try again.",
-              variant: "destructive",
-            });
-          }
-        }
-      };
-
-      return (
-        <AdminActionMenu
-          editHref={`/admin/retreat/${retreat.id}/general`}
-          publicHref={`/retreats/${retreat.id}`}
-          handleDelete={handleDelete}
-        />
-      );
-    },
-  },
-];
-
 export function RetreatDataTable() {
   const [data, setData] = useState<RetreatWithBasicRelations[]>([]);
   const [sorting, setSorting] = useState<SortingState>([]);
@@ -150,6 +50,7 @@ export function RetreatDataTable() {
     pageIndex: 0,
     pageSize: 10,
   });
+  const router = useRouter();
 
   const [totalPages, setTotalPages] = useState(0);
   useEffect(() => {
@@ -190,6 +91,112 @@ export function RetreatDataTable() {
       setTotalPages(0);
     }
   };
+
+  const columns: ColumnDef<RetreatWithBasicRelations>[] = useMemo(
+    () => [
+      {
+        accessorKey: "name",
+        header: ({ column }) => {
+          return (
+            <Button
+              variant="ghost"
+              onClick={() =>
+                column.toggleSorting(column.getIsSorted() === "asc")
+              }
+            >
+              Name
+              <CaretSortIcon className="ml-2 size-4" />
+            </Button>
+          );
+        },
+      },
+      {
+        accessorKey: "bookingType",
+        header: "Booking Type",
+      },
+      {
+        accessorKey: "duration",
+        header: "Duration",
+      },
+      {
+        accessorKey: "date",
+        header: "Date",
+        cell: ({ row }) => {
+          const date = row.getValue("date") as Date | null;
+          return date ? date.toLocaleDateString() : "Not set";
+        },
+      },
+      {
+        accessorKey: "guests",
+        header: "Guests",
+        cell: ({ row }) => {
+          const min = row.original.minGuests;
+          const max = row.original.maxGuests;
+          return `${min ?? 0} - ${max ?? "unlimited"}`;
+        },
+      },
+      {
+        accessorKey: "property",
+        header: "Property",
+        cell: ({ row }) => row.original.property?.name ?? "N/A",
+      },
+      {
+        accessorKey: "host",
+        header: "Host",
+        cell: ({ row }) => row.original.host?.name ?? "N/A",
+      },
+      {
+        accessorKey: "updatedAt",
+        header: "Updated At",
+        cell: ({ row }) => {
+          return (row.getValue("updatedAt") as Date).toLocaleDateString();
+        },
+      },
+      {
+        id: "actions",
+        cell: ({ row }) => {
+          const retreat = row.original;
+
+          const handleDelete = async () => {
+            if (
+              window.confirm("Are you sure you want to delete this retreat?")
+            ) {
+              try {
+                const response = await deleteRetreat(retreat.id);
+                if (!response.success) {
+                  throw new Error(response.error);
+                }
+                toast({
+                  title: "Success",
+                  description: "Retreat deleted successfully",
+                });
+                router.refresh();
+              } catch (error) {
+                console.error("Failed to delete retreat:", error);
+                toast({
+                  title: "Error",
+                  description:
+                    error instanceof Error
+                      ? error.message
+                      : "Failed to delete retreat. Please try again.",
+                  variant: "destructive",
+                });
+              }
+            }
+          };
+
+          return (
+            <AdminActionMenu
+              editHref={`/admin/retreat/${retreat.id}/general`}
+              publicHref={`/retreats/${retreat.id}`}
+              handleDelete={handleDelete}
+            />
+          );
+        },
+      },
+    ],
+    []
+  );
 
   const table = useReactTable({
     data,

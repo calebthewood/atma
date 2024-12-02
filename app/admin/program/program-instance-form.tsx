@@ -186,10 +186,7 @@ export function ProgramInstanceForm() {
     setIsLoading(true);
     try {
       if (currentInstance) {
-        const response = await updateInstance(
-          currentInstance.id,
-          values
-        );
+        const response = await updateInstance(currentInstance.id, values);
         if (response.success) {
           toast({
             title: "Success",

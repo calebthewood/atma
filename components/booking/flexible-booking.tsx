@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { RetreatWithPrice } from "@/actions/retreat-actions";
+import { RetreatWithRelations } from "@/actions/retreat-actions";
 import { PriceMod, Retreat, RetreatInstance } from "@prisma/client";
 import {
   addDays,
@@ -42,14 +42,12 @@ import { DatePickerWithRange } from "../ui/date-pickers";
 import { Separator } from "../ui/separator";
 import { GuestSelect } from "./guest-select";
 
-const today = new Date();
-
 interface RetreatIntanceWithMods extends RetreatInstance {
   priceMods: PriceMod[];
 }
 interface BookingListProps {
   events: RetreatIntanceWithMods[];
-  retreat: RetreatWithPrice;
+  retreat: RetreatWithRelations;
   userId: string | undefined;
 }
 
@@ -90,7 +88,9 @@ export function FlexibleBooking({ userId, retreat, events }: BookingListProps) {
   };
 
   const duration = dateDiffNumber();
-  const prices = retreat.priceMods;
+  // @ts-ignore
+  const prices = retreat?.priceMods ?? [];
+  // @ts-ignore
   const basePrice = prices.find((p) => p.name?.toLowerCase().includes("base"));
 
   const calculateTotal = () => {

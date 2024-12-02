@@ -13,6 +13,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { toast } from "@/components/ui/use-toast";
 
 type ExtendedRetreat = Retreat & {
   host: Host;
@@ -48,12 +49,26 @@ export function RetreatList() {
     async function fetchRetreats() {
       try {
         setIsLoading(true);
-        const fetchedRetreats = await getRetreats();
-        setRetreats(fetchedRetreats);
+        const response = await getRetreats();
+        if (response.success && response.data) {
+          setRetreats(response.data);
+        } else {
+          toast({
+            title: "Error",
+            description: "Failed to load programs",
+            variant: "destructive",
+          });
+        }
         setError(null);
       } catch (error) {
         console.error("Error fetching retreats:", error);
         setError("Failed to fetch retreats. Please try again later.");
+        console.error("Error fetching programs:", error);
+        toast({
+          title: "Error",
+          description: "Failed to load programs",
+          variant: "destructive",
+        });
       } finally {
         setIsLoading(false);
       }

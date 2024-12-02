@@ -200,7 +200,7 @@ const Thumb: React.FC<ThumbProps> = (props) => {
       variant="outline"
       size="sm"
       className={cn(
-        "relative min-h-24 min-w-24 size-full aspect-square overflow-hidden rounded-xl p-0",
+        "relative aspect-square size-full min-h-24 min-w-24 overflow-hidden rounded-xl p-0",
         "shadow-[inset_0_0_0_0.2rem_var(--detail-medium-contrast)]",
         "cursor-pointer appearance-none bg-transparent",
         "touch-manipulation focus:outline-none",

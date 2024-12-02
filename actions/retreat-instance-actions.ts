@@ -1,8 +1,11 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
+import {
+  InstanceFormData,
+  instanceFormSchema,
+} from "@/schemas/retreat-instance";
 import { PriceMod, type Retreat, type RetreatInstance } from "@prisma/client";
-import { InstanceFormData, instanceFormSchema } from "@/schemas/retreat-instance";
 
 import { prisma } from "@/lib/prisma";
 
@@ -33,11 +36,11 @@ export type InstanceWithRelations = RetreatInstance & {
   retreat: {
     id: string;
     name: string | null;
-    category: string;
     propertyId: string;
+    category: string;
     images: {
       id: string;
-      retreatId: string | null;
+      programId: string | null;
       filePath: string;
       desc: string;
       hostId: string | null;
@@ -255,13 +258,31 @@ export async function getPaginatedInstances(
         include: {
           retreat: {
             select: {
+              id: true,
               name: true,
               propertyId: true,
-              images: true,
               category: true,
+              images: {
+                select: {
+                  id: true,
+                  programId: true,
+                  filePath: true,
+                  desc: true,
+                  hostId: true,
+                  createdAt: true,
+                  updatedAt: true,
+                  order: true,
+                },
+              },
             },
           },
-          bookings: true,
+          bookings: {
+            select: {
+              id: true,
+              guestCount: true,
+              status: true,
+            },
+          },
           priceMods: true,
         },
       }),
@@ -271,7 +292,7 @@ export async function getPaginatedInstances(
     return {
       success: true,
       data: {
-        instances,
+        instances: instances as InstanceWithRelations[],
         totalPages: Math.ceil(totalCount / pageSize),
         currentPage: page,
         totalInstances: totalCount,
