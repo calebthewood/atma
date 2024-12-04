@@ -77,8 +77,8 @@ export function ProgramInstanceForm() {
     },
   });
 
-  // Load instance data when edit param changes
   useEffect(() => {
+    console.log("INSTANCE FORM ", programId);
     async function loadInstanceData() {
       if (!editId) {
         form.reset({
@@ -95,7 +95,9 @@ export function ProgramInstanceForm() {
       }
 
       try {
+        console.log("INSTANCE FORM ", editId);
         const response = await getInstance(editId);
+        console.log("INSTANCE FORM ", response);
         if (response.success && response.data) {
           const instance = response.data;
           setCurrentInstance(instance);
@@ -111,7 +113,7 @@ export function ProgramInstanceForm() {
         } else {
           toast({
             title: "Error",
-            description: "Failed to load program instance",
+            description: "Failed to load retreat instance",
             variant: "destructive",
           });
         }
@@ -119,7 +121,7 @@ export function ProgramInstanceForm() {
         console.error("Error loading instance:", error);
         toast({
           title: "Error",
-          description: "Failed to load program instance",
+          description: "Failed to load retreat instance",
           variant: "destructive",
         });
       }

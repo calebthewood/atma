@@ -48,7 +48,7 @@ export type InstanceWithRelations = ProgramInstance & {
       updatedAt: Date;
       order: number;
     }[];
-  };
+  } | null;
   bookings: {
     id: string;
     guestCount: number;
@@ -73,44 +73,72 @@ export type ActionResponse<T = void> = Promise<{
 // ============================================================================
 // Core CRUD Operations
 // ============================================================================
-
 export async function getInstance(
   id: string
 ): ActionResponse<InstanceWithRelations> {
+  if (!id) {
+    return {
+      success: false,
+      error: "Instance ID is required",
+    };
+  }
+
   try {
-    const instance = await prisma.programInstance.findUnique({
+    // Get base instance
+    const basicInstance = await prisma.programInstance.findUnique({
       where: { id },
-      include: {
-        program: {
-          include: {
-            images: true,
-          },
-          select: {
-            id: true,
-            name: true,
-            propertyId: true,
-            category: true,
-          },
-        },
-        bookings: {
-          select: {
-            id: true,
-            guestCount: true,
-            status: true,
-          },
-        },
-        priceMods: true,
-      },
     });
 
-    if (!instance) {
-      return { success: false, error: "Instance not found" };
+    if (!basicInstance) {
+      return {
+        success: false,
+        error: "Instance not found",
+      };
     }
 
-    return { success: true, data: instance as InstanceWithRelations };
+    // Get related data in parallel
+    const [program, bookings, priceMods] = await Promise.all([
+      prisma.program.findUnique({
+        where: { id: basicInstance.programId },
+        select: {
+          id: true,
+          name: true,
+          propertyId: true,
+          category: true,
+          images: true, // Move images into select
+        },
+      }),
+      prisma.booking.findMany({
+        where: { programInstanceId: id },
+        select: {
+          id: true,
+          guestCount: true,
+          status: true,
+        },
+      }),
+      prisma.priceMod.findMany({
+        where: { programInstanceId: id },
+      }),
+    ]);
+
+    // Combine all data
+    const fullInstance = {
+      ...basicInstance,
+      program,
+      bookings,
+      priceMods,
+    };
+
+    return {
+      success: true,
+      data: fullInstance,
+    };
   } catch (error) {
-    console.error("Failed to fetch instance:", error);
-    return { success: false, error: "Failed to fetch instance" };
+    console.error("Server error in getInstance:", error);
+    return {
+      success: false,
+      error: "Failed to fetch instance",
+    };
   }
 }
 
@@ -154,7 +182,7 @@ export async function createInstance(
       },
     });
 
-    revalidatePath("/admin/programs");
+    revalidatePath("/admin/program");
     return { success: true, data: instance };
   } catch (error) {
     console.error("Error creating instance:", error);

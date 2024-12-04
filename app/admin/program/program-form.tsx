@@ -239,7 +239,7 @@ export function ProgramForm({ program }: ProgramFormProps) {
         });
       }
       form.reset(values);
-      router.push("/admin/programs");
+      router.push("/admin/program");
     } catch (error) {
       console.error("Error submitting program:", error);
       toast({

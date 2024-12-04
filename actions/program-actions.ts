@@ -129,8 +129,8 @@ export async function updateProgram(
       data,
     });
 
-    revalidatePath("/admin/programs");
-    revalidatePath(`/admin/programs/${id}`);
+    revalidatePath("/admin/program");
+    revalidatePath(`/admin/program/${id}`);
     return { success: true, data: program };
   } catch (error) {
     console.error("Failed to update program:", error);

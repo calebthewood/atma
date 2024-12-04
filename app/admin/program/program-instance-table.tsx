@@ -206,7 +206,7 @@ export function ProgramInstancesList({
         return (
           <AdminActionMenu
             editHref={`/admin/program/${programId}/instance?edit=${instance.id}`}
-            publicHref={`/programs/${programId}/instance/${instance.id}`}
+            publicHref={`/program/${programId}/instance/${instance.id}`}
             handleDelete={handleDelete}
           />
         );
