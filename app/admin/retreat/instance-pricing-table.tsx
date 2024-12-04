@@ -6,7 +6,7 @@ import {
   deletePriceMod,
   getPriceModsByRetreatInstance,
   PriceModWithRelations,
-} from "@/actions/price-mods";
+} from "@/actions/price-mod-actions";
 import type { PriceMod } from "@prisma/client";
 import {
   ColumnDef,

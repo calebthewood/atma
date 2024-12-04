@@ -2,7 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import { PriceModInput, priceModSchema } from "@/schemas/price-mods";
-import { Prisma } from "@prisma/client";
+import { PriceMod, Prisma } from "@prisma/client";
 
 import { prisma } from "@/lib/prisma";
 
@@ -29,6 +29,227 @@ export type PriceModListResponse = {
   data?: PriceModWithRelations[];
 };
 
+export type PriceModWithSource = PriceMod & {
+  source: "property" | "retreat" | "program" | "instance";
+};
+
+type GetAllPriceModsResponse = {
+  success: boolean;
+  data?: {
+    allPriceMods: PriceModWithSource[];
+    propertyId?: string;
+    retreatId?: string;
+    programId?: string;
+  };
+  error?: string;
+};
+
+interface BasePriceModResult {
+  propertyId?: string;
+  priceMods: PriceModWithSource[];
+  error?: string;
+}
+
+interface RetreatPriceModResult extends BasePriceModResult {
+  retreatId?: string;
+}
+
+interface ProgramPriceModResult extends BasePriceModResult {
+  programId?: string;
+}
+
+export async function getRetreatPriceMods(retreatId: string): Promise<{
+  success: boolean;
+  data?: PriceMod[];
+  error?: string;
+}> {
+  try {
+    const priceMods = await prisma.priceMod.findMany({
+      where: { retreatId },
+      orderBy: { createdAt: "desc" },
+    });
+
+    return {
+      success: true,
+      data: priceMods,
+    };
+  } catch (error) {
+    console.error("Error fetching retreat price mods:", error);
+    return {
+      success: false,
+      error: "Failed to fetch price modifications",
+    };
+  }
+}
+
+// First, get the related IDs
+async function getRelatedIds(instanceId: string, type: "retreat" | "program") {
+  try {
+    if (type === "retreat") {
+      const instance = await prisma.retreatInstance.findUnique({
+        where: { id: instanceId },
+        select: {
+          id: true,
+          retreatId: true,
+          retreat: {
+            select: {
+              propertyId: true,
+            },
+          },
+        },
+      });
+
+      return {
+        instanceId: instance?.id,
+        parentId: instance?.retreatId,
+        propertyId: instance?.retreat?.propertyId,
+      };
+    } else {
+      const instance = await prisma.programInstance.findUnique({
+        where: { id: instanceId },
+        select: {
+          id: true,
+          programId: true,
+          program: {
+            select: {
+              propertyId: true,
+            },
+          },
+        },
+      });
+
+      return {
+        instanceId: instance?.id,
+        parentId: instance?.programId,
+        propertyId: instance?.program?.propertyId,
+      };
+    }
+  } catch (error) {
+    console.error("Error getting related IDs:", error);
+    return null;
+  }
+}
+
+// Get price mods for a specific entity
+async function getPriceModsForEntity(params: {
+  propertyId?: string;
+  retreatId?: string;
+  programId?: string;
+  retreatInstanceId?: string;
+  programInstanceId?: string;
+}): Promise<PriceModWithSource[]> {
+  const {
+    propertyId,
+    retreatId,
+    programId,
+    retreatInstanceId,
+    programInstanceId,
+  } = params;
+
+  if (!Object.values(params).some((id) => id)) return [];
+
+  try {
+    // Build the OR conditions for valid IDs
+    const conditions: Prisma.PriceModWhereInput[] = [];
+
+    if (propertyId) conditions.push({ propertyId });
+    if (retreatId) conditions.push({ retreatId });
+    if (programId) conditions.push({ programId });
+    if (retreatInstanceId) conditions.push({ retreatInstanceId });
+    if (programInstanceId) conditions.push({ programInstanceId });
+
+    const priceMods = await prisma.priceMod.findMany({
+      where: {
+        OR: conditions,
+      },
+    });
+
+    // Add source to each price mod
+    return priceMods.map((mod) => ({
+      ...mod,
+      source:
+        mod.retreatInstanceId || mod.programInstanceId
+          ? "instance"
+          : mod.retreatId
+            ? "retreat"
+            : mod.programId
+              ? "program"
+              : "property",
+    }));
+  } catch (error) {
+    console.error("Error fetching price mods:", error);
+    return [];
+  }
+}
+
+export async function getAllPriceMods(
+  instanceId: string,
+  type: "retreat" | "program"
+): Promise<GetAllPriceModsResponse> {
+  try {
+    // Get all related IDs
+    const ids = await getRelatedIds(instanceId, type);
+    if (!ids) {
+      return {
+        success: false,
+        error: `${type} instance not found`,
+      };
+    }
+
+    // Get all price mods in a single query
+    const allPriceMods = await getPriceModsForEntity({
+      propertyId: ids.propertyId,
+      retreatId: type === "retreat" ? ids.parentId : undefined,
+      programId: type === "program" ? ids.parentId : undefined,
+      retreatInstanceId: type === "retreat" ? ids.instanceId : undefined,
+      programInstanceId: type === "program" ? ids.instanceId : undefined,
+    });
+
+    // Sort the price mods
+    const sortedPriceMods = sortPriceMods(allPriceMods);
+
+    return {
+      success: true,
+      data: {
+        allPriceMods: sortedPriceMods,
+        propertyId: ids.propertyId,
+        retreatId: type === "retreat" ? ids.parentId : undefined,
+        programId: type === "program" ? ids.parentId : undefined,
+      },
+    };
+  } catch (error) {
+    console.error("Error fetching price modifications:", error);
+    return {
+      success: false,
+      error: "Failed to fetch price modifications",
+    };
+  }
+}
+function sortPriceMods(priceMods: PriceModWithSource[]): PriceModWithSource[] {
+  const sourceOrder = { instance: 0, retreat: 1, program: 1, property: 2 };
+  const typeOrder = {
+    BASE_PRICE: 0,
+    BASE_MOD: 1,
+    ADDON: 2,
+    FEE: 3,
+    TAX: 4,
+  };
+
+  return priceMods.sort((a, b) => {
+    if (sourceOrder[a.source] !== sourceOrder[b.source]) {
+      return sourceOrder[a.source] - sourceOrder[b.source];
+    }
+
+    if (a.type !== b.type) {
+      return (
+        (typeOrder[a.type as keyof typeof typeOrder] || 99) -
+        (typeOrder[b.type as keyof typeof typeOrder] || 99)
+      );
+    }
+
+    return b.value - a.value;
+  });
+}
 /**
  * Create a new price modification
  */

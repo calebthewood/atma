@@ -103,7 +103,7 @@ export function ProgramInstanceForm() {
             programId: instance.programId,
             startDate: new Date(instance.startDate),
             endDate: new Date(instance.endDate),
-            duration: instance.duration,
+            duration: instance?.duration,
             itinerary: instance.itinerary,
             availableSlots: instance.availableSlots,
             isFull: instance.isFull,

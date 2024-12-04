@@ -73,132 +73,91 @@ export type ActionResponse<T = void> = Promise<{
 // ============================================================================
 // Core CRUD Operations
 // ============================================================================
-
-export async function createInstance(
-  data: InstanceFormData
-): ActionResponse<RetreatInstance> {
-  try {
-    // Validate retreat exists
-    const retreat = await prisma.retreat.findUnique({
-      where: { id: data.retreatId },
-    });
-
-    if (!retreat) {
-      return { success: false, error: "Retreat not found" };
-    }
-
-    // Parse dates
-    const startDate = new Date(data.startDate);
-    const endDate = new Date(data.endDate);
-
-    if (endDate <= startDate) {
-      return { success: false, error: "End date must be after start date" };
-    }
-
-    // Calculate duration if not provided
-    const duration =
-      data.duration ||
-      Math.ceil(
-        (endDate.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24)
-      );
-
-    const instance = await prisma.retreatInstance.create({
-      data: {
-        retreatId: data.retreatId,
-        startDate,
-        endDate,
-        duration,
-        itinerary: data.itinerary,
-        availableSlots: data.availableSlots,
-        isFull: data.isFull || data.availableSlots === 0,
-      },
-    });
-
-    revalidatePath("/admin/retreats");
-    return { success: true, data: instance };
-  } catch (error) {
-    console.error("Error creating retreat instance:", error);
-    return { success: false, error: "Failed to create retreat instance" };
+export async function getInstance(id: string): ActionResponse<RetreatInstance> {
+  if (!id) {
+    return {
+      success: false,
+      error: "Instance ID is required",
+    };
   }
-}
 
-export async function getInstance(
-  id: string
-): ActionResponse<InstanceWithRelations> {
   try {
     const instance = await prisma.retreatInstance.findUnique({
       where: { id },
-      include: {
-        retreat: {
-          include: {
-            images: true,
-          },
-          select: {
-            id: true,
-            name: true,
-            propertyId: true,
-            category: true,
-          },
-        },
-        bookings: {
-          select: {
-            id: true,
-            guestCount: true,
-            status: true,
-          },
-        },
-        priceMods: true,
-      },
     });
 
     if (!instance) {
-      return { success: false, error: "Instance not found" };
+      return {
+        success: false,
+        error: "Instance not found",
+      };
     }
 
-    return { success: true, data: instance as InstanceWithRelations };
+    return {
+      success: true,
+      data: instance,
+    };
   } catch (error) {
-    console.error("Failed to fetch instance:", error);
-    return { success: false, error: "Failed to fetch instance" };
+    console.error("Error fetching instance:", error);
+    return {
+      success: false,
+      error: "Failed to fetch instance",
+    };
   }
 }
 
 export async function updateInstance(
   id: string,
-  data: Partial<InstanceFormData>
+  data: Partial<RetreatInstance>
 ): ActionResponse<RetreatInstance> {
+  if (!id) {
+    return {
+      success: false,
+      error: "Instance ID is required",
+    };
+  }
+
   try {
-    let duration = data.duration;
-    if (data.startDate && data.endDate) {
-      const startDate = new Date(data.startDate);
-      const endDate = new Date(data.endDate);
-
-      if (endDate <= startDate) {
-        return { success: false, error: "End date must be after start date" };
-      }
-
-      if (!duration) {
-        duration = Math.ceil(
-          (endDate.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24)
-        );
-      }
-    }
+    const validatedData = instanceFormSchema.partial().parse(data);
 
     const instance = await prisma.retreatInstance.update({
       where: { id },
-      data: {
-        ...data,
-        duration,
-        startDate: data.startDate ? new Date(data.startDate) : undefined,
-        endDate: data.endDate ? new Date(data.endDate) : undefined,
-        isFull: data.availableSlots === 0 ? true : data.isFull,
-      },
+      data: validatedData,
     });
 
-    revalidatePath("/admin/retreats");
-    return { success: true, data: instance };
+    return {
+      success: true,
+      data: instance,
+    };
   } catch (error) {
-    console.error("Failed to update instance:", error);
-    return { success: false, error: "Failed to update instance" };
+    console.error("Error updating instance:", error);
+    return {
+      success: false,
+      error: "Failed to update instance",
+    };
+  }
+}
+
+export async function createInstance(
+  data: Omit<RetreatInstance, "id" | "createdAt" | "updatedAt">
+): ActionResponse<RetreatInstance> {
+  try {
+    const validatedData = instanceFormSchema.parse(data);
+
+    const instance = await prisma.retreatInstance.create({
+      data: validatedData,
+    });
+
+    return {
+      success: true,
+      data: instance,
+    };
+  } catch (error) {
+    console.error("Error creating instance:", error);
+    return {
+      success: false,
+      error: "Failed to create instance",
+    };
   }
 }
 

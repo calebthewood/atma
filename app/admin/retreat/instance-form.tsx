@@ -79,6 +79,7 @@ export function RetreatInstanceForm() {
 
   // Load instance data when edit param changes
   useEffect(() => {
+    console.log("INSTANCE FORM ", retreatId);
     async function loadInstanceData() {
       if (!editId) {
         form.reset({
@@ -95,7 +96,9 @@ export function RetreatInstanceForm() {
       }
 
       try {
+        console.log("INSTANCE FORM ", editId);
         const response = await getInstance(editId);
+        console.log("INSTANCE FORM ", response);
         if (response.success && response.data) {
           const instance = response.data;
           setCurrentInstance(instance);
@@ -103,7 +106,7 @@ export function RetreatInstanceForm() {
             retreatId: instance.retreatId,
             startDate: new Date(instance.startDate),
             endDate: new Date(instance.endDate),
-            duration: instance.duration,
+            duration: instance?.duration,
             itinerary: instance.itinerary,
             availableSlots: instance.availableSlots,
             isFull: instance.isFull,
@@ -184,9 +187,17 @@ export function RetreatInstanceForm() {
 
   async function onSubmit(values: InstanceFormData) {
     setIsLoading(true);
+    const formattedValues = {
+      ...values,
+      startDate: new Date(values.startDate),
+      endDate: new Date(values.endDate),
+    };
     try {
       if (currentInstance) {
-        const response = await updateInstance(currentInstance.id, values);
+        const response = await updateInstance(
+          currentInstance.id,
+          formattedValues
+        );
         if (response.success) {
           toast({
             title: "Success",
@@ -197,7 +208,7 @@ export function RetreatInstanceForm() {
           throw new Error(response.error);
         }
       } else {
-        const response = await createInstance(values);
+        const response = await createInstance(formattedValues);
         if (response.success) {
           toast({
             title: "Success",
@@ -317,7 +328,7 @@ export function RetreatInstanceForm() {
                           mode="single"
                           selected={new Date(field.value)}
                           onSelect={(date) => {
-                            field.onChange(startOfDay(date || new Date()));
+                            field.onChange(startOfDay(date ?? new Date()));
                             handleFieldBlur("startDate");
                           }}
                           initialFocus

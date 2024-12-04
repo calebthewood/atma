@@ -2,13 +2,19 @@ import { ReactNode, Suspense } from "react";
 import Image from "next/image";
 import { notFound } from "next/navigation";
 import { getRetreatImages } from "@/actions/image-actions";
+import {
+  getAllPriceMods,
+  getRetreatPriceMods,
+} from "@/actions/price-mod-actions";
 import { getRetreat } from "@/actions/retreat-actions";
 import { auth } from "@/auth";
 
+import prisma from "@/lib/prisma";
 import { cn } from "@/lib/utils";
 import { CardTitle } from "@/components/ui/card";
 import ThumbnailCarousel from "@/components/ui/carousel-thumbnail";
 import { toast } from "@/components/ui/use-toast";
+import { FixedBooking } from "@/components/booking/fixed-booking";
 import { CatalogTabs } from "@/components/catalog-tabs";
 import { RetreatInstancesList } from "@/app/admin/retreat/retreat-instance-table";
 
@@ -30,11 +36,13 @@ export default async function RetreatPage({
   params: Promise<{ id: string }>;
 }) {
   const parameters = await params;
+
   try {
-    const [retreatResponse, images, session] = await Promise.all([
+    const [retreatResponse, images, session, priceMods] = await Promise.all([
       getRetreat(parameters.id),
       getRetreatImages(parameters.id),
       auth(),
+      getRetreatPriceMods(parameters.id),
     ]);
 
     if (!retreatResponse.success || !retreatResponse.data) {
@@ -45,7 +53,7 @@ export default async function RetreatPage({
     const retreat = retreatResponse.data;
 
     const [title, subtitle] = retreat.name?.split("|") ?? [];
-    const coverImage = retreat.images[0]?.filePath || DEFAULT_SLIDES[0];
+    const coverImage = images[0]?.filePath || DEFAULT_SLIDES[3];
     const imageSlides =
       retreat.images.length > 0
         ? retreat.images.map((img) => img.filePath)
@@ -102,7 +110,7 @@ export default async function RetreatPage({
 
           {/* Content Section with edge-to-edge gradient */}
           <div className="">
-            <div className="container relative mx-auto px-4 py-16">
+            <div className="container relative mx-auto py-16">
               <div className="space-y-12">
                 {/* Detail Cards */}
                 <GlassCard className="rounded-lg p-6">
@@ -121,8 +129,7 @@ export default async function RetreatPage({
                 </Suspense>
 
                 {/* Description and Booking Section */}
-                {/* Description and Booking Section */}
-                <div className="container relative mx-auto">
+                <div className="relative mx-auto">
                   <div className="flex flex-col gap-8 lg:flex-row">
                     {/* Left Column - Content */}
                     <div className="flex w-full flex-col gap-y-6 lg:w-2/3">
@@ -149,12 +156,14 @@ export default async function RetreatPage({
                     <div className="w-full lg:w-1/3">
                       <div className="sticky top-24">
                         <GlassCard className="rounded-lg p-6">
-                          Booking component to go here
-                          {/* <BookingSelector
-            type={retreat.bookingType ?? "Fixed"}
-            userId={session?.user?.id}
-            retreat={retreat}
-          /> */}
+                          <FixedBooking
+                            type="retreat"
+                            userId={session?.user?.id}
+                            item={retreat}
+                            instances={retreat.retreatInstances}
+                            priceMods={priceMods.data ?? []}
+                          />
+                          testing
                         </GlassCard>
                       </div>
                     </div>

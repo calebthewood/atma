@@ -1,5 +1,4 @@
 "use client";
-"use client";
 
 import { useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
@@ -13,7 +12,7 @@ import {
 import { addDays, format, parseISO } from "date-fns";
 import { DateRange } from "react-day-picker";
 
-import { toUSD } from "@/lib/utils";
+import { calculateFinalPrice, toUSD } from "@/lib/utils";
 import {
   Card,
   CardContent,
@@ -35,30 +34,39 @@ import { Lead, P, Small } from "../typography";
 import { DatePickerFixedRange } from "../ui/date-pickers";
 
 const today = new Date();
-
-interface BookingItemInstance extends RetreatInstance, ProgramInstance {
-  priceMods: PriceMod[];
-}
-
 interface BookingProps {
   type: "program" | "retreat";
   item: ProgramWithBasicRelations | RetreatWithRelations;
-  instance: BookingItemInstance;
+  instances: RetreatInstance[] | ProgramInstance[];
   userId: string | undefined;
+  priceMods: PriceMod[];
 }
 
-export function FixedBooking({ userId, type, item, instance }: BookingProps) {
+export function FixedBooking({
+  userId,
+  type,
+  item,
+  instances,
+  priceMods: rawPriceMods,
+}: BookingProps) {
+  // Doing this, and :rawPriceMods above, to please typescript seems silly
+  const priceMods = rawPriceMods.map((mod) => ({
+    ...mod,
+    source: "retreat" as const,
+  }));
   const router = useRouter();
   const searchParams = useSearchParams();
+
+  // Get the instance ID from search params
+  const instanceId = searchParams.get("instance");
+  const currentInstance = instances.find((i) => i.id === instanceId);
 
   // Initialize maxGuests (fallback to 16 if not specified)
   const maxGuests =
     item?.maxGuests && item?.maxGuests > 0 ? item.maxGuests : 16;
 
-  // Get prices and base price
-  const priceMods = instance?.priceMods || [];
-  const basePrice =
-    priceMods.find((p) => p.type === "BASE_PRICE") ?? priceMods[0];
+  // Get base price from price mods
+  const basePrice = priceMods.find((mod) => mod.type === "BASE_PRICE");
 
   // Initialize date state from URL or defaults
   const [date, setDate] = useState<DateRange | undefined>(() => {
@@ -74,7 +82,7 @@ export function FixedBooking({ userId, type, item, instance }: BookingProps) {
 
     return {
       from: today,
-      to: addDays(today, instance?.duration || 1),
+      to: addDays(today, currentInstance?.duration || 1),
     };
   });
 
@@ -89,64 +97,56 @@ export function FixedBooking({ userId, type, item, instance }: BookingProps) {
     }
   }, [date, maxGuests, router, searchParams]);
 
-  const calculateTotal = () => {
+  const getPriceModsByType = (type: string) => {
+    return priceMods.filter((mod) => mod.type === type);
+  };
+
+  const calculateSubtotal = () => {
     const guestCount = parseInt(searchParams.get("guests") || "1");
-    const basePriceMod = priceMods.find((mod) => mod.type === "BASE_PRICE");
-    const basePrice = basePriceMod?.value ?? 250;
-
-    let baseTotal = basePrice * guestCount;
-
-    // Apply base modifications (seasonal adjustments)
-    const baseMods = sumPriceMods("BASE_MOD", baseTotal, guestCount);
-    baseTotal += baseMods;
-
-    // Calculate other modifications
-    const discounts = sumPriceMods("DISCOUNT", baseTotal, guestCount);
-    const fees = sumPriceMods("FEE", baseTotal, guestCount);
-    const taxes = sumPriceMods("TAX", baseTotal, guestCount);
-    const addons = sumPriceMods("ADDON", baseTotal, guestCount);
-
-    return baseTotal + discounts + fees + taxes + addons;
+    return basePrice ? basePrice.value * guestCount : 0;
   };
 
-  const sumPriceMods = (
-    type: "BASE_PRICE" | "DISCOUNT" | "FEE" | "TAX" | "ADDON" | "BASE_MOD",
-    baseTotal: number,
-    guestCount: number
-  ): number => {
-    const applicableMods = priceMods.filter((mod) => {
-      if (mod.type !== type) return false;
+  const total = calculateFinalPrice(priceMods);
+  const renderPriceModGroup = (type: string, label: string) => {
+    const mods = getPriceModsByType(type);
+    if (!mods.length) return null;
 
-      const currentDate = date?.from ?? new Date();
-      if (mod.dateStart && mod.dateEnd) {
-        if (currentDate < mod.dateStart || currentDate > mod.dateEnd) {
-          return false;
-        }
-      }
-
-      if (mod.guestMin && guestCount < mod.guestMin) return false;
-      if (mod.guestMax && guestCount > mod.guestMax) return false;
-
-      return true;
-    });
-
-    return applicableMods.reduce((total, mod) => {
-      if (mod.unit === "FIXED") {
-        return total + mod.value;
-      } else if (mod.unit === "PERCENT") {
-        const percentValue = (baseTotal * mod.value) / 100;
-        return total + percentValue;
-      }
-      return total;
-    }, 0);
+    return (
+      <div className="space-y-1">
+        <Small className="text-primary/60">{label}</Small>
+        {mods.map((mod, i) => (
+          <Tooltip key={`${type}-${i}`}>
+            <TooltipTrigger className="w-full">
+              <Small className="flex w-full cursor-help justify-between text-primary/60">
+                <span>{mod.name}</span>
+                <span>{toUSD(mod.value)}</span>
+              </Small>
+            </TooltipTrigger>
+            <TooltipContent side="top" className="max-w-[200px] text-sm">
+              <div>
+                <p>{mod.desc || "No description available"}</p>
+                <p className="mt-1 text-xs text-primary/60">
+                  Source: {mod?.source || "NA"}
+                </p>
+              </div>
+            </TooltipContent>
+          </Tooltip>
+        ))}
+      </div>
+    );
   };
+
+  // if (isLoading) {
+  //   return <Card className="max-w-md animate-pulse" />;
+  // }
+
   return (
     <Card className="max-w-md">
       <CardHeader>
         <CardTitle className="text-lg">
           {basePrice ? toUSD(basePrice.value) : "Price on request"}
           <Lead className="inline text-sm"> / </Lead>
-          <Small>{instance.duration} nights</Small>
+          <Small>{currentInstance?.duration} nights</Small>
         </CardTitle>
         <CardDescription>
           Fixed {type === "program" ? "Program" : "Retreat"}
@@ -158,7 +158,7 @@ export function FixedBooking({ userId, type, item, instance }: BookingProps) {
             className="w-full"
             selectedRange={date}
             setSelectedRange={setDate}
-            duration={instance.duration}
+            duration={currentInstance?.duration || 1}
           />
         </div>
         <div className="mt-2 flex w-full">
@@ -167,39 +167,22 @@ export function FixedBooking({ userId, type, item, instance }: BookingProps) {
       </CardContent>
       <CardContent>
         <TooltipProvider>
-          {priceMods.map((mod, i) => (
-            <Tooltip key={`price-mod-tt-${i}`}>
-              <TooltipTrigger className="w-full">
-                <Small className="flex w-full cursor-help justify-between text-primary/60">
-                  <span>{mod.name}</span>
-                  <span>{toUSD(mod.value)}</span>
-                </Small>
-              </TooltipTrigger>
-              <TooltipContent side="top" className="max-w-[200px] text-sm">
-                {mod.desc || "No description available"}
-              </TooltipContent>
-            </Tooltip>
-          ))}
+          <div className="space-y-4">
+            {renderPriceModGroup("BASE_MOD", "Seasonal Adjustments")}
+            {renderPriceModGroup("ADDON", "Add-ons")}
+            {renderPriceModGroup("FEE", "Fees")}
+            {renderPriceModGroup("TAX", "Taxes")}
+          </div>
 
           <div className="mt-4 border-t pt-4">
             <Small className="flex justify-between text-lg text-primary/60">
-              <span>
-                {searchParams.get("guests") || "1"} guests x{" "}
-                {basePrice ? toUSD(basePrice.value) : "TBD"}
-              </span>
-              <span>
-                {basePrice
-                  ? toUSD(
-                      parseInt(searchParams.get("guests") || "1") *
-                        basePrice.value
-                    )
-                  : "TBD"}
-              </span>
+              <span>Subtotal</span>
+              <span>{toUSD(calculateSubtotal())}</span>
             </Small>
 
             <P className="mt-2 flex justify-between font-semibold">
-              <span className="text-primary/60">Total (pre-tax)</span>
-              <span>{toUSD(calculateTotal())}</span>
+              <span className="text-primary/60">Total</span>
+              <span>{toUSD(total)}</span>
             </P>
           </div>
         </TooltipProvider>
@@ -207,12 +190,9 @@ export function FixedBooking({ userId, type, item, instance }: BookingProps) {
       <CardFooter className="justify-end">
         <CheckoutButton
           uiMode="embedded"
-          price={calculateTotal()}
+          price={total}
           userId={userId}
           propertyId={item.propertyId}
-          // type={type}
-          // itemId={item.id}
-          // instanceId={instance.id}
           checkInDate={date?.from}
           checkOutDate={date?.to}
           guestCount={parseInt(searchParams.get("guests") || "1")}

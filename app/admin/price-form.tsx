@@ -11,7 +11,7 @@ import {
   createPriceMod,
   getPriceMod,
   updatePriceMod,
-} from "@/actions/price-mods";
+} from "@/actions/price-mod-actions";
 import { PriceModInput, priceModSchema } from "@/schemas/price-mods";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { format } from "date-fns";
@@ -257,7 +257,7 @@ export function PriceModForm() {
         <CardDescription>
           {instanceId
             ? `Manage pricing for retreat instance ${instanceId}`
-            : `Manage pricing for ${entityType.slice(0, -1)} ${entityId}`}
+            : `Manage pricing for ${entityType.slice(0)} ${entityId}`}
         </CardDescription>
       </CardHeader>
       <CardContent>

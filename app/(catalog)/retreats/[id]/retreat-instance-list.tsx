@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Calendar, Clock, Users } from "lucide-react";
 
@@ -33,6 +34,15 @@ const RetreatInstances = ({ instances }: RetreatInstancesProps) => {
       day: "numeric",
     }).format(new Date(date));
   };
+
+  useEffect(() => {
+    // Only set the first instance if there are instances and no instance is currently selected
+    if (instances.length > 0 && !searchParams.get("instance")) {
+      const params = new URLSearchParams(searchParams);
+      params.set("instance", instances[0].id);
+      router.push(`?${params.toString()}`, { scroll: false });
+    }
+  }, [instances, searchParams, router]);
 
   const selectedInstanceId = searchParams.get("instance");
 
@@ -70,7 +80,7 @@ const RetreatInstances = ({ instances }: RetreatInstancesProps) => {
               <div className="flex items-center gap-4 text-sm">
                 <div className="flex items-center gap-1">
                   <Clock className="h-4 w-4" />
-                  <span>{instance.duration} days</span>
+                  <span>{instance?.duration ?? "NA"} days</span>
                 </div>
 
                 <div className="flex items-center gap-1">
