@@ -134,7 +134,9 @@ export default async function RetreatPage({
                     {/* Left Column - Content */}
                     <div className="flex w-full flex-col gap-y-6 lg:w-2/3">
                       <GlassCard className="rounded-lg p-6">
-                        <CardTitle>Overview</CardTitle>
+                        <CardTitle className="mb-2 text-3xl font-light">
+                          Overview
+                        </CardTitle>
                         <RetreatDescription copy={retreat.desc} />
                       </GlassCard>
 
@@ -155,16 +157,15 @@ export default async function RetreatPage({
                     {/* Right Column - Booking */}
                     <div className="w-full lg:w-1/3">
                       <div className="sticky top-24">
-                        <GlassCard className="rounded-lg p-6">
-                          <FixedBooking
-                            type="retreat"
-                            userId={session?.user?.id}
-                            item={retreat}
-                            instances={retreat.retreatInstances}
-                            priceMods={priceMods.data ?? []}
-                          />
-                          testing
-                        </GlassCard>
+                        {/* <GlassCard className="rounded-lg p-6"> */}
+                        <FixedBooking
+                          type="retreat"
+                          userId={session?.user?.id}
+                          item={retreat}
+                          instances={retreat.retreatInstances}
+                          priceMods={priceMods.data ?? []}
+                        />
+                        {/* </GlassCard> */}
                       </div>
                     </div>
                   </div>

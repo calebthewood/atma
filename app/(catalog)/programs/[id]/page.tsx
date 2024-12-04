@@ -1,21 +1,17 @@
+import { ReactNode, Suspense } from "react";
+import Image from "next/image";
+import { notFound } from "next/navigation";
 import { getProgram } from "@/actions/program-actions";
-import { getProperty } from "@/actions/property-actions";
 import { auth } from "@/auth";
-import { BedSingle, Navigation, NotepadText, User } from "lucide-react";
 
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { cn } from "@/lib/utils";
+import { CardTitle } from "@/components/ui/card";
 import ThumbnailCarousel from "@/components/ui/carousel-thumbnail";
-import { LoadingSpinner } from "@/components/loading-spinner";
-import { TitleImageBanner } from "@/components/title-img-banner";
+import { toast } from "@/components/ui/use-toast";
+import { FixedBooking } from "@/components/booking/fixed-booking";
+import { CatalogTabs } from "@/components/catalog-tabs";
 
-const SLIDES = [
+const DEFAULT_SLIDES = [
   "/img/iStock-1929812569.jpg",
   "/img/iStock-1812905796.jpg",
   "/img/iStock-1550112895.jpg",
@@ -24,120 +20,177 @@ const SLIDES = [
   "/img/iStock-1291807006.jpg",
 ];
 
-export default async function Page(props: { params: Promise<{ id: string }> }) {
-  const params = await props.params;
-  const result = await getProgram(params.id);
-  // const session = await auth();
-  const details = [
-    {
-      name: "Room Type",
-      icon: <BedSingle />,
-      detail: "",
-    },
-    {
-      name: "Excursions",
-      icon: <NotepadText />,
-      detail: "",
-    },
-    {
-      name: "Transportation",
-      icon: <Navigation />,
-      detail: "Car & Boat",
-    },
-    {
-      name: "Tour Guide",
-      icon: <User />,
-      detail: "Not Included",
-    },
-  ];
-
-  // function RenderBookingType({ type }: { type: string }) {
-  //   switch (type) {
-  //     case "open":
-  //       return (
-  //         <OpenBooking
-  //           userId={session?.user?.id}
-  //           retreat={retreat}
-  //           events={retreat.retreatInstances}
-  //         />
-  //       );
-  //     case "fixed_range":
-  //       return (
-  //         <FixedBooking
-  //           userId={session?.user?.id}
-  //           retreat={retreat}
-  //           event={retreat.retreatInstances[0]}
-  //         />
-  //       );
-  //     case "flexible_range":
-  //       return (
-  //         <FlexibleBooking
-  //           userId={session?.user?.id}
-  //           retreat={retreat}
-  //           events={retreat.retreatInstances}
-  //         />
-  //       );
-  //     default:
-  //       return null;
-  //   }
-  // }
-
-  if (!result.success) {
-    return (
-      <>
-        <LoadingSpinner /> Loading...
-      </>
-    );
-  }
-  const program = result.data;
-  // move this default to a general config? maybe not needed even.
-  const coverImgPath =
-    program?.images[0]?.filePath || "/img/iStock-1490140364.jpg";
-
-  const [title, subtitle] = program?.name?.split("|") ?? [];
+function ProgramDescription({ copy }: { copy: string | null }) {
+  if (!copy) return null;
 
   return (
-    <div className="mt-4 h-auto min-h-screen">
-      <TitleImageBanner title={title} subtitle={subtitle} href={coverImgPath} />
-      <div className="container">
-        <div className="flex justify-center gap-6 py-12">
-          {details.map((d, i) => (
-            <RetreatDescCard key={d.name} desc={d} />
-          ))}
-        </div>
-        <div className="my-12">
-          <ThumbnailCarousel
-            slides={program?.property?.images.map((i) => i.filePath)}
-          />
-        </div>
-        <div className="grid grid-cols-12">
-          <div className="col-span-4 col-start-2 text-lg">
-            <p className="my-4">{program?.desc}</p>
-          </div>
-          <div className="col-span-5 col-start-7 mb-16">
-            {/* <RenderBookingType type={retreat.bookingType} /> */}
-          </div>
-        </div>
-      </div>
+    <div className="text-lg">
+      <p>{copy}</p>
     </div>
   );
 }
 
-function RetreatDescCard({
-  desc,
+function GlassCard({
+  children,
+  className,
 }: {
-  desc: { name: string; icon: any; detail: string };
+  children: ReactNode;
+  className?: string;
 }) {
   return (
-    <Card className="w-56">
-      <CardHeader>
-        <CardDescription className="mx-auto p-4">{desc.icon}</CardDescription>
-        <CardTitle className="mx-auto font-light">{desc.name}</CardTitle>
-      </CardHeader>
-      <CardContent></CardContent>
-      <CardFooter className="justify-center">
-        <p className="text-center">{desc.detail}</p>
-      </CardFooter>
-    </Card>
+    <div
+      className={cn(
+        "relative rounded border bg-white/20 p-4 shadow backdrop-blur",
+        className
+      )}
+    >
+      {children}
+    </div>
   );
+}
+
+export default async function ProgramPage({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}) {
+  const parameters = await params;
+
+  try {
+    const [programResponse, session] = await Promise.all([
+      getProgram(parameters.id),
+      auth(),
+    ]);
+
+    if (!programResponse.success || !programResponse.data) {
+      console.error("Failed to fetch program:", programResponse.error);
+      notFound();
+    }
+
+    const program = programResponse.data;
+
+    const [title, subtitle] = program.name?.split("|") ?? [];
+
+    // Handle images from both program and property
+    const coverImage =
+      program.images[0]?.filePath ||
+      program.property?.images[0]?.filePath ||
+      DEFAULT_SLIDES[3];
+
+    const imageSlides =
+      program.images.length > 0
+        ? program.images.map((img) => img.filePath)
+        : program.property?.images?.length > 0
+          ? program.property.images.map((img) => img.filePath)
+          : DEFAULT_SLIDES;
+
+    const tabsData = [
+      {
+        value: "keyBenefits",
+        label: "Benefits",
+        content: <div>{program?.keyBenefits}</div>,
+      },
+      {
+        value: "programApproach",
+        label: "Approach",
+        content: <div>{program?.programApproach}</div>,
+      },
+      {
+        value: "whoIsthisFor",
+        label: "Who is this for?",
+        content: <div>{program?.whoIsthisFor}</div>,
+      },
+    ];
+
+    return (
+      <div className="relative min-h-screen border">
+        {/* Fixed Background Image with fade-in */}
+        <div className="fixed inset-0 h-screen w-full animate-fade-in">
+          <Image
+            priority
+            alt="program cover photo"
+            src={coverImage}
+            fill={true}
+            sizes="100vw"
+            className="-z-20 object-cover"
+          />
+          <div className="bg-richWhite/40 absolute inset-0 dark:bg-richBlack/40" />
+        </div>
+
+        {/* Scrollable Content */}
+        <div className="relative md:container">
+          {/* Title Section */}
+          <div className="mt-56 flex items-end pb-20">
+            <GlassCard className="w-full rounded-r py-8 pl-4 md:-left-10 md:max-w-3xl md:pl-10 md:pr-8 xl:left-0">
+              <div className="flex items-center text-lg font-medium">
+                {subtitle}
+              </div>
+              <h1 className="text-2xl font-medium md:text-4xl">{title}</h1>
+            </GlassCard>
+          </div>
+
+          {/* Content Section */}
+          <div>
+            <div className="container relative mx-auto py-16">
+              <div className="space-y-12">
+                {/* Image Carousel */}
+                <Suspense
+                  fallback={
+                    <div className="h-96 w-full animate-pulse rounded-lg bg-gray-100/20" />
+                  }
+                >
+                  <GlassCard className="rounded-lg p-6">
+                    <ThumbnailCarousel slides={imageSlides} />
+                  </GlassCard>
+                </Suspense>
+
+                {/* Description and Booking Section */}
+                <div className="relative mx-auto">
+                  <div className="flex flex-col gap-8 lg:flex-row">
+                    {/* Left Column - Content */}
+                    <div className="flex w-full flex-col gap-y-6 lg:w-2/3">
+                      <GlassCard className="rounded-lg p-6">
+                        <CardTitle className="mb-2 text-3xl font-light">
+                          Overview
+                        </CardTitle>
+                        <ProgramDescription copy={program.desc} />
+                      </GlassCard>
+
+                      <GlassCard className="w-full">
+                        <CatalogTabs
+                          tabs={tabsData}
+                          defaultTab="whoIsthisFor"
+                        />
+                      </GlassCard>
+                    </div>
+
+                    {/* Right Column - Booking */}
+                    <div className="w-full lg:w-1/3">
+                      <div className="sticky top-24">
+                        <FixedBooking
+                          type="program"
+                          userId={session?.user?.id}
+                          item={program}
+                          instances={program.programs}
+                          priceMods={[]}
+                        />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  } catch (error) {
+    console.error("Error loading program page:", error);
+    toast({
+      title: "Error",
+      description: "Failed to load program details. Please try again.",
+      variant: "destructive",
+    });
+    notFound();
+  }
 }

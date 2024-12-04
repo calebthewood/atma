@@ -77,11 +77,7 @@ export async function getPropertyWithId(
       include: {
         host: true,
         amenities: true,
-        images: {
-          orderBy: {
-            createdAt: "asc",
-          },
-        },
+        images: true,
         reviews: {
           include: {
             user: true,

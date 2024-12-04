@@ -13,7 +13,13 @@ import {
   PropertyWithRelations,
 } from "@/actions/property-actions";
 import { getRetreat, RetreatWithRelations } from "@/actions/retreat-actions";
-import { Host, Program, Property, Retreat } from "@prisma/client";
+import {
+  Host,
+  Image as ImageType,
+  Program,
+  Property,
+  Retreat,
+} from "@prisma/client";
 import { CirclePlus } from "lucide-react";
 
 import { cn } from "@/lib/utils";
@@ -152,6 +158,7 @@ export function LazyRetreatItem({
   ...props
 }: LazyRetreatCardProps) {
   const [item, setItem] = useState<ItemType | null | undefined>();
+  const [images, setImages] = useState<ImageType>();
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
@@ -171,7 +178,7 @@ export function LazyRetreatItem({
             if (response.success) setItem(response.property);
             break;
           case "programs":
-            response = await getProgram(id); // Using the new getProgram action
+            response = await getProgram(id);
             if (response.success && response.data) {
               setItem(response.data);
             }
@@ -206,7 +213,7 @@ export function LazyRetreatItem({
   }
 
   if (!item) return null;
-
+  console.log("ITEM", item);
   // Type guards
   const isRetreat = (item: ItemType): item is RetreatWithRelations => {
     return "retreatInstances" in item;
