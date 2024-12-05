@@ -1,6 +1,7 @@
 import { ReactNode, Suspense } from "react";
 import Image from "next/image";
 import { notFound } from "next/navigation";
+import { fetchImages } from "@/actions/image-actions";
 import { getProgram } from "@/actions/program-actions";
 import { auth } from "@/auth";
 
@@ -68,21 +69,17 @@ export default async function ProgramPage({
     }
 
     const program = programResponse.data;
+    // const images = await fetchImages(retreat.propertyId, "property");
+    const images = program.property.images;
+    console.log("Images", images);
 
     const [title, subtitle] = program.name?.split("|") ?? [];
 
     // Handle images from both program and property
-    const coverImage =
-      program.images[0]?.filePath ||
-      program.property?.images[0]?.filePath ||
-      DEFAULT_SLIDES[3];
+    const coverImage = images[0]?.filePath || DEFAULT_SLIDES[0];
+    let imageSlides = images.map((img) => img.filePath);
 
-    const imageSlides =
-      program.images.length > 0
-        ? program.images.map((img) => img.filePath)
-        : program.property?.images?.length > 0
-          ? program.property.images.map((img) => img.filePath)
-          : DEFAULT_SLIDES;
+    imageSlides.unshift(imageSlides.pop() || "");
 
     const tabsData = [
       {
@@ -105,14 +102,14 @@ export default async function ProgramPage({
     return (
       <div className="relative min-h-screen border">
         {/* Fixed Background Image with fade-in */}
-        <div className="fixed inset-0 h-screen w-full animate-fade-in">
+        <div className="fixed inset-0 h-screen w-full">
           <Image
             priority
             alt="program cover photo"
             src={coverImage}
             fill={true}
             sizes="100vw"
-            className="-z-20 object-cover"
+            className="animate-fade-in -z-20 object-cover"
           />
           <div className="bg-richWhite/40 absolute inset-0 dark:bg-richBlack/40" />
         </div>
@@ -139,9 +136,11 @@ export default async function ProgramPage({
                     <div className="h-96 w-full animate-pulse rounded-lg bg-gray-100/20" />
                   }
                 >
-                  <GlassCard className="rounded-lg p-6">
-                    <ThumbnailCarousel slides={imageSlides} />
-                  </GlassCard>
+                  {imageSlides.length > 0 && (
+                    <GlassCard className="rounded-lg p-6">
+                      <ThumbnailCarousel slides={imageSlides} />
+                    </GlassCard>
+                  )}
                 </Suspense>
 
                 {/* Description and Booking Section */}

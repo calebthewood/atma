@@ -243,7 +243,7 @@ export function LazyRetreatItem({
 
   return (
     <div className={cn("space-y-3", className)} {...props}>
-      <Link href={`/${segment}/${id}`}>
+      <Link prefetch href={`/${segment}/${id}`}>
         <ContextMenu>
           <ContextMenuTrigger>
             <div className="overflow-hidden rounded-md">

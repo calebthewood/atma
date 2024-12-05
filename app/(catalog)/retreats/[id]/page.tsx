@@ -1,7 +1,7 @@
 import { ReactNode, Suspense } from "react";
 import Image from "next/image";
 import { notFound } from "next/navigation";
-import { getRetreatImages } from "@/actions/image-actions";
+import { fetchImages, getRetreatImages } from "@/actions/image-actions";
 import {
   getAllPriceMods,
   getRetreatPriceMods,
@@ -38,9 +38,8 @@ export default async function RetreatPage({
   const parameters = await params;
 
   try {
-    const [retreatResponse, images, session, priceMods] = await Promise.all([
+    const [retreatResponse, session, priceMods] = await Promise.all([
       getRetreat(parameters.id),
-      getRetreatImages(parameters.id),
       auth(),
       getRetreatPriceMods(parameters.id),
     ]);
@@ -51,13 +50,13 @@ export default async function RetreatPage({
     }
 
     const retreat = retreatResponse.data;
-
+    // const images = await fetchImages(retreat.propertyId, "property");
+    const images = retreat.property.images;
+    console.log("Images", images);
     const [title, subtitle] = retreat.name?.split("|") ?? [];
-    const coverImage = images[0]?.filePath || DEFAULT_SLIDES[3];
-    const imageSlides =
-      retreat.images.length > 0
-        ? retreat.images.map((img) => img.filePath)
-        : DEFAULT_SLIDES;
+
+    const coverImage = images[0]?.filePath || DEFAULT_SLIDES[0];
+    const imageSlides = images.map((img) => img.filePath);
 
     const tabsData = [
       {
@@ -79,14 +78,14 @@ export default async function RetreatPage({
     return (
       <div className="relative min-h-screen border">
         {/* Fixed Background Image with fade-in */}
-        <div className="fixed inset-0 h-screen w-full animate-fade-in">
+        <div className="animate-fade-in fixed inset-0 h-screen w-full">
           <Image
             priority
             alt="destination cover photo"
             src={coverImage}
             fill={true}
             sizes="100vw"
-            className="-z-20 object-cover"
+            className="animate-fade-in -z-20 object-cover"
           />
           <div className="bg-richWhite/40 absolute inset-0 dark:bg-richBlack/40" />
         </div>
@@ -123,9 +122,11 @@ export default async function RetreatPage({
                     <div className="h-96 w-full animate-pulse rounded-lg bg-gray-100/20" />
                   }
                 >
-                  <GlassCard className="rounded-lg p-6">
-                    <ThumbnailCarousel slides={imageSlides} />
-                  </GlassCard>
+                  {imageSlides.length > 0 && (
+                    <GlassCard className="rounded-lg p-6">
+                      <ThumbnailCarousel slides={imageSlides} />
+                    </GlassCard>
+                  )}
                 </Suspense>
 
                 {/* Description and Booking Section */}

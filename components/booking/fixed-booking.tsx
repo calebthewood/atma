@@ -2,41 +2,30 @@
 
 import { useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { type ProgramWithBasicRelations } from "@/actions/program-actions";
+import { ProgramWithRelations, type ProgramWithBasicRelations } from "@/actions/program-actions";
 import { type RetreatWithRelations } from "@/actions/retreat-actions";
-import {
-  PriceMod,
-  type ProgramInstance,
-  type RetreatInstance,
-} from "@prisma/client";
+import { PriceMod, type ProgramInstance, type RetreatInstance } from "@prisma/client";
 import { addDays, format, parseISO } from "date-fns";
 import { DateRange } from "react-day-picker";
 
+
+
 import { calculateFinalPrice, toUSD } from "@/lib/utils";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+
+
 
 import CheckoutButton from "../checkout/checkout-button";
 import { ClickyCounter } from "../counter";
 import { Lead, P, Small } from "../typography";
 import { DatePickerFixedRange } from "../ui/date-pickers";
 
+
 const today = new Date();
 interface BookingProps {
   type: "program" | "retreat";
-  item: ProgramWithBasicRelations | RetreatWithRelations;
+  item: ProgramWithRelations | RetreatWithRelations;
   instances: RetreatInstance[] | ProgramInstance[];
   userId: string | undefined;
   priceMods: PriceMod[];
