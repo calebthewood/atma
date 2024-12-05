@@ -104,7 +104,7 @@ export default async function ProgramsPage() {
     .slice(0, 10);
 
   return (
-    <div className="space-y-8 px-4 py-6 lg:px-8">
+    <div className="container space-y-8 px-4 py-6 lg:px-8">
       <Suspense fallback={<ProgramListSkeleton />}>
         <ProgramList
           title="Featured Programs"

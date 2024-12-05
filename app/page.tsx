@@ -24,8 +24,6 @@ export default async function Page() {
     await getPrograms(),
   ]);
 
-  console.log("Retreats ", retreats);
-
   const sections = [
     {
       title: "Browse Retreats",
@@ -63,11 +61,13 @@ export default async function Page() {
   ];
 
   return (
-    <div className="flex flex-col gap-y-6">
+    <>
       <BookingBar />
-      <HeroSection />
-      <HomePageLists sections={sections} />
-    </div>
+      <div className="container flex flex-col gap-y-6 py-6">
+        <HeroSection />
+        <HomePageLists sections={sections} />
+      </div>
+    </>
   );
 }
 

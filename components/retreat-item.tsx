@@ -12,7 +12,12 @@ import {
   getPropertyWithId,
   PropertyWithRelations,
 } from "@/actions/property-actions";
-import { getRetreat, RetreatWithRelations } from "@/actions/retreat-actions";
+import {
+  getRetreat,
+  getSimpleRetreat,
+  RetreatWithRelations,
+  SimpleRetreat,
+} from "@/actions/retreat-actions";
 import {
   Host,
   Image as ImageType,
@@ -143,10 +148,7 @@ interface LazyRetreatCardProps {
   className?: string;
   segment: string; //"retreats" | "destinations" | "programs" | "hosts";
 }
-type ItemType =
-  | RetreatWithRelations
-  | PropertyWithRelations
-  | ProgramWithRelations;
+type ItemType = SimpleRetreat | PropertyWithRelations | ProgramWithRelations;
 
 export function LazyRetreatItem({
   id,
@@ -158,7 +160,7 @@ export function LazyRetreatItem({
   ...props
 }: LazyRetreatCardProps) {
   const [item, setItem] = useState<ItemType | null | undefined>();
-  const [images, setImages] = useState<ImageType>();
+  const [image, setImage] = useState<string>(imagePaths[0]);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
@@ -170,17 +172,33 @@ export function LazyRetreatItem({
         let response;
         switch (segment) {
           case "retreats":
-            response = await getRetreat(id);
-            if (response.success) setItem(response.data);
+            response = await getSimpleRetreat(id);
+            if (response.success && response.data) {
+              setItem(response.data);
+              const img = response?.data?.property?.images[0]?.filePath;
+              if (img) {
+                setImage(img);
+              }
+            }
             break;
           case "destinations":
             response = await getPropertyWithId(id);
-            if (response.success) setItem(response.property);
+            if (response.success) {
+              setItem(response.property);
+              const img = response?.property?.images[0]?.filePath;
+              if (img) {
+                setImage(img);
+              }
+            }
             break;
           case "programs":
             response = await getProgram(id);
             if (response.success && response.data) {
               setItem(response.data);
+              const img = response?.data?.property?.images[0]?.filePath;
+              if (img) {
+                setImage(img);
+              }
             }
             break;
         }
@@ -194,7 +212,7 @@ export function LazyRetreatItem({
     fetchItem(id);
   }, [id, segment]);
 
-  if (isLoading) {
+  if (isLoading || !item) {
     return (
       <div className={cn("flex flex-col space-y-3", className)}>
         <Skeleton
@@ -211,11 +229,8 @@ export function LazyRetreatItem({
       </div>
     );
   }
-
-  if (!item) return null;
-  console.log("ITEM", item);
   // Type guards
-  const isRetreat = (item: ItemType): item is RetreatWithRelations => {
+  const isRetreat = (item: ItemType): item is SimpleRetreat => {
     return "retreatInstances" in item;
   };
 
@@ -226,9 +241,6 @@ export function LazyRetreatItem({
   // Get display data based on item type
   const displayData = {
     name: item.name || "Unnamed",
-    image:
-      item.images[0]?.filePath ||
-      imagePaths[Math.floor(Math.random() * imagePaths.length)],
     city: isRetreat(item)
       ? item.property.city
       : isProgram(item)
@@ -248,7 +260,7 @@ export function LazyRetreatItem({
           <ContextMenuTrigger>
             <div className="overflow-hidden rounded-md">
               <Image
-                src={displayData.image}
+                src={image}
                 alt={displayData.name}
                 width={width}
                 height={height}

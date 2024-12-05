@@ -160,6 +160,7 @@ export async function deleteProgram(id: string): ActionResponse {
 export async function getPrograms(): ActionResponse<BaseProgram[]> {
   try {
     const programs = await prisma.program.findMany({
+      where: { status: "published" },
       include: { property: { select: { name: true } } },
     });
     return { success: true, data: programs };

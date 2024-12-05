@@ -57,7 +57,7 @@ export function ScrollableList({
                 key={`${item.type}-${item.id}-${index}`}
                 id={item.id}
                 segment={getSegment(item.type)}
-                className={className ?? `w-[${width}px]`}
+                className={className ?? `w-[${width}px] h-auto`}
                 aspectRatio={aspectRatio}
                 width={width}
                 height={height}

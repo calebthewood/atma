@@ -111,7 +111,6 @@ export async function getPropertyWithId(
 
 export async function createProperty(data: PropertyFormData) {
   try {
-    console.log("data ", data);
     const property = await prisma.property.create({
       data: {
         ...data,
@@ -160,6 +159,7 @@ export type PropertiesWithImages = Prisma.PropertyGetPayload<{
 
 export async function getProperties(): Promise<PropertiesWithImages[]> {
   const properties = await prisma.property.findMany({
+    where: { status: "published" },
     include: {
       host: {
         select: {

@@ -1,7 +1,6 @@
 import { ReactNode, Suspense } from "react";
 import Image from "next/image";
 import { notFound } from "next/navigation";
-import { fetchImages } from "@/actions/image-actions";
 import { getProgram } from "@/actions/program-actions";
 import { auth } from "@/auth";
 
@@ -109,7 +108,7 @@ export default async function ProgramPage({
             src={coverImage}
             fill={true}
             sizes="100vw"
-            className="animate-fade-in -z-20 object-cover"
+            className="-z-20 animate-fade-in object-cover"
           />
           <div className="bg-richWhite/40 absolute inset-0 dark:bg-richBlack/40" />
         </div>

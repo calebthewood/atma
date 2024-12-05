@@ -65,7 +65,9 @@ export function MainNav({ items }: MainNavProps) {
         {items?.map((item, i) =>
           item?.href ? (
             <DropdownMenuItem key={`main-nav-dmi-${i}`}>
-              <Link href={item?.href}>{item.title}</Link>
+              <Link prefetch href={item?.href}>
+                {item.title}
+              </Link>
             </DropdownMenuItem>
           ) : (
             <DropdownMenuItem>{item.title}</DropdownMenuItem>

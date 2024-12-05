@@ -18,7 +18,7 @@ import { FixedBooking } from "@/components/booking/fixed-booking";
 import { CatalogTabs } from "@/components/catalog-tabs";
 import { RetreatInstancesList } from "@/app/admin/retreat/retreat-instance-table";
 
-import { BookingSelector, RetreatDetailCards } from "./retreat-detail-cards";
+import { RetreatDetailCards } from "./retreat-detail-cards";
 import RetreatInstances from "./retreat-instance-list";
 
 const DEFAULT_SLIDES = [
@@ -78,14 +78,14 @@ export default async function RetreatPage({
     return (
       <div className="relative min-h-screen border">
         {/* Fixed Background Image with fade-in */}
-        <div className="animate-fade-in fixed inset-0 h-screen w-full">
+        <div className="fixed inset-0 h-screen w-full animate-fade-in">
           <Image
             priority
             alt="destination cover photo"
             src={coverImage}
             fill={true}
             sizes="100vw"
-            className="animate-fade-in -z-20 object-cover"
+            className="-z-20 animate-fade-in object-cover"
           />
           <div className="bg-richWhite/40 absolute inset-0 dark:bg-richBlack/40" />
         </div>

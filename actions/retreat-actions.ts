@@ -16,6 +16,21 @@ export type BaseRetreat = Retreat & {
   host?: { name: string | null };
 };
 
+export type SimpleRetreat = Prisma.RetreatGetPayload<{
+  include: {
+    property: {
+      select: {
+        name: true;
+        city: true;
+        country: true;
+        location: true;
+        images: true;
+      };
+    };
+    host: true;
+  };
+}>;
+
 export type RetreatWithRelations = Prisma.RetreatGetPayload<{
   include: {
     property: {
@@ -162,6 +177,38 @@ export async function getRetreat(
   }
 }
 
+export async function getSimpleRetreat(
+  id: string
+): ActionResponse<SimpleRetreat> {
+  try {
+    const retreat = await prisma.retreat.findUnique({
+      where: { id, status: "published" },
+      include: {
+        property: {
+          select: {
+            images: true,
+            city: true,
+            country: true,
+            name: true,
+            location: true,
+          },
+        },
+        host: true,
+        images: true,
+      },
+    });
+
+    if (!retreat) {
+      return { success: false, error: "Retreat not found" };
+    }
+
+    return { success: true, data: retreat };
+  } catch (error) {
+    console.error("Failed to fetch retreat:", error);
+    return { success: false, error: "Failed to fetch retreat" };
+  }
+}
+
 export async function updateRetreat(
   id: string,
   data: Partial<RetreatFormData>
@@ -203,6 +250,7 @@ export async function deleteRetreat(id: string): ActionResponse {
 export async function getRetreats(): ActionResponse<BaseRetreat[]> {
   try {
     const retreats = await prisma.retreat.findMany({
+      where: { status: "published" },
       include: {
         property: { select: { name: true, city: true, location: true } },
       },

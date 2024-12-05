@@ -8,7 +8,7 @@ export default async function Page() {
   const properties = await getPropertyIds();
 
   return (
-    <div className="h-full py-6 md:px-4 lg:px-8">
+    <div className="container h-full py-6 md:px-4 lg:px-8">
       <div className="flex items-center justify-between">
         <div className="space-y-1">
           <h2 className="text-2xl font-semibold tracking-tight">
