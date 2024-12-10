@@ -97,7 +97,7 @@ export default async function Page(props: { params: Promise<{ id: string }> }) {
   const focusRetreat = property.retreats[0];
   console.log(property);
   return (
-    <div className="mt-4 h-auto min-h-screen">
+    <div className="mt-4 h-auto min-h-screen md:container">
       <TitleImageBanner title={title} subtitle={subtitle} href={coverImgPath} />
       <div className="">
         <div className="flex justify-center gap-6 py-12">

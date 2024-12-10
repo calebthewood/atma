@@ -2,46 +2,24 @@
 
 import { useEffect, useState } from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import {
-  deletePriceMod,
-  getPriceModsByRetreatInstance,
-  PriceModWithRelations,
-} from "@/actions/price-mod-actions";
+import { deletePriceMod, getPriceModsByProgramInstance, getPriceModsByRetreatInstance, PriceModWithRelations } from "@/actions/price-mod-actions";
 import type { PriceMod } from "@prisma/client";
-import {
-  ColumnDef,
-  ColumnFiltersState,
-  flexRender,
-  getCoreRowModel,
-  getFilteredRowModel,
-  getPaginationRowModel,
-  getSortedRowModel,
-  SortingState,
-  useReactTable,
-  VisibilityState,
-} from "@tanstack/react-table";
+import { ColumnDef, ColumnFiltersState, flexRender, getCoreRowModel, getFilteredRowModel, getPaginationRowModel, getSortedRowModel, SortingState, useReactTable, VisibilityState } from "@tanstack/react-table";
 import { ChevronDown, ChevronsUpDown, PlusCircle } from "lucide-react";
+
+
 
 import { toUSD } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
-import {
-  DropdownMenu,
-  DropdownMenuCheckboxItem,
-  DropdownMenuContent,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
+import { DropdownMenu, DropdownMenuCheckboxItem, DropdownMenuContent, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { toast } from "@/components/ui/use-toast";
 
+
+
 import { AdminActionMenu } from "../components";
+
 
 const useUpdateSearchParam = () => {
   const router = useRouter();
@@ -74,8 +52,9 @@ export function PriceModsTable() {
   const [rowSelection, setRowSelection] = useState({});
 
   const searchParams = useSearchParams();
+  const pathname = usePathname();
   const updateSearchParams = useUpdateSearchParam();
-  const retreatInstanceId = searchParams.get("edit");
+  const instanceId = searchParams.get("edit");
 
   const columns: ColumnDef<PriceMod>[] = [
     {
@@ -232,11 +211,14 @@ export function PriceModsTable() {
   });
 
   const fetchPriceMods = async () => {
-    if (!retreatInstanceId) return;
+    if (!instanceId) return;
 
     try {
       setLoading(true);
-      const response = await getPriceModsByRetreatInstance(retreatInstanceId);
+
+      const response = pathname.includes("retreat")
+        ? await getPriceModsByRetreatInstance(instanceId)
+        : await getPriceModsByProgramInstance(instanceId);
 
       if (response.success && response.data) {
         setData(response.data);
@@ -261,13 +243,13 @@ export function PriceModsTable() {
 
   useEffect(() => {
     fetchPriceMods();
-  }, [retreatInstanceId]);
+  }, [instanceId]);
 
   const handleRowClick = (priceModId: string) => {
     updateSearchParams({ price: priceModId });
   };
 
-  if (!retreatInstanceId) {
+  if (!instanceId) {
     return (
       <div className="text-center text-muted-foreground">
         Select a retreat instance to view price modifications

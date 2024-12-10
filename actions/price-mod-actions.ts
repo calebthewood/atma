@@ -4,7 +4,13 @@ import { revalidatePath } from "next/cache";
 import { PriceModInput, priceModSchema } from "@/schemas/price-mods";
 import { PriceMod, Prisma } from "@prisma/client";
 
+
+
 import { prisma } from "@/lib/prisma";
+
+
+
+
 
 // Type Definitions
 export type PriceModWithRelations = Prisma.PriceModGetPayload<{
@@ -364,6 +370,35 @@ export async function getPriceModsByRetreatInstance(
   try {
     const priceMods = await prisma.priceMod.findMany({
       where: { retreatInstanceId },
+      orderBy: { createdAt: "desc" },
+      include: {
+        host: true,
+        property: true,
+        program: true,
+        retreat: true,
+        retreatInstance: true,
+      },
+    });
+
+    return {
+      success: true,
+      data: priceMods,
+    };
+  } catch (error) {
+    console.error("Error fetching price modifications:", error);
+    return {
+      success: false,
+      error: "Failed to fetch price modifications",
+    };
+  }
+}
+
+export async function getPriceModsByProgramInstance(
+  programInstanceId: string
+): Promise<PriceModListResponse> {
+  try {
+    const priceMods = await prisma.priceMod.findMany({
+      where: { programInstanceId },
       orderBy: { createdAt: "desc" },
       include: {
         host: true,
