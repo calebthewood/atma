@@ -81,7 +81,7 @@ export function BookingListItem({ booking }: BookingListItemProps) {
       <TableCell>{format(booking.checkInDate, "MMM d, yyyy")}</TableCell>
       <TableCell>{format(booking.checkOutDate, "MMM d, yyyy")}</TableCell>
       <TableCell>{booking.guestCount}</TableCell>
-      <TableCell>{toUSD(booking.totalPrice)}</TableCell>
+      <TableCell>${booking.totalPrice}</TableCell>
       <TableCell>{booking.status}</TableCell>
       <TableCell>
         {/* Add action buttons here, e.g., View Details, Edit, Cancel */}

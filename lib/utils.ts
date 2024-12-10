@@ -9,7 +9,7 @@ export function cn(...inputs: ClassValue[]) {
 }
 
 export const toUSD = (value: number | undefined): string => {
-  if (typeof value !== 'number') return 'XX';
+  if (typeof value !== "number") return "XX";
   const n = Number(value);
   if (isNaN(n)) return "$";
   return n.toLocaleString("en-US", {
