@@ -16,6 +16,7 @@ import ThumbnailCarousel from "@/components/ui/carousel-thumbnail";
 import { toast } from "@/components/ui/use-toast";
 import { FixedBooking } from "@/components/booking/fixed-booking";
 import { CatalogTabs } from "@/components/catalog-tabs";
+import { TitleImageBanner } from "@/components/title-img-banner";
 import { RetreatInstancesList } from "@/app/admin/retreat/retreat-instance-table";
 
 import { RetreatDetailCards } from "./retreat-detail-cards";
@@ -76,107 +77,73 @@ export default async function RetreatPage({
       },
     ];
     return (
-      <div className="relative min-h-screen border">
-        {/* Fixed Background Image with fade-in */}
-        <div className="fixed inset-0 h-screen w-full animate-fade-in">
-          <Image
-            priority
-            alt="destination cover photo"
-            src={coverImage}
-            fill={true}
-            sizes="100vw"
-            className="-z-20 animate-fade-in object-cover"
-          />
-          <div className="bg-richWhite/40 absolute inset-0 dark:bg-richBlack/40" />
-        </div>
+      <div className="relative mt-6 min-h-screen border md:container">
+        <TitleImageBanner title={title} subtitle={subtitle} href={coverImage} />
+        {/* Content Section with edge-to-edge gradient */}
+        <div className="">
+          <div className="container relative mx-auto py-16">
+            <div className="space-y-12">
+              {/* Detail Cards */}
+              <GlassCard className="rounded-lg p-6">
+                <RetreatDetailCards retreat={retreat} />
+              </GlassCard>
 
-        {/* Scrollable Content */}
-        <div
-          className={cn(
-            "relative md:container"
-            // "dark:before:to-gradient-richBlack before:pointer-events-none before:absolute before:inset-0 before:bg-gradient-to-b before:from-transparent before:to-richBeige"
-          )}
-        >
-          {/* Title Section */}
-          <div className="mt-56 flex items-end pb-20">
-            <GlassCard className="w-full rounded-r py-8 pl-4 md:-left-10 md:max-w-3xl md:pl-10 md:pr-8 xl:left-0">
-              <div className="flex items-center text-lg font-medium">
-                {subtitle}
-              </div>
-              <h1 className="text-2xl font-medium md:text-4xl">{title}</h1>
-            </GlassCard>
-          </div>
+              {/* Image Carousel */}
+              <Suspense
+                fallback={
+                  <div className="h-96 w-full animate-pulse rounded-lg bg-gray-100/20" />
+                }
+              >
+                {imageSlides.length > 0 && (
+                  <GlassCard className="rounded-lg p-6">
+                    <ThumbnailCarousel slides={imageSlides} />
+                  </GlassCard>
+                )}
+              </Suspense>
 
-          {/* Content Section with edge-to-edge gradient */}
-          <div className="">
-            <div className="container relative mx-auto py-16">
-              <div className="space-y-12">
-                {/* Detail Cards */}
-                <GlassCard className="rounded-lg p-6">
-                  <RetreatDetailCards retreat={retreat} />
-                </GlassCard>
-
-                {/* Image Carousel */}
-                <Suspense
-                  fallback={
-                    <div className="h-96 w-full animate-pulse rounded-lg bg-gray-100/20" />
-                  }
-                >
-                  {imageSlides.length > 0 && (
+              {/* Description and Booking Section */}
+              <div className="relative mx-auto">
+                <div className="flex flex-col gap-8 lg:flex-row">
+                  {/* Left Column - Content */}
+                  <div className="flex w-full flex-col gap-y-6 lg:w-2/3">
                     <GlassCard className="rounded-lg p-6">
-                      <ThumbnailCarousel slides={imageSlides} />
+                      <CardTitle className="mb-2 text-3xl font-light">
+                        Overview
+                      </CardTitle>
+                      <RetreatDescription copy={retreat.desc} />
                     </GlassCard>
-                  )}
-                </Suspense>
 
-                {/* Description and Booking Section */}
-                <div className="relative mx-auto">
-                  <div className="flex flex-col gap-8 lg:flex-row">
-                    {/* Left Column - Content */}
-                    <div className="flex w-full flex-col gap-y-6 lg:w-2/3">
-                      <GlassCard className="rounded-lg p-6">
-                        <CardTitle className="mb-2 text-3xl font-light">
-                          Overview
-                        </CardTitle>
-                        <RetreatDescription copy={retreat.desc} />
-                      </GlassCard>
+                    <GlassCard className="w-full">
+                      <CatalogTabs tabs={tabsData} defaultTab="whoIsthisFor" />
+                    </GlassCard>
 
-                      <GlassCard className="w-full">
-                        <CatalogTabs
-                          tabs={tabsData}
-                          defaultTab="whoIsthisFor"
-                        />
-                      </GlassCard>
+                    <GlassCard className="rounded-lg p-6">
+                      <RetreatInstances instances={retreat.retreatInstances} />
+                    </GlassCard>
+                  </div>
 
-                      <GlassCard className="rounded-lg p-6">
-                        <RetreatInstances
-                          instances={retreat.retreatInstances}
-                        />
-                      </GlassCard>
-                    </div>
-
-                    {/* Right Column - Booking */}
-                    <div className="w-full lg:w-1/3">
-                      <div className="sticky top-24">
-                        {/* <GlassCard className="rounded-lg p-6"> */}
-                        <FixedBooking
-                          type="retreat"
-                          userId={session?.user?.id}
-                          item={retreat}
-                          instances={retreat.retreatInstances}
-                          priceMods={priceMods.data ?? []}
-                        />
-                        {/* </GlassCard> */}
-                      </div>
+                  {/* Right Column - Booking */}
+                  <div className="w-full lg:w-1/3">
+                    <div className="sticky top-24">
+                      {/* <GlassCard className="rounded-lg p-6"> */}
+                      <FixedBooking
+                        type="retreat"
+                        userId={session?.user?.id}
+                        item={retreat}
+                        instances={retreat.retreatInstances}
+                        priceMods={priceMods.data ?? []}
+                      />
+                      {/* </GlassCard> */}
                     </div>
                   </div>
                 </div>
-                <div className="mb-96"></div>
               </div>
+              <div className="mb-96"></div>
             </div>
           </div>
         </div>
       </div>
+      // </div>
     );
   } catch (error) {
     console.error("Error loading retreat page:", error);

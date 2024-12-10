@@ -10,6 +10,7 @@ import ThumbnailCarousel from "@/components/ui/carousel-thumbnail";
 import { toast } from "@/components/ui/use-toast";
 import { FixedBooking } from "@/components/booking/fixed-booking";
 import { CatalogTabs } from "@/components/catalog-tabs";
+import { TitleImageBanner } from "@/components/title-img-banner";
 
 const DEFAULT_SLIDES = [
   "/img/iStock-1929812569.jpg",
@@ -99,80 +100,53 @@ export default async function ProgramPage({
     ];
 
     return (
-      <div className="relative min-h-screen border">
-        {/* Fixed Background Image with fade-in */}
-        <div className="fixed inset-0 h-screen w-full">
-          <Image
-            priority
-            alt="program cover photo"
-            src={coverImage}
-            fill={true}
-            sizes="100vw"
-            className="-z-20 animate-fade-in object-cover"
-          />
-          <div className="bg-richWhite/40 absolute inset-0 dark:bg-richBlack/40" />
-        </div>
+      <div className="relative mt-6 min-h-screen border md:container">
+        <TitleImageBanner title={title} subtitle={subtitle} href={coverImage} />
 
-        {/* Scrollable Content */}
-        <div className="relative md:container">
-          {/* Title Section */}
-          <div className="mt-56 flex items-end pb-20">
-            <GlassCard className="w-full rounded-r py-8 pl-4 md:-left-10 md:max-w-3xl md:pl-10 md:pr-8 xl:left-0">
-              <div className="flex items-center text-lg font-medium">
-                {subtitle}
-              </div>
-              <h1 className="text-2xl font-medium md:text-4xl">{title}</h1>
-            </GlassCard>
-          </div>
+        {/* Content Section */}
+        <div>
+          <div className="container relative mx-auto py-16">
+            <div className="space-y-12">
+              {/* Image Carousel */}
+              <Suspense
+                fallback={
+                  <div className="h-96 w-full animate-pulse rounded-lg bg-gray-100/20" />
+                }
+              >
+                {imageSlides.length > 0 && (
+                  <GlassCard className="rounded-lg p-6">
+                    <ThumbnailCarousel slides={imageSlides} />
+                  </GlassCard>
+                )}
+              </Suspense>
 
-          {/* Content Section */}
-          <div>
-            <div className="container relative mx-auto py-16">
-              <div className="space-y-12">
-                {/* Image Carousel */}
-                <Suspense
-                  fallback={
-                    <div className="h-96 w-full animate-pulse rounded-lg bg-gray-100/20" />
-                  }
-                >
-                  {imageSlides.length > 0 && (
+              {/* Description and Booking Section */}
+              <div className="relative mx-auto">
+                <div className="flex flex-col gap-8 lg:flex-row">
+                  {/* Left Column - Content */}
+                  <div className="flex w-full flex-col gap-y-6 lg:w-2/3">
                     <GlassCard className="rounded-lg p-6">
-                      <ThumbnailCarousel slides={imageSlides} />
+                      <CardTitle className="mb-2 text-3xl font-light">
+                        Overview
+                      </CardTitle>
+                      <ProgramDescription copy={program.desc} />
                     </GlassCard>
-                  )}
-                </Suspense>
 
-                {/* Description and Booking Section */}
-                <div className="relative mx-auto">
-                  <div className="flex flex-col gap-8 lg:flex-row">
-                    {/* Left Column - Content */}
-                    <div className="flex w-full flex-col gap-y-6 lg:w-2/3">
-                      <GlassCard className="rounded-lg p-6">
-                        <CardTitle className="mb-2 text-3xl font-light">
-                          Overview
-                        </CardTitle>
-                        <ProgramDescription copy={program.desc} />
-                      </GlassCard>
+                    <GlassCard className="w-full">
+                      <CatalogTabs tabs={tabsData} defaultTab="whoIsthisFor" />
+                    </GlassCard>
+                  </div>
 
-                      <GlassCard className="w-full">
-                        <CatalogTabs
-                          tabs={tabsData}
-                          defaultTab="whoIsthisFor"
-                        />
-                      </GlassCard>
-                    </div>
-
-                    {/* Right Column - Booking */}
-                    <div className="w-full lg:w-1/3">
-                      <div className="sticky top-24">
-                        <FixedBooking
-                          type="program"
-                          userId={session?.user?.id}
-                          item={program}
-                          instances={program.programs}
-                          priceMods={[]}
-                        />
-                      </div>
+                  {/* Right Column - Booking */}
+                  <div className="w-full lg:w-1/3">
+                    <div className="sticky top-24">
+                      <FixedBooking
+                        type="program"
+                        userId={session?.user?.id}
+                        item={program}
+                        instances={program.programs}
+                        priceMods={program.priceMods}
+                      />
                     </div>
                   </div>
                 </div>

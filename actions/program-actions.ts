@@ -23,6 +23,7 @@ export type ProgramWithRelations = Prisma.ProgramGetPayload<{
     amenities: true;
     images: true;
     programs: true;
+    priceMods: true;
   };
 }>;
 
@@ -105,6 +106,7 @@ export async function getProgram(
         amenities: true,
         images: true,
         programs: true,
+        priceMods: true,
       },
     });
 

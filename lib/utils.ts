@@ -8,7 +8,8 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
-export const toUSD = (value: any): string => {
+export const toUSD = (value: number | undefined): string => {
+  if (typeof value !== 'number') return 'XX';
   const n = Number(value);
   if (isNaN(n)) return "$";
   return n.toLocaleString("en-US", {
@@ -49,7 +50,7 @@ export function sumPriceList(prices: PriceMod[] | null) {
 }
 
 // Helper function to calculate the final price based on all applicable price mods
-export function calculateFinalPrice(priceMods: PriceModWithSource[]): number {
+export function calculatePriceMods(priceMods: PriceModWithSource[]): number {
   let basePrice = 0;
   let modifiers = 0;
   let fees = 0;

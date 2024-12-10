@@ -265,7 +265,7 @@ export function LazyRetreatItem({
                 width={width}
                 height={height}
                 className={cn(
-                  "size-auto object-cover transition-all hover:scale-105",
+                  "size-auto object-cover transition-all hover:scale-105 fade-in",
                   aspectRatio === "portrait" ? "aspect-[3/4]" : "aspect-square"
                 )}
               />

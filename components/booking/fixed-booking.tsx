@@ -15,7 +15,7 @@ import {
 import { addDays, format, parseISO } from "date-fns";
 import { DateRange } from "react-day-picker";
 
-import { calculateFinalPrice, toUSD } from "@/lib/utils";
+import { calculatePriceMods, toUSD } from "@/lib/utils";
 import {
   Card,
   CardContent,
@@ -59,7 +59,7 @@ export function FixedBooking({
   }));
   const router = useRouter();
   const searchParams = useSearchParams();
-
+  const guestCount = parseInt(searchParams.get("guests") || "1");
   // Get the instance ID from search params
   const instanceId = searchParams.get("instance");
   const currentInstance = instances.find((i) => i.id === instanceId);
@@ -105,11 +105,12 @@ export function FixedBooking({
   };
 
   const calculateSubtotal = () => {
-    const guestCount = parseInt(searchParams.get("guests") || "1");
     return basePrice ? basePrice.value * guestCount : 0;
   };
 
-  const total = calculateFinalPrice(priceMods);
+  const singlePrice = calculatePriceMods(priceMods);
+  const total = singlePrice * guestCount; // refactor when adding more complex pricing.
+
   const renderPriceModGroup = (type: string, label: string) => {
     const mods = getPriceModsByType(type);
     if (!mods.length) return null;
@@ -177,12 +178,15 @@ export function FixedBooking({
             {renderPriceModGroup("TAX", "Taxes")}
           </div>
 
-          <div className="mt-4 border-t pt-4">
-            <Small className="flex justify-between text-lg text-primary/60">
-              <span>Subtotal</span>
-              <span>{toUSD(calculateSubtotal())}</span>
-            </Small>
+          <Small className="flex justify-between text-lg text-primary/60">
+            <span>
+              {toUSD(basePrice?.value)} X {guestCount} guest
+              {guestCount > 1 ? "s" : ""}
+            </span>
 
+            <span>{toUSD(calculateSubtotal())}</span>
+          </Small>
+          <div className="mt-4 border-t pt-4">
             <P className="mt-2 flex justify-between font-semibold">
               <span className="text-primary/60">Total</span>
               <span>{toUSD(total)}</span>
