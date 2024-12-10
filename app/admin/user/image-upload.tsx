@@ -39,7 +39,6 @@ export function ImageUploadForm() {
     const result = await uploadImage(formData);
     if (result.success) {
       // Handle success (e.g., show a success message, reset the form)
-      console.log("Image uploaded successfully:", result.url);
       setFile(null);
       setPreview(null);
       formRef.current?.reset();

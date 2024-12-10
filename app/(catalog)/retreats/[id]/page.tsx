@@ -53,7 +53,7 @@ export default async function RetreatPage({
     const retreat = retreatResponse.data;
     // const images = await fetchImages(retreat.propertyId, "property");
     const images = retreat.property.images;
-    console.log("Images", images);
+
     const [title, subtitle] = retreat.name?.split("|") ?? [];
 
     const coverImage = images[0]?.filePath || DEFAULT_SLIDES[0];
@@ -77,7 +77,7 @@ export default async function RetreatPage({
       },
     ];
     return (
-      <div className="relative mt-6 min-h-screen border md:container">
+      <div className="relative mt-6 min-h-screen md:container">
         <TitleImageBanner title={title} subtitle={subtitle} href={coverImage} />
         {/* Content Section with edge-to-edge gradient */}
         <div className="">

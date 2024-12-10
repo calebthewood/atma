@@ -55,6 +55,7 @@ export default function Page() {
           includeHost: true,
           includeImages: true,
         });
+        console.log("places ", places);
         if (places) {
           // @ts-ignore
           setSearchResults(places);
@@ -106,7 +107,7 @@ export default function Page() {
                   <RetreatItem
                     retreat={r}
                     imgUrl={r.images[0]?.filePath}
-                    segment="retreats"
+                    segment="destinations"
                     className="w-[250px]"
                     aspectRatio="portrait"
                     width={250}

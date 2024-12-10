@@ -71,7 +71,6 @@ export default async function ProgramPage({
     const program = programResponse.data;
     // const images = await fetchImages(retreat.propertyId, "property");
     const images = program.property.images;
-    console.log("Images", images);
 
     const [title, subtitle] = program.name?.split("|") ?? [];
 
@@ -100,7 +99,7 @@ export default async function ProgramPage({
     ];
 
     return (
-      <div className="relative mt-6 min-h-screen border md:container">
+      <div className="relative mt-6 min-h-screen md:container">
         <TitleImageBanner title={title} subtitle={subtitle} href={coverImage} />
 
         {/* Content Section */}

@@ -61,7 +61,6 @@ export function CreateHostForm() {
     try {
       //@ts-ignore
       const host = await createHost(values);
-      console.log("Host created:", host);
       form.reset(); // Reset form after successful submission
       // TODO: Add success message or redirect
     } catch (error) {

@@ -78,7 +78,6 @@ export function ProgramInstanceForm() {
   });
 
   useEffect(() => {
-    console.log("INSTANCE FORM ", programId);
     async function loadInstanceData() {
       if (!editId) {
         form.reset({
@@ -95,9 +94,7 @@ export function ProgramInstanceForm() {
       }
 
       try {
-        console.log("INSTANCE FORM ", editId);
         const response = await getInstance(editId);
-        console.log("INSTANCE FORM ", response);
         if (response.success && response.data) {
           const instance = response.data;
           setCurrentInstance(instance);

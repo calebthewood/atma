@@ -31,7 +31,6 @@ export function AdminTitle() {
   const routeTitle =
     sidebarNavItems.find((item) => pathname.startsWith(item.href))?.title ||
     "Admin Dashboard";
-  console.log(pathname);
 
   return (
     <div className="space-y-0.5">

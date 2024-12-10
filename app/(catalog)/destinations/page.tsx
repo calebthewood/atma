@@ -67,7 +67,7 @@ export default async function Page() {
           <ScrollBar orientation="horizontal" />
         </ScrollArea>
       </div>
-      <div className="mt-8 flex items-center justify-between">
+      {/* <div className="mt-8 flex items-center justify-between">
         <div className="space-y-1">
           <h2 className="text-2xl font-semibold tracking-tight">
             London Based Destinations
@@ -76,7 +76,7 @@ export default async function Page() {
             Browse Properties situated in and around London
           </p>
         </div>
-      </div>
+      </div> */}
       <Separator className="my-4" />
       <div className="relative">
         {/* <ScrollArea>

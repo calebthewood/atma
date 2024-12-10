@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Loader } from "@googlemaps/js-api-loader";
-import { Check, ChevronsUpDown, Minus, Plus } from "lucide-react";
+import { Check, ChevronsUpDown } from "lucide-react";
 
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -24,7 +24,7 @@ import {
 import { ClickyCounter } from "../counter";
 
 interface Place {
-  desc: string;
+  description: string;
   place_id: string;
 }
 
@@ -180,16 +180,20 @@ export function LocationCombobox() {
               {places.map((place) => (
                 <CommandItem
                   key={place.place_id}
-                  value={place.desc}
-                  onSelect={() => handlePlaceSelect(place.place_id, place.desc)}
+                  value={place.description}
+                  onSelect={() =>
+                    handlePlaceSelect(place.place_id, place.description)
+                  }
                 >
                   <Check
                     className={cn(
                       "mr-2 size-4",
-                      value?.name === place.desc ? "opacity-100" : "opacity-0"
+                      value?.name === place.description
+                        ? "opacity-100"
+                        : "opacity-0"
                     )}
                   />
-                  {place.desc}
+                  {place.description}
                 </CommandItem>
               ))}
             </CommandGroup>
