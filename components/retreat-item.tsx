@@ -253,24 +253,47 @@ export function LazyRetreatItem({
         : item.country,
   };
 
+  // const isRetreat = (item) => item?.type === 'retreat';
+  // const isProgram = (item) => item?.type === 'program';
+
   return (
-    <div className={cn("space-y-3", className)} {...props}>
-      <Link prefetch href={`/${segment}/${id}`}>
+    <div
+      className={cn("group relative overflow-hidden rounded", className)}
+      style={{ height: `${height}px` }}
+      {...props}
+    >
+      <Link prefetch href={`/${segment}/${id}`} className="absolute inset-0">
         <ContextMenu>
           <ContextMenuTrigger>
-            <div className="overflow-hidden rounded-md">
+            {/* Background Image with Overlay */}
+            <div className="absolute inset-0">
               <Image
                 src={image}
                 alt={displayData.name}
                 width={width}
                 height={height}
-                className={cn(
-                  "size-auto object-cover transition-all fade-in hover:scale-105",
-                  aspectRatio === "portrait" ? "aspect-[3/4]" : "aspect-square"
-                )}
+                className="h-full w-full object-cover transition-all duration-300 group-hover:scale-105"
               />
+              {/* Dark Overlay */}
+              <div className="absolute inset-0 bg-black/40" />
+            </div>
+
+            {/* Content */}
+            <div className="absolute inset-0 flex h-auto flex-col justify-between p-6">
+              <div className="space-y-2 text-white">
+                <h3 className="text-2xl leading-tight">{displayData.name}</h3>
+              </div>
+              <div>
+                <p className="text-sm font-medium text-white/80">
+                  {displayData.city && displayData.country
+                    ? `${displayData.city}, ${displayData.country}`
+                    : "Location unavailable"}
+                </p>
+              </div>
             </div>
           </ContextMenuTrigger>
+
+          {/* Context Menu */}
           <ContextMenuContent className="w-40">
             <ContextMenuItem>Add to Schedule</ContextMenuItem>
             <ContextMenuSub>
@@ -315,14 +338,6 @@ export function LazyRetreatItem({
           </ContextMenuContent>
         </ContextMenu>
       </Link>
-      <div className="space-y-1 text-sm">
-        <h3 className="font-medium leading-none">{displayData.name}</h3>
-        <p className="text-xs text-muted-foreground">
-          {displayData.city && displayData.country
-            ? `${displayData.city}, ${displayData.country}`
-            : "Location unavailable"}
-        </p>
-      </div>
     </div>
   );
 }

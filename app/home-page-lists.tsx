@@ -1,7 +1,5 @@
 "use client";
 
-import { Host, Program, Property, Retreat } from "@prisma/client";
-
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import { Separator } from "@/components/ui/separator";
 import { LazyRetreatItem } from "@/components/retreat-item";
@@ -43,7 +41,7 @@ export function ScrollableList({
   return (
     <div className="space-y-4">
       <div className="space-y-1">
-        <h2 className="text-2xl font-semibold tracking-tight">{title}</h2>
+        <h2 className="text-4xl leading-tight">{title}</h2>
         {description && (
           <p className="text-sm text-muted-foreground">{description}</p>
         )}
@@ -57,7 +55,7 @@ export function ScrollableList({
                 key={`${item.type}-${item.id}-${index}`}
                 id={item.id}
                 segment={getSegment(item.type)}
-                className={className ?? `w-[${width}px] h-auto`}
+                className={className ?? `w-[${width}px] h-auto `}
                 aspectRatio={aspectRatio}
                 width={width}
                 height={height}

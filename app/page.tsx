@@ -5,10 +5,16 @@ import { getProperties, getPropertyIds } from "@/actions/property-actions";
 import { getRetreats } from "@/actions/retreat-actions";
 import { auth } from "@/auth";
 
+
+
 import HeroCarousel from "@/components/ui/carousel-hero";
 import { BookingBar } from "@/components/booking-bar";
 
+
+
 import { HomePageLists } from "./home-page-lists";
+import DestinationGrid from "./destination-grid";
+
 
 export const metadata: Metadata = {
   title: "atma reserve",
@@ -26,8 +32,8 @@ export default async function Page() {
 
   const sections = [
     {
-      title: "Browse Retreats",
-      description: "Top picks for you. Updated on the regular.",
+      title: "Explore Our Retreat Collection",
+      description: "",
       items:
         retreats?.data?.map((r) => ({ id: r.id, type: "retreat" as const })) ??
         [],
@@ -36,28 +42,28 @@ export default async function Page() {
       height: 330,
       className: "w-[250px]",
     },
-    {
-      title: "Special Programmes",
-      description: "Curated programs just for you.",
-      items:
-        programs?.data?.map((p) => ({ id: p.id, type: "program" as const })) ??
-        [],
-      aspectRatio: "portrait" as const,
-      width: 250,
-      height: 330,
-      className: "w-[250px]",
-    },
-    {
-      title: "Destinations",
-      description: "Luxury locations, worldwide.",
-      items:
-        properties.map((p) => ({ id: p.id, type: "destination" as const })) ??
-        [],
-      aspectRatio: "square" as const,
-      width: 150,
-      height: 150,
-      className: "w-[150px]",
-    },
+    // {
+    //   title: "Special Programmes",
+    //   description: "Curated programs just for you.",
+    //   items:
+    //     programs?.data?.map((p) => ({ id: p.id, type: "program" as const })) ??
+    //     [],
+    //   aspectRatio: "portrait" as const,
+    //   width: 250,
+    //   height: 330,
+    //   className: "w-[250px]",
+    // },
+    // {
+    //   title: "Destinations",
+    //   description: "Luxury locations, worldwide.",
+    //   items:
+    //     properties.map((p) => ({ id: p.id, type: "destination" as const })) ??
+    //     [],
+    //   aspectRatio: "square" as const,
+    //   width: 150,
+    //   height: 150,
+    //   className: "w-[150px]",
+    // },
   ];
 
   return (
@@ -66,6 +72,7 @@ export default async function Page() {
       <div className="container flex flex-col gap-y-6 py-6">
         <HeroSection />
         <HomePageLists sections={sections} />
+        <DestinationGrid />
       </div>
     </>
   );
