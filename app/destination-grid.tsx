@@ -33,7 +33,7 @@ const content = {
 
 export default function DestinationGrid() {
   return (
-    <div className="md:container">
+    <div className="">
       <h2 className="mb-4 text-4xl tracking-tight">
         Discover New Destinations{" "}
       </h2>

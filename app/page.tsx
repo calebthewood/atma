@@ -5,16 +5,11 @@ import { getProperties, getPropertyIds } from "@/actions/property-actions";
 import { getRetreats } from "@/actions/retreat-actions";
 import { auth } from "@/auth";
 
-
-
 import HeroCarousel from "@/components/ui/carousel-hero";
 import { BookingBar } from "@/components/booking-bar";
 
-
-
-import { HomePageLists } from "./home-page-lists";
 import DestinationGrid from "./destination-grid";
-
+import { HomePageLists, ScrollableList } from "./home-page-lists";
 
 export const metadata: Metadata = {
   title: "atma reserve",
@@ -42,17 +37,17 @@ export default async function Page() {
       height: 330,
       className: "w-[250px]",
     },
-    // {
-    //   title: "Special Programmes",
-    //   description: "Curated programs just for you.",
-    //   items:
-    //     programs?.data?.map((p) => ({ id: p.id, type: "program" as const })) ??
-    //     [],
-    //   aspectRatio: "portrait" as const,
-    //   width: 250,
-    //   height: 330,
-    //   className: "w-[250px]",
-    // },
+    {
+      title: "Travel Differently: Wellness Programming",
+      description: "",
+      items:
+        programs?.data?.map((p) => ({ id: p.id, type: "program" as const })) ??
+        [],
+      aspectRatio: "portrait" as const,
+      width: 250,
+      height: 330,
+      className: "w-[250px]",
+    },
     // {
     //   title: "Destinations",
     //   description: "Luxury locations, worldwide.",
@@ -66,13 +61,20 @@ export default async function Page() {
     // },
   ];
 
+  // Travel Differently: Wellness Programming
+
   return (
     <>
       <BookingBar />
       <div className="container flex flex-col gap-y-6 py-6">
         <HeroSection />
-        <HomePageLists sections={sections} />
+        <ScrollableList {...sections[0]} />
         <DestinationGrid />
+        <ScrollableList {...sections[1]} />
+        <div className="mx-auto mt-12 mb-56 text-center">
+          <h3 className="text-4xl  mb-4">{`Escape the ordinary`}</h3>
+          <p className="text-xl px-12">{`At Atma Reserve, we craft extraordinary travel experiences. Explore our exclusive Hotel Collection or create your bespoke escape with you dedicated Client Advisor. From flights and transfers to unique experiences, let us handle every detail. Whatever your Travel State of Mind, let’s bring your dream journey to life.`}</p>
+        </div>
       </div>
     </>
   );

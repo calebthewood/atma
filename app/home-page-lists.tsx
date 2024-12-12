@@ -39,14 +39,14 @@ export function ScrollableList({
   };
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-4 my-10">
       <div className="space-y-1">
         <h2 className="text-4xl leading-tight">{title}</h2>
         {description && (
           <p className="text-sm text-muted-foreground">{description}</p>
         )}
       </div>
-      <Separator />
+      {/* <Separator /> */}
       <div className="relative">
         <ScrollArea>
           <div className="flex space-x-4 pb-4">
@@ -55,7 +55,7 @@ export function ScrollableList({
                 key={`${item.type}-${item.id}-${index}`}
                 id={item.id}
                 segment={getSegment(item.type)}
-                className={className ?? `w-[${width}px] h-auto `}
+                className={className ?? `w-[${width}px] h-auto`}
                 aspectRatio={aspectRatio}
                 width={width}
                 height={height}
