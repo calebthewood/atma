@@ -122,7 +122,7 @@ function BookingItem({
       </div>
       <div className="flex basis-1/2 flex-col items-end">
         <PriceSummary prices={prices} />
-        <CheckoutButton
+        {/* <CheckoutButton
           uiMode="embedded"
           price={adjustedPrice}
           userId={userId}
@@ -132,7 +132,7 @@ function BookingItem({
           checkInDate={item.startDate}
           checkOutDate={item.endDate}
           guestCount={guestCount}
-        />
+        /> */}
       </div>
     </div>
   );

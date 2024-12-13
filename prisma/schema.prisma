@@ -144,15 +144,15 @@ model Property {
     createdAt                DateTime          @default(now())
     updatedAt                DateTime          @updatedAt
     host                     Host?             @relation(fields: [hostId], references: [id])
-    reviews                  Review[]
-    images                   Image[]
     retreats                 Retreat[]
-    rooms                    Room[]
     programs                 Program[]
-    verified                 DateTime? // last date verified by human admin to fix scraping issues
+    rooms                    Room[]
+    images                   Image[]
     priceMods                PriceMod[]
     amenities                PropertyAmenity[]
-    Booking                  Booking[]
+    reviews                  Review[]
+    verified                 DateTime? // last date verified by human admin to fix scraping issues
+    booking                  Booking[]
 }
 
 // The profile for a room type offered by Host, not a record of the room itself
@@ -167,7 +167,7 @@ model Room {
     bedType     String? // Twin Bed: 39” x 75” (sleeps 1), Twin XL Bed: 39” x 80” (sleeps 1), Full Bed (Double Bed): 54” x 75” (sleeps 1-2), Queen Bed: 60” x 80” (sleeps 2), King Bed: 76” x 80” (sleeps 2), California King Bed: 72” x 84” (sleeps 2)
     minGuests   Int      @default(1)
     maxGuests   Int      @default(-1)
-    property    Property @relation(fields: [propertyId], references: [id])
+    property    Property @relation(fields: [propertyId], references: [id], onDelete: Cascade)
     propertyId  String
     createdAt   DateTime @default(now())
     updatedAt   DateTime @updatedAt
@@ -232,7 +232,7 @@ model Retreat {
     images                   Image[]
     host                     Host?             @relation(fields: [hostId], references: [id])
     hostId                   String?
-    property                 Property          @relation(fields: [propertyId], references: [id])
+    property                 Property          @relation(fields: [propertyId], references: [id], onDelete: Cascade)
     propertyId               String
     createdAt                DateTime          @default(now())
     updatedAt                DateTime          @updatedAt
@@ -265,7 +265,7 @@ model Program {
     images                   Image[]
     host                     Host?             @relation(fields: [hostId], references: [id])
     hostId                   String?
-    property                 Property          @relation(fields: [propertyId], references: [id])
+    property                 Property          @relation(fields: [propertyId], references: [id], onDelete: Cascade)
     propertyId               String
     createdAt                DateTime          @default(now())
     updatedAt                DateTime          @updatedAt
@@ -278,7 +278,7 @@ model Program {
 
 model RetreatInstance {
     id             String     @id @default(cuid())
-    retreat        Retreat    @relation(fields: [retreatId], references: [id])
+    retreat        Retreat    @relation(fields: [retreatId], references: [id], onDelete: Cascade)
     retreatId      String
     startDate      DateTime // start and end date can both be the window of time within which a retreat may be booked, or the specific length of the retreat
     endDate        DateTime
@@ -294,7 +294,7 @@ model RetreatInstance {
 
 model ProgramInstance {
     id             String     @id @default(cuid())
-    program        Program    @relation(fields: [programId], references: [id])
+    program        Program    @relation(fields: [programId], references: [id], onDelete: Cascade)
     programId      String
     startDate      DateTime // start and end date can both be the window of time within which a retreat may be booked, or the specific length of the retreat
     endDate        DateTime
@@ -318,8 +318,8 @@ model Booking {
     createdAt    DateTime @default(now())
     updatedAt    DateTime @updatedAt
 
-    propertyId        String
-    property          Property         @relation(fields: [propertyId], references: [id])
+    propertyId        String?
+    property          Property?        @relation(fields: [propertyId], references: [id])
     user              User             @relation(fields: [userId], references: [id])
     userId            String
     message           Message[]
@@ -345,17 +345,17 @@ model PriceMod {
     roomType          String           @default("all") // "single", "double", "suite", etc, or "all"
     createdAt         DateTime         @default(now())
     updatedAt         DateTime         @updatedAt
-    retreatInstance   RetreatInstance? @relation(fields: [retreatInstanceId], references: [id])
+    retreatInstance   RetreatInstance? @relation(fields: [retreatInstanceId], references: [id], onDelete: Cascade)
     retreatInstanceId String?
-    program           Program?         @relation(fields: [programId], references: [id])
+    program           Program?         @relation(fields: [programId], references: [id], onDelete: Cascade)
     programId         String?
-    host              Host?            @relation(fields: [hostId], references: [id])
+    host              Host?            @relation(fields: [hostId], references: [id], onDelete: Cascade)
     hostId            String?
-    retreat           Retreat?         @relation(fields: [retreatId], references: [id])
+    retreat           Retreat?         @relation(fields: [retreatId], references: [id], onDelete: Cascade)
     retreatId         String?
-    property          Property?        @relation(fields: [propertyId], references: [id])
+    property          Property?        @relation(fields: [propertyId], references: [id], onDelete: Cascade)
     propertyId        String?
-    ProgramInstance   ProgramInstance? @relation(fields: [programInstanceId], references: [id])
+    programInstance   ProgramInstance? @relation(fields: [programInstanceId], references: [id], onDelete: Cascade)
     programInstanceId String?
 }
 
@@ -378,13 +378,13 @@ model Review {
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt
 
-    property   Property? @relation(fields: [propertyId], references: [id])
+    property   Property? @relation(fields: [propertyId], references: [id], onDelete: Cascade)
     propertyId String?
     host       Host?     @relation(fields: [hostId], references: [id])
     hostId     String?
     retreat    Retreat?  @relation(fields: [retreatId], references: [id])
     retreatId  String?
-    Program    Program?  @relation(fields: [programId], references: [id])
+    program    Program?  @relation(fields: [programId], references: [id])
     programId  String?
 }
 
@@ -421,7 +421,7 @@ model Image {
     desc       String    @default("img description")
     user       User?     @relation(fields: [userId], references: [id])
     userId     String?
-    property   Property? @relation(fields: [propertyId], references: [id])
+    property   Property? @relation(fields: [propertyId], references: [id], onDelete: Cascade)
     propertyId String?
     program    Program?  @relation(fields: [programId], references: [id])
     programId  String?

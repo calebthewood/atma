@@ -107,9 +107,7 @@ export default function CheckoutButton({
                     stripe={getStripe()}
                     options={{ clientSecret }}
                   >
-                    {/* <ScrollArea className="h-[600px]"> */}
                     <EmbeddedCheckout />
-                    {/* </ScrollArea> */}
                   </EmbeddedCheckoutProvider>
                 </div>
               </DialogHeader>

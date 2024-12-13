@@ -14,7 +14,7 @@ import { Separator } from "@/components/ui/separator";
 export default async function Page({
   params,
 }: {
-  params: { bookingId: string };
+  params: Promise<{ bookingId: string }>;
 }) {
   try {
     const { bookingId } = await params;
@@ -32,7 +32,7 @@ export default async function Page({
     }
 
     return (
-      <div className="min-h-screen  px-4 py-12 sm:px-6 lg:px-8">
+      <div className="min-h-screen px-4 py-12 sm:px-6 lg:px-8">
         <div className="mx-auto max-w-2xl">
           <Card className="shadow-lg">
             <CardHeader className="text-center">
@@ -46,15 +46,12 @@ export default async function Page({
               {/* Property Section */}
               <div className="space-y-2">
                 <h3 className="text-lg font-semibold">Location</h3>
-                <div className="space-y-2 rounded  p-4">
+                <div className="space-y-2 rounded p-4">
                   <div className="flex items-start gap-2">
                     <MapPin className="mt-1 h-5 w-5 text-primary" />
                     <div>
                       <p className="font-medium">{property.name}</p>
-                      <p className="text-sm">
-                        {property.address}
-                      </p>
-
+                      <p className="text-sm">{property.address}</p>
                     </div>
                   </div>
                 </div>
@@ -69,7 +66,7 @@ export default async function Page({
                     <h3 className="text-lg font-semibold">
                       Experience Details
                     </h3>
-                    <div className="rounded  p-4">
+                    <div className="rounded p-4">
                       <p className="font-medium">{experienceName}</p>
                     </div>
                   </div>
@@ -127,7 +124,7 @@ export default async function Page({
                   </div>
                 </div>
 
-                <div className="rounded  p-4">
+                <div className="rounded p-4">
                   <div className="flex items-center justify-between">
                     <span className="text-lg font-semibold">Total Price</span>
                     <span className="text-2xl font-bold text-primary">

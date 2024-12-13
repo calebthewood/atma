@@ -46,7 +46,7 @@ const content = {
 
 export default function DestinationGrid() {
   return (
-     <div className="container mx-auto px-4">
+    <div className="container mx-auto px-4">
       <h2 className="mb-4 text-4xl tracking-tight">
         Discover New Destinations{" "}
       </h2>
@@ -162,7 +162,7 @@ function ImageCard({
               <Button
                 asChild
                 variant={"outline"}
-                className="basis-1/3 rounded-full bg-white/20 px-4 py-2 text-sm font-medium text-white backdrop-blur-sm transition hover:bg-white/30 transition-all drop-shadow-sm hover:drop-shadow-2xl"
+                className="basis-1/3 rounded-full bg-white/20 px-4 py-2 text-sm font-medium text-white drop-shadow-sm backdrop-blur-sm transition-all hover:bg-white/30 hover:drop-shadow-2xl"
               >
                 <Link prefetch href={buttonLink}>
                   {buttonText}

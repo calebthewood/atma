@@ -166,7 +166,7 @@ export function FlexibleBooking({ userId, retreat, events }: BookingListProps) {
         </P>
       </CardContent>
       <CardFooter className="justify-end">
-        <CheckoutButton
+        {/* <CheckoutButton
           uiMode="embedded"
           // price={Number(retreat.price)}
           price={250}
@@ -175,7 +175,7 @@ export function FlexibleBooking({ userId, retreat, events }: BookingListProps) {
           checkInDate={date?.from}
           checkOutDate={date?.to}
           guestCount={guestCount ?? 1}
-        />
+        /> */}
       </CardFooter>
     </Card>
   );

@@ -66,14 +66,14 @@ export default async function Page() {
   return (
     <>
       <BookingBar />
-      <div className="md:container flex flex-col gap-y-6 py-6">
+      <div className="flex flex-col gap-y-6 py-6 md:container">
         <HeroSection />
         <ScrollableList {...sections[0]} />
         <DestinationGrid />
         <ScrollableList {...sections[1]} />
-        <div className="mx-auto mt-12 mb-56 text-center">
-          <h3 className="text-4xl  mb-4">{`Escape the ordinary`}</h3>
-          <p className="text-xl px-12">{`At Atma Reserve, we craft extraordinary travel experiences. Explore our exclusive Hotel Collection or create your bespoke escape with you dedicated Client Advisor. From flights and transfers to unique experiences, let us handle every detail. Whatever your Travel State of Mind, let’s bring your dream journey to life.`}</p>
+        <div className="mx-auto mb-56 mt-12 text-center">
+          <h3 className="mb-4 text-4xl">{`Escape the ordinary`}</h3>
+          <p className="px-12 text-xl">{`At Atma Reserve, we craft extraordinary travel experiences. Explore our exclusive Hotel Collection or create your bespoke escape with you dedicated Client Advisor. From flights and transfers to unique experiences, let us handle every detail. Whatever your Travel State of Mind, let’s bring your dream journey to life.`}</p>
         </div>
       </div>
     </>

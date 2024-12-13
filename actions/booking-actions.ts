@@ -6,8 +6,8 @@ import { prisma } from "@/lib/prisma";
 
 export async function createBooking(data: {
   propertyId: string;
-  entity: "retreat" | "program";
-  entityId: string;
+  entity?: "retreat" | "program";
+  entityId?: string;
   checkInDate: Date;
   checkOutDate: Date;
   guestCount: number;
