@@ -152,6 +152,7 @@ model Property {
     verified                 DateTime? // last date verified by human admin to fix scraping issues
     priceMods                PriceMod[]
     amenities                PropertyAmenity[]
+    Booking                  Booking[]
 }
 
 // The profile for a room type offered by Host, not a record of the room itself
@@ -309,22 +310,23 @@ model ProgramInstance {
 
 model Booking {
     id           String   @id @default(cuid())
-    propertyId   String
     checkInDate  DateTime
     checkOutDate DateTime
     guestCount   Int
     totalPrice   String
-    status       String
+    status       String // can be various initial stripe/booking stages, upcoming, completed or archived
     createdAt    DateTime @default(now())
     updatedAt    DateTime @updatedAt
 
+    propertyId        String
+    property          Property         @relation(fields: [propertyId], references: [id])
     user              User             @relation(fields: [userId], references: [id])
     userId            String
     message           Message[]
     notification      Notification?
     retreatInstance   RetreatInstance? @relation(fields: [retreatInstanceId], references: [id])
     retreatInstanceId String?
-    ProgramInstance   ProgramInstance? @relation(fields: [programInstanceId], references: [id])
+    programInstance   ProgramInstance? @relation(fields: [programInstanceId], references: [id])
     programInstanceId String?
 }
 

@@ -66,7 +66,7 @@ export default async function Page() {
   return (
     <>
       <BookingBar />
-      <div className="container flex flex-col gap-y-6 py-6">
+      <div className="md:container flex flex-col gap-y-6 py-6">
         <HeroSection />
         <ScrollableList {...sections[0]} />
         <DestinationGrid />

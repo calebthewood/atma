@@ -1,6 +1,7 @@
 import { headers } from "next/headers";
 import { NextRequest, NextResponse } from "next/server";
 
+import { sendEmail } from "@/lib/sendgrid";
 import { stripe } from "@/lib/stripe";
 
 export async function POST(req: NextRequest) {

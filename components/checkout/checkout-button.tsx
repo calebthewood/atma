@@ -11,7 +11,6 @@ import {
 import type Stripe from "stripe";
 
 import getStripe from "@/lib/getStripe";
-import { CURRENCY, formatAmountForDisplay, stripe } from "@/lib/stripe";
 import {
   Dialog,
   DialogContent,
@@ -28,6 +27,8 @@ interface CheckoutFormProps {
   uiMode?: Stripe.Checkout.SessionCreateParams.UiMode;
   price: number;
   userId: string | undefined;
+  entity: "retreat" | "program";
+  entityId: string;
   propertyId: string;
   checkInDate: Date | undefined;
   checkOutDate: Date | undefined;
@@ -38,6 +39,8 @@ export default function CheckoutButton({
   uiMode,
   price,
   userId,
+  entity,
+  entityId,
   propertyId,
   checkInDate,
   checkOutDate,
@@ -58,11 +61,13 @@ export default function CheckoutButton({
     ) as Stripe.Checkout.SessionCreateParams.UiMode;
 
     const booking = await createBooking({
-      userId: userId,
-      propertyId: propertyId,
-      checkInDate: checkInDate,
-      checkOutDate: checkOutDate,
-      guestCount: guestCount,
+      userId,
+      entity,
+      entityId,
+      propertyId,
+      checkInDate,
+      checkOutDate,
+      guestCount,
       totalPrice: String(price),
       status: "checkout-initiated",
     });
@@ -72,7 +77,6 @@ export default function CheckoutButton({
       booking.id
     );
     if (uiMode === "embedded") return setClientSecret(client_secret);
-
     window.location.assign(url as string);
   };
   const disabled = !userId || !checkInDate || !checkOutDate;
@@ -95,10 +99,10 @@ export default function CheckoutButton({
             </DialogTrigger>
           </form>
           {clientSecret ? (
-            <DialogContent className="">
+            <DialogContent className="max-h-[720px] overflow-auto">
               <DialogHeader>
                 <DialogTitle>Checkout</DialogTitle>
-                <DialogDescription className="rounded">
+                <div className="rounded p-1">
                   <EmbeddedCheckoutProvider
                     stripe={getStripe()}
                     options={{ clientSecret }}
@@ -107,7 +111,7 @@ export default function CheckoutButton({
                     <EmbeddedCheckout />
                     {/* </ScrollArea> */}
                   </EmbeddedCheckoutProvider>
-                </DialogDescription>
+                </div>
               </DialogHeader>
             </DialogContent>
           ) : null}

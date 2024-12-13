@@ -279,9 +279,9 @@ export function LazyRetreatItem({
             </div>
 
             {/* Content */}
-            <div className="absolute inset-0 flex h-auto flex-col justify-between p-6">
-              <div className="space-y-2 text-white">
-                <h3 className="text-2xl leading-tight">{displayData.name}</h3>
+            <div className="absolute inset-0 flex h-auto flex-col justify-between py-6 px-4">
+              <div className="space-y-2 text-richBeige">
+                <h3 className="text-2xl font-medium leading-tight">{displayData.name}</h3>
               </div>
               <div>
                 <p className="text-sm font-medium text-white/80">

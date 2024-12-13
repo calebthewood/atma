@@ -81,7 +81,7 @@ export default function Page() {
   }, [handleSearch]);
 
   return (
-    <div className="h-full px-4 py-6 lg:px-8">
+    <div className="h-full px-4 py-6 lg:px-8 md:container">
       <div className="flex items-center justify-between">
         <div className="space-y-1">
           <h2 className="text-2xl font-semibold tracking-tight">

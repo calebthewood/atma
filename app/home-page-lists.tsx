@@ -39,7 +39,7 @@ export function ScrollableList({
   };
 
   return (
-    <div className="space-y-4 my-10">
+    <div className="space-y-4 my-10 px-4">
       <div className="space-y-1">
         <h2 className="text-4xl leading-tight">{title}</h2>
         {description && (

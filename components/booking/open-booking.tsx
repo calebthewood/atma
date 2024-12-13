@@ -126,6 +126,8 @@ function BookingItem({
           uiMode="embedded"
           price={adjustedPrice}
           userId={userId}
+          // entity={type}
+          // entityId={instanceId || ""}
           propertyId={retreat.propertyId}
           checkInDate={item.startDate}
           checkOutDate={item.endDate}

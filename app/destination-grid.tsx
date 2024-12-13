@@ -1,4 +1,5 @@
 import Image from "next/image";
+import Link from "next/link";
 
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -9,12 +10,18 @@ const content = {
     description: "200 hotels, 345 local flights and 234 bus providers",
     href: "/img/asia-card-bg.png",
     alt: "scenic asian landscape",
+    buttonText: "Explore More",
+    buttonLink:
+      "http://localhost:3000/search?place=Japan&lat=36.204824&lon=138.252924",
   },
   usa: {
     title: "USA",
     description: "Unleash your sense of adventure during a fitness retreat",
     href: "/img/usa-card-bg.png",
     alt: "scenic usa landscape",
+    buttonText: "Explore More",
+    buttonLink:
+      "http://localhost:3000/search?guests=2&place=USA&lat=38.7945952&lon=-106.5348379",
   },
   southAmerica: {
     title: "South America",
@@ -22,64 +29,76 @@ const content = {
       "Connect and align during an ayuverdic retreat in the mountains",
     href: "/img/coastline-card-bg.png",
     alt: "scenic usa landscape",
+    buttonText: "View",
+    buttonLink:
+      "http://localhost:3000/search?place=Brazil&lat=-14.235004&lon=-51.92528",
   },
   europe: {
     title: "Europe",
     description: "Step into an oasis with stunning views",
     href: "/img/coastline-card-bg.png",
     alt: "scenic european landscape",
+    buttonText: "View",
+    buttonLink:
+      "http://localhost:3000/search?place=Italy&lat=41.87194&lon=12.56738",
   },
 };
 
 export default function DestinationGrid() {
   return (
-    <div className="">
+     <div className="container mx-auto px-4">
       <h2 className="mb-4 text-4xl tracking-tight">
         Discover New Destinations{" "}
       </h2>
-      <div className="grid h-[600px] w-full grid-cols-4 grid-rows-5 gap-4">
-        {/* Large item (2x2) */}
-        <div className="col-span-2 row-span-3 h-full w-full">
+      {/* Grid container with responsive classes */}
+      <div className="grid gap-4 md:h-[600px] md:grid-cols-4 md:grid-rows-5">
+        {/* First large item - spans full width on mobile, 2 cols on desktop */}
+        <div className="h-[300px] md:col-span-2 md:row-span-3 md:h-full">
           <ImageCard
             className="h-full w-full"
             imgHref={content.usa.href}
             imgAlt={content.usa.alt}
             title={content.usa.title}
             description={content.usa.description}
-            buttonText="Explore More"
+            buttonText={content.usa.buttonText}
+            buttonLink={content.usa.buttonLink}
           />
         </div>
 
-        {/* Bottom two items (1x2 each) */}
-        <div className="col-span-1 col-start-1 row-span-2 h-full w-full">
+        {/* Two smaller items - stack on mobile, side by side on desktop */}
+        <div className="h-[300px] md:col-span-1 md:col-start-1 md:row-span-2 md:h-full">
           <ImageCard
             className="h-full w-full"
             imgHref={content.europe.href}
             imgAlt={content.europe.alt}
             title={content.europe.title}
             description={content.europe.description}
-            buttonText="View"
+            buttonText={content.europe.buttonText}
+            buttonLink={content.europe.buttonLink}
           />
         </div>
-        <div className="col-span-1 col-start-2 row-span-2 h-full w-full">
+        <div className="h-[300px] md:col-span-1 md:col-start-2 md:row-span-2 md:h-full">
           <ImageCard
             className="h-full w-full"
             imgHref={content.southAmerica.href}
             imgAlt={content.southAmerica.alt}
             title={content.southAmerica.title}
             description={content.southAmerica.description}
-            buttonText="View"
+            buttonText={content.southAmerica.buttonText}
+            buttonLink={content.southAmerica.buttonLink}
           />
         </div>
 
-        <div className="col-span-2 col-start-3 row-span-5 row-start-1 h-full w-full">
+        {/* Last large item - full width on mobile, right side on desktop */}
+        <div className="h-[400px] md:col-span-2 md:col-start-3 md:row-span-5 md:row-start-1 md:h-full">
           <ImageCard
             className="h-full w-full"
             imgHref={content.asia.href}
             imgAlt={content.asia.alt}
             title={content.asia.title}
             description={content.asia.description}
-            buttonText="Explore More"
+            buttonText={content.asia.buttonText}
+            buttonLink={content.asia.buttonLink}
           />
         </div>
       </div>
@@ -96,6 +115,7 @@ interface ImageCardProps {
   title: string;
   description: string;
   buttonText: string;
+  buttonLink: string;
 }
 
 function ImageCard({
@@ -107,6 +127,7 @@ function ImageCard({
   description,
   buttonText,
   className,
+  buttonLink,
   ...props
 }: ImageCardProps) {
   return (
@@ -139,10 +160,13 @@ function ImageCard({
             </p>
             {buttonText && (
               <Button
+                asChild
                 variant={"outline"}
-                className="basis-1/3 rounded-full bg-white/20 px-4 py-2 text-sm font-medium text-white backdrop-blur-sm transition hover:bg-white/30"
+                className="basis-1/3 rounded-full bg-white/20 px-4 py-2 text-sm font-medium text-white backdrop-blur-sm transition hover:bg-white/30 transition-all drop-shadow-sm hover:drop-shadow-2xl"
               >
-                {buttonText}
+                <Link prefetch href={buttonLink}>
+                  {buttonText}
+                </Link>
               </Button>
             )}
           </div>

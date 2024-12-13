@@ -38,6 +38,7 @@ interface RootLayoutProps {
 export default async function RootLayout({ children }: RootLayoutProps) {
   const properties = await getPropertyIds();
   const retreats = await getRetreats();
+
   return (
     <>
       <html lang="en" suppressHydrationWarning>

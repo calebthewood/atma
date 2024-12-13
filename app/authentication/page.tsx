@@ -28,6 +28,7 @@ export default function AuthenticationPage() {
         <div className="absolute inset-0 bg-zinc-900" />
         <Image
           alt=""
+          className="object-cover"
           src="/stock-images/jared-rice-NTyBbu66_SI-unsplash.jpg"
           fill={true}
         />

@@ -37,16 +37,16 @@ export async function createCheckoutSession(
       ],
       metadata: { bookingId },
       ...(ui_mode === "hosted" && {
-        success_url: `${origin}/checkout?session_id={CHECKOUT_SESSION_ID}`,
+        success_url: `${origin}/checkout/${bookingId}/?session_id={CHECKOUT_SESSION_ID}`,
         cancel_url: `${origin}/checkout`,
       }),
       ...(ui_mode === "embedded" && {
-        return_url: `${origin}/checkout?session_id={CHECKOUT_SESSION_ID}`,
+        return_url: `${origin}/checkout/${bookingId}/?session_id={CHECKOUT_SESSION_ID}`,
       }),
       ui_mode,
     });
 
-  console.log("checkout session: ", checkoutSession);
+  // console.log("checkout session: ", checkoutSession);
 
   return {
     client_secret: checkoutSession.client_secret,

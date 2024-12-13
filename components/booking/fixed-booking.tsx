@@ -199,6 +199,8 @@ export function FixedBooking({
           uiMode="embedded"
           price={total}
           userId={userId}
+          entity={type}
+          entityId={instanceId || ""}
           propertyId={item.propertyId}
           checkInDate={date?.from}
           checkOutDate={date?.to}

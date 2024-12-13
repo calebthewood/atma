@@ -6,6 +6,8 @@ import { prisma } from "@/lib/prisma";
 
 export async function createBooking(data: {
   propertyId: string;
+  entity: "retreat" | "program";
+  entityId: string;
   checkInDate: Date;
   checkOutDate: Date;
   guestCount: number;
@@ -14,9 +16,11 @@ export async function createBooking(data: {
   userId: string;
 }) {
   try {
+    const key = data.entity + "InstanceId";
     const booking = await prisma.booking.create({
       data: {
         propertyId: data.propertyId,
+        [key]: data.entityId,
         checkInDate: data.checkInDate,
         checkOutDate: data.checkOutDate,
         guestCount: data.guestCount,
@@ -25,8 +29,6 @@ export async function createBooking(data: {
         userId: data.userId,
       },
     });
-
-    revalidatePath("/bookings");
 
     return booking;
   } catch (error) {
@@ -50,6 +52,41 @@ export async function getBookingById(bookingId: string) {
     const booking = await prisma.booking.findUnique({
       where: {
         id: bookingId,
+      },
+    });
+
+    if (!booking) {
+      throw new Error("Booking not found");
+    }
+
+    return booking;
+  } catch (error) {
+    console.error(`Error fetching booking with id ${bookingId}:`, error);
+    throw new Error(`Failed to fetch booking with id ${bookingId}`);
+  }
+}
+
+export async function getBookingWithRelations(bookingId: string) {
+  try {
+    const booking = await prisma.booking.findUnique({
+      where: {
+        id: bookingId,
+      },
+      include: {
+        retreatInstance: {
+          include: {
+            retreat: {
+              include: { property: true },
+            },
+          },
+        },
+        programInstance: {
+          include: {
+            program: {
+              include: { property: true },
+            },
+          },
+        },
       },
     });
 

@@ -2,21 +2,25 @@ import { NextResponse } from "next/server";
 import { createBooking, updateBooking } from "@/actions/booking-actions";
 import type { Stripe } from "stripe";
 
+import { sendEmail } from "@/lib/sendgrid";
 import { stripe } from "@/lib/stripe";
 
 /* ReadMe
   to test locally, run "stripe listen --forward-to localhost:3000/api/webhooks" in
   the terminal, this establishes a 'local listener' connected to your stripe dashboard.
-  you can verify this by checkig the local listener STATUS here: https://dashboard.stripe.com/test/webhooks
+  you can verify this by checking the local listener STATUS here: https://dashboard.stripe.com/test/webhooks
   otherwise your local dev app wont receive events when going thru the checkout process.
 */
 export async function POST(req: Request) {
   let event: Stripe.Event;
 
   try {
+    const body = await req.text();
+    const signature = req.headers.get("stripe-signature") as string;
+
     event = stripe.webhooks.constructEvent(
-      await (await req.blob()).text(),
-      req.headers.get("stripe-signature") as string,
+      body,
+      signature,
       process.env.STRIPE_WEBHOOK_SECRET as string
     );
   } catch (err) {
@@ -37,6 +41,9 @@ export async function POST(req: Request) {
     "checkout.session.completed",
     "payment_intent.succeeded",
     "payment_intent.payment_failed",
+    "charge.updated",
+    "booking",
+    "checkout.session.completed",
   ];
 
   if (permittedEvents.includes(event.type)) {
@@ -53,7 +60,7 @@ export async function POST(req: Request) {
             const res = await updateBooking(bookingId, { status: "completed" });
 
             if (res) {
-              console.log(`💰💰 Booking status: completeda`);
+              console.log(`💰💰 Booking status: completed`);
             }
           }
 
