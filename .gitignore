@@ -43,3 +43,6 @@ ingest/
 *.sqlite3
 *.sqlite-journal
 *.sqlite3-journal
+
+# misc
+deploy-staging.sh

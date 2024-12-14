@@ -214,7 +214,7 @@ export function LazyRetreatItem({
 
   if (isLoading || !item) {
     return (
-      <div className={cn("flex flex-col space-y-3", className)}>
+      <div className={cn("flex flex-col space-y-3 ", className)}>
         <Skeleton
           className={cn(
             "rounded-xl",
@@ -258,11 +258,11 @@ export function LazyRetreatItem({
 
   return (
     <div
-      className={cn("group relative overflow-hidden rounded", className)}
+      className={cn("group relative overflow-hidden rounded m-2 shadow-sm", className)}
       style={{ height: `${height}px` }}
       {...props}
     >
-      <Link prefetch href={`/${segment}/${id}`} className="absolute inset-0">
+      <Link prefetch href={`/${segment}/${id}`} className="absolute inset-0 ">
         <ContextMenu>
           <ContextMenuTrigger>
             {/* Background Image with Overlay */}
