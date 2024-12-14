@@ -10,7 +10,7 @@
     "dev": "npx prisma db push && next dev --turbopack",
     "build": "next build",
     "start": "next start",
-    "deploy": "bash deploy.sh",
+    "deploy": "bash deploy-staging.sh",
     "lint": "next lint",
     "lint:fix": "next lint --fix",
     "format": "prettier --write .",

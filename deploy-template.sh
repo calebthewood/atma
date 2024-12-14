@@ -1,11 +1,9 @@
 #!/bin/bash
 
 # Configuration
-HOST="[ip address]"
-USER="[user]"
-SSH_ALIAS="[from ssh config, if exists]"
-APP_USER="[server user]"
-APP_DIR="/home/atma/[app]"
+HOST="[ip]"
+SSH_ALIAS="[set in /.ssh/config]"
+APP_DIR="/home/atma/atma"
 SERVICE_NAME="atma-staging.service"
 
 # Text colors
@@ -15,32 +13,31 @@ NC='\033[0m' # No Color
 
 echo -e "${GREEN}Deploying to production...${NC}"
 
-# SSH into server and run deployment commands
-ssh $SSH_ALIAS /bin/bash << EOF
-    # Print commands and exit on errors
-    set -xe
+ssh -tt $SSH_ALIAS << EOF
+    set -x
 
-    echo -e "${GREEN}Switching to $APP_USER user...${NC}"
-    sudo su - $APP_USER << ATMA_COMMANDS
-        echo -e "${GREEN}Navigating to app directory...${NC}"
+    # Use su instead of sudo -u
+    sudo su - atma << 'ENDBASH'
         cd $APP_DIR
-
-        echo -e "${GREEN}Pulling latest changes...${NC}"
         git stash
         git pull
-
-        echo -e "${GREEN}Installing dependencies and building...${NC}"
-        npm ci
+        rm -rf node_modules
+        rm -rf .next
+        npm i --force
         npm run build
+ENDBASH
 
-        exit
-ATMA_COMMANDS
+    set -x
+    echo "Restarting service..."
+    sudo systemctl restart atma-staging.service
 
-    echo -e "${GREEN}Restarting service...${NC}"
-    sudo systemctl restart $SERVICE_NAME
+    echo "Checking service status..."
+    sudo systemctl status atma-staging.service --no-pager
 
-    echo -e "${GREEN}Checking service status...${NC}"
-    sudo systemctl status $SERVICE_NAME --no-pager
+    echo "Recent application logs:"
+    sudo journalctl --no-pager -u atma-staging.service -n 50
+    set +x
+    exit
 EOF
 
 if [ $? -eq 0 ]; then
