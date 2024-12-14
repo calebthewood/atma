@@ -23,31 +23,27 @@
 
 .noise::before {
   background:
-    repeating-radial-gradient(#000 0 0.0001%, #fff 0 0.0002%) 60% 60%/3000px
-      3000px,
-    repeating-conic-gradient(#000 0 0.0001%, #fff 0 0.0002%) 40% 40%/3000px
-      3000px;
+    repeating-radial-gradient(#000 0 0.0001%, #fff 0 0.0002%) 60% 60%/3000px 3000px,
+    repeating-conic-gradient(#000 0 0.0001%, #fff 0 0.0002%) 40% 40%/3000px 3000px;
   background-blend-mode: difference;
   opacity: 0.1;
 }
 
 .noise::after {
-  background-image: linear-gradient(
-    45deg,
-    hsl(0deg 0% 100% / 80%) 0%,
-    hsl(300deg 100% 100%) 8%,
-    hsl(300deg 100% 100%) 17%,
-    hsl(300deg 100% 100%) 25%,
-    hsl(300deg 100% 100%) 33%,
-    hsl(300deg 100% 100%) 42%,
-    hsl(300deg 100% 100%) 50%,
-    hsl(300deg 100% 100%) 58%,
-    hsl(300deg 100% 100%) 67%,
-    hsl(300deg 100% 100%) 75%,
-    hsl(300deg 100% 100%) 83%,
-    hsl(300deg 100% 100%) 92%,
-    hsl(0deg 0% 100% / 20%) 100%
-  );
+  background-image: linear-gradient(45deg,
+      hsl(0deg 0% 100% / 80%) 0%,
+      hsl(300deg 100% 100%) 8%,
+      hsl(300deg 100% 100%) 17%,
+      hsl(300deg 100% 100%) 25%,
+      hsl(300deg 100% 100%) 33%,
+      hsl(300deg 100% 100%) 42%,
+      hsl(300deg 100% 100%) 50%,
+      hsl(300deg 100% 100%) 58%,
+      hsl(300deg 100% 100%) 67%,
+      hsl(300deg 100% 100%) 75%,
+      hsl(300deg 100% 100%) 83%,
+      hsl(300deg 100% 100%) 92%,
+      hsl(0deg 0% 100% / 20%) 100%);
   mix-blend-mode: normal;
   opacity: 0.2;
 }
@@ -66,6 +62,143 @@
     src: url("/fonts/TeluguMN-01.ttf") format("opentype");
     font-weight: normal;
     font-style: normal;
+    font-display: swap;
+  }
+
+
+  /* Test Sans Wide - Book */
+  @font-face {
+    font-family: "test-sans-wide";
+    src: url("/fonts/test-sans-wide-book.woff2") format("woff2");
+    font-weight: 400;
+    font-style: normal;
+    font-display: swap;
+  }
+
+  @font-face {
+    font-family: "test-sans-wide";
+    src: url("/fonts/test-sans-wide-book-italic.woff2") format("woff2");
+    font-weight: 400;
+    font-style: italic;
+    font-display: swap;
+  }
+
+  /* Test Sans Wide - Light */
+  @font-face {
+    font-family: "test-sans-wide";
+    src: url("/fonts/test-sans-wide-extra-light.woff2") format("woff2");
+    font-weight: 300;
+    font-style: normal;
+    font-display: swap;
+  }
+
+  @font-face {
+    font-family: "test-sans-wide";
+    src: url("/fonts/test-sans-wide-light-italic.woff2") format("woff2");
+    font-weight: 300;
+    font-style: italic;
+    font-display: swap;
+  }
+
+  /* Test Sans Wide - Regular/Medium */
+  @font-face {
+    font-family: "test-sans-wide";
+    src: url("/fonts/test-sans-wide.woff2") format("woff2");
+    font-weight: 500;
+    font-style: normal;
+    font-display: swap;
+  }
+
+  @font-face {
+    font-family: "test-sans-wide";
+    src: url("/fonts/test-sans-wide-italic.woff2") format("woff2");
+    font-weight: 500;
+    font-style: italic;
+    font-display: swap;
+  }
+
+  /* Test Sans Wide - Half Bold */
+  @font-face {
+    font-family: "test-sans-wide";
+    src: url("/fonts/test-sans-wide-half-bold.woff2") format("woff2");
+    font-weight: 600;
+    font-style: normal;
+    font-display: swap;
+  }
+
+  @font-face {
+    font-family: "test-sans-wide";
+    src: url("/fonts/test-sans-wide-half-bold-italic.woff2") format("woff2");
+    font-weight: 600;
+    font-style: italic;
+    font-display: swap;
+  }
+
+  /* Test Sans Wide - Bold */
+  @font-face {
+    font-family: "test-sans-wide";
+    src: url("/fonts/test-sans-wide-bold.woff2") format("woff2");
+    font-weight: 700;
+    font-style: normal;
+    font-display: swap;
+  }
+
+  @font-face {
+    font-family: "test-sans-wide";
+    src: url("/fonts/test-sans-wide-bold-kursiv.woff2") format("woff2");
+    font-weight: 700;
+    font-style: italic;
+    font-display: swap;
+  }
+
+  /* Test Sans Wide - Three Quarter Bold */
+  @font-face {
+    font-family: "test-sans-wide";
+    src: url("/fonts/test-sans-wide-three-quarter-bold.woff2") format("woff2");
+    font-weight: 750;
+    font-style: normal;
+    font-display: swap;
+  }
+
+  @font-face {
+    font-family: "test-sans-wide";
+    src: url("/fonts/test-sans-wide-three-quarter-bold-italic.woff2") format("woff2");
+    font-weight: 750;
+    font-style: italic;
+    font-display: swap;
+  }
+
+  /* Test Sans Wide - Extra Bold */
+  @font-face {
+    font-family: "test-sans-wide";
+    src: url("/fonts/test-sans-wide-extra-bold.woff2") format("woff2");
+    font-weight: 800;
+    font-style: normal;
+    font-display: swap;
+  }
+
+  @font-face {
+    font-family: "test-sans-wide";
+    src: url("/fonts/test-sans-wide-extra-bold-italic.woff2") format("woff2");
+    font-weight: 800;
+    font-style: italic;
+    font-display: swap;
+  }
+
+  /* Test Sans Wide - Strong */
+  @font-face {
+    font-family: "test-sans-wide";
+    src: url("/fonts/test-sans-wide-strong.woff2") format("woff2");
+    font-weight: 900;
+    font-style: normal;
+    font-display: swap;
+  }
+
+  @font-face {
+    font-family: "test-sans-wide";
+    src: url("/fonts/test-sans-wide-strong-italic.woff2") format("woff2");
+    font-weight: 900;
+    font-style: italic;
     font-display: swap;
   }
 

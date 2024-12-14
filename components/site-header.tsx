@@ -1,8 +1,5 @@
-import Link from "next/link";
 
 import { siteConfig } from "@/config/site";
-import { buttonVariants } from "@/components/ui/button";
-import { Icons } from "@/components/icons";
 import {
   HeroTitle,
   MainNav,

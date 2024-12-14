@@ -9,7 +9,6 @@ const config = {
     "./app/**/*.{ts,tsx}",
     "./src/**/*.{ts,tsx}",
   ],
-  prefix: "",
   theme: {
     container: {
       center: true,
@@ -18,9 +17,6 @@ const config = {
         "2xl": "1400px",
       },
     },
-    fontFamily: {
-      title: ["var(--font-title)", ...fontFamily.sans],
-    },
     extend: {
       colors: {
         border: "hsl(var(--border))",
@@ -28,6 +24,14 @@ const config = {
         ring: "hsl(var(--ring))",
         background: "hsl(var(--background))",
         foreground: "hsl(var(--foreground))",
+        richBlack: "#060201",
+        crowshead: "#1B0E0A",
+        eternity: "#271910",
+        bistre: "#271910",
+        richBistre: "#3F2C20",
+        linear: "#271910",
+        richBeige: "#F3EEE7",
+        fontColor: "#F0F1DD",
         primary: {
           DEFAULT: "hsl(var(--primary))",
           foreground: "hsl(var(--primary-foreground))",
@@ -56,15 +60,23 @@ const config = {
           DEFAULT: "hsl(var(--card))",
           foreground: "hsl(var(--card-foreground))",
         },
-        richblack: "#060201",
-        crowshead: "#1B0E0A",
-        eternity: "#271910",
-        bistre: "#3F2C20",
+        atma: {
+          red: "#FC5630",
+          turquoise: "#C1EAE6",
+          yellow: "#FEFF97",
+          mint: "#BDFFCB",
+          beige: "#FFDBCD",
+        },
       },
       borderRadius: {
-        lg: "var(--radius)",
-        md: "calc(var(--radius) - 2px)",
+        lg: `var(--radius)`,
+        md: `calc(var(--radius) - 2px)`,
         sm: "calc(var(--radius) - 4px)",
+      },
+      fontFamily: {
+        title: ["bristone", "sans"],
+        tagline: ["telugumn", "sans"],
+        sans: ["var(--font-test-sans-wide)", ...fontFamily.sans],
       },
       keyframes: {
         "accordion-down": {
@@ -84,6 +96,9 @@ const config = {
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
         "fade-in": "fade-in 0.5s ease-out",
+      },
+      backgroundImage: {
+        "gradient-dark": "linear-gradient(to top right, #060201, #271910)",
       },
     },
   },

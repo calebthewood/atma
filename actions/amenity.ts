@@ -285,37 +285,37 @@ export async function getEntityAmenities(
 }
 
 /**
- * Get amenities grouped by category
+ * Get amenities grouped by category, commented out for erroneous build error
  */
-export async function getAmenitiesByCategory(type: AmenityType) {
-  try {
-    const validatedType = amenityTypeSchema.parse(type);
+// export async function getAmenitiesByCategory(type: AmenityType) {
+//   try {
+//     const validatedType = amenityTypeSchema.parse(type);
 
-    const amenities = await prisma.amenity.findMany({
-      where: {
-        type: validatedType,
-      },
-      orderBy: [{ categoryName: "asc" }, { name: "asc" }],
-    });
+//     const amenities = await prisma.amenity.findMany({
+//       where: {
+//         type: validatedType,
+//       },
+//       orderBy: [{ categoryName: "asc" }, { name: "asc" }],
+//     });
 
-    const grouped = amenities.reduce(
-      (acc, amenity) => {
-        const category = amenity.categoryName || "Uncategorized";
-        if (!acc[category]) {
-          acc[category] = [];
-        }
-        acc[category].push(amenity);
-        return acc;
-      },
-      {} as Record<string, typeof amenities>
-    );
+//     const grouped = amenities.reduce(
+//       (acc, amenity) => {
+//         const category = amenity.categoryName || "Uncategorized";
+//         if (!acc[category]) {
+//           acc[category] = [];
+//         }
+//         acc[category].push(amenity);
+//         return acc;
+//       },
+//       {} as Record<string, typeof amenities>
+//     );
 
-    return grouped;
-  } catch (error) {
-    if (error instanceof z.ZodError) {
-      throw new Error(`Invalid amenity type: ${type}`);
-    }
-    console.error("Failed to fetch amenities by category:", error);
-    throw new Error("Failed to fetch amenities by category");
-  }
-}
+//     return grouped;
+//   } catch (error) {
+//     if (error instanceof z.ZodError) {
+//       throw new Error(`Invalid amenity type: ${type}`);
+//     }
+//     console.error("Failed to fetch amenities by category:", error);
+//     throw new Error("Failed to fetch amenities by category");
+//   }
+// }

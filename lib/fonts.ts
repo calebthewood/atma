@@ -1,15 +1,8 @@
 import {
   JetBrains_Mono as FontMono,
-  Inter as FontSans,
-  Montserrat,
-  Roboto,
+  Instrument_Sans,
 } from "next/font/google";
-
-export const fontSans = Montserrat({
-  subsets: ["latin"],
-  variable: "--font-sans",
-  display: "swap",
-});
+import localFont from "next/font/local";
 
 export const fontMono = FontMono({
   subsets: ["latin"],
@@ -19,16 +12,48 @@ export const fontMono = FontMono({
 
 export const fontSerif = FontMono({
   subsets: ["latin"],
-  variable: "--font-mono",
+  variable: "--font-serif",
   display: "swap",
 });
 
-/** Style guide uses Gilroy (sans) for titles & marketing, webflow  site uses Goudosb (serif).
- * Using Roboto here as a free alternative to Gilroy. Ask Scarlett & Anas.
- */
-export const fontTitle = Roboto({
-  weight: ["100", "300", "400", "500", "700", "900"],
+export const fontSans = Instrument_Sans({
+  weight: ["400", "500", "700"],
   subsets: ["latin"],
   variable: "--font-title",
+  display: "swap",
+});
+
+export const fontTitle = localFont({
+  src: [
+    // Regular weights
+    {
+      path: "../public/fonts/test-sans-wide-book.woff2",
+      weight: "400",
+      style: "normal",
+    },
+    {
+      path: "../public/fonts/test-sans-wide-book-italic.woff2",
+      weight: "400",
+      style: "italic",
+    },
+    {
+      path: "../public/fonts/test-sans-wide.woff2",
+      weight: "500",
+      style: "normal",
+    },
+    {
+      path: "../public/fonts/test-sans-wide-italic.woff2",
+      weight: "500",
+      style: "italic",
+    },
+    // Add other weights similarly...
+    {
+      path: "../public/fonts/test-sans-wide-bold.woff2",
+      weight: "700",
+      style: "normal",
+    },
+    // ... continue with other weights
+  ],
+  variable: "--font-test-sans-wide",
   display: "swap",
 });
