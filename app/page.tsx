@@ -7,7 +7,6 @@ import { auth } from "@/auth";
 
 import { BookingBar } from "@/components/booking-bar";
 import DestinationSection from "@/components/sections/destination-section";
-import FooterSection from "@/components/sections/footer-section";
 import ProgramSection from "@/components/sections/program-section";
 import RetreatSection from "@/components/sections/retreat-section";
 import SubscriptionSection from "@/components/sections/subscription-section";
@@ -34,7 +33,6 @@ export default async function Page() {
         <DestinationSection />
         <RetreatSection />
         <SubscriptionSection />
-        <FooterSection />
       </div>
     </>
   );

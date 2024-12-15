@@ -8,6 +8,7 @@ import { getRetreats } from "@/actions/retreat-actions";
 import { siteConfig } from "@/config/site";
 import { fontSans, fontTitle } from "@/lib/fonts/fonts";
 import { cn } from "@/lib/utils";
+import FooterSection from "@/components/sections/footer-section";
 import { SiteHeader } from "@/components/site-header";
 import { TailwindIndicator } from "@/components/tailwind-indicator";
 import { ThemeProvider } from "@/components/theme-provider";
@@ -46,7 +47,7 @@ export default async function RootLayout({ children }: RootLayoutProps) {
         <head />
         <body
           className={cn(
-            "min-h-screen bg-richBeige font-sans antialiased dark:bg-gradient-dark",
+            "bg-richBeige font-sans antialiased dark:bg-gradient-dark",
             fontSans.variable,
             fontTitle.variable
           )}
@@ -56,6 +57,7 @@ export default async function RootLayout({ children }: RootLayoutProps) {
               <SiteHeader />
               {children}
             </div>
+            <FooterSection />
             <TailwindIndicator />
           </ThemeProvider>
         </body>

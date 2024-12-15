@@ -4,7 +4,7 @@ export default function FooterSection() {
   const currentYear = new Date().getFullYear();
 
   return (
-    <footer className="flex flex-col gap-3 border-t bg-[#f4f1ea] px-4 py-6 md:px-8 lg:px-12">
+    <footer className="flex flex-col gap-3 border-t px-4 py-6 md:px-8 lg:px-12">
       <div className="flex flex-col items-center justify-between gap-4 md:flex-row">
         <Link
           href="/"

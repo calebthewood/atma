@@ -1,6 +1,6 @@
 export default function SubscriptionSection() {
   return (
-    <div className="mx-auto h-96 w-full max-w-3xl bg-[#f4f1ea]">
+    <div className="mx-auto h-96 w-full max-w-3xl">
       <div className="text-left font-broad text-[35px] font-semibold text-black">
         Your wellness journey starts here
       </div>
