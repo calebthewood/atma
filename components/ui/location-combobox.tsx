@@ -41,6 +41,8 @@ interface SelectedPlace {
 
 const buttonClasses =
   "h-12 pb-0 w-full rounded rounded-b-none border-b-2 border-transparent border-b-black bg-transparent text-left shadow-none px-0";
+// because google...
+const google = window.google;
 
 export function LocationCombobox() {
   const [open, setOpen] = useState(false);
