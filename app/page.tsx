@@ -7,9 +7,12 @@ import { auth } from "@/auth";
 
 import HeroCarousel from "@/components/ui/carousel-hero";
 import { BookingBar } from "@/components/booking-bar";
+import DestinationSection from "@/components/sections/destination-section";
+import ProgramSection from "@/components/sections/program-section";
 
 import DestinationGrid from "./destination-grid";
 import { HomePageLists, ScrollableList } from "./home-page-lists";
+import RetreatSection from "@/components/sections/retreat-section";
 
 export const metadata: Metadata = {
   title: "atma reserve",
@@ -69,14 +72,9 @@ export default async function Page() {
     <>
       <BookingBar />
       <div className="flex flex-col gap-y-6 py-6 md:container">
-        <HeroSection />
-        <ScrollableList {...sections[0]} />
-        <DestinationGrid />
-        <ScrollableList {...sections[1]} />
-        <div className="mx-auto mb-56 mt-12 text-center">
-          <h3 className="mb-4 text-4xl">{`Escape the ordinary`}</h3>
-          <p className="px-12 text-xl">{`At Atma Reserve, we craft extraordinary travel experiences. Explore our exclusive Hotel Collection or create your bespoke escape with you dedicated Client Advisor. From flights and transfers to unique experiences, let us handle every detail. Whatever your Travel State of Mind, let’s bring your dream journey to life.`}</p>
-        </div>
+        <ProgramSection programs={programs.data?.slice(0, 3) ?? []} />
+        <DestinationSection />
+        <RetreatSection />
       </div>
     </>
   );

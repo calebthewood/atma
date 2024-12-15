@@ -2,7 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import { programFormSchema } from "@/schemas/program-schema";
-import { Prisma, Program } from "@prisma/client";
+import { Image, Prisma, Program } from "@prisma/client";
 import { z } from "zod";
 
 import prisma from "@/lib/prisma";
@@ -12,7 +12,7 @@ import prisma from "@/lib/prisma";
 // ============================================================================
 
 export type BaseProgram = Program & {
-  property?: { name: string };
+  property?: { name: string; country: string; city: string; images: Image[] };
   host?: { name: string | null };
 };
 
@@ -163,7 +163,11 @@ export async function getPrograms(): ActionResponse<BaseProgram[]> {
   try {
     const programs = await prisma.program.findMany({
       where: { status: "published" },
-      include: { property: { select: { name: true } } },
+      include: {
+        property: {
+          select: { name: true, images: true, city: true, country: true },
+        },
+      },
     });
     return { success: true, data: programs };
   } catch (error) {

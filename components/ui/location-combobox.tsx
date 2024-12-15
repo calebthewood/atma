@@ -27,7 +27,7 @@ import {
   EuropeIcon,
   NorthAmericaIcon,
   SouthAmericaIcon,
-} from "../svg/svg";
+} from "../geography/lo-res";
 
 interface Place {
   description: string;
