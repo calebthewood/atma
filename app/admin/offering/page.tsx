@@ -8,7 +8,7 @@ export default function AmenityPage() {
   return (
     <div className="">
       <h3 className="text-lg font-medium">Create New Offering</h3>
-      <p className="text-muted-foreground text-sm">
+      <p className="text-sm text-muted-foreground">
         Form allows admin user to create a new Amenity or Activity item
       </p>
       <Separator className="my-6" />

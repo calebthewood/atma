@@ -124,7 +124,7 @@ export const AmenityCheckboxes = ({
   if (loading) {
     return (
       <div className="flex items-center justify-center p-4">
-        <div className="text-muted-foreground text-sm">
+        <div className="text-sm text-muted-foreground">
           Loading amenities...
         </div>
       </div>
@@ -133,16 +133,16 @@ export const AmenityCheckboxes = ({
 
   if (error) {
     return (
-      <div className="bg-destructive/10 rounded-md p-4">
-        <div className="text-destructive text-sm">{error}</div>
+      <div className="rounded-md bg-destructive/10 p-4">
+        <div className="text-sm text-destructive">{error}</div>
       </div>
     );
   }
 
   if (amenities.length === 0) {
     return (
-      <div className="bg-muted rounded-md p-4">
-        <div className="text-muted-foreground text-sm">No amenities found</div>
+      <div className="rounded-md bg-muted p-4">
+        <div className="text-sm text-muted-foreground">No amenities found</div>
       </div>
     );
   }

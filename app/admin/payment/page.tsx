@@ -7,7 +7,7 @@ export default function Page() {
   return (
     <div className="">
       <h3 className="text-lg font-medium">Payments</h3>
-      <p className="text-muted-foreground text-sm">
+      <p className="text-sm text-muted-foreground">
         For testing only, to be setup with Stripe
       </p>
       <Separator className="my-6" />

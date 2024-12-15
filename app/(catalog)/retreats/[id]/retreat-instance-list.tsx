@@ -58,7 +58,7 @@ const RetreatInstances = ({ instances }: RetreatInstancesProps) => {
           <div
             key={instance.id}
             onClick={() => handleInstanceClick(instance.id)}
-            className={`hover:border-richBlack hover:bg-richBlack/30 cursor-pointer rounded-lg border p-4 transition-all hover:shadow-md ${
+            className={`cursor-pointer rounded-lg border p-4 transition-all hover:border-richBlack hover:bg-richBlack/30 hover:shadow-md ${
               selectedInstanceId === instance.id
                 ? "bg-richWhite/10 border-richBlack"
                 : "border-gray-200/30"
@@ -66,7 +66,7 @@ const RetreatInstances = ({ instances }: RetreatInstancesProps) => {
           >
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-3">
-                <Calendar className="text-richBlack size-5" />
+                <Calendar className="size-5 text-richBlack" />
                 <div>
                   <div className="font-medium">
                     {formatDate(instance.startDate)}

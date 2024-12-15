@@ -75,7 +75,7 @@ function DetailCard({ name, icon, value }: DetailCardProps) {
         <CardTitle className="mx-auto font-light">{name}</CardTitle>
       </CardHeader>
       <CardFooter className="justify-center">
-        <p className="text-muted-foreground text-center text-sm">{value}</p>
+        <p className="text-center text-sm text-muted-foreground">{value}</p>
       </CardFooter>
     </Card>
   );

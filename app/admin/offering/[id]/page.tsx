@@ -129,7 +129,7 @@ export default async function Page(props: { params: Promise<{ id: string }> }) {
                 Delete Amenity
               </Button>
               {totalConnections > 0 && (
-                <p className="text-muted-foreground mt-2 text-sm">
+                <p className="mt-2 text-sm text-muted-foreground">
                   Remove all connections before deleting this amenity
                 </p>
               )}

@@ -2,7 +2,11 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { BaseProgram, ProgramWithAllRelations, ProgramWithBasicRelations } from "@/actions/program-actions";
+import {
+  BaseProgram,
+  ProgramWithAllRelations,
+  ProgramWithBasicRelations,
+} from "@/actions/program-actions";
 import { motion } from "framer-motion";
 
 import { Button } from "../ui/button";
@@ -102,7 +106,7 @@ const ProgramCard = ({
             : "City, Country"}
         </div>
 
-        <div className="font-broad text-center text-lg font-normal uppercase tracking-wide">
+        <div className="text-center font-broad text-lg font-normal uppercase tracking-wide">
           {program.name || "Retreat Name"}
           <br />
           {program.duration || "7+ nights"}

@@ -3,11 +3,7 @@
 import { useState } from "react";
 import { RetreatWithRelations } from "@/actions/retreat-actions";
 import { PriceMod, RetreatInstance } from "@prisma/client";
-import {
-  addDays,
-  differenceInCalendarDays,
-  formatDistance,
-} from "date-fns";
+import { addDays, differenceInCalendarDays, formatDistance } from "date-fns";
 import { DateRange } from "react-day-picker";
 
 import { toUSD } from "@/lib/utils";
@@ -40,9 +36,7 @@ interface BookingListProps {
  * Note that the flexible_range retreats need only 1 retreat instance.
  */
 export function FlexibleBooking({ userId, retreat, events }: BookingListProps) {
-  const [priceMods, _] = useState<PriceMod[]>(
-    events[0]?.priceMods || []
-  );
+  const [priceMods, _] = useState<PriceMod[]>(events[0]?.priceMods || []);
   const [guestCount, setGuestCount] = useState(retreat.minGuests ?? 1);
   const [date, setDate] = useState<DateRange | undefined>({
     from: new Date(),
@@ -113,13 +107,13 @@ export function FlexibleBooking({ userId, retreat, events }: BookingListProps) {
         </div>
       </CardContent>
       <CardContent>
-        <Small className="text-primary/60 flex justify-between text-lg">
+        <Small className="flex justify-between text-lg text-primary/60">
           <span>
             {guestCount} guests x {toUSD(basePrice?.value)}
           </span>
           <span>{toUSD((guestCount ?? 1) * (basePrice?.value ?? 1))}</span>
         </Small>
-        <Small className="text-primary/60 flex justify-between text-lg">
+        <Small className="flex justify-between text-lg text-primary/60">
           <span>
             {dateDiffDisplay()} x ${(guestCount ?? 1) * (basePrice?.value ?? 1)}
           </span>
@@ -132,7 +126,7 @@ export function FlexibleBooking({ userId, retreat, events }: BookingListProps) {
           priceMods.map((mod, i) => (
             <Small
               key={`price-mod-${i}`}
-              className="text-primary/60 flex justify-between"
+              className="flex justify-between text-primary/60"
             >
               <span>{mod.name}</span>
               <span>{toUSD(mod.value)}</span>

@@ -36,7 +36,7 @@ export default async function Page({
         <div className="mx-auto max-w-2xl">
           <Card className="shadow-lg">
             <CardHeader className="text-center">
-              <CardTitle className="text-primary text-3xl font-bold">
+              <CardTitle className="text-3xl font-bold text-primary">
                 Booking Confirmation
               </CardTitle>
               <p className="mt-2">Booking ID: {booking.id}</p>
@@ -48,7 +48,7 @@ export default async function Page({
                 <h3 className="text-lg font-semibold">Location</h3>
                 <div className="space-y-2 rounded p-4">
                   <div className="flex items-start gap-2">
-                    <MapPin className="text-primary mt-1 size-5" />
+                    <MapPin className="mt-1 size-5 text-primary" />
                     <div>
                       <p className="font-medium">{property.name}</p>
                       <p className="text-sm">{property.address}</p>
@@ -127,7 +127,7 @@ export default async function Page({
                 <div className="rounded p-4">
                   <div className="flex items-center justify-between">
                     <span className="text-lg font-semibold">Total Price</span>
-                    <span className="text-primary text-2xl font-bold">
+                    <span className="text-2xl font-bold text-primary">
                       ${booking.totalPrice}
                     </span>
                   </div>

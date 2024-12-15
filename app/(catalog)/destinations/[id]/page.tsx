@@ -110,7 +110,7 @@ export default async function Page(props: { params: Promise<{ id: string }> }) {
           <div className="mx-16 w-10/12 md:hidden">
             <Separator
               orientation="horizontal"
-              className="bg-primary/80 my-16 h-px w-full"
+              className="my-16 h-px w-full bg-primary/80"
             />
           </div>
           <div className="flex-0 mx-8 mb-16 gap-4">

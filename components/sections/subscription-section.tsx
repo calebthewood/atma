@@ -1,10 +1,10 @@
 export default function SubscriptionSection() {
   return (
     <div className="mx-auto h-96 w-full max-w-3xl bg-[#f4f1ea]">
-      <div className="font-broad text-left text-[35px] font-semibold text-black">
+      <div className="text-left font-broad text-[35px] font-semibold text-black">
         Your wellness journey starts here
       </div>
-      <div className="font-broad text-right text-[35px] font-semibold text-black">
+      <div className="text-right font-broad text-[35px] font-semibold text-black">
         Stay connected with us
       </div>
       <div className="my-12 flex flex-row justify-center">

@@ -97,11 +97,7 @@ interface BookingItemProps {
   prices: PriceMod[] | null;
 }
 
-function BookingItem({
-  item,
-  guestCount,
-  prices,
-}: BookingItemProps) {
+function BookingItem({ item, guestCount, prices }: BookingItemProps) {
   const start = format(item.startDate, "EEE, MMM dd");
   const end = format(item.endDate, "EEE, MMM dd");
   const basePrice = 250;

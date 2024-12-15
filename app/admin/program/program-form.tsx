@@ -321,7 +321,7 @@ export function ProgramForm({ program }: ProgramFormProps) {
                         className="items-center gap-x-4"
                       >
                         <span>{config.label}</span>
-                        <span className="text-muted-foreground ml-2 text-xs">
+                        <span className="ml-2 text-xs text-muted-foreground">
                           {config.description}
                         </span>
                       </SelectItem>

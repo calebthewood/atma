@@ -20,5 +20,5 @@ const nextConfig = {
     ],
   },
 };
-// for more, see https://github.com/shadcn-ui/ui/blob/main/apps/www/next.config.mjs
+
 export default nextConfig;

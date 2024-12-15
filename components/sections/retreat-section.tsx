@@ -4,7 +4,6 @@ import { motion } from "framer-motion";
 import HeroCarousel from "../ui/carousel-hero";
 import { SectionHeader } from "./components";
 
-
 const containerVariants = {
   hidden: { opacity: 0 },
   visible: {

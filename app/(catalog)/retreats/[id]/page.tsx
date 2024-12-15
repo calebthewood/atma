@@ -2,10 +2,7 @@ import { ReactNode, Suspense } from "react";
 
 import { notFound } from "next/navigation";
 
-import {
-
-  getRetreatPriceMods,
-} from "@/actions/price-mod-actions";
+import { getRetreatPriceMods } from "@/actions/price-mod-actions";
 import { getRetreat } from "@/actions/retreat-actions";
 import { auth } from "@/auth";
 

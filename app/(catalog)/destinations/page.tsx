@@ -14,7 +14,7 @@ export default async function Page() {
           <h2 className="text-2xl font-semibold tracking-tight">
             Browse Destinations
           </h2>
-          <p className="text-muted-foreground text-sm">
+          <p className="text-sm text-muted-foreground">
             Retreats held at the finest locales around the world.
           </p>
         </div>
@@ -43,7 +43,7 @@ export default async function Page() {
           <h2 className="text-2xl font-semibold tracking-tight">
             Destinations Near You
           </h2>
-          <p className="text-muted-foreground text-sm">
+          <p className="text-sm text-muted-foreground">
             This is not currently implemented.
           </p>
         </div>

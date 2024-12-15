@@ -77,7 +77,7 @@ export default function FooterSection() {
       <div className="h-px w-full bg-black/20" />
 
       <div className="flex flex-wrap items-center gap-2 text-[10px] font-medium text-black/50">
-        <span>© {currentYear} ATMA Reserve, Inc.</span>
+        <span>© {currentYear} ATMA Reserve.</span>
         <div className="size-[3px] rounded-full bg-black/50" />
         <Link href="/privacy" className="hover:text-black/70">
           Privacy
