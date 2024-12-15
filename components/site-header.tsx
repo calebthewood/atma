@@ -1,8 +1,7 @@
-
 import { siteConfig } from "@/config/site";
 import {
   HeroTitle,
-  MainNav,
+  MainMenu,
   MainNavigationMenu,
 } from "@/components/nav-components";
 import { ThemeToggle } from "@/components/theme-toggle";
@@ -10,15 +9,13 @@ import { ThemeToggle } from "@/components/theme-toggle";
 export function SiteHeader() {
   return (
     <header className="top-0 z-40 w-full bg-transparent">
-      <div className="flex items-center md:container sm:justify-between md:space-x-4">
-        <MainNav items={siteConfig.mainNav} />
-        <nav className="flex flex-1 items-center justify-center space-x-4">
-          <div className="flex flex-col items-center justify-center">
-            <HeroTitle />
-            <MainNavigationMenu />
-          </div>
-        </nav>
-        <ThemeToggle />
+      <div className="flex flex-col items-center md:container">
+        <div className="flex min-h-24 w-full flex-row justify-between items-center">
+          <MainMenu items={siteConfig.mainNav} />
+          <ThemeToggle />
+        </div>
+        <HeroTitle />
+      <MainNavigationMenu />
       </div>
     </header>
   );

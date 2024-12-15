@@ -5,7 +5,7 @@ import { getPropertyIds } from "@/actions/property-actions";
 import { getRetreats } from "@/actions/retreat-actions";
 
 import { siteConfig } from "@/config/site";
-import { fontSans } from "@/lib/fonts";
+import { fontSans, fontTitle } from "@/lib/fonts/fonts";
 import { cn } from "@/lib/utils";
 import { SiteHeader } from "@/components/site-header";
 import { TailwindIndicator } from "@/components/tailwind-indicator";
@@ -46,7 +46,8 @@ export default async function RootLayout({ children }: RootLayoutProps) {
         <body
           className={cn(
             "min-h-screen bg-richBeige font-sans antialiased dark:bg-gradient-dark",
-            fontSans.variable
+            fontSans.variable,
+            fontTitle.variable
           )}
         >
           <ThemeProvider attribute="class" defaultTheme="system" enableSystem>

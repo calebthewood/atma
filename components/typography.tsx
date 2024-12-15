@@ -1,6 +1,6 @@
 import React from "react";
 
-import { fontTitle } from "@/lib/fonts";
+import { fontTitle } from "@/lib/fonts/fonts";
 import { cn } from "@/lib/utils";
 
 interface TypographyProps {

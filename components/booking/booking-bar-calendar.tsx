@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { format, parse } from "date-fns";
+import { ChevronsUpDown } from "lucide-react";
 import { DateRange } from "react-day-picker";
 
 import { cn } from "@/lib/utils";
@@ -14,8 +15,8 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 
-import { Small } from "../typography";
-import { Separator } from "../ui/separator";
+const buttonClasses =
+  "h-12 pb-0 w-full rounded rounded-b-none border-b-2 border-transparent border-b-black bg-transparent text-left shadow-none px-0";
 
 export function BookingBarCalendar() {
   const [date, setDate] = useState<DateRange | undefined>({
@@ -25,8 +26,6 @@ export function BookingBarCalendar() {
 
   const router = useRouter();
   const searchParams = useSearchParams();
-
-  const updateDate = (date: DateRange | undefined) => setDate(date);
 
   useEffect(() => {
     const fromParam = searchParams.get("from");
@@ -65,79 +64,37 @@ export function BookingBarCalendar() {
   }, [date, router, searchParams]);
 
   return (
-    <div className={cn("grid w-full gap-2")}>
-      <Popover>
-        <PopoverTrigger asChild>
-          <div className="flex h-12 w-full items-center justify-around">
-            <Button
-              id="date"
-              variant={"outline"}
-              className={cn(
-                "size-full rounded border-transparent bg-transparent text-left font-normal shadow-none",
-                !date && "text-muted-foreground"
-              )}
-            >
-              {date?.from ? (
-                <DateDisplay date={date.from} />
-              ) : (
-                <DatePlaceholder />
-              )}
-            </Button>
-            <Separator
-              orientation="vertical"
-              className="mx-2 h-full w-[0.5px]"
-            />
-            <Button
-              id="date"
-              variant={"outline"}
-              className={cn(
-                "size-full rounded border-transparent bg-transparent text-left font-normal shadow-none",
-                !date && "text-muted-foreground"
-              )}
-            >
-              {date?.to ? (
-                <DateDisplay date={date.to} to />
-              ) : (
-                <DatePlaceholder checkIn={false} />
-              )}
-            </Button>
-          </div>
-        </PopoverTrigger>
-        <PopoverContent className="w-auto p-0" align="start">
-          <Calendar
-            initialFocus
-            mode="range"
-            defaultMonth={date?.from}
-            selected={date}
-            onSelect={updateDate}
-            numberOfMonths={2}
-          />
-        </PopoverContent>
-      </Popover>
-    </div>
-  );
-}
+    <Popover>
+      <PopoverTrigger asChild>
+        <div className="flex w-full gap-x-4 items-center">
+          <Button variant="outline" className={buttonClasses}>
+            <span className="flex w-full items-center justify-between text-base">
+              {date?.from
+                ? `FROM ${format(date.from, "LLL dd, y").toUpperCase()}`
+                : "CHECK IN"}
+              <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+            </span>
+          </Button>
 
-function DatePlaceholder({ checkIn = true }: { checkIn?: boolean }) {
-  return (
-    <div className="w-full text-start">
-      <div className="font-title text-xs">
-        {checkIn ? "CHECK IN" : "CHECK OUT"}
-      </div>
-      <div className="font-tagline text-xs font-light opacity-70">
-        {checkIn ? "ARRIVAL DATE" : "DEPARTURE DATE"}
-      </div>
-    </div>
-  );
-}
-
-function DateDisplay({ date, to = false }: { date: Date; to?: boolean }) {
-  return (
-    <div className="w-full text-start">
-      <div className="font-title text-xs">{to ? "TO" : "FROM"}</div>
-      <div className="font-tagline font-light opacity-70">
-        {format(date, "LLL dd, y")}
-      </div>
-    </div>
+          <Button variant="outline" className={buttonClasses}>
+            <span className="flex w-full items-center justify-between text-base">
+              {date?.to
+                ? `TO ${format(date.to, "LLL dd, y").toUpperCase()}`
+                : "CHECK OUT"}
+              <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+            </span>
+          </Button>
+        </div>
+      </PopoverTrigger>
+      <PopoverContent className="w-auto p-0" align="start">
+        <Calendar
+          mode="range"
+          defaultMonth={date?.from}
+          selected={date}
+          onSelect={setDate}
+          numberOfMonths={2}
+        />
+      </PopoverContent>
+    </Popover>
   );
 }

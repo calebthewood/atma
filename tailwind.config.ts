@@ -1,6 +1,10 @@
 import type { Config } from "tailwindcss";
 import { fontFamily } from "tailwindcss/defaultTheme";
 
+
+
+
+
 const config = {
   darkMode: ["class"],
   content: [
@@ -18,6 +22,9 @@ const config = {
       },
     },
     extend: {
+      letterSpacing: {
+        widester: "0.3em",
+      },
       colors: {
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
@@ -74,10 +81,10 @@ const config = {
         sm: "calc(var(--radius) - 4px)",
       },
       fontFamily: {
-        title: ["bristone", "sans"],
-        tagline: ["telugumn", "sans"],
-        sans: ["var(--font-test-sans-wide)", ...fontFamily.sans],
+        sans: ["var(--font-title)", ...fontFamily.sans], // Instrument Sans as default
+        broad: ["var(--font-test-sans-wide)", ...fontFamily.sans],
       },
+
       keyframes: {
         "accordion-down": {
           from: { height: "0" },

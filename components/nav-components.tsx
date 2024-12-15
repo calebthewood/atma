@@ -25,35 +25,25 @@ import {
 
 import { Separator } from "./ui/separator";
 
-interface MainNavProps {
+interface MainMenuProps {
   items?: NavItem[];
 }
 
 export function HeroTitle() {
   return (
-    <Link href="/" className="hover: mt-16 hover:brightness-200">
-      <h1 className="flex w-full justify-between px-2 font-title text-6xl transition-all hover:scale-[97%] sm:px-0">
-        <span className="flex size-14 flex-col items-center justify-center pl-2 md:size-16">
-          A
-        </span>
-        <span className="flex size-14 flex-col items-center justify-center md:size-16">
-          T
-        </span>
-        <span className="flex size-14 flex-col items-center justify-center md:size-16">
-          M
-        </span>
-        <span className="flex size-14 flex-col items-center justify-center md:size-16">
-          A
-        </span>
+    <Link href="/" className="max-w-xl hover:brightness-200">
+      <h1 className="font-broad mb-4 flex w-full justify-between text-3xl transition-all hover:scale-[97%] sm:px-0">
+        <span className="tracking-widester ml-1 font-normal">ATMA</span>
+        <span className="tracking-widester font-semibold">RESERVE</span>
       </h1>
-      <p className="font-tagline text-sm leading-10 md:leading-[56px]">
-        THE WORLD&apos;S DESTINATION FOR FINEST RETREATS
+      <p className="text-center text-sm font-thin uppercase leading-relaxed tracking-wider text-black">
+        {`THE WORLD'S DESTINATION FOR FINEST RETREATS`}
       </p>
     </Link>
   );
 }
 
-export function MainNav({ items }: MainNavProps) {
+export function MainMenu({ items }: MainMenuProps) {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger className="hidden md:block">
@@ -81,17 +71,24 @@ export function MainNav({ items }: MainNavProps) {
 export function MainNavigationMenu() {
   const paths = usePathname().split("/");
   const path = paths[1];
+  const navMenuLinkStyle = cn(
+    "px-1 sm:px-2 md:px-12",
+    "bg-transparent text-center text-xl font-bold uppercase leading-relaxed text-black",
+    "opacity-50 hover:opacity-100 transition-all"
+  );
 
   return (
-    <NavigationMenu>
-      <NavigationMenuList>
+    <NavigationMenu className="my-16 w-full">
+      <NavigationMenuList className="w-full justify-evenly">
+        <div className="text-center text-xl font-normal uppercase leading-relaxed text-black opacity-70">
+          BROWSE BY
+        </div>
         <NavigationMenuItem>
           <Link href="/destinations" legacyBehavior passHref>
             <NavigationMenuLink
               className={cn(
                 navigationMenuTriggerStyle(),
-                "px-1 sm:px-2 md:px-4",
-                "bg-transparent font-title text-xs leading-6 opacity-50 hover:opacity-100",
+                navMenuLinkStyle,
                 path === "destinations" && "opacity-100"
               )}
             >
@@ -110,8 +107,7 @@ export function MainNavigationMenu() {
             <NavigationMenuLink
               className={cn(
                 navigationMenuTriggerStyle(),
-                "px-1 sm:px-2 md:px-4",
-                "bg-transparent font-title text-xs leading-6 opacity-50 hover:opacity-100",
+                navMenuLinkStyle,
                 path === "retreats" && "opacity-100"
               )}
             >
@@ -130,13 +126,11 @@ export function MainNavigationMenu() {
             <NavigationMenuLink
               className={cn(
                 navigationMenuTriggerStyle(),
-                "px-1 sm:px-2 md:px-4",
-                "bg-transparent font-title text-xs leading-6 opacity-50 hover:opacity-100",
+                navMenuLinkStyle,
                 path === "programs" && "opacity-100"
               )}
             >
-              <span className="hidden md:inline-block">SPECIAL PROGRAMMES</span>
-              <span className="md:hidden">PROGRAMMES</span>
+              PROGRAMS
             </NavigationMenuLink>
           </Link>
           <Separator

@@ -49,7 +49,7 @@ export function GuestSelect({
 function GuestPlaceholder() {
   return (
     <div className="w-full text-start">
-      <div className="font-title text-xs">{"GUESTS"}</div>
+      <div className=" text-xs">{"GUESTS"}</div>
       <div className="font-tagline text-xs font-light text-richBeige/70">
         {"SELECT GUESTS"}
       </div>

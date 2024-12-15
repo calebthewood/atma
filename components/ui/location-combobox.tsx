@@ -22,6 +22,12 @@ import {
 } from "@/components/ui/popover";
 
 import { ClickyCounter } from "../counter";
+import {
+  AsiaIcon,
+  EuropeIcon,
+  NorthAmericaIcon,
+  SouthAmericaIcon,
+} from "../svg/svg";
 
 interface Place {
   description: string;
@@ -33,6 +39,9 @@ interface SelectedPlace {
   lat: number;
   lon: number;
 }
+
+const buttonClasses =
+  "h-12 pb-0 w-full rounded rounded-b-none border-b-2 border-transparent border-b-black bg-transparent text-left shadow-none px-0";
 
 export function LocationCombobox() {
   const [open, setOpen] = useState(false);
@@ -80,7 +89,44 @@ export function LocationCombobox() {
 
   useEffect(() => {}, [value, setValue]);
 
+  const DEFAULT_CONTINENTS = [
+    {
+      id: "asia",
+      name: "Asia",
+      icon: AsiaIcon,
+      lat: 34.047863,
+      lon: 100.619655,
+    },
+    {
+      id: "europe",
+      name: "Europe",
+      icon: EuropeIcon,
+      lat: 54.525961,
+      lon: 15.255119,
+    },
+    {
+      id: "north-america",
+      name: "North America",
+      icon: NorthAmericaIcon,
+      lat: 54.526,
+      lon: -105.255119,
+    },
+    {
+      id: "south-america",
+      name: "South America",
+      icon: SouthAmericaIcon,
+      lat: -8.783195,
+      lon: -55.491477,
+    },
+  ];
+
+  // Modify the handleInputChange function
   const handleInputChange = (input: string) => {
+    if (!input.trim()) {
+      setPlaces([]); // Clear places when input is empty
+      return;
+    }
+
     if (placesService && sessionToken) {
       placesService.getPlacePredictions(
         {
@@ -93,7 +139,6 @@ export function LocationCombobox() {
             status === google.maps.places.PlacesServiceStatus.OK &&
             predictions
           ) {
-            //@ts-ignore
             setPlaces(predictions);
           }
         }
@@ -151,6 +196,8 @@ export function LocationCombobox() {
     }
   }, [value, setValue, router, searchParams]);
 
+  const resetPlaces = () => setPlaces([]);
+
   return (
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
@@ -158,14 +205,14 @@ export function LocationCombobox() {
           variant="outline"
           role="combobox"
           aria-expanded={open}
-          className="h-12 w-full justify-between rounded border-transparent bg-transparent pl-2 text-foreground shadow-none"
+          className={buttonClasses}
         >
-          {value ? (
-            value.name
-          ) : (
-            <Placeholder title="LOCATION" subtitle="CITY, COUNTRY OR REGION" />
-          )}
-          <ChevronsUpDown className="ml-2 size-4 shrink-0 opacity-50" />
+          <span className="flex w-full items-center justify-between text-base">
+            <span className="overflow-hidden text-ellipsis whitespace-nowrap">
+              {value ? value.name.toUpperCase() : "LOCATION"}
+            </span>
+            <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+          </span>
         </Button>
       </PopoverTrigger>
       <PopoverContent className="w-[300px] p-0">
@@ -177,93 +224,67 @@ export function LocationCombobox() {
           <CommandList>
             <CommandEmpty>No locations found.</CommandEmpty>
             <CommandGroup>
-              {places.map((place) => (
-                <CommandItem
-                  key={place.place_id}
-                  value={place.description}
-                  onSelect={() =>
-                    handlePlaceSelect(place.place_id, place.description)
-                  }
-                >
-                  <Check
-                    className={cn(
-                      "mr-2 size-4",
-                      value?.name === place.description
-                        ? "opacity-100"
-                        : "opacity-0"
-                    )}
-                  />
-                  {place.description}
-                </CommandItem>
-              ))}
+              {places.length > 0
+                ? // Show search results when available
+                  places.map((place) => (
+                    <CommandItem
+                      key={place.place_id}
+                      value={place.description}
+                      onSelect={() =>
+                        handlePlaceSelect(place.place_id, place.description)
+                      }
+                    >
+                      <Check
+                        className={cn(
+                          "mr-2 size-4",
+                          value?.name === place.description
+                            ? "opacity-100"
+                            : "opacity-0"
+                        )}
+                      />
+                      {place.description}
+                    </CommandItem>
+                  ))
+                : // Updated continent items with icons
+                  DEFAULT_CONTINENTS.map((continent) => (
+                    <CommandItem
+                      key={continent.id}
+                      value={continent.name}
+                      onSelect={() => {
+                        setValue({
+                          name: continent.name,
+                          lat: continent.lat,
+                          lon: continent.lon,
+                        });
+                        setOpen(false);
+                      }}
+                      className="flex items-center gap-2 py-3"
+                    >
+                      <Check
+                        className={cn(
+                          "mr-2 size-4",
+                          value?.name === continent.name
+                            ? "opacity-100"
+                            : "opacity-0"
+                        )}
+                      />
+                      <continent.icon
+                        size={42}
+                        className="text-muted-foreground"
+                      />
+                      <span className="font-medium">{continent.name}</span>
+                    </CommandItem>
+                  ))}
             </CommandGroup>
+            {places.length > 0 && (
+              <CommandGroup>
+                <Button onClick={resetPlaces} variant={"ghost"}>
+                  Clear
+                </Button>
+              </CommandGroup>
+            )}
           </CommandList>
         </Command>
-      </PopoverContent>
-    </Popover>
-  );
-}
-function Placeholder({ title, subtitle }: { title: string; subtitle: string }) {
-  return (
-    <div className="w-full text-start">
-      <div className="font-title text-xs">{title}</div>
-      <div className="font-tagline text-xs font-light opacity-70">
-        {subtitle}
-      </div>
-    </div>
-  );
-}
-export function GuestCombobox() {
-  const [open, setOpen] = useState(false);
-  const [guestCount, setGuestCount] = useState(0);
-
-  const router = useRouter();
-  const searchParams = useSearchParams();
-
-  useEffect(() => {
-    const guestParam = searchParams.get("guests");
-    if (guestParam) {
-      setGuestCount(parseInt(guestParam, 10));
-    }
-  }, [searchParams]);
-
-  useEffect(() => {
-    const current = new URLSearchParams(Array.from(searchParams.entries()));
-
-    if (guestCount > 0) {
-      current.set("guests", guestCount.toString());
-    } else {
-      current.delete("guests");
-    }
-
-    const search = current.toString();
-    const query = search ? `?${search}` : "";
-
-    router.push(`${window.location.pathname}${query}`, { scroll: false });
-  }, [guestCount, router, searchParams]);
-
-  return (
-    <Popover open={open} onOpenChange={setOpen}>
-      <PopoverTrigger asChild>
-        <Button
-          variant="outline"
-          role="combobox"
-          aria-expanded={open}
-          className="h-12 w-full justify-between rounded border-transparent bg-transparent pl-2 shadow-none"
-        >
-          {guestCount > 0 ? (
-            <Placeholder
-              title="GUESTS"
-              subtitle={`${guestCount} guest${guestCount !== 1 ? "s" : ""}`}
-            />
-          ) : (
-            <Placeholder title="GUESTS" subtitle="ADD GUESTS" />
-          )}
-          {/* <ChevronsUpDown className="ml-2 size-4 shrink-0 opacity-50" /> */}
-        </Button>
-      </PopoverTrigger>
-      <PopoverContent className="w-[260px] p-4">
-        <ClickyCounter />
       </PopoverContent>
     </Popover>
   );

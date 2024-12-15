@@ -49,7 +49,7 @@
 }
 
 @layer base {
-  @font-face {
+  /* @font-face {
     font-family: "bristone";
     src: url("/fonts/bristone-reg.otf") format("opentype");
     font-weight: normal;
@@ -63,11 +63,11 @@
     font-weight: normal;
     font-style: normal;
     font-display: swap;
-  }
+  } */
 
 
   /* Test Sans Wide - Book */
-  @font-face {
+  /* @font-face {
     font-family: "test-sans-wide";
     src: url("/fonts/test-sans-wide-book.woff2") format("woff2");
     font-weight: 400;
@@ -81,10 +81,10 @@
     font-weight: 400;
     font-style: italic;
     font-display: swap;
-  }
+  } */
 
   /* Test Sans Wide - Light */
-  @font-face {
+  /* @font-face {
     font-family: "test-sans-wide";
     src: url("/fonts/test-sans-wide-extra-light.woff2") format("woff2");
     font-weight: 300;
@@ -98,10 +98,10 @@
     font-weight: 300;
     font-style: italic;
     font-display: swap;
-  }
+  } */
 
   /* Test Sans Wide - Regular/Medium */
-  @font-face {
+  /* @font-face {
     font-family: "test-sans-wide";
     src: url("/fonts/test-sans-wide.woff2") format("woff2");
     font-weight: 500;
@@ -115,10 +115,10 @@
     font-weight: 500;
     font-style: italic;
     font-display: swap;
-  }
+  } */
 
   /* Test Sans Wide - Half Bold */
-  @font-face {
+  /* @font-face {
     font-family: "test-sans-wide";
     src: url("/fonts/test-sans-wide-half-bold.woff2") format("woff2");
     font-weight: 600;
@@ -132,10 +132,10 @@
     font-weight: 600;
     font-style: italic;
     font-display: swap;
-  }
+  } */
 
   /* Test Sans Wide - Bold */
-  @font-face {
+  /* @font-face {
     font-family: "test-sans-wide";
     src: url("/fonts/test-sans-wide-bold.woff2") format("woff2");
     font-weight: 700;
@@ -149,10 +149,10 @@
     font-weight: 700;
     font-style: italic;
     font-display: swap;
-  }
+  } */
 
   /* Test Sans Wide - Three Quarter Bold */
-  @font-face {
+  /* @font-face {
     font-family: "test-sans-wide";
     src: url("/fonts/test-sans-wide-three-quarter-bold.woff2") format("woff2");
     font-weight: 750;
@@ -166,10 +166,10 @@
     font-weight: 750;
     font-style: italic;
     font-display: swap;
-  }
+  } */
 
   /* Test Sans Wide - Extra Bold */
-  @font-face {
+  /* @font-face {
     font-family: "test-sans-wide";
     src: url("/fonts/test-sans-wide-extra-bold.woff2") format("woff2");
     font-weight: 800;
@@ -183,10 +183,10 @@
     font-weight: 800;
     font-style: italic;
     font-display: swap;
-  }
+  } */
 
   /* Test Sans Wide - Strong */
-  @font-face {
+  /* @font-face {
     font-family: "test-sans-wide";
     src: url("/fonts/test-sans-wide-strong.woff2") format("woff2");
     font-weight: 900;
@@ -200,7 +200,7 @@
     font-weight: 900;
     font-style: italic;
     font-display: swap;
-  }
+  } */
 
   :root {
     --background: 39 27% 93%;
