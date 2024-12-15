@@ -1,6 +1,5 @@
-import Image from "next/image";
 import { Host } from "@prisma/client"; // Make sure to import the Host type
-import { Building2, MoreHorizontal } from "lucide-react";
+import { MoreHorizontal } from "lucide-react";
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";

@@ -4,7 +4,6 @@ import React, { useEffect, useMemo, useState } from "react";
 import { z } from "zod";
 
 import { Checkbox } from "@/components/ui/checkbox";
-import { FormLabel } from "@/components/ui/form";
 import { toast } from "@/components/ui/use-toast";
 import { H3, Lead } from "@/components/typography";
 
@@ -125,7 +124,7 @@ export const AmenityCheckboxes = ({
   if (loading) {
     return (
       <div className="flex items-center justify-center p-4">
-        <div className="text-sm text-muted-foreground">
+        <div className="text-muted-foreground text-sm">
           Loading amenities...
         </div>
       </div>
@@ -134,16 +133,16 @@ export const AmenityCheckboxes = ({
 
   if (error) {
     return (
-      <div className="rounded-md bg-destructive/10 p-4">
-        <div className="text-sm text-destructive">{error}</div>
+      <div className="bg-destructive/10 rounded-md p-4">
+        <div className="text-destructive text-sm">{error}</div>
       </div>
     );
   }
 
   if (amenities.length === 0) {
     return (
-      <div className="rounded-md bg-muted p-4">
-        <div className="text-sm text-muted-foreground">No amenities found</div>
+      <div className="bg-muted rounded-md p-4">
+        <div className="text-muted-foreground text-sm">No amenities found</div>
       </div>
     );
   }

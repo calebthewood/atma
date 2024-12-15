@@ -5,11 +5,6 @@ interface ContinentIconProps extends SVGProps<SVGSVGElement> {
   color?: string;
 }
 
-const defaultProps = {
-  size: 24,
-  color: "currentColor",
-};
-
 export const AfricaIcon = ({
   size = 24,
   color = "currentColor",

@@ -1,5 +1,6 @@
 "use client";
 
+import React from "react";
 import Link from "next/link";
 import { motion } from "framer-motion";
 
@@ -10,7 +11,6 @@ import {
   SouthAmericaIcon,
 } from "@/components/geography/lo-res";
 
-import { Button } from "../ui/button";
 import { SectionHeader } from "./components";
 
 const CONTINENTS = [
@@ -63,7 +63,10 @@ const cardVariants = {
 
 export default function DestinationSection() {
   return (
-    <section id="destination-section" className="my-32 flex flex-col gap-y-8 md:container">
+    <section
+      id="destination-section"
+      className="my-32 flex flex-col gap-y-8 md:container"
+    >
       <SectionHeader title="Destinations" subtitle="Discover Wellness By" />
       <motion.div
         className="scrollbar-hide flex w-full flex-wrap justify-center gap-1 lg:flex-nowrap"
@@ -104,7 +107,7 @@ const ContinentCard = ({ name, icon: Icon, href }: ContinentCardProps) => {
   return (
     <motion.div
       variants={cardVariants}
-      className="group relative flex aspect-square w-80 flex-shrink-0 flex-col items-center justify-center rounded-2xl transition-all duration-300 hover:bg-black/10"
+      className="group relative flex aspect-square w-80 shrink-0 flex-col items-center justify-center rounded-2xl transition-all duration-300 hover:bg-black/10"
     >
       <Link href={href} className="flex flex-col items-center gap-4">
         <Icon className="size-64 text-black/70 transition-transform duration-300 group-hover:scale-110" />

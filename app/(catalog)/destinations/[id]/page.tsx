@@ -1,4 +1,3 @@
-import Image from "next/image";
 import { getPropertyById } from "@/actions/property-actions";
 import { auth } from "@/auth";
 import { Separator } from "@radix-ui/react-separator";
@@ -12,10 +11,8 @@ import {
   User,
 } from "lucide-react";
 
-import { AspectRatio } from "@/components/ui/aspect-ratio";
 import {
   Card,
-  CardContent,
   CardDescription,
   CardFooter,
   CardHeader,
@@ -49,7 +46,7 @@ const DEFAULT_SLIDES = [
 export default async function Page(props: { params: Promise<{ id: string }> }) {
   const params = await props.params;
   const property = await getPropertyById(params.id);
-  const session = await auth();
+  // const session = await auth();
 
   const tabsData = [
     {
@@ -86,7 +83,7 @@ export default async function Page(props: { params: Promise<{ id: string }> }) {
     property?.images.sort((a, b) => a.order - b.order)[0]?.filePath ||
     "/img/iStock-1490140364.jpg";
 
-  const [title, _] = property.name.split("|");
+  const [title] = property.name.split("|");
   const subtitle = property.type ?? "";
 
   const slides =
@@ -113,7 +110,7 @@ export default async function Page(props: { params: Promise<{ id: string }> }) {
           <div className="mx-16 w-10/12 md:hidden">
             <Separator
               orientation="horizontal"
-              className="my-16 h-px w-full bg-primary/80"
+              className="bg-primary/80 my-16 h-px w-full"
             />
           </div>
           <div className="flex-0 mx-8 mb-16 gap-4">
@@ -199,26 +196,5 @@ function PlaceList({ placeList }: { placeList: string | null | undefined }) {
       </div>
       <ScrollBar orientation="horizontal" />
     </ScrollArea>
-  );
-}
-
-function RetreatDescCard({
-  desc,
-}: {
-  desc: { name: string; icon: any; detail: string };
-}) {
-  const [amenity, value] = parseAmenity(desc.detail);
-  return (
-    <Card className="w-56">
-      <CardHeader>
-        <CardDescription className="mx-auto p-4">{desc.icon}</CardDescription>
-        <CardTitle className="mx-auto font-light">{desc.name}</CardTitle>
-      </CardHeader>
-      {/* <CardContent></CardContent> */}
-      <CardFooter className="flex-col justify-center">
-        <p className="text-center">{amenity}</p>
-        <p className="text-center">{value}</p>
-      </CardFooter>
-    </Card>
   );
 }

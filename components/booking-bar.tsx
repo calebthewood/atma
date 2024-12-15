@@ -3,7 +3,6 @@
 import React, { useCallback } from "react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
-import { Search } from "lucide-react";
 
 import { BookingBarCalendar } from "./booking/booking-bar-calendar";
 import { PurposeCombobox } from "./purposes-combobox";
@@ -30,7 +29,7 @@ export function BookingBar() {
   );
 
   return (
-    <div className="z-50 flex w-full flex-col gap-2 px-2 md:container md:flex-row md:justify-between mb-24">
+    <div className="z-50 mb-24 flex w-full flex-col gap-2 px-2 md:container md:flex-row md:justify-between">
       <div className="flex w-full flex-col gap-2 md:min-h-16 md:flex-row md:items-center md:gap-x-4 md:p-2">
         <div className="w-full basis-2/12">
           <LocationCombobox />

@@ -166,7 +166,7 @@ export function ImageGallery({ recordId, recordType }: ImageGalleryProps) {
         try {
           await updateImageOrder(updatedImages);
           toast({ title: "Success", description: "Image order updated" });
-        } catch (error) {
+        } catch {
           // Revert on error
           setImages(images);
           toast({
@@ -203,7 +203,7 @@ export function ImageGallery({ recordId, recordType }: ImageGalleryProps) {
           img.id === id ? { ...img, desc: description } : img
         )
       );
-    } catch (error) {
+    } catch {
       toast({
         title: "Error",
         description: "Failed to update description",
@@ -217,7 +217,7 @@ export function ImageGallery({ recordId, recordType }: ImageGalleryProps) {
       await deleteImage(id);
       setImages(images.filter((img) => img.id !== id));
       toast({ title: "Success", description: "Image deleted" });
-    } catch (error) {
+    } catch {
       toast({
         title: "Error",
         description: "Failed to delete image",

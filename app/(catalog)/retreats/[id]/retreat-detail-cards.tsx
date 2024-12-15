@@ -1,5 +1,5 @@
 "use client";
-
+import React from "react";
 import { RetreatWithRelations } from "@/actions/retreat-actions";
 import {
   BedSingle,
@@ -75,7 +75,7 @@ function DetailCard({ name, icon, value }: DetailCardProps) {
         <CardTitle className="mx-auto font-light">{name}</CardTitle>
       </CardHeader>
       <CardFooter className="justify-center">
-        <p className="text-center text-sm text-muted-foreground">{value}</p>
+        <p className="text-muted-foreground text-center text-sm">{value}</p>
       </CardFooter>
     </Card>
   );
@@ -85,42 +85,42 @@ export function RetreatDetailCards({ retreat }: RetreatDetailCardsProps) {
   const details = [
     {
       name: "Date",
-      icon: <Calendar className="h-6 w-6" />,
+      icon: <Calendar className="size-6" />,
       value: retreat?.date?.toLocaleDateString() ?? "Flexible Dates",
     },
     {
       name: "Duration",
-      icon: <Clock className="h-6 w-6" />,
+      icon: <Clock className="size-6" />,
       value: retreat?.duration || "Contact for details",
     },
     {
       name: "Group Size",
-      icon: <Users className="h-6 w-6" />,
+      icon: <Users className="size-6" />,
       value: formatGroupSize(retreat?.minGuests, retreat?.maxGuests),
     },
     {
       name: "Room Type",
-      icon: <BedSingle className="h-6 w-6" />, // @ts-ignore
+      icon: <BedSingle className="size-6" />, // @ts-ignore
       value: retreat.property?.rooms?.[0]?.type || "Contact for details",
     },
     {
       name: "Location",
-      icon: <MapPin className="h-6 w-6" />,
+      icon: <MapPin className="size-6" />,
       value: formatLocation(retreat.property?.city, retreat.property?.country),
     },
     {
       name: "Transportation",
-      icon: <Navigation className="h-6 w-6" />,
+      icon: <Navigation className="size-6" />,
       value: retreat?.transportationAndParking || "Contact for details",
     },
     {
       name: "Excursions",
-      icon: <NotepadText className="h-6 w-6" />,
+      icon: <NotepadText className="size-6" />,
       value: "Available - Contact for details",
     },
     {
       name: "Guide",
-      icon: <User className="h-6 w-6" />,
+      icon: <User className="size-6" />,
       value: retreat?.host?.name || "Contact for details",
     },
   ];

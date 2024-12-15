@@ -1,26 +1,22 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import {
   getProgram,
-  type ActionResponse,
-  type ProgramWithRelations,
+  type ProgramWithAllRelations,
 } from "@/actions/program-actions";
 import {
   getPropertyWithId,
   PropertyWithRelations,
 } from "@/actions/property-actions";
 import {
-  getRetreat,
   getSimpleRetreat,
-  RetreatWithRelations,
   SimpleRetreat,
 } from "@/actions/retreat-actions";
 import {
   Host,
-  Image as ImageType,
   Program,
   Property,
   Retreat,
@@ -148,7 +144,7 @@ interface LazyRetreatCardProps {
   className?: string;
   segment: string; //"retreats" | "destinations" | "programs" | "hosts";
 }
-type ItemType = SimpleRetreat | PropertyWithRelations | ProgramWithRelations;
+type ItemType = SimpleRetreat | PropertyWithRelations | ProgramWithAllRelations;
 
 export function LazyRetreatItem({
   id,
@@ -234,7 +230,7 @@ export function LazyRetreatItem({
     return "retreatInstances" in item;
   };
 
-  const isProgram = (item: ItemType): item is ProgramWithRelations => {
+  const isProgram = (item: ItemType): item is ProgramWithAllRelations => {
     return "duration" in item;
   };
 
@@ -275,7 +271,7 @@ export function LazyRetreatItem({
                 alt={displayData.name}
                 width={width}
                 height={height}
-                className="h-full w-full object-cover transition-all duration-300 group-hover:scale-105"
+                className="size-full object-cover transition-all duration-300 group-hover:scale-105"
               />
               {/* Dark Overlay */}
               <div className="absolute inset-0 bg-black/40" />
@@ -283,7 +279,7 @@ export function LazyRetreatItem({
 
             {/* Content */}
             <div className="absolute inset-0 flex h-auto flex-col justify-between px-4 py-6">
-              <div className="space-y-2 text-richBeige">
+              <div className="text-richBeige space-y-2">
                 <h3 className="text-2xl font-medium leading-tight">
                   {displayData.name}
                 </h3>

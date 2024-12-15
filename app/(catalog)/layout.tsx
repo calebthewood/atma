@@ -1,5 +1,5 @@
 "use client";
-
+import React from "react";
 import { Suspense } from "react";
 
 import { BookingBar } from "@/components/booking-bar";

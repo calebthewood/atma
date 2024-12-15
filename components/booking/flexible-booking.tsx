@@ -2,12 +2,10 @@
 
 import { useState } from "react";
 import { RetreatWithRelations } from "@/actions/retreat-actions";
-import { PriceMod, Retreat, RetreatInstance } from "@prisma/client";
+import { PriceMod, RetreatInstance } from "@prisma/client";
 import {
   addDays,
-  compareAsc,
   differenceInCalendarDays,
-  format,
   formatDistance,
 } from "date-fns";
 import { DateRange } from "react-day-picker";
@@ -21,25 +19,9 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
 
-import CheckoutButton from "../checkout/checkout-button";
-import { ClickyCounter } from "../counter";
-import { Large, Lead, P, Small } from "../typography";
+import { P, Small } from "../typography";
 import { DatePickerWithRange } from "../ui/date-pickers";
-import { Separator } from "../ui/separator";
 import { GuestSelect } from "./guest-select";
 
 interface RetreatIntanceWithMods extends RetreatInstance {
@@ -58,7 +40,7 @@ interface BookingListProps {
  * Note that the flexible_range retreats need only 1 retreat instance.
  */
 export function FlexibleBooking({ userId, retreat, events }: BookingListProps) {
-  const [priceMods, setPriceMods] = useState<PriceMod[]>(
+  const [priceMods, _] = useState<PriceMod[]>(
     events[0]?.priceMods || []
   );
   const [guestCount, setGuestCount] = useState(retreat.minGuests ?? 1);
@@ -131,13 +113,13 @@ export function FlexibleBooking({ userId, retreat, events }: BookingListProps) {
         </div>
       </CardContent>
       <CardContent>
-        <Small className="flex justify-between text-lg text-primary/60">
+        <Small className="text-primary/60 flex justify-between text-lg">
           <span>
             {guestCount} guests x {toUSD(basePrice?.value)}
           </span>
           <span>{toUSD((guestCount ?? 1) * (basePrice?.value ?? 1))}</span>
         </Small>
-        <Small className="flex justify-between text-lg text-primary/60">
+        <Small className="text-primary/60 flex justify-between text-lg">
           <span>
             {dateDiffDisplay()} x ${(guestCount ?? 1) * (basePrice?.value ?? 1)}
           </span>
@@ -150,7 +132,7 @@ export function FlexibleBooking({ userId, retreat, events }: BookingListProps) {
           priceMods.map((mod, i) => (
             <Small
               key={`price-mod-${i}`}
-              className="flex justify-between text-primary/60"
+              className="text-primary/60 flex justify-between"
             >
               <span>{mod.name}</span>
               <span>{toUSD(mod.value)}</span>

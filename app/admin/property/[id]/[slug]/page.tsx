@@ -69,7 +69,7 @@ export default async function Page(props: {
     <div className="space-y-6">
       <div>
         <h3 className="text-lg font-medium">Edit Property</h3>
-        <p className="text-sm text-muted-foreground">Edit existing property.</p>
+        <p className="text-muted-foreground text-sm">Edit existing property.</p>
       </div>
 
       <Tabs defaultValue={params.slug} className="w-full max-w-2xl">

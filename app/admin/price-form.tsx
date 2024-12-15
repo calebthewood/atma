@@ -242,7 +242,7 @@ export function PriceModForm() {
 
   if (!entityType || !entityId) {
     return (
-      <div className="text-center text-muted-foreground">
+      <div className="text-muted-foreground text-center">
         Invalid URL structure
       </div>
     );

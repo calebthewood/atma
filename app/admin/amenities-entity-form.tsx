@@ -78,7 +78,6 @@ export function AmenitiesEntityForm({
         description: errorMessage,
         variant: "destructive",
       });
-    } finally {
     }
   };
 
@@ -120,8 +119,8 @@ export function AmenitiesEntityForm({
 
   if (error) {
     return (
-      <div className="rounded-md bg-destructive/10 p-4">
-        <div className="text-sm text-destructive">{error}</div>
+      <div className="bg-destructive/10 rounded-md p-4">
+        <div className="text-destructive text-sm">{error}</div>
       </div>
     );
   }

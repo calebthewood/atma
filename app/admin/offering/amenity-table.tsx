@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { deleteAmenity, getAmenitiesByType } from "@/actions/amenity";
 import type { Amenity } from "@prisma/client";

@@ -1,45 +1,9 @@
 "use client";
-
-import Link from "next/link";
 import { motion } from "framer-motion";
 
-import {
-  AsiaIcon,
-  EuropeIcon,
-  NorthAmericaIcon,
-  SouthAmericaIcon,
-} from "@/components/geography/lo-res";
-
-import { Button } from "../ui/button";
 import HeroCarousel from "../ui/carousel-hero";
 import { SectionHeader } from "./components";
 
-const CONTINENTS = [
-  {
-    id: "asia",
-    name: "Asia",
-    icon: AsiaIcon,
-    href: "/destinations/asia",
-  },
-  {
-    id: "europe",
-    name: "Europe",
-    icon: EuropeIcon,
-    href: "/destinations/europe",
-  },
-  {
-    id: "north-america",
-    name: "North America",
-    icon: NorthAmericaIcon,
-    href: "/destinations/north-america",
-  },
-  {
-    id: "south-america",
-    name: "South America",
-    icon: SouthAmericaIcon,
-    href: "/destinations/south-america",
-  },
-];
 
 const containerVariants = {
   hidden: { opacity: 0 },

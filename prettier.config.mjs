@@ -1,5 +1,4 @@
-/** @type {import('prettier').Config} */
-module.exports = {
+export default {
   endOfLine: "lf",
   semi: true,
   singleQuote: false,
@@ -28,4 +27,8 @@ module.exports = {
   ],
   importOrderTypeScriptVersion: "5.5.4",
   importOrderParserPlugins: ["typescript", "jsx", "decorators-legacy"],
+  semi: true,
+  singleQuote: false,
+  tabWidth: 2,
+  plugins: ["prettier-plugin-tailwindcss"],
 };

@@ -1,18 +1,16 @@
 import { Metadata } from "next";
 import { getHosts } from "@/actions/host-actions";
 import { getPrograms } from "@/actions/program-actions";
-import { getProperties, getPropertyIds } from "@/actions/property-actions";
+import { getPropertyIds } from "@/actions/property-actions";
 import { getRetreats } from "@/actions/retreat-actions";
 import { auth } from "@/auth";
 
-import HeroCarousel from "@/components/ui/carousel-hero";
 import { BookingBar } from "@/components/booking-bar";
 import DestinationSection from "@/components/sections/destination-section";
+import FooterSection from "@/components/sections/footer-section";
 import ProgramSection from "@/components/sections/program-section";
-
-import DestinationGrid from "./destination-grid";
-import { HomePageLists, ScrollableList } from "./home-page-lists";
 import RetreatSection from "@/components/sections/retreat-section";
+import SubscriptionSection from "@/components/sections/subscription-section";
 
 export const metadata: Metadata = {
   title: "atma reserve",
@@ -20,53 +18,13 @@ export const metadata: Metadata = {
 };
 
 export default async function Page() {
-  const session = await auth();
-  const [hosts, properties, retreats, programs] = await Promise.all([
+  const _session = await auth();
+  const [_hosts, _properties, _retreats, programs] = await Promise.all([
     getHosts(),
     getPropertyIds(),
     getRetreats(),
     getPrograms(),
   ]);
-
-  // Rest of your existing code...
-
-  const sections = [
-    {
-      title: "Explore Our Retreat Collection",
-      description: "",
-      items:
-        retreats?.data?.map((r) => ({ id: r.id, type: "retreat" as const })) ??
-        [],
-      aspectRatio: "portrait" as const,
-      width: 250,
-      height: 330,
-      className: "w-[250px]",
-    },
-    {
-      title: "Travel Differently: Wellness Programming",
-      description: "",
-      items:
-        programs?.data?.map((p) => ({ id: p.id, type: "program" as const })) ??
-        [],
-      aspectRatio: "portrait" as const,
-      width: 250,
-      height: 330,
-      className: "w-[250px]",
-    },
-    // {
-    //   title: "Destinations",
-    //   description: "Luxury locations, worldwide.",
-    //   items:
-    //     properties.map((p) => ({ id: p.id, type: "destination" as const })) ??
-    //     [],
-    //   aspectRatio: "square" as const,
-    //   width: 150,
-    //   height: 150,
-    //   className: "w-[150px]",
-    // },
-  ];
-
-  // Travel Differently: Wellness Programming
 
   return (
     <>
@@ -75,31 +33,9 @@ export default async function Page() {
         <ProgramSection programs={programs.data?.slice(0, 3) ?? []} />
         <DestinationSection />
         <RetreatSection />
+        <SubscriptionSection />
+        <FooterSection />
       </div>
     </>
   );
 }
-
-const HeroSection = () => {
-  const slides = [
-    {
-      image: "/img/iStock-1929812569.jpg",
-      title: "FEATURED RETREAT OR PROGRAM",
-      desc: "10 Days of Yoga and Meditation, leave your boyfriend at home!",
-      buttonText: "Explore",
-    },
-    {
-      image: "/img/iStock-1812905796.jpg",
-      title: "UPCOMING RETREAT",
-      desc: "Hopefully they paid us to be featured prominently.",
-      buttonText: "Explore",
-    },
-    // Add more slides as needed
-  ];
-
-  return (
-    <div className="h-[600px] w-full">
-      <HeroCarousel slides={slides} />
-    </div>
-  );
-};

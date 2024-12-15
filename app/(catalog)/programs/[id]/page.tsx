@@ -1,5 +1,5 @@
 import { ReactNode, Suspense } from "react";
-import Image from "next/image";
+
 import { notFound } from "next/navigation";
 import { getProgram } from "@/actions/program-actions";
 import { auth } from "@/auth";

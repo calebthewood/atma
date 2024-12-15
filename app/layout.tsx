@@ -1,5 +1,6 @@
 import "@/styles/globals.css";
 
+import React from "react";
 import { Metadata, Viewport } from "next";
 import { getPropertyIds } from "@/actions/property-actions";
 import { getRetreats } from "@/actions/retreat-actions";
@@ -36,8 +37,8 @@ interface RootLayoutProps {
 }
 
 export default async function RootLayout({ children }: RootLayoutProps) {
-  const properties = await getPropertyIds();
-  const retreats = await getRetreats();
+  const _properties = await getPropertyIds();
+  const _retreats = await getRetreats();
 
   return (
     <>
@@ -45,7 +46,7 @@ export default async function RootLayout({ children }: RootLayoutProps) {
         <head />
         <body
           className={cn(
-            "min-h-screen bg-richBeige font-sans antialiased dark:bg-gradient-dark",
+            "bg-richBeige dark:bg-gradient-dark min-h-screen font-sans antialiased",
             fontSans.variable,
             fontTitle.variable
           )}

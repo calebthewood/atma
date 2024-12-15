@@ -87,7 +87,7 @@ export default function Page() {
           <h2 className="text-2xl font-semibold tracking-tight">
             Search Results
           </h2>
-          <p className="text-sm text-muted-foreground">
+          <p className="text-muted-foreground text-sm">
             Properties within range
           </p>
         </div>

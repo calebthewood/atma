@@ -1,15 +1,14 @@
 import { ReactNode, Suspense } from "react";
-import Image from "next/image";
+
 import { notFound } from "next/navigation";
-import { fetchImages, getRetreatImages } from "@/actions/image-actions";
+
 import {
-  getAllPriceMods,
+
   getRetreatPriceMods,
 } from "@/actions/price-mod-actions";
 import { getRetreat } from "@/actions/retreat-actions";
 import { auth } from "@/auth";
 
-import prisma from "@/lib/prisma";
 import { cn } from "@/lib/utils";
 import { CardTitle } from "@/components/ui/card";
 import ThumbnailCarousel from "@/components/ui/carousel-thumbnail";
@@ -17,7 +16,6 @@ import { toast } from "@/components/ui/use-toast";
 import { FixedBooking } from "@/components/booking/fixed-booking";
 import { CatalogTabs } from "@/components/catalog-tabs";
 import { TitleImageBanner } from "@/components/title-img-banner";
-import { RetreatInstancesList } from "@/app/admin/retreat/retreat-instance-table";
 
 import { RetreatDetailCards } from "./retreat-detail-cards";
 import RetreatInstances from "./retreat-instance-list";

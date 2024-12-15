@@ -1,7 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
+import React, { useState } from "react";
 import { ChevronsUpDown } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -16,10 +15,6 @@ const buttonClasses =
 
 export function PurposeCombobox() {
   const [open, setOpen] = useState(false);
-  const [purpose, setPurpose] = useState(0);
-
-  const router = useRouter();
-  const searchParams = useSearchParams();
 
   return (
     <Popover open={open} onOpenChange={setOpen}>
@@ -32,7 +27,7 @@ export function PurposeCombobox() {
         >
           <span className="flex w-full items-center justify-between text-base">
             PURPOSES
-            <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+            <ChevronsUpDown className="ml-2 size-4 shrink-0 opacity-50" />
           </span>
         </Button>
       </PopoverTrigger>

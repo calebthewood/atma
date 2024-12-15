@@ -8,7 +8,7 @@ export default function Page() {
   return (
     <div className="">
       <h3 className="text-lg font-medium">Create New Host</h3>
-      <p className="text-sm text-muted-foreground">
+      <p className="text-muted-foreground text-sm">
         Form allows admin user to create a new host
       </p>
       <Separator className="my-6" />

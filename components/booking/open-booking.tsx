@@ -20,10 +20,9 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 
-import CheckoutButton from "../checkout/checkout-button";
 import { Lead, Small } from "../typography";
 import { DatePicker } from "../ui/date-pickers";
-import { GuestCombobox } from "../ui/location-combobox";
+import { GuestCombobox } from "../ui/guest-combobox";
 import { Separator } from "../ui/separator";
 
 const today = new Date();
@@ -99,9 +98,7 @@ interface BookingItemProps {
 }
 
 function BookingItem({
-  userId,
   item,
-  retreat,
   guestCount,
   prices,
 }: BookingItemProps) {
@@ -178,7 +175,7 @@ interface OpenBookingProps {
 }
 
 export function OpenBooking({ userId, retreat, events }: OpenBookingProps) {
-  const [guestCount, setGuestCount] = React.useState(retreat.minGuests || 1);
+  const [guestCount, _] = React.useState(retreat.minGuests || 1);
   const [date, setDate] = React.useState<Date | undefined>(today);
 
   const displayed = React.useMemo(

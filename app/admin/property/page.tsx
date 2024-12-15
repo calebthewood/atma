@@ -8,7 +8,7 @@ export default function Page() {
     <div className="space-y-6">
       <div>
         <h3 className="text-lg font-medium">Create or Edit Property</h3>
-        <p className="text-sm text-muted-foreground">
+        <p className="text-muted-foreground text-sm">
           Properties belong to Hosts, Retreats & Programs are held at a Property
         </p>
       </div>

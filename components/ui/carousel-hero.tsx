@@ -1,4 +1,5 @@
-"use client"
+"use client";
+
 import React, { useCallback, useEffect, useState } from "react";
 import Image from "next/image";
 import { UseEmblaCarouselType } from "embla-carousel-react";
@@ -19,19 +20,6 @@ interface Slide {
 
 const HeroCarousel = ({ slides }: { slides: Slide[] }) => {
   const [api, setApi] = useState<UseEmblaCarouselType[1] | null>(null);
-  const [current, setCurrent] = useState(0);
-  const [count, setCount] = useState(0);
-
-  useEffect(() => {
-    if (!api) return;
-
-    setCount(api.scrollSnapList().length);
-    setCurrent(api.selectedScrollSnap() + 1);
-
-    api.on("select", () => {
-      setCurrent(api.selectedScrollSnap() + 1);
-    });
-  }, [api]);
 
   const scrollPrev = useCallback(() => api && api.scrollPrev(), [api]);
   const scrollNext = useCallback(() => api && api.scrollNext(), [api]);
@@ -73,14 +61,14 @@ const HeroCarousel = ({ slides }: { slides: Slide[] }) => {
           ))}
         </CarouselContent>
 
-        <div className="absolute top-8 right-8 flex space-x-2">
+        <div className="absolute right-8 top-8 flex space-x-2">
           <Button
             size="icon"
             variant="secondary"
             className="h-8 w-10 rounded-full border border-[#786018]/20 bg-[#841729] text-white transition-colors hover:bg-[#841729]/80"
             onClick={scrollPrev}
           >
-            <ArrowLeftIcon className="h-5 w-5" />
+            <ArrowLeftIcon className="size-5" />
           </Button>
           <Button
             size="icon"
@@ -88,7 +76,7 @@ const HeroCarousel = ({ slides }: { slides: Slide[] }) => {
             className="h-8 w-10 rounded-full border border-[#786018]/20 bg-[#841729] text-white transition-colors hover:bg-[#841729]/80"
             onClick={scrollNext}
           >
-            <ArrowRightIcon className="h-5 w-5" />
+            <ArrowRightIcon className="size-5" />
           </Button>
         </div>
       </Carousel>

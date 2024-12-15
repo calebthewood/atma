@@ -6,7 +6,6 @@ import { format, parse } from "date-fns";
 import { ChevronsUpDown } from "lucide-react";
 import { DateRange } from "react-day-picker";
 
-import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
 import {
@@ -66,13 +65,13 @@ export function BookingBarCalendar() {
   return (
     <Popover>
       <PopoverTrigger asChild>
-        <div className="flex w-full gap-x-4 items-center">
+        <div className="flex w-full items-center gap-x-4">
           <Button variant="outline" className={buttonClasses}>
             <span className="flex w-full items-center justify-between text-base">
               {date?.from
                 ? `FROM ${format(date.from, "LLL dd, y").toUpperCase()}`
                 : "CHECK IN"}
-              <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+              <ChevronsUpDown className="ml-2 size-4 shrink-0 opacity-50" />
             </span>
           </Button>
 
@@ -81,7 +80,7 @@ export function BookingBarCalendar() {
               {date?.to
                 ? `TO ${format(date.to, "LLL dd, y").toUpperCase()}`
                 : "CHECK OUT"}
-              <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+              <ChevronsUpDown className="ml-2 size-4 shrink-0 opacity-50" />
             </span>
           </Button>
         </div>

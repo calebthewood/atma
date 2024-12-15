@@ -1,5 +1,5 @@
 import { Suspense } from "react";
-import { Metadata } from "next";
+
 import { getPrograms } from "@/actions/program-actions";
 
 import { cn } from "@/lib/utils";
@@ -30,7 +30,7 @@ function ProgramList({
       <div className="space-y-1">
         <h2 className="text-2xl font-semibold tracking-tight">{title}</h2>
         {description && (
-          <p className="text-sm text-muted-foreground">{description}</p>
+          <p className="text-muted-foreground text-sm">{description}</p>
         )}
       </div>
       <Separator className="my-4" />

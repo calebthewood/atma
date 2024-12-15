@@ -14,14 +14,12 @@ import getStripe from "@/lib/getStripe";
 import {
   Dialog,
   DialogContent,
-  DialogDescription,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
 
 import { Button } from "../ui/button";
-import { ScrollArea } from "../ui/scroll-area";
 
 interface CheckoutFormProps {
   uiMode?: Stripe.Checkout.SessionCreateParams.UiMode;
@@ -47,7 +45,7 @@ export default function CheckoutButton({
   guestCount,
 }: CheckoutFormProps): JSX.Element {
   const [loading] = useState<boolean>(false);
-  const [input, setInput] = useState({ price });
+  const [input, _] = useState({ price });
   const [clientSecret, setClientSecret] = useState<string | null>(null);
 
   const formAction = async (data: FormData): Promise<void> => {

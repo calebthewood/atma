@@ -60,7 +60,7 @@ export function CreateHostForm() {
     setIsSubmitting(true);
     try {
       //@ts-ignore
-      const host = await createHost(values);
+      const _host = await createHost(values);
       form.reset(); // Reset form after successful submission
       // TODO: Add success message or redirect
     } catch (error) {

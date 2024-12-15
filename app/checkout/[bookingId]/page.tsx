@@ -36,7 +36,7 @@ export default async function Page({
         <div className="mx-auto max-w-2xl">
           <Card className="shadow-lg">
             <CardHeader className="text-center">
-              <CardTitle className="text-3xl font-bold text-primary">
+              <CardTitle className="text-primary text-3xl font-bold">
                 Booking Confirmation
               </CardTitle>
               <p className="mt-2">Booking ID: {booking.id}</p>
@@ -48,7 +48,7 @@ export default async function Page({
                 <h3 className="text-lg font-semibold">Location</h3>
                 <div className="space-y-2 rounded p-4">
                   <div className="flex items-start gap-2">
-                    <MapPin className="mt-1 h-5 w-5 text-primary" />
+                    <MapPin className="text-primary mt-1 size-5" />
                     <div>
                       <p className="font-medium">{property.name}</p>
                       <p className="text-sm">{property.address}</p>
@@ -79,7 +79,7 @@ export default async function Page({
                 <h3 className="text-lg font-semibold">Stay Details</h3>
                 <div className="grid grid-cols-2 gap-4">
                   <div className="flex items-center gap-2">
-                    <Calendar className="h-4 w-4" />
+                    <Calendar className="size-4" />
                     <div>
                       <p className="text-sm">Check-in</p>
                       <p className="font-medium">
@@ -93,7 +93,7 @@ export default async function Page({
                     </div>
                   </div>
                   <div className="flex items-center gap-2">
-                    <Calendar className="h-4 w-4" />
+                    <Calendar className="size-4" />
                     <div>
                       <p className="text-sm">Check-out</p>
                       <p className="font-medium">
@@ -114,7 +114,7 @@ export default async function Page({
               {/* Guest & Price Details */}
               <div className="space-y-4">
                 <div className="flex items-center gap-2">
-                  <Users className="h-4 w-4 text-gray-500" />
+                  <Users className="size-4 text-gray-500" />
                   <div>
                     <p className="text-sm text-gray-500">Number of Guests</p>
                     <p className="font-medium">
@@ -127,7 +127,7 @@ export default async function Page({
                 <div className="rounded p-4">
                   <div className="flex items-center justify-between">
                     <span className="text-lg font-semibold">Total Price</span>
-                    <span className="text-2xl font-bold text-primary">
+                    <span className="text-primary text-2xl font-bold">
                       ${booking.totalPrice}
                     </span>
                   </div>

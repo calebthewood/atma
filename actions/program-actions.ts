@@ -2,7 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import { programFormSchema } from "@/schemas/program-schema";
-import { Image, Prisma, Program } from "@prisma/client";
+import { Prisma, Program } from "@prisma/client";
 import { z } from "zod";
 
 import prisma from "@/lib/prisma";
@@ -12,11 +12,11 @@ import prisma from "@/lib/prisma";
 // ============================================================================
 
 export type BaseProgram = Program & {
-  property?: { name: string; country: string; city: string; images: Image[] };
+  property?: { name: string };
   host?: { name: string | null };
 };
 
-export type ProgramWithRelations = Prisma.ProgramGetPayload<{
+export type Base = Prisma.ProgramGetPayload<{
   include: {
     property: { select: { images: true; city: true; country: true } };
     host: true;
@@ -94,14 +94,34 @@ export async function createProgram(
 }
 
 // The function implementation
+export type ProgramWithAllRelations = Prisma.ProgramGetPayload<{
+  include: {
+    property: {
+      select: {
+        images: true;
+        name: true;
+        city: true;
+        country: true;
+      };
+    };
+    host: true;
+    amenities: true;
+    images: true;
+    programs: true;
+    priceMods: true;
+  };
+}>;
+
 export async function getProgram(
   id: string
-): ActionResponse<ProgramWithRelations> {
+): ActionResponse<ProgramWithAllRelations> {
   try {
     const program = await prisma.program.findUnique({
       where: { id },
       include: {
-        property: { select: { images: true, city: true, country: true } },
+        property: {
+          select: { images: true, city: true, country: true, name: true },
+        },
         host: true,
         amenities: true,
         images: true,
@@ -159,7 +179,7 @@ export async function deleteProgram(id: string): ActionResponse {
 // List & Query Operations
 // ============================================================================
 
-export async function getPrograms(): ActionResponse<BaseProgram[]> {
+export async function getPrograms(): ActionResponse<ProgramWithAllRelations[]> {
   try {
     const programs = await prisma.program.findMany({
       where: { status: "published" },
@@ -167,6 +187,11 @@ export async function getPrograms(): ActionResponse<BaseProgram[]> {
         property: {
           select: { name: true, images: true, city: true, country: true },
         },
+        host: true,
+        amenities: true,
+        images: true,
+        programs: true,
+        priceMods: true,
       },
     });
     return { success: true, data: programs };

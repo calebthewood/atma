@@ -6,7 +6,6 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 
-import { uploadToS3 } from "@/lib/s3";
 import { Button } from "@/components/ui/button";
 import {
   Form,
@@ -25,8 +24,8 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 
-const MAX_UPLOAD_SIZE = 1024 * 1024 * 3; // 3MB
-const ACCEPTED_FILE_TYPES = ["image/png", "image/jpg", "image/jpeg"];
+const _MAX_UPLOAD_SIZE = 1024 * 1024 * 3; // 3MB
+const _ACCEPTED_FILE_TYPES = ["image/png", "image/jpg", "image/jpeg"];
 
 const formSchema = z.object({
   fname: z
@@ -67,7 +66,7 @@ export function CreateUserForm() {
   async function onSubmit(values: z.infer<typeof formSchema>) {
     setIsSubmitting(true);
     try {
-      const user = await createUser({
+      const _user = await createUser({
         ...values,
       });
       form.reset();

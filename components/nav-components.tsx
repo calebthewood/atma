@@ -74,7 +74,7 @@ export function MainNavigationMenu() {
   const navMenuLinkStyle = cn(
     "px-1 sm:px-2 md:px-12",
     "bg-transparent text-center text-xl font-bold uppercase leading-relaxed text-black",
-    "opacity-50 hover:opacity-100 transition-all"
+    "opacity-50 transition-all hover:opacity-100"
   );
 
   return (
@@ -97,7 +97,7 @@ export function MainNavigationMenu() {
           </Link>
           <Separator
             className={cn(
-              "mx-auto h-0.5 w-0 bg-richBlack transition-all duration-300 dark:bg-richBeige",
+              "bg-richBlack dark:bg-richBeige mx-auto h-0.5 w-0 transition-all duration-300",
               path === "destinations" && "w-4 opacity-100"
             )}
           />
@@ -116,7 +116,7 @@ export function MainNavigationMenu() {
           </Link>
           <Separator
             className={cn(
-              "mx-auto h-0.5 w-0 bg-richBlack transition-all duration-300 dark:bg-richBeige",
+              "bg-richBlack dark:bg-richBeige mx-auto h-0.5 w-0 transition-all duration-300",
               path === "retreats" && "w-4 opacity-100"
             )}
           />
@@ -135,7 +135,7 @@ export function MainNavigationMenu() {
           </Link>
           <Separator
             className={cn(
-              "mx-auto h-0.5 w-0 bg-richBlack transition-all duration-300 dark:bg-richBeige",
+              "bg-richBlack dark:bg-richBeige mx-auto h-0.5 w-0 transition-all duration-300",
               path === "programs" && "w-4 opacity-100"
             )}
           />
@@ -155,13 +155,13 @@ const ListItem = React.forwardRef<
         <a
           ref={ref}
           className={cn(
-            "block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground",
+            "hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors",
             className
           )}
           {...props}
         >
           <div className="text-sm font-medium leading-none">{title}</div>
-          <p className="line-clamp-2 text-sm leading-snug text-muted-foreground">
+          <p className="text-muted-foreground line-clamp-2 text-sm leading-snug">
             {children}
           </p>
         </a>

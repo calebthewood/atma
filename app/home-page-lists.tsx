@@ -1,7 +1,6 @@
 "use client";
 
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
-import { Separator } from "@/components/ui/separator";
 import { LazyRetreatItem } from "@/components/retreat-item";
 
 type ListItem = {
@@ -43,7 +42,7 @@ export function ScrollableList({
       <div className="space-y-1">
         <h2 className="text-4xl leading-tight">{title}</h2>
         {description && (
-          <p className="text-sm text-muted-foreground">{description}</p>
+          <p className="text-muted-foreground text-sm">{description}</p>
         )}
       </div>
       {/* <Separator /> */}

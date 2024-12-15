@@ -5,7 +5,6 @@ import { getBookings } from "@/actions/booking-actions";
 import { Booking } from "@prisma/client";
 import { format } from "date-fns";
 
-import { toUSD } from "@/lib/utils";
 import {
   Table,
   TableBody,

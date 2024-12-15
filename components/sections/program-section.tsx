@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { BaseProgram } from "@/actions/program-actions";
+import { BaseProgram, ProgramWithAllRelations, ProgramWithBasicRelations } from "@/actions/program-actions";
 import { motion } from "framer-motion";
 
 import { Button } from "../ui/button";
@@ -32,10 +32,13 @@ const cardVariants = {
 export default function ProgramSection({
   programs,
 }: {
-  programs: BaseProgram[];
+  programs: ProgramWithAllRelations[];
 }) {
   return (
-    <section id="program-section" className="flex flex-col gap-y-5 md:container">
+    <section
+      id="program-section"
+      className="flex flex-col gap-y-5 md:container"
+    >
       <SectionHeader title="Tailored" subtitle="Year Round Programs" />
       <motion.div
         className="scrollbar-hide flex w-full flex-row justify-center gap-6 overflow-x-auto pb-6"
@@ -73,12 +76,12 @@ const ProgramCard = ({
   program,
   bgImg,
 }: {
-  program: BaseProgram;
+  program: ProgramWithAllRelations;
   bgImg: string;
 }) => {
   return (
     <motion.div
-      className="group relative aspect-[3/4] w-80 flex-shrink-0 overflow-hidden rounded-lg transition-transform duration-300 hover:scale-105"
+      className="group relative aspect-[3/4] w-80 shrink-0 overflow-hidden rounded-lg transition-transform duration-300 hover:scale-105"
       variants={cardVariants}
     >
       <Image

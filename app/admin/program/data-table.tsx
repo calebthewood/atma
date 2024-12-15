@@ -361,7 +361,7 @@ export function ProgramDataTable() {
             variant="outline"
             size="sm"
             className="w-24"
-            onClick={() => table.previousPage()}
+            onClick={handlePreviousPage}
             disabled={!table.getCanPreviousPage()}
           >
             Previous
@@ -370,7 +370,7 @@ export function ProgramDataTable() {
             variant="outline"
             size="sm"
             className="w-24"
-            onClick={() => table.nextPage()}
+            onClick={handleNextPage}
             disabled={!table.getCanNextPage()}
           >
             Next

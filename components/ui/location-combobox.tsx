@@ -5,29 +5,17 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { Loader } from "@googlemaps/js-api-loader";
 import { Check, ChevronsUpDown } from "lucide-react";
 
+
+
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
-import {
-  Command,
-  CommandEmpty,
-  CommandGroup,
-  CommandInput,
-  CommandItem,
-  CommandList,
-} from "@/components/ui/command";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
+import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 
-import { ClickyCounter } from "../counter";
-import {
-  AsiaIcon,
-  EuropeIcon,
-  NorthAmericaIcon,
-  SouthAmericaIcon,
-} from "../geography/lo-res";
+
+
+import { AsiaIcon, EuropeIcon, NorthAmericaIcon, SouthAmericaIcon } from "../geography/lo-res";
+
 
 interface Place {
   description: string;
@@ -208,10 +196,10 @@ export function LocationCombobox() {
           className={buttonClasses}
         >
           <span className="flex w-full items-center justify-between text-base">
-            <span className="overflow-hidden text-ellipsis whitespace-nowrap">
+            <span className="truncate">
               {value ? value.name.toUpperCase() : "LOCATION"}
             </span>
-            <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+            <ChevronsUpDown className="ml-2 size-4 shrink-0 opacity-50" />
           </span>
         </Button>
       </PopoverTrigger>

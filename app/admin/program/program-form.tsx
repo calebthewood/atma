@@ -6,7 +6,7 @@ import { getHosts } from "@/actions/host-actions";
 import {
   createProgram,
   updateProgram,
-  type ProgramWithRelations,
+  type ProgramWithAllRelations,
 } from "@/actions/program-actions";
 import { getProperties } from "@/actions/property-actions";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -91,7 +91,7 @@ const formSchema = z.object({
 type FormData = z.infer<typeof formSchema>;
 
 type ProgramFormProps = {
-  program?: ProgramWithRelations;
+  program?: ProgramWithAllRelations;
 };
 export function ProgramForm({ program }: ProgramFormProps) {
   const [isLoading, setIsLoading] = useState(false);
@@ -321,7 +321,7 @@ export function ProgramForm({ program }: ProgramFormProps) {
                         className="items-center gap-x-4"
                       >
                         <span>{config.label}</span>
-                        <span className="ml-2 text-xs text-muted-foreground">
+                        <span className="text-muted-foreground ml-2 text-xs">
                           {config.description}
                         </span>
                       </SelectItem>

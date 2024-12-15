@@ -55,7 +55,7 @@ export default function DestinationGrid() {
         {/* First large item - spans full width on mobile, 2 cols on desktop */}
         <div className="h-[300px] md:col-span-2 md:row-span-3 md:h-full">
           <ImageCard
-            className="h-full w-full"
+            className="size-full"
             imgHref={content.usa.href}
             imgAlt={content.usa.alt}
             title={content.usa.title}
@@ -68,7 +68,7 @@ export default function DestinationGrid() {
         {/* Two smaller items - stack on mobile, side by side on desktop */}
         <div className="h-[300px] md:col-span-1 md:col-start-1 md:row-span-2 md:h-full">
           <ImageCard
-            className="h-full w-full"
+            className="size-full"
             imgHref={content.europe.href}
             imgAlt={content.europe.alt}
             title={content.europe.title}
@@ -79,7 +79,7 @@ export default function DestinationGrid() {
         </div>
         <div className="h-[300px] md:col-span-1 md:col-start-2 md:row-span-2 md:h-full">
           <ImageCard
-            className="h-full w-full"
+            className="size-full"
             imgHref={content.southAmerica.href}
             imgAlt={content.southAmerica.alt}
             title={content.southAmerica.title}
@@ -92,7 +92,7 @@ export default function DestinationGrid() {
         {/* Last large item - full width on mobile, right side on desktop */}
         <div className="h-[400px] md:col-span-2 md:col-start-3 md:row-span-5 md:row-start-1 md:h-full">
           <ImageCard
-            className="h-full w-full"
+            className="size-full"
             imgHref={content.asia.href}
             imgAlt={content.asia.alt}
             title={content.asia.title}
@@ -132,10 +132,7 @@ function ImageCard({
 }: ImageCardProps) {
   return (
     <div
-      className={cn(
-        "relative h-full w-full overflow-hidden rounded",
-        className
-      )}
+      className={cn("relative size-full overflow-hidden rounded", className)}
       {...props}
     >
       <div className="absolute inset-0">

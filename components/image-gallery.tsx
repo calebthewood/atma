@@ -14,20 +14,6 @@ const images = [
   "/img/iStock-1291807006.jpg",
 ];
 
-function generateSlides() {
-  return images.map((img, i) => (
-    <Image
-      key={`${i}-${img}`}
-      fill={true}
-      src={img}
-      alt="alt"
-      className={cn(
-        "aspect-square size-auto object-cover transition-all hover:scale-105"
-      )}
-    />
-  ));
-}
-
 export function FakeImageGallery() {
   const [currImg, setCurrImg] = useState(images[0]);
   return (
