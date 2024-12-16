@@ -37,7 +37,22 @@ export async function createBooking(data: {
   }
 }
 
-export async function getBookings() {
+export async function getBookings(): Promise<
+  {
+    id: string;
+    status: string;
+    propertyId: string | null;
+    createdAt: Date;
+    updatedAt: Date;
+    retreatInstanceId: string | null;
+    programInstanceId: string | null;
+    userId: string;
+    checkInDate: Date;
+    checkOutDate: Date;
+    guestCount: number;
+    totalPrice: string;
+  }[]
+> {
   try {
     const bookings = await prisma.booking.findMany();
     return bookings;
@@ -47,7 +62,20 @@ export async function getBookings() {
   }
 }
 
-export async function getBookingById(bookingId: string) {
+export async function getBookingById(bookingId: string): Promise<{
+  id: string;
+  checkInDate: Date;
+  checkOutDate: Date;
+  guestCount: number;
+  totalPrice: string;
+  status: string;
+  createdAt: Date;
+  updatedAt: Date;
+  propertyId: string | null;
+  userId: string;
+  retreatInstanceId: string | null;
+  programInstanceId: string | null;
+}> {
   try {
     const booking = await prisma.booking.findUnique({
       where: {
@@ -130,7 +158,20 @@ export async function updateBooking(
   }
 }
 
-export async function deleteBooking(bookingId: string) {
+export async function deleteBooking(bookingId: string): Promise<{
+  id: string;
+  checkInDate: Date;
+  checkOutDate: Date;
+  guestCount: number;
+  totalPrice: string;
+  status: string;
+  createdAt: Date;
+  updatedAt: Date;
+  propertyId: string | null;
+  userId: string;
+  retreatInstanceId: string | null;
+  programInstanceId: string | null;
+}> {
   try {
     const booking = await prisma.booking.delete({
       where: {

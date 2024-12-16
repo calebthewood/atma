@@ -88,7 +88,19 @@ export async function deleteAmenity(id: string) {
 /**
  * Get all amenities of a specific type
  */
-export async function getAmenitiesByType(type: AmenityType) {
+export async function getAmenitiesByType(type: AmenityType): Promise<
+  {
+    id: string;
+    name: string;
+    type: string;
+    createdAt: Date;
+    updatedAt: Date;
+    categoryValue: string | null;
+    categoryName: string | null;
+    value: string;
+    custom: boolean;
+  }[]
+> {
   try {
     const validatedType = amenityTypeSchema.parse(type);
     const amenities = await prisma.amenity.findMany({
@@ -113,7 +125,7 @@ export async function updateEntityAmenity(
   entityId: string,
   amenityId: string,
   action: "connect" | "disconnect"
-) {
+): Promise<void> {
   try {
     const validatedEntityType = entityTypeSchema.parse(entityType);
     const validatedAction = actionSchema.parse(action);
@@ -223,7 +235,19 @@ export async function getEntityAmenities(
   entityType: EntityType,
   entityId: string,
   amenityType: AmenityType
-) {
+): Promise<
+  {
+    id: string;
+    type: string;
+    categoryValue: string | null;
+    categoryName: string | null;
+    name: string;
+    value: string;
+    custom: boolean;
+    createdAt: Date;
+    updatedAt: Date;
+  }[]
+> {
   try {
     const validatedEntityType = entityTypeSchema.parse(entityType);
     const validatedAmenityType = amenityTypeSchema.parse(amenityType);

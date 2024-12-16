@@ -2,7 +2,7 @@
 
 import { signIn } from "@/auth.ts";
 
-export async function googleSignIn() {
+export async function googleSignIn(): Promise<void> {
   await signIn("google", {
     provider: "google",
     redirectTo: "/",

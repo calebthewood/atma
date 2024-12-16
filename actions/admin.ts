@@ -2,7 +2,16 @@
 
 import prisma from "@/lib/prisma";
 
-export async function getDatabaseCounts() {
+export async function getDatabaseCounts(): Promise<{
+  userCount: number;
+  hostCount: number;
+  propertyCount: number;
+  verifiedPropertyCount: number;
+  retreatCount: number;
+  verifiedRetreatCount: number;
+  programCount: number;
+  verifiedProgramCount: number;
+}> {
   try {
     const [
       userCount,
@@ -59,7 +68,7 @@ export async function getDatabaseCounts() {
 }
 
 // Usage in a Next.js route handler or server component
-export async function GET() {
+export async function GET(): Promise<Response> {
   try {
     const counts = await getDatabaseCounts();
     return new Response(JSON.stringify(counts), {

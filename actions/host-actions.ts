@@ -5,7 +5,7 @@ import { Host, Prisma } from "@prisma/client";
 
 import { prisma } from "@/lib/prisma";
 
-export async function createHost(data: Host) {
+export async function createHost(data: Host): Promise<Host> {
   try {
     const host = await prisma.host.create({
       data: {
@@ -58,7 +58,7 @@ export async function getHosts(): Promise<GetHostsReturn> {
   }
 }
 
-export async function getHostById(hostId: string) {
+export async function getHostById(hostId: string): Promise<Host> {
   try {
     const host = await prisma.host.findUnique({
       where: {
@@ -106,7 +106,7 @@ export async function updateHost(
   }
 }
 
-export async function deleteHost(hostId: string) {
+export async function deleteHost(hostId: string): Promise<Host> {
   try {
     const host = await prisma.host.delete({
       where: {
