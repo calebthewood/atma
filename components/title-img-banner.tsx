@@ -1,42 +1,42 @@
 import Image from "next/image";
 
-import { GlassCard } from "./glass-card";
-import { H1 } from "./typography";
-
 export function TitleImageBanner({
-  title,
-  subtitle,
-  href,
+  name,
+  city,
+  country,
+  address,
+  nearestAirport,
+  imgHref,
 }: {
-  title: string;
-  subtitle: string;
-  href: string;
+  name: string;
+  city: string | undefined | null;
+  country: string | undefined | null;
+  address: string | undefined | null;
+  nearestAirport: string | undefined | null;
+  imgHref: string;
 }) {
+  const line1 = name;
+  const line2 = country ? `${city}, ${country}` : city;
+  const line3 = nearestAirport ? `${address} / ${nearestAirport}` : address;
   return (
-    <div className="relative flex h-3/4 min-h-[500px] flex-col justify-end bg-muted p-0 text-white dark:border-r md:p-10">
-      <Image
-        priority
-        alt="destination cover photo"
-        src={href}
-        fill={true}
-        sizes="100vw"
-        className="w-full bg-contain md:bg-cover"
-        // style={{
-        //   objectFit: "cover",
-        //   objectPosition: "center",
-        //   width: "100%",
-        // }}
-      />
-      <GlassCard className="z-20 w-full rounded-r py-1 pl-4 md:-left-10 md:pl-10 md:pr-8">
-        <div className="flex items-center text-lg font-medium text-white">
-          {subtitle}
-        </div>
-        <div className=" ">
-          <blockquote className="space-y-2">
-            <H1 className="mb-1 text-4xl text-white md:text-6xl">{title}</H1>
-          </blockquote>
-        </div>
-      </GlassCard>
+    <div className="mx-auto">
+      <div className="mb-8">
+        <h1 className="text-3xl font-semibold capitalize">{line1}</h1>
+        <p className="uppercase/60 mt-2 text-xs font-medium">{line2}</p>
+        <p className="mt-2 text-sm font-medium">{line3}</p>
+      </div>
+
+      <div className="relative aspect-[16/9] w-full overflow-hidden rounded-lg md:aspect-[21/9]">
+        <Image
+          priority
+          alt={name}
+          src={imgHref}
+          fill
+          sizes="(max-width: 768px) 100vw, 90vw"
+          className="border-px rounded border-muted object-cover"
+          quality={90}
+        />
+      </div>
     </div>
   );
 }

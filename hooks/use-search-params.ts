@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback } from "react";
+import { useCallback, useMemo } from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 
 export const useUpdateSearchParam = () => {
@@ -25,4 +25,18 @@ export const useUpdateSearchParam = () => {
   );
 
   return updateSearchParams;
+};
+
+/** Generates url for search page passed to Link tags in search bar  */
+export const useSearchURL = (baseRoute = "search") => {
+  const searchParams = useSearchParams();
+
+  return useMemo(() => {
+    const params = new URLSearchParams(searchParams.toString());
+    // Filter out any empty parameters
+    Array.from(params.entries()).forEach(([key, value]) => {
+      if (!value) params.delete(key);
+    });
+    return `/${baseRoute}?${params.toString()}`;
+  }, [searchParams]);
 };

@@ -2,11 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import {
-  BaseProgram,
-  ProgramWithAllRelations,
-  ProgramWithBasicRelations,
-} from "@/actions/program-actions";
+import { ProgramWithAllRelations } from "@/actions/program-actions";
 import { motion } from "framer-motion";
 
 import { Button } from "../ui/button";
@@ -69,7 +65,7 @@ export default function ProgramSection({
           asChild
           className="mx-auto rounded-full bg-[#841729] px-8 py-4 uppercase"
         >
-          <Link href="/retreats">See All Programs</Link>
+          <Link href="/programs">See All Programs</Link>
         </Button>
       </div>
     </section>
@@ -84,34 +80,36 @@ const ProgramCard = ({
   bgImg: string;
 }) => {
   return (
-    <motion.div
-      className="group relative aspect-[3/4] w-80 shrink-0 overflow-hidden rounded-lg transition-transform duration-300 hover:scale-105"
-      variants={cardVariants}
-    >
-      <Image
-        src={bgImg}
-        alt={program.name || "Program Image"}
-        fill
-        className="object-cover transition-transform duration-500 group-hover:scale-110"
-        priority={false}
-      />
-      <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/50 to-transparent transition-opacity duration-300 group-hover:opacity-90" />
+    <Link prefetch href={`/programs/${program.id}`}>
+      <motion.div
+        className="group relative aspect-[3/4] w-80 shrink-0 overflow-hidden rounded-lg transition-transform duration-300 hover:scale-105"
+        variants={cardVariants}
+      >
+        <Image
+          src={bgImg}
+          alt={program.name || "Program Image"}
+          fill
+          className="object-cover transition-transform duration-500 group-hover:scale-110"
+          priority={false}
+        />
+        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/50 to-transparent transition-opacity duration-300 group-hover:opacity-90" />
 
-      <div className="absolute inset-0 flex flex-col items-center justify-between p-8 text-sm font-normal text-white">
-        <div className="text-center text-sm font-normal uppercase tracking-wide">
-          {program.property?.name || "PROPERTY NAME"}
-          <br />
-          {program.property?.city && program.property?.country
-            ? `${program.property.city}, ${program.property.country}`
-            : "City, Country"}
-        </div>
+        <div className="absolute inset-0 flex flex-col items-center justify-between p-8 text-sm font-normal text-white">
+          <div className="text-center text-sm font-normal uppercase tracking-wide">
+            {program.property?.name || "PROPERTY NAME"}
+            <br />
+            {program.property?.city && program.property?.country
+              ? `${program.property.city}, ${program.property.country}`
+              : "City, Country"}
+          </div>
 
-        <div className="text-center font-broad text-lg font-normal uppercase tracking-wide">
-          {program.name || "Retreat Name"}
-          <br />
-          {program.duration || "7+ nights"}
+          <div className="text-center font-broad text-lg font-normal uppercase tracking-wide">
+            {program.name || "Retreat Name"}
+            <br />
+            {program.duration || "7+ nights"}
+          </div>
         </div>
-      </div>
-    </motion.div>
+      </motion.div>
+    </Link>
   );
 };

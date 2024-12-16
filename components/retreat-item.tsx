@@ -44,7 +44,7 @@ const imagePaths = [
   "/img/wellness-practices-self-care-world-health-day.jpg",
   "/img/woman-sits-pool-with-palm-trees-background.jpg",
 ];
-const rIsx = 0;
+const rIsx = 2;
 interface RetreatCardProps extends React.HTMLAttributes<HTMLDivElement> {
   retreat: Retreat | Host | Property | Program;
   aspectRatio?: "portrait" | "square";
@@ -71,7 +71,7 @@ export function RetreatItem({
           <ContextMenuTrigger>
             <div className="overflow-hidden rounded-md">
               <Image
-                src={imgUrl ?? imagePaths[rIsx]}
+                src={imgUrl || imagePaths[rIsx]}
                 alt={retreat.name || "n/a"}
                 width={width}
                 height={height}
@@ -120,10 +120,6 @@ export function RetreatItem({
           </ContextMenuContent>
         </ContextMenu>
       </Link>
-      <div className="space-y-1 text-sm">
-        <h3 className="font-medium leading-none">{retreat.name}</h3>
-        {/* <p className="text-xs text-muted-foreground">{retreat?.desc}</p> */}
-      </div>
     </div>
   );
 }
@@ -259,7 +255,7 @@ export function LazyRetreatItem({
             {/* Background Image with Overlay */}
             <div className="absolute inset-0">
               <Image
-                src={image}
+                src={image || "/img/iStock-1507078404.jpg"}
                 alt={displayData.name}
                 width={width}
                 height={height}

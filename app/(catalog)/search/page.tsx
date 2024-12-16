@@ -2,21 +2,28 @@
 
 import React, { useCallback, useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
-import { searchProperties } from "@/actions/location-actions";
-import { PropertiesWithImages } from "@/actions/property-actions";
+import {
+  CountryProperties,
+  PropertyWithIncludes,
+  searchProperties,
+} from "@/actions/location-actions";
 import { addDays } from "date-fns";
 
-import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
+import { getCountryName } from "@/lib/utils";
 import { LoadingSpinner } from "@/components/loading-spinner";
 import { RetreatItem } from "@/components/retreat-item";
 import { Lead } from "@/components/typography";
+import TabbedSearchResults from "./tabbed-search-results";
 
 export default function Page() {
-  const [searchResults, setSearchResults] = useState<PropertiesWithImages[]>(
-    []
-  );
+  const [searchResults, setSearchResults] = useState<
+    PropertyWithIncludes[] | CountryProperties[]
+  >([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [searchType, setSearchType] = useState<"location" | "continent">(
+    "location"
+  );
 
   const searchParams = useSearchParams();
 
@@ -25,6 +32,7 @@ export default function Page() {
     const place = encodedPlace ? decodeURIComponent(encodedPlace) : "";
     const lat = searchParams.get("lat");
     const lon = searchParams.get("lon");
+    const continent = searchParams.get("continent");
     const from = searchParams.get("from");
     const to = searchParams.get("to");
     const guests = searchParams.get("guests");
@@ -32,53 +40,77 @@ export default function Page() {
     const today = new Date();
     const twoDaysFromNow = addDays(today, 2);
 
-    const searchCriteria = {
-      place: place || "",
-      lat: lat ? parseFloat(lat) : null,
-      lon: lon ? parseFloat(lon) : null,
-      from: from ? new Date(from) : today,
-      to: to ? new Date(to) : twoDaysFromNow,
-      guests: guests ? parseInt(guests, 10) : 1,
-    };
+    setIsLoading(true);
+    setError(null);
 
-    if (searchCriteria.lat && searchCriteria.lon) {
-      console.log("Searching with criteria:", searchCriteria);
-      setIsLoading(true);
-      setError(null);
-
-      try {
-        const places = await searchProperties({
-          latitude: searchCriteria.lat,
-          longitude: searchCriteria.lon,
+    try {
+      if (continent) {
+        // Handle continent search
+        setSearchType("continent");
+        const results = await searchProperties({
+          continent,
+          includeHost: true,
+          includeImages: true,
+        });
+        setSearchResults(results);
+      } else if (lat && lon) {
+        // Handle location search
+        setSearchType("location");
+        const searchCriteria = {
+          latitude: parseFloat(lat),
+          longitude: parseFloat(lon),
           radiusMiles: 200,
           limit: 10,
           includeHost: true,
           includeImages: true,
-        });
-        console.log("places ", places);
-        if (places) {
-          // @ts-ignore
-          setSearchResults(places);
-        }
-      } catch (err) {
-        console.error("Error during search:", err);
-        setError("An error occurred while searching. Please try again.");
-      } finally {
-        setIsLoading(false);
+        };
+
+        const places = await searchProperties(searchCriteria);
+        setSearchResults(places);
+      } else {
+        setError("Please provide a valid location or continent to search.");
       }
-    } else {
-      console.log("Cannot search without location coordinates");
-      setError("Please provide a valid location to search.");
+    } catch (err) {
+      console.error("Error during search:", err);
+      setError("An error occurred while searching. Please try again.");
+    } finally {
+      setIsLoading(false);
     }
   }, [searchParams]);
 
   useEffect(() => {
     const debounceTimer = setTimeout(() => {
       handleSearch();
-    }, 300); // 300ms debounce
+    }, 300);
 
     return () => clearTimeout(debounceTimer);
   }, [handleSearch]);
+
+  const renderLocationResults = () => {
+    const results = searchResults as PropertyWithIncludes[];
+    return (
+      <div className="flex space-x-4 pb-4">
+        {results.map((property, i) => (
+          <div key={property.id + `${i * 3.7}`} className="flex flex-col">
+            <RetreatItem
+              retreat={property}
+              imgUrl={property.images?.[0]?.filePath}
+              segment="destinations"
+              className="w-[250px]"
+              aspectRatio="portrait"
+              width={250}
+              height={330}
+            />
+            <div>{property.address}</div>
+          </div>
+        ))}
+      </div>
+    );
+  };
+  const renderContinentResults = () => {
+    const results = searchResults as CountryProperties[];
+    return <TabbedSearchResults results={results} />;
+  };
 
   return (
     <div className="h-full px-4 py-6 md:container lg:px-8">
@@ -88,38 +120,24 @@ export default function Page() {
             Search Results
           </h2>
           <p className="text-sm text-muted-foreground">
-            Properties within range
+            {searchType === "location"
+              ? "Properties within range"
+              : "Properties by country"}
           </p>
         </div>
       </div>
       <div className="relative">
-        <ScrollArea>
-          {isLoading ? (
-            <LoadingSpinner />
-          ) : error ? (
-            <Lead className="mt-4 text-red-500">{error}</Lead>
-          ) : searchResults.length === 0 ? (
-            <Lead className="mt-4">No results found.</Lead>
-          ) : (
-            <div className="flex space-x-4 pb-4">
-              {searchResults.map((r, i) => (
-                <div key={r.name + `${i * 3.7}`} className="flex flex-col">
-                  <RetreatItem
-                    retreat={r}
-                    imgUrl={r.images[0]?.filePath}
-                    segment="destinations"
-                    className="w-[250px]"
-                    aspectRatio="portrait"
-                    width={250}
-                    height={330}
-                  />
-                  <div>{r.address}</div>
-                </div>
-              ))}
-            </div>
-          )}
-          <ScrollBar orientation="horizontal" />
-        </ScrollArea>
+        {isLoading ? (
+          <LoadingSpinner />
+        ) : error ? (
+          <Lead className="mt-4 text-red-500">{error}</Lead>
+        ) : searchResults.length === 0 ? (
+          <Lead className="mt-4">No results found.</Lead>
+        ) : searchType === "location" ? (
+          renderLocationResults()
+        ) : (
+          renderContinentResults()
+        )}
       </div>
     </div>
   );

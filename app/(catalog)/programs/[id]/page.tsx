@@ -1,5 +1,4 @@
 import { ReactNode, Suspense } from "react";
-
 import { notFound } from "next/navigation";
 import { getProgram } from "@/actions/program-actions";
 import { auth } from "@/auth";
@@ -97,10 +96,17 @@ export default async function ProgramPage({
         content: <div>{program?.whoIsthisFor}</div>,
       },
     ];
-
+    const property = program.property;
     return (
       <div className="relative mt-6 min-h-screen md:container">
-        <TitleImageBanner title={title} subtitle={subtitle} href={coverImage} />
+        <TitleImageBanner
+          name={property.name}
+          city={property.city}
+          country={property.country}
+          address={property?.address}
+          nearestAirport={property?.nearbyAirport}
+          imgHref={coverImage}
+        />
 
         {/* Content Section */}
         <div>

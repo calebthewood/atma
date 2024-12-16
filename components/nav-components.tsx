@@ -36,7 +36,7 @@ export function HeroTitle() {
         <span className="ml-1 font-normal tracking-widester">ATMA</span>
         <span className="font-semibold tracking-widester">RESERVE</span>
       </h1>
-      <p className="text-center text-sm font-thin uppercase leading-relaxed tracking-wider text-black">
+      <p className="text-center text-sm font-thin uppercase leading-relaxed tracking-wider">
         {`THE WORLD'S DESTINATION FOR FINEST RETREATS`}
       </p>
     </Link>
@@ -73,14 +73,14 @@ export function MainNavigationMenu() {
   const path = paths[1];
   const navMenuLinkStyle = cn(
     "px-1 sm:px-2 md:px-12",
-    "bg-transparent text-center text-xl font-bold uppercase leading-relaxed text-black",
+    "bg-transparent text-center text-xl font-bold uppercase leading-relaxed",
     "opacity-50 transition-all hover:opacity-100"
   );
 
   return (
     <NavigationMenu className="my-16 w-full">
       <NavigationMenuList className="w-full justify-evenly">
-        <div className="text-center text-xl font-normal uppercase leading-relaxed text-black opacity-70">
+        <div className="text-center text-xl font-normal uppercase leading-relaxed opacity-70">
           BROWSE BY
         </div>
         <NavigationMenuItem>

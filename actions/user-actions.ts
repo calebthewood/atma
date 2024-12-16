@@ -108,3 +108,28 @@ export async function uploadImage(formData: FormData) {
     return { success: false, error: "Failed to upload image" };
   }
 }
+
+// Server action to handle newsletter subscription
+export async function subscribeToNewsletter(email: string) {
+  try {
+    // Validate email
+    if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      throw new Error("Please enter a valid email address");
+    }
+
+    // Later we will:
+    // 1. Validate the email isn't already subscribed
+    // 2. Add the email to your newsletter service (e.g., Mailchimp)
+    // 3. Store the subscription in your database
+    // For now, we'll simulate a delay
+    await new Promise((resolve) => setTimeout(resolve, 1000));
+
+    return { success: true };
+  } catch (error) {
+    console.error("Newsletter subscription error:", error);
+    return {
+      success: false,
+      error: error instanceof Error ? error.message : "Subscription failed",
+    };
+  }
+}

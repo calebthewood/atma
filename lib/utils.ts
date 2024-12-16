@@ -80,6 +80,25 @@ export function calculatePriceMods(priceMods: PriceModWithSource[]): number {
   return basePrice + modifiers + fees + taxes;
 }
 
+export function haversineDistance(
+  lat1: number,
+  lon1: number,
+  lat2: number,
+  lon2: number
+): number {
+  const R = 3959; // Earth's radius in miles
+  const dLat = ((lat2 - lat1) * Math.PI) / 180;
+  const dLon = ((lon2 - lon1) * Math.PI) / 180;
+  const a =
+    Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+    Math.cos((lat1 * Math.PI) / 180) *
+      Math.cos((lat2 * Math.PI) / 180) *
+      Math.sin(dLon / 2) *
+      Math.sin(dLon / 2);
+  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+  return R * c;
+}
+
 /** Use with google places api to get a continent for a location based on the "short_name" property from the api response */
 export const shortNameToContinent = (shortName: string) => {
   const continentMap: { [sn: string]: string } = {
@@ -323,4 +342,15 @@ export const shortNameToContinent = (shortName: string) => {
     ZW: "Africa",
   };
   return shortName in continentMap ? continentMap[shortName] : "NA";
+};
+
+export const getCountryName = (countryCode: string): string => {
+  try {
+    const regionNames = new Intl.DisplayNames(["en"], { type: "region" });
+    return regionNames.of(countryCode.toUpperCase()) || countryCode;
+  } catch (error) {
+    // Fallback in case the API is not supported or errors
+    console.warn("Intl.DisplayNames not supported:", error);
+    return countryCode;
+  }
 };

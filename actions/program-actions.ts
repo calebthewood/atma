@@ -6,6 +6,7 @@ import { Prisma, Program } from "@prisma/client";
 import { z } from "zod";
 
 import prisma from "@/lib/prisma";
+import { haversineDistance, shortNameToContinent } from "@/lib/utils";
 
 // ============================================================================
 // Types
@@ -102,6 +103,8 @@ export type ProgramWithAllRelations = Prisma.ProgramGetPayload<{
         name: true;
         city: true;
         country: true;
+        nearbyAirport: true;
+        address: true;
       };
     };
     host: true;
@@ -120,7 +123,14 @@ export async function getProgram(
       where: { id },
       include: {
         property: {
-          select: { images: true, city: true, country: true, name: true },
+          select: {
+            images: true,
+            city: true,
+            country: true,
+            name: true,
+            nearbyAirport: true,
+            address: true,
+          },
         },
         host: true,
         amenities: true,
@@ -185,7 +195,14 @@ export async function getPrograms(): ActionResponse<ProgramWithAllRelations[]> {
       where: { status: "published" },
       include: {
         property: {
-          select: { name: true, images: true, city: true, country: true },
+          select: {
+            name: true,
+            images: true,
+            city: true,
+            country: true,
+            nearbyAirport: true,
+            address: true,
+          },
         },
         host: true,
         amenities: true,

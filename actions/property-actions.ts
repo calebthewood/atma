@@ -30,6 +30,7 @@ export type PropertyWithRelations = Prisma.PropertyGetPayload<{
     rooms: true;
     retreats: true;
     programs: true;
+    priceMods: true;
   };
 }>;
 
@@ -86,6 +87,7 @@ export async function getPropertyWithId(
         rooms: true,
         retreats: true,
         programs: true,
+        priceMods: true,
       },
     });
 
@@ -257,4 +259,148 @@ export async function deleteProperty(id: string) {
   revalidatePath("/admin/property");
   revalidatePath(`/admin/property/${id}`);
   return property;
+}
+
+export type PropertyAmenityWithDetails = {
+  propertyId: string;
+  amenityId: string;
+  createdAt: Date;
+  updatedAt: Date;
+  amenity: {
+    id: string;
+    type: string;
+    categoryValue: string | null;
+    categoryName: string | null;
+    name: string;
+    value: string;
+    custom: boolean;
+  };
+};
+
+export async function getPropertyAmenities(
+  propertyId: string
+): Promise<PropertyAmenityWithDetails[]> {
+  try {
+    const amenities = await prisma.propertyAmenity.findMany({
+      where: {
+        propertyId: propertyId,
+      },
+      include: {
+        amenity: true,
+      },
+      orderBy: [
+        {
+          amenity: {
+            type: "asc",
+          },
+        },
+        {
+          amenity: {
+            categoryValue: "asc",
+          },
+        },
+        {
+          amenity: {
+            name: "asc",
+          },
+        },
+      ],
+    });
+
+    return amenities;
+  } catch (error) {
+    console.error("Failed to fetch property amenities:", error);
+    throw new Error("Failed to fetch property amenities");
+  }
+}
+
+// Optional: Helper function to get amenities by category
+export async function getPropertyAmenitiesByCategory(
+  propertyId: string,
+  category: string
+): Promise<PropertyAmenityWithDetails[]> {
+  try {
+    const amenities = await prisma.propertyAmenity.findMany({
+      where: {
+        propertyId: propertyId,
+        amenity: {
+          categoryValue: category,
+        },
+      },
+      include: {
+        amenity: true,
+      },
+      orderBy: {
+        amenity: {
+          name: "asc",
+        },
+      },
+    });
+
+    return amenities;
+  } catch (error) {
+    console.error(
+      `Failed to fetch property amenities for category ${category}:`,
+      error
+    );
+    throw new Error(
+      `Failed to fetch property amenities for category ${category}`
+    );
+  }
+}
+
+export type EntityWithDetails = {
+  id: string;
+  name: string | null;
+  images: { filePath: string }[];
+  city?: string | null;
+  country?: string | null;
+  date?: Date | null;
+  endDate?: Date | null;
+  priceMods: {
+    type: string;
+    value: number;
+  }[];
+};
+
+export async function getPropertyEntityIds(
+  propertyId: string,
+  entityType: "retreat" | "program"
+) {
+  try {
+    if (entityType === "retreat") {
+      const retreats = await prisma.retreat.findMany({
+        where: {
+          propertyId,
+          status: "published",
+        },
+        take: 10,
+        orderBy: {
+          date: "asc",
+        },
+        select: {
+          id: true,
+        },
+      });
+      return retreats.map((r) => r.id);
+    } else {
+      const programs = await prisma.program.findMany({
+        where: {
+          propertyId,
+          status: "published",
+        },
+        take: 10,
+        orderBy: {
+          date: "asc",
+        },
+        select: {
+          id: true,
+        },
+      });
+      return programs.map((p) => p.id);
+    }
+  } catch (error) {
+    console.error(`Failed to fetch ${entityType} IDs:`, error);
+    throw new Error(`Failed to fetch ${entityType} IDs`);
+  }
 }

@@ -1,6 +1,6 @@
 "use client";
-import React from "react";
-import { Suspense } from "react";
+
+import React, { Suspense } from "react";
 
 import { BookingBar } from "@/components/booking-bar";
 
@@ -13,7 +13,7 @@ export default function CatalogLayout({ children }: LayoutProps) {
       <Suspense>
         <BookingBar />
       </Suspense>
-      {children}
+      <main className="md:container">{children}</main>
     </>
   );
 }

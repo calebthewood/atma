@@ -1,8 +1,9 @@
 "use server";
 
-import { Prisma, PrismaClient } from "@prisma/client";
+import { Prisma } from "@prisma/client";
 
 import { prisma } from "@/lib/prisma";
+import { haversineDistance, shortNameToContinent } from "@/lib/utils";
 
 // import { PropertiesWithImages } from "./property-actions";
 
@@ -16,26 +17,47 @@ const EARTH_RADIUS_KM = 6371;
  */
 const toRadians = (degrees: number): number => (degrees * Math.PI) / 180;
 
-type SearchOptions = {
-  latitude?: number;
-  longitude?: number;
+export interface SearchOptions {
+  latitude?: number | null;
+  longitude?: number | null;
   radiusMiles?: number;
   limit?: number;
   includeHost?: boolean;
   includeImages?: boolean;
   includePrograms?: boolean;
   includeRetreats?: boolean;
-  // Add more filter options as needed
   nameContains?: string;
-};
+  continent?: string;
+}
+
+export type PropertyWithIncludes = Prisma.PropertyGetPayload<{
+  include: {
+    host: {
+      select: {
+        id: true;
+        name: true;
+      };
+    };
+    images: {
+      select: {
+        filePath: true;
+        desc: true;
+      };
+    };
+  };
+}>;
+
+export interface CountryProperties {
+  country: string;
+  properties: PropertyWithIncludes[];
+}
 
 /**
  * Searches for properties based on given options, including related records.
- *
- * @param options - Search options including location, radius, and what to include
- * @returns Properties matching the search criteria with included related records
  */
-export const searchProperties = async (options: SearchOptions) => {
+export const searchProperties = async (
+  options: SearchOptions
+): Promise<PropertyWithIncludes[] | CountryProperties[]> => {
   const {
     latitude,
     longitude,
@@ -46,48 +68,96 @@ export const searchProperties = async (options: SearchOptions) => {
     includePrograms = false,
     includeRetreats = false,
     nameContains,
+    continent,
   } = options;
 
-  const include: any = {};
+  const include: Prisma.PropertyInclude = {
+    host: includeHost
+      ? {
+          select: {
+            id: true,
+            name: true,
+          },
+        }
+      : false,
+    images: includeImages
+      ? {
+          select: {
+            filePath: true,
+            desc: true,
+          },
+        }
+      : false,
+    programs: includePrograms,
+    retreats: includeRetreats,
+  };
 
-  if (includeHost) {
-    include.host = { select: { name: true, id: true } };
-  }
-
-  if (includeImages) {
-    include.images = { select: { filePath: true, desc: true } };
-  }
-
-  if (includePrograms) {
-    include.programs = true;
-  }
-
-  if (includeRetreats) {
-    include.retreats = true;
-  }
-
-  const where: Prisma.PropertyWhereInput = {};
+  const where: Prisma.PropertyWhereInput = {
+    status: "published",
+  };
 
   if (nameContains) {
     where.name = { contains: nameContains };
   }
 
-  // Fetch properties
+  // If continent is provided, handle continent-based search
+  if (continent) {
+    const properties = await prisma.property.findMany({
+      where: {
+        ...where,
+        country: { not: null },
+      },
+      include,
+    });
+
+    // Group properties by country and filter by continent
+    const groupedProperties = properties.reduce(
+      (acc: CountryProperties[], property) => {
+        if (!property.country) return acc;
+
+        const propertyContinent = shortNameToContinent(property.country);
+
+        if (propertyContinent.toLowerCase() === continent.toLowerCase()) {
+          const existingCountry = acc.find(
+            (cp) => cp.country === property.country
+          );
+
+          if (existingCountry) {
+            existingCountry.properties.push(property);
+          } else {
+            acc.push({
+              country: property.country,
+              properties: [property],
+            });
+          }
+        }
+
+        return acc;
+      },
+      []
+    );
+
+    // Sort countries by number of properties (descending)
+    return groupedProperties.sort(
+      (a, b) => b.properties.length - a.properties.length
+    );
+  }
+
+  // Handle location-based search
   const properties = await prisma.property.findMany({
     where,
     include,
   });
 
-  // If latitude and longitude are provided, filter by distance
   if (latitude && longitude) {
     const nearbyProperties = properties
       .map((property) => ({
         ...property,
         distance: haversineDistance(
-          latitude, //@ts-ignore
-          longitude, //@ts-ignore
-          property.lat, //@ts-ignore
-          property.lng //@ts-ignore
+          latitude,
+          longitude,
+          property.lat ?? 0,
+          property.lng ?? 0
         ),
       }))
       .filter((property) => property.distance <= radiusMiles)
@@ -97,28 +167,5 @@ export const searchProperties = async (options: SearchOptions) => {
     return nearbyProperties;
   }
 
-  // If no location filtering, just return the first 'limit' properties
   return properties.slice(0, limit);
 };
-
-// Haversine distance calculation function
-function haversineDistance(
-  lat1: number | null | undefined,
-  lon1: number | null | undefined,
-  lat2: number | null | undefined,
-  lon2: number | null | undefined
-): number {
-  if (!lat2 || !lon2 || !lat1 || !lon1) return Infinity;
-
-  const R = 3959; // Earth radius in miles
-  const dLat = toRadians(lat2 - lat1);
-  const dLon = toRadians(lon2 - lon1);
-  const a =
-    Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-    Math.cos(toRadians(lat1)) *
-      Math.cos(toRadians(lat2)) *
-      Math.sin(dLon / 2) *
-      Math.sin(dLon / 2);
-  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-  return R * c;
-}

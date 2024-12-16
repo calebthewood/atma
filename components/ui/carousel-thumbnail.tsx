@@ -15,6 +15,8 @@ import {
   type CarouselApi,
 } from "@/components/ui/carousel";
 
+import { ScrollArea } from "./scroll-area";
+
 const TWEEN_FACTOR = 0.9;
 
 type PropType = {
@@ -139,7 +141,7 @@ const ThumbnailCarousel: React.FC<PropType> = (props) => {
 
         {/* Thumbnails */}
         <div className="mt-7 lg:mt-0 lg:w-1/4">
-          <div className="lg:h-[30rem] lg:overflow-y-auto lg:pr-2">
+          <div className="lg:h-[30rem] lg:pr-2">
             {/* Mobile Carousel */}
             <div className="lg:hidden">
               <Carousel
@@ -168,16 +170,18 @@ const ThumbnailCarousel: React.FC<PropType> = (props) => {
             </div>
 
             {/* Desktop Grid */}
-            <div className="hidden lg:grid lg:grid-cols-2 lg:gap-3">
-              {slides.map((img, idx) => (
-                <Thumb
-                  key={`desktop-thumb-${idx}`}
-                  onClick={() => onThumbClick(idx)}
-                  selected={idx === selectedIndex}
-                  img={img}
-                />
-              ))}
-            </div>
+            <ScrollArea className="h-[480px] w-full overflow-hidden">
+              <div className="hidden lg:grid lg:grid-cols-2 lg:gap-0">
+                {slides.map((img, idx) => (
+                  <Thumb
+                    key={`desktop-thumb-${idx}`}
+                    onClick={() => onThumbClick(idx)}
+                    selected={idx === selectedIndex}
+                    img={img}
+                  />
+                ))}
+              </div>
+            </ScrollArea>
           </div>
         </div>
       </div>
@@ -203,7 +207,7 @@ const Thumb: React.FC<ThumbProps> = (props) => {
         "relative aspect-square size-full min-h-24 min-w-24 overflow-hidden rounded-xl p-0",
         "shadow-[inset_0_0_0_0.2rem_var(--detail-medium-contrast)]",
         "cursor-pointer appearance-none bg-transparent",
-        "touch-manipulation focus:outline-none",
+        "touch-manipulation border-transparent focus:outline-none",
         selected ? "shadow-[inset_0_0_0_0.2rem_var(--text-body)]" : ""
       )}
     >

@@ -1,7 +1,5 @@
 import { ReactNode, Suspense } from "react";
-
 import { notFound } from "next/navigation";
-
 import { getRetreatPriceMods } from "@/actions/price-mod-actions";
 import { getRetreat } from "@/actions/retreat-actions";
 import { auth } from "@/auth";
@@ -71,9 +69,18 @@ export default async function RetreatPage({
         content: <div>{retreat?.whoIsthisFor}</div>,
       },
     ];
+
+    const property = retreat.property;
     return (
       <div className="relative mt-6 min-h-screen md:container">
-        <TitleImageBanner title={title} subtitle={subtitle} href={coverImage} />
+        <TitleImageBanner
+          name={property.name}
+          city={property.city}
+          country={property.country}
+          address={property?.address}
+          nearestAirport={property?.nearbyAirport}
+          imgHref={coverImage}
+        />
         {/* Content Section with edge-to-edge gradient */}
         <div className="">
           <div className="container relative mx-auto py-16">
@@ -128,7 +135,6 @@ export default async function RetreatPage({
                         instances={retreat.retreatInstances}
                         priceMods={priceMods.data ?? []}
                       />
-                      {/* </GlassCard> */}
                     </div>
                   </div>
                 </div>
@@ -138,7 +144,6 @@ export default async function RetreatPage({
           </div>
         </div>
       </div>
-      // </div>
     );
   } catch (error) {
     console.error("Error loading retreat page:", error);

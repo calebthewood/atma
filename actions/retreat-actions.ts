@@ -6,6 +6,7 @@ import { Prisma, Retreat } from "@prisma/client";
 import { z } from "zod";
 
 import prisma from "@/lib/prisma";
+import { haversineDistance, shortNameToContinent } from "@/lib/utils";
 
 // ============================================================================
 // Types
@@ -28,6 +29,7 @@ export type SimpleRetreat = Prisma.RetreatGetPayload<{
       };
     };
     host: true;
+    priceMods: true;
   };
 }>;
 
@@ -39,6 +41,8 @@ export type RetreatWithRelations = Prisma.RetreatGetPayload<{
         city: true;
         country: true;
         name: true;
+        nearbyAirport: true;
+        address: true;
       };
     };
     priceMods: true;
@@ -152,6 +156,8 @@ export async function getRetreat(
             city: true,
             country: true,
             name: true,
+            nearbyAirport: true,
+            address: true,
           },
         },
         priceMods: true,
@@ -195,6 +201,7 @@ export async function getSimpleRetreat(
         },
         host: true,
         images: true,
+        priceMods: true,
       },
     });
 
