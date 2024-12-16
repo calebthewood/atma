@@ -172,7 +172,7 @@ function ModifiedImageUpload({
         <input {...getInputProps()} />
 
         <div className="space-y-2">
-          <p className="text-sm text-muted-foreground">
+          <p className="text-muted-foreground text-sm">
             {isDragActive
               ? "Drop the files here..."
               : "Drag 'n' drop images here, or click to select"}
@@ -180,7 +180,7 @@ function ModifiedImageUpload({
           {uploading && (
             <>
               <Progress value={progress} className="h-1" />
-              <p className="text-xs text-muted-foreground">
+              <p className="text-muted-foreground text-xs">
                 {progress < 50 ? "Processing images..." : "Uploading..."} (
                 {Math.round(progress)}%)
               </p>
@@ -189,7 +189,7 @@ function ModifiedImageUpload({
         </div>
       </div>
 
-      <p className="text-center text-xs text-muted-foreground">
+      <p className="text-muted-foreground text-center text-xs">
         Supported formats: PNG, JPG, GIF, WebP
       </p>
     </div>
@@ -337,7 +337,7 @@ export function ImageManagement({
       <div>
         <h4 className="text-sm font-medium">Image Gallery</h4>
         {isLoading ? (
-          <div className="text-center text-sm text-muted-foreground">
+          <div className="text-muted-foreground text-center text-sm">
             Loading images...
           </div>
         ) : (

@@ -273,7 +273,7 @@ export function PriceModsTable() {
 
   if (!instanceId) {
     return (
-      <div className="text-center text-muted-foreground">
+      <div className="text-muted-foreground text-center">
         Select a retreat instance to view price modifications
       </div>
     );
@@ -359,7 +359,7 @@ export function PriceModsTable() {
                 <TableRow
                   key={row.id}
                   data-state={row.getIsSelected() && "selected"}
-                  className="cursor-pointer hover:bg-muted/50"
+                  className="hover:bg-muted/50 cursor-pointer"
                   onClick={() => handleRowClick(row.original.id)}
                 >
                   {row.getVisibleCells().map((cell) => (

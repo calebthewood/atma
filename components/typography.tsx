@@ -79,13 +79,13 @@ export function Blockquote({ children, className }: TypographyProps) {
 
 export function Lead({ children, className }: TypographyProps) {
   return (
-    <p className={cn("text-xl text-muted-foreground", className)}>{children}</p>
+    <p className={cn("text-muted-foreground text-xl", className)}>{children}</p>
   );
 }
 
 export function Muted({ children, className }: TypographyProps) {
   return (
-    <p className={cn("text-sm text-muted-foreground", className)}>{children}</p>
+    <p className={cn("text-muted-foreground text-sm", className)}>{children}</p>
   );
 }
 

@@ -33,7 +33,7 @@ export function TitleImageBanner({
           src={imgHref}
           fill
           sizes="(max-width: 768px) 100vw, 90vw"
-          className="border-px rounded border-muted object-cover"
+          className="border-px border-muted rounded object-cover"
           quality={90}
         />
       </div>

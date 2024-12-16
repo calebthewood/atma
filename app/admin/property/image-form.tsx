@@ -111,7 +111,7 @@ export function ImageUpload({ recordId, recordType }: ImageUploadProps) {
         <input {...getInputProps()} />
 
         <div className="space-y-2">
-          <p className="text-sm text-muted-foreground">
+          <p className="text-muted-foreground text-sm">
             {isDragActive
               ? "Drop the files here..."
               : "Drag 'n' drop images here, or click to select"}
@@ -119,7 +119,7 @@ export function ImageUpload({ recordId, recordType }: ImageUploadProps) {
           {uploading && (
             <>
               <Progress value={progress} className="h-1" />
-              <p className="text-xs text-muted-foreground">
+              <p className="text-muted-foreground text-xs">
                 {progress < 50 ? "Processing images..." : "Uploading..."} (
                 {Math.round(progress)}%)
               </p>
@@ -128,7 +128,7 @@ export function ImageUpload({ recordId, recordType }: ImageUploadProps) {
         </div>
       </div>
 
-      <p className="text-center text-xs text-muted-foreground">
+      <p className="text-muted-foreground text-center text-xs">
         Supported formats: PNG, JPG, GIF, WebP
       </p>
     </div>

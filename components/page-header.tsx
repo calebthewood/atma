@@ -45,7 +45,7 @@ export function PageHeaderDescription({
   ...props
 }: PageHeaderDescriptionProps) {
   return (
-    <p className={cn("text-lg text-muted-foreground", className)} {...props}>
+    <p className={cn("text-muted-foreground text-lg", className)} {...props}>
       {children}
     </p>
   );

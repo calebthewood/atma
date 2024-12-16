@@ -36,7 +36,7 @@ const TabbedSearchResults = ({ results }: { results: CountryProperties[] }) => {
           {results.map((countryGroup) => (
             <div
               key={countryGroup.country}
-              className="flex flex-col rounded bg-card p-4"
+              className="bg-card flex flex-col rounded p-4"
             >
               <h3 className="mb-4 text-xl font-semibold">
                 {getCountryName(countryGroup.country)}
@@ -59,7 +59,7 @@ const TabbedSearchResults = ({ results }: { results: CountryProperties[] }) => {
                       width={300}
                       height={300}
                     />
-                    <div className="mt-2 w-[290px] overflow-hidden text-ellipsis text-sm text-muted-foreground">
+                    <div className="text-muted-foreground mt-2 w-[290px] overflow-hidden text-ellipsis text-sm">
                       {property.address}
                     </div>
                   </div>
@@ -87,7 +87,7 @@ const TabbedSearchResults = ({ results }: { results: CountryProperties[] }) => {
                     width={300}
                     height={300}
                   />
-                  <div className="mt-2 w-[290px] overflow-hidden text-ellipsis text-sm text-muted-foreground">
+                  <div className="text-muted-foreground mt-2 w-[290px] overflow-hidden text-ellipsis text-sm">
                     {property.address}
                   </div>
                 </div>

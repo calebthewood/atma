@@ -344,7 +344,7 @@ export function RetreatInstancesList({
                 <TableRow
                   key={row.id}
                   data-state={row.getIsSelected() && "selected"}
-                  className="cursor-pointer hover:bg-muted/50"
+                  className="hover:bg-muted/50 cursor-pointer"
                   onClick={() => handleRowClick(row.original.id)}
                 >
                   {row.getVisibleCells().map((cell) => (
@@ -372,7 +372,7 @@ export function RetreatInstancesList({
       </div>
 
       <div className="flex items-center justify-between space-x-2 py-4">
-        <span className="text-sm text-muted-foreground">
+        <span className="text-muted-foreground text-sm">
           Page {pagination.pageIndex + 1} of {totalPages}
         </span>
         <div className="space-x-2">

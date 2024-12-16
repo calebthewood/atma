@@ -107,13 +107,13 @@ export function FlexibleBooking({ userId, retreat, events }: BookingListProps) {
         </div>
       </CardContent>
       <CardContent>
-        <Small className="flex justify-between text-lg text-primary/60">
+        <Small className="text-primary/60 flex justify-between text-lg">
           <span>
             {guestCount} guests x {toUSD(basePrice?.value)}
           </span>
           <span>{toUSD((guestCount ?? 1) * (basePrice?.value ?? 1))}</span>
         </Small>
-        <Small className="flex justify-between text-lg text-primary/60">
+        <Small className="text-primary/60 flex justify-between text-lg">
           <span>
             {dateDiffDisplay()} x ${(guestCount ?? 1) * (basePrice?.value ?? 1)}
           </span>
@@ -126,7 +126,7 @@ export function FlexibleBooking({ userId, retreat, events }: BookingListProps) {
           priceMods.map((mod, i) => (
             <Small
               key={`price-mod-${i}`}
-              className="flex justify-between text-primary/60"
+              className="text-primary/60 flex justify-between"
             >
               <span>{mod.name}</span>
               <span>{toUSD(mod.value)}</span>

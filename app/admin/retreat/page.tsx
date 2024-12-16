@@ -9,7 +9,7 @@ export default function Page() {
     <div className="space-y-6">
       <div>
         <h3 className="text-lg font-medium">Create or Edit Retreat</h3>
-        <p className="text-sm text-muted-foreground">
+        <p className="text-muted-foreground text-sm">
           Retreats are held at Properties, and should have a Host
         </p>
       </div>

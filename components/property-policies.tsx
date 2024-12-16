@@ -62,7 +62,7 @@ const PolicyItem = ({
   value: React.ReactNode;
 }) => (
   <div className="mb-2 flex items-center justify-between border-b border-gray-100 pb-2">
-    <span className="text-sm text-muted-foreground">{label}</span>
+    <span className="text-muted-foreground text-sm">{label}</span>
     <span className="font-medium">{value}</span>
   </div>
 );

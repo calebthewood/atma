@@ -118,7 +118,7 @@ export function FixedBooking({
         {mods.map((mod, i) => (
           <Tooltip key={`${type}-${i}`}>
             <TooltipTrigger className="w-full">
-              <Small className="flex w-full cursor-help justify-between text-primary/60">
+              <Small className="text-primary/60 flex w-full cursor-help justify-between">
                 <span>{mod.name}</span>
                 <span>{toUSD(mod.value)}</span>
               </Small>
@@ -126,7 +126,7 @@ export function FixedBooking({
             <TooltipContent side="top" className="max-w-[200px] text-sm">
               <div>
                 <p>{mod.desc || "No description available"}</p>
-                <p className="mt-1 text-xs text-primary/60">
+                <p className="text-primary/60 mt-1 text-xs">
                   Source: {mod?.source || "NA"}
                 </p>
               </div>
@@ -175,7 +175,7 @@ export function FixedBooking({
             {renderPriceModGroup("TAX", "Taxes")}
           </div>
 
-          <Small className="flex justify-between text-lg text-primary/60">
+          <Small className="text-primary/60 flex justify-between text-lg">
             <span>
               {toUSD(basePrice?.value)} X {guestCount} guest
               {guestCount > 1 ? "s" : ""}

@@ -8,7 +8,7 @@ export default function Page() {
   return (
     <div className="">
       <h3 className="text-lg font-medium">Create User</h3>
-      <p className="text-sm text-muted-foreground">
+      <p className="text-muted-foreground text-sm">
         Create user, can be Admin, User, or Host
       </p>
       <Separator className="my-6" />
