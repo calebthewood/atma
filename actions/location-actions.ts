@@ -52,6 +52,38 @@ export interface CountryProperties {
   properties: PropertyWithIncludes[];
 }
 
+export async function getGroupedDestinations(): Promise<CountryProperties[]> {
+  const include: Prisma.PropertyInclude = {
+    host: {
+      select: {
+        id: true,
+        name: true,
+      },
+    },
+    images: {
+      select: {
+        filePath: true,
+        desc: true,
+      },
+    },
+  };
+
+  const properties = await prisma.property.findMany({ include });
+  const groupedProperties = properties.reduce(
+    (acc: CountryProperties[], property) => {
+      if (!property.country) return acc;
+      acc.push({
+        country: property.country,
+        properties: [property],
+      });
+
+      return acc;
+    },
+    []
+  );
+  return groupedProperties;
+}
+
 /**
  * Searches for properties based on given options, including related records.
  */
@@ -61,7 +93,7 @@ export const searchProperties = async (
   const {
     latitude,
     longitude,
-    radiusMiles = 20,
+    radiusMiles = 500,
     limit = 10,
     includeHost = false,
     includeImages = false,

@@ -13,14 +13,6 @@ import { QuickLink } from "@/components/shared";
 import { TitleImageBanner } from "@/components/title-img-banner";
 import PropertyLazyCarousel from "@/components/upcoming-carousel";
 
-/** Amenity strings are formatted like 'Amenity Title: Name | Value */
-const parseAmenity = (str: string | null | undefined) => {
-  if (!str) return ["", ""];
-  if (!str.includes(":")) return [str, ""];
-  const string = str.split(":")[1];
-  return string.split("|");
-};
-
 const DEFAULT_SLIDES = [
   "/img/iStock-1929812569.jpg",
   "/img/iStock-1812905796.jpg",
@@ -72,6 +64,7 @@ export default async function Page(props: { params: Promise<{ id: string }> }) {
           address={property.address}
           nearestAirport={property.nearbyAirport}
           imgHref={coverImgPath}
+          taglist={property.tagList}
         />
       </section>
 
@@ -99,7 +92,7 @@ export default async function Page(props: { params: Promise<{ id: string }> }) {
       {programIds.length > 0 && (
         <section id="upcoming-programs">
           <QuickLink text="See All Programs" href="/programs" />
-          <h2 className="my-12 w-full text-center text-[35px] font-semibold capitalize">
+          <h2 className="my-12 w-full text-center text-3xl font-semibold capitalize">
             Exclusive Wellness Programs
           </h2>
           <PropertyLazyCarousel entityIds={programIds} entityType="program" />
@@ -109,7 +102,7 @@ export default async function Page(props: { params: Promise<{ id: string }> }) {
       {retreatIds.length > 0 && (
         <section id="upcoming-retreats">
           <QuickLink text="See All Retreats" href="/retreats" />
-          <h2 className="my-12 w-full text-center text-[35px] font-semibold capitalize">
+          <h2 className="my-12 w-full text-center text-3xl font-semibold capitalize">
             Upcoming Retreats
           </h2>
           <PropertyLazyCarousel entityIds={retreatIds} entityType="retreat" />

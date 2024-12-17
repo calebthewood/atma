@@ -76,7 +76,7 @@ export function RetreatItem({
                 width={width}
                 height={height}
                 className={cn(
-                  "size-auto object-cover transition-all hover:scale-105",
+                  "size-full object-cover transition-all hover:scale-105",
                   aspectRatio === "portrait" ? "aspect-[3/4]" : "aspect-square"
                 )}
               />
@@ -267,7 +267,7 @@ export function LazyRetreatItem({
 
             {/* Content */}
             <div className="absolute inset-0 flex h-auto flex-col justify-between px-4 py-6">
-              <div className="text-richBeige space-y-2">
+              <div className="space-y-2 text-richBeige">
                 <h3 className="text-2xl font-medium leading-tight">
                   {displayData.name}
                 </h3>

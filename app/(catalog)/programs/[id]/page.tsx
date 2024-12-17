@@ -1,53 +1,22 @@
-import { ReactNode, Suspense } from "react";
 import { notFound } from "next/navigation";
 import { getProgram } from "@/actions/program-actions";
+import {
+  getPropertyAmenitiesByCategory,
+  getPropertyById,
+  getPropertyEntityIds,
+} from "@/actions/property-actions";
 import { auth } from "@/auth";
 
-import { cn } from "@/lib/utils";
-import { CardTitle } from "@/components/ui/card";
 import ThumbnailCarousel from "@/components/ui/carousel-thumbnail";
 import { toast } from "@/components/ui/use-toast";
 import { FixedBooking } from "@/components/booking/fixed-booking";
-import { CatalogTabs } from "@/components/catalog-tabs";
+import EntityInstancesTabs from "@/components/program-tabs";
+import PropertyPolicies from "@/components/property-policies";
+import PropertyTabs from "@/components/property-tabs";
+import SubscriptionSection from "@/components/sections/subscription-section";
+import { QuickLink } from "@/components/shared";
 import { TitleImageBanner } from "@/components/title-img-banner";
-
-const DEFAULT_SLIDES = [
-  "/img/iStock-1929812569.jpg",
-  "/img/iStock-1812905796.jpg",
-  "/img/iStock-1550112895.jpg",
-  "/img/iStock-1507078404.jpg",
-  "/img/iStock-1490140364.jpg",
-  "/img/iStock-1291807006.jpg",
-];
-
-function ProgramDescription({ copy }: { copy: string | null }) {
-  if (!copy) return null;
-
-  return (
-    <div className="text-lg">
-      <p>{copy}</p>
-    </div>
-  );
-}
-
-function GlassCard({
-  children,
-  className,
-}: {
-  children: ReactNode;
-  className?: string;
-}) {
-  return (
-    <div
-      className={cn(
-        "relative rounded border bg-white/20 p-4 shadow backdrop-blur",
-        className
-      )}
-    >
-      {children}
-    </div>
-  );
-}
+import PropertyLazyCarousel from "@/components/upcoming-carousel";
 
 export default async function ProgramPage({
   params,
@@ -68,97 +37,104 @@ export default async function ProgramPage({
     }
 
     const program = programResponse.data;
-    // const images = await fetchImages(retreat.propertyId, "property");
+    const property = await getPropertyById(program.propertyId);
     const images = program.property.images;
+    const parkingAmenities = await getPropertyAmenitiesByCategory(
+      program.propertyId,
+      "parking-transportation"
+    );
 
-    const [title, subtitle] = program.name?.split("|") ?? [];
-
+    const programIds = await getPropertyEntityIds(
+      program.propertyId,
+      "program"
+    );
     // Handle images from both program and property
-    const coverImage = images[0]?.filePath || DEFAULT_SLIDES[0];
+    const coverImage = images[0]?.filePath || "/img/iStock-1550112895.jpg";
     let imageSlides = images.map((img) => img.filePath);
 
     imageSlides.unshift(imageSlides.pop() || "");
 
-    const tabsData = [
-      {
-        value: "keyBenefits",
-        label: "Benefits",
-        content: <div>{program?.keyBenefits}</div>,
-      },
-      {
-        value: "programApproach",
-        label: "Approach",
-        content: <div>{program?.programApproach}</div>,
-      },
-      {
-        value: "whoIsthisFor",
-        label: "Who is this for?",
-        content: <div>{program?.whoIsthisFor}</div>,
-      },
-    ];
-    const property = program.property;
     return (
-      <div className="relative mt-6 min-h-screen md:container">
-        <TitleImageBanner
-          name={property.name}
-          city={property.city}
-          country={property.country}
-          address={property?.address}
-          nearestAirport={property?.nearbyAirport}
-          imgHref={coverImage}
-        />
+      <div className="flex h-auto min-h-screen flex-col gap-16">
+        <section id="hero">
+          <TitleImageBanner
+            name={program.property.name}
+            city={program.property.city}
+            country={program.property.country}
+            address={program.property?.address}
+            nearestAirport={program.property?.nearbyAirport}
+            imgHref={coverImage}
+            taglist={program.property.tagList}
+          />
+        </section>
 
-        {/* Content Section */}
-        <div>
-          <div className="container relative mx-auto py-16">
-            <div className="space-y-12">
-              {/* Image Carousel */}
-              <Suspense
-                fallback={
-                  <div className="h-96 w-full animate-pulse rounded-lg bg-gray-100/20" />
-                }
-              >
-                {imageSlides.length > 0 && (
-                  <GlassCard className="rounded-lg p-6">
-                    <ThumbnailCarousel slides={imageSlides} />
-                  </GlassCard>
-                )}
-              </Suspense>
+        <div className="h-auto flex-col gap-y-16">
+          <div className="grid grid-cols-12 gap-8">
+            {/* Left Column - spans 8 columns */}
+            <div className="col-span-12 space-y-16 lg:col-span-8">
+              <section id="offerings">
+                <h2 className="mb-5 text-2xl font-semibold capitalize">
+                  Highlights
+                </h2>
+                <PropertyTabs property={property} />
+              </section>
 
-              {/* Description and Booking Section */}
-              <div className="relative mx-auto">
-                <div className="flex flex-col gap-8 lg:flex-row">
-                  {/* Left Column - Content */}
-                  <div className="flex w-full flex-col gap-y-6 lg:w-2/3">
-                    <GlassCard className="rounded-lg p-6">
-                      <CardTitle className="mb-2 text-3xl font-light">
-                        Overview
-                      </CardTitle>
-                      <ProgramDescription copy={program.desc} />
-                    </GlassCard>
+              <section id="section2">
+                <h2 className="mb-5 text-2xl font-semibold capitalize">
+                  Program Options
+                </h2>
+                <EntityInstancesTabs instances={program.programs} />
+              </section>
 
-                    <GlassCard className="w-full">
-                      <CatalogTabs tabs={tabsData} defaultTab="whoIsthisFor" />
-                    </GlassCard>
-                  </div>
+              <section id="practical-information">
+                <h2 className="mb-5 text-2xl font-semibold capitalize">
+                  Practical Information
+                </h2>
+                <PropertyPolicies
+                  property={property}
+                  amenities={parkingAmenities}
+                  className="lg:grid-cols-2"
+                />
+              </section>
+            </div>
 
-                  {/* Right Column - Booking */}
-                  <div className="w-full lg:w-1/3">
-                    <div className="sticky top-24">
-                      <FixedBooking
-                        type="program"
-                        userId={session?.user?.id}
-                        item={program}
-                        instances={program.programs}
-                        priceMods={program.priceMods}
-                      />
-                    </div>
-                  </div>
-                </div>
-              </div>
+            {/* Right Column - spans 4 columns */}
+            <div className="col-span-12 lg:col-span-4">
+              <aside className="sticky top-24">
+                <FixedBooking
+                  type="program"
+                  userId={session?.user?.id}
+                  item={program}
+                  instances={program.programs}
+                  priceMods={program.priceMods}
+                />
+              </aside>
             </div>
           </div>
         </div>
+        <section id="gallery">
+          <h2 className="mb-10 text-center text-3xl font-semibold capitalize">
+            Meet {property?.name}
+          </h2>
+          <p className="mx-auto mb-10 max-w-3xl text-center text-sm font-normal capitalize">
+            {property?.descShort}
+          </p>
+          <ThumbnailCarousel slides={imageSlides} />
+        </section>
+
+        {programIds.length > 0 && (
+          <section id="upcoming-programs">
+            <QuickLink text="See All Programs" href="/programs" />
+            <h2 className="my-12 w-full text-center text-3xl font-semibold capitalize">
+              Other Offerings by
+            </h2>
+            <PropertyLazyCarousel entityIds={programIds} entityType="program" />
+          </section>
+        )}
+
+        <section>
+          <SubscriptionSection />
+        </section>
       </div>
     );
   } catch (error) {

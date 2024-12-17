@@ -2,7 +2,7 @@
 
 import React from "react";
 import { RetreatWithRelations } from "@/actions/retreat-actions";
-import { PriceMod, Retreat, RetreatInstance } from "@prisma/client";
+import { PriceMod, RetreatInstance } from "@prisma/client";
 import { compareAsc, format } from "date-fns";
 
 import { sumPriceList, toUSD } from "@/lib/utils";
@@ -101,7 +101,7 @@ function BookingItem({ item, guestCount, prices }: BookingItemProps) {
   const start = format(item.startDate, "EEE, MMM dd");
   const end = format(item.endDate, "EEE, MMM dd");
   const basePrice = 250;
-  const adjustedPrice = basePrice * guestCount;
+  // const adjustedPrice = basePrice * guestCount;
 
   return (
     <div className="flex flex-row">

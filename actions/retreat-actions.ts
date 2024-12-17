@@ -43,6 +43,7 @@ export type RetreatWithRelations = Prisma.RetreatGetPayload<{
         name: true;
         nearbyAirport: true;
         address: true;
+        tagList: true;
       };
     };
     priceMods: true;
@@ -158,6 +159,7 @@ export async function getRetreat(
             name: true,
             nearbyAirport: true,
             address: true,
+            tagList: true,
           },
         },
         priceMods: true,

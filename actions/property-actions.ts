@@ -17,19 +17,13 @@ export async function getProperty(id: string) {
     throw new Error("Failed to get property");
   }
 }
+
 export type PropertyWithRelations = Prisma.PropertyGetPayload<{
   include: {
-    host: true;
-    amenities: true;
     images: true;
-    reviews: {
-      include: {
-        user: true;
-      };
-    };
-    rooms: true;
     retreats: true;
     programs: true;
+    amenities: true;
     priceMods: true;
   };
 }>;
@@ -79,11 +73,6 @@ export async function getPropertyWithId(
         host: true,
         amenities: true,
         images: true,
-        reviews: {
-          include: {
-            user: true,
-          },
-        },
         rooms: true,
         retreats: true,
         programs: true,
@@ -214,41 +203,23 @@ export async function getPaginatedProperties(
   }
 }
 
-function nullToUndefined<T>(obj: T): T {
-  if (obj === null) {
-    return undefined as any;
-  }
-
-  if (typeof obj !== "object") {
-    return obj;
-  }
-
-  if (Array.isArray(obj)) {
-    return obj.map(nullToUndefined) as any;
-  }
-
-  return Object.fromEntries(
-    Object.entries(obj).map(([key, value]) => [key, nullToUndefined(value)])
-  ) as T;
-}
-
-export async function getPropertyById(propertyId: string) {
+export async function getPropertyById(
+  propertyId: string
+): Promise<PropertyWithRelations | null> {
   const property = await prisma.property.findUnique({
     where: {
       id: propertyId,
     },
     include: {
-      host: true,
-      reviews: true,
       images: true,
       retreats: true,
-      rooms: true,
       programs: true,
       amenities: true,
+      priceMods: true,
     },
   });
 
-  return nullToUndefined(property);
+  return property;
 }
 
 export async function deleteProperty(id: string) {

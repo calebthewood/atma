@@ -9,10 +9,10 @@ import {
 } from "@/actions/location-actions";
 import { addDays } from "date-fns";
 
-import { getCountryName } from "@/lib/utils";
 import { LoadingSpinner } from "@/components/loading-spinner";
 import { RetreatItem } from "@/components/retreat-item";
 import { Lead } from "@/components/typography";
+
 import TabbedSearchResults from "./tabbed-search-results";
 
 export default function Page() {
@@ -28,17 +28,17 @@ export default function Page() {
   const searchParams = useSearchParams();
 
   const handleSearch = useCallback(async () => {
-    const encodedPlace = searchParams.get("place");
-    const place = encodedPlace ? decodeURIComponent(encodedPlace) : "";
+    // const encodedPlace = searchParams.get("place");
+    // const place = encodedPlace ? decodeURIComponent(encodedPlace) : "";
     const lat = searchParams.get("lat");
     const lon = searchParams.get("lon");
     const continent = searchParams.get("continent");
-    const from = searchParams.get("from");
-    const to = searchParams.get("to");
-    const guests = searchParams.get("guests");
+    // const from = searchParams.get("from");
+    // const to = searchParams.get("to");
+    // const guests = searchParams.get("guests");
 
-    const today = new Date();
-    const twoDaysFromNow = addDays(today, 2);
+    // const today = new Date();
+    // const twoDaysFromNow = addDays(today, 2);
 
     setIsLoading(true);
     setError(null);
@@ -119,7 +119,7 @@ export default function Page() {
           <h2 className="text-2xl font-semibold tracking-tight">
             Search Results
           </h2>
-          <p className="text-muted-foreground text-sm">
+          <p className="text-sm text-muted-foreground">
             {searchType === "location"
               ? "Properties within range"
               : "Properties by country"}

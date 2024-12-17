@@ -51,10 +51,10 @@ export default [
 
     rules: {
       "@next/next/no-html-link-for-pages": "off",
-      "react/jsx-key": "off",
+      "react/jsx-key": "warn",
       "tailwindcss/no-custom-classname": "off",
-      "tailwindcss/classnames-order": "warn",
-      "no-unused-vars": "warn",
+      "tailwindcss/classnames-order": "off",
+      "no-unused-vars": "off",
       "no-undef": "warn",
       "@typescript-eslint/no-unused-vars": [
         "warn",

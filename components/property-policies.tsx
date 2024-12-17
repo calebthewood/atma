@@ -1,5 +1,7 @@
 import React from "react";
+import { PropertyWithRelations } from "@/actions/property-actions";
 
+import { cn } from "@/lib/utils";
 import { Card, CardContent } from "@/components/ui/card";
 
 type Amenity = {
@@ -18,27 +20,9 @@ type PropertyAmenity = {
 };
 
 type PropertyPoliciesProps = {
-  property: {
-    checkInTime?: string | null;
-    checkOutTime?: string | null;
-    frontDeskHours?: string | null;
-    childrenAllowed?: boolean | null;
-    additionalFeeForChildren?: number | null;
-    extraBeds?: boolean | null;
-    extraBedFee?: number | null;
-    breakFastProvided?: boolean | null;
-    breakfastType?: string | null;
-    breakfastFeeAdult?: number | null;
-    breakfastFeeChild?: number | null;
-    breakfastIncluded?: boolean | null;
-    depositRequired?: boolean | null;
-    depositMethods?: string | null;
-    paymentMethods?: string | null;
-    petsAllowed?: boolean | null;
-    serviceAnimalsAllowed?: boolean | null;
-    minAgeForPrimary?: number | null;
-  };
+  property: PropertyWithRelations | null;
   amenities: PropertyAmenity[];
+  className?: string;
 };
 
 const PolicySection = ({
@@ -62,7 +46,7 @@ const PolicyItem = ({
   value: React.ReactNode;
 }) => (
   <div className="mb-2 flex items-center justify-between border-b border-gray-100 pb-2">
-    <span className="text-muted-foreground text-sm">{label}</span>
+    <span className="text-sm text-muted-foreground">{label}</span>
     <span className="font-medium">{value}</span>
   </div>
 );
@@ -79,40 +63,46 @@ const formatTime = (time: string | null | undefined) => {
 export default function PropertyPolicies({
   property,
   amenities,
+  className,
 }: PropertyPoliciesProps) {
   return (
     <Card className="w-full border-none shadow-none">
-      <CardContent className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
+      <CardContent
+        className={cn(
+          "grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4",
+          className
+        )}
+      >
         <PolicySection title="Check-in Information">
           <PolicyItem
             label="Check-in Time"
-            value={formatTime(property.checkInTime)}
+            value={formatTime(property?.checkInTime)}
           />
           <PolicyItem
             label="Check-out Time"
-            value={formatTime(property.checkOutTime)}
+            value={formatTime(property?.checkOutTime)}
           />
           <PolicyItem
             label="Front Desk Hours"
-            value={property.frontDeskHours || "Not specified"}
+            value={property?.frontDeskHours || "Not specified"}
           />
         </PolicySection>
 
         <PolicySection title="Children">
           <PolicyItem
             label="Children Allowed"
-            value={<BooleanIndicator value={property.childrenAllowed} />}
+            value={<BooleanIndicator value={property?.childrenAllowed} />}
           />
         </PolicySection>
 
         <PolicySection title="Pet Policy">
           <PolicyItem
             label="Pets Allowed"
-            value={<BooleanIndicator value={property.petsAllowed} />}
+            value={<BooleanIndicator value={property?.petsAllowed} />}
           />
           <PolicyItem
             label="Service Animals Allowed"
-            value={<BooleanIndicator value={property.serviceAnimalsAllowed} />}
+            value={<BooleanIndicator value={property?.serviceAnimalsAllowed} />}
           />
         </PolicySection>
         {amenities.length > 0 && (

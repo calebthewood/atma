@@ -344,7 +344,7 @@ export function ProgramInstancesList({
                 <TableRow
                   key={row.id}
                   data-state={row.getIsSelected() && "selected"}
-                  className="hover:bg-muted/50 cursor-pointer"
+                  className="cursor-pointer hover:bg-muted/50"
                   onClick={() => handleRowClick(row.original.id)}
                 >
                   {row.getVisibleCells().map((cell) => (
@@ -372,7 +372,7 @@ export function ProgramInstancesList({
       </div>
 
       <div className="flex items-center justify-between space-x-2 py-4">
-        <span className="text-muted-foreground text-sm">
+        <span className="text-sm text-muted-foreground">
           Page {pagination.pageIndex + 1} of {totalPages}
         </span>
         <div className="space-x-2">

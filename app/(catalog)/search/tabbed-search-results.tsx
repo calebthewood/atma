@@ -33,15 +33,15 @@ const TabbedSearchResults = ({ results }: { results: CountryProperties[] }) => {
       {/* All Countries Tab Content */}
       <TabsContent value="all" className="min-h-96">
         <div className="flex flex-wrap gap-8">
-          {results.map((countryGroup) => (
+          {results.map((countryGroup, i) => (
             <div
-              key={countryGroup.country}
-              className="bg-card flex flex-col rounded p-4"
+              key={`${countryGroup.country}-${i}-tab`}
+              className="flex flex-col rounded bg-card p-4"
             >
               <h3 className="mb-4 text-xl font-semibold">
                 {getCountryName(countryGroup.country)}
                 <span className="ml-2 text-sm font-normal">
-                  ({countryGroup.properties.length} properties)
+                  {`${countryGroup.properties.length} destination${countryGroup.properties.length > 1 ? "s" : ""}`}
                 </span>
               </h3>
               <div className="flex flex-wrap gap-4">
@@ -59,7 +59,7 @@ const TabbedSearchResults = ({ results }: { results: CountryProperties[] }) => {
                       width={300}
                       height={300}
                     />
-                    <div className="text-muted-foreground mt-2 w-[290px] overflow-hidden text-ellipsis text-sm">
+                    <div className="mt-2 w-[290px] overflow-hidden text-ellipsis text-sm text-muted-foreground">
                       {property.address}
                     </div>
                   </div>
@@ -87,7 +87,7 @@ const TabbedSearchResults = ({ results }: { results: CountryProperties[] }) => {
                     width={300}
                     height={300}
                   />
-                  <div className="text-muted-foreground mt-2 w-[290px] overflow-hidden text-ellipsis text-sm">
+                  <div className="mt-2 w-[290px] overflow-hidden text-ellipsis text-sm text-muted-foreground">
                     {property.address}
                   </div>
                 </div>

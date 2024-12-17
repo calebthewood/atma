@@ -1,8 +1,12 @@
-import { Property } from "@prisma/client";
+import { PropertyWithRelations } from "@/actions/property-actions";
 
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
-const PropertyTabs = ({ property }: { property: Property }) => {
+const PropertyTabs = ({
+  property,
+}: {
+  property: PropertyWithRelations | null;
+}) => {
   const tabsData = [
     {
       value: "amenity-healing",
@@ -41,7 +45,7 @@ const PropertyTabs = ({ property }: { property: Property }) => {
           <TabsTrigger
             key={tab.value}
             value={tab.value}
-            className="border-primary min-w-32 border-b bg-transparent py-2 text-sm font-semibold uppercase leading-none text-[#494846]/80 data-[state=active]:bg-transparent data-[state=active]:text-[#841729] data-[state=active]:shadow-none"
+            className="min-w-32 border-b border-primary bg-transparent py-2 text-sm font-semibold uppercase leading-none text-[#494846]/80 data-[state=active]:bg-transparent data-[state=active]:text-[#841729] data-[state=active]:shadow-none"
           >
             {tab.label}
           </TabsTrigger>

@@ -47,14 +47,14 @@ export function UserListItem({ user }: UserListItemProps) {
         </Avatar>
         <div>
           <p className="text-sm font-medium leading-none">{user.username}</p>
-          <p className="text-muted-foreground text-sm">{user.email}</p>
+          <p className="text-sm text-muted-foreground">{user.email}</p>
         </div>
       </div>
       <Popover open={open} onOpenChange={setOpen}>
         <PopoverTrigger asChild>
           <Button variant="outline" className="ml-auto w-28 justify-end">
             {value}{" "}
-            <ChevronDown className="text-muted-foreground ml-2 size-4" />
+            <ChevronDown className="ml-2 size-4 text-muted-foreground" />
           </Button>
         </PopoverTrigger>
         <PopoverContent className="p-0" align="end">
@@ -72,7 +72,7 @@ export function UserListItem({ user }: UserListItemProps) {
                   }}
                 >
                   <p>User</p>
-                  <p className="text-muted-foreground text-sm">
+                  <p className="text-sm text-muted-foreground">
                     Can view and book retreats.
                   </p>
                 </CommandItem>
@@ -85,7 +85,7 @@ export function UserListItem({ user }: UserListItemProps) {
                   }}
                 >
                   <p>Admin</p>
-                  <p className="text-muted-foreground text-sm">
+                  <p className="text-sm text-muted-foreground">
                     Can view, comment and edit.
                   </p>
                 </CommandItem>
@@ -98,7 +98,7 @@ export function UserListItem({ user }: UserListItemProps) {
                   }}
                 >
                   <p>Host</p>
-                  <p className="text-muted-foreground text-sm">
+                  <p className="text-sm text-muted-foreground">
                     Can create, edit retreats.
                   </p>
                 </CommandItem>

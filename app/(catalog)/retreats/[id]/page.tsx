@@ -1,28 +1,22 @@
-import { ReactNode, Suspense } from "react";
 import { notFound } from "next/navigation";
-import { getRetreatPriceMods } from "@/actions/price-mod-actions";
+import {
+  getPropertyAmenitiesByCategory,
+  getPropertyById,
+  getPropertyEntityIds,
+} from "@/actions/property-actions";
 import { getRetreat } from "@/actions/retreat-actions";
 import { auth } from "@/auth";
 
-import { cn } from "@/lib/utils";
-import { CardTitle } from "@/components/ui/card";
 import ThumbnailCarousel from "@/components/ui/carousel-thumbnail";
 import { toast } from "@/components/ui/use-toast";
 import { FixedBooking } from "@/components/booking/fixed-booking";
-import { CatalogTabs } from "@/components/catalog-tabs";
+import EntityInstancesTabs from "@/components/program-tabs";
+import PropertyPolicies from "@/components/property-policies";
+import PropertyTabs from "@/components/property-tabs";
+import SubscriptionSection from "@/components/sections/subscription-section";
+import { QuickLink } from "@/components/shared";
 import { TitleImageBanner } from "@/components/title-img-banner";
-
-import { RetreatDetailCards } from "./retreat-detail-cards";
-import RetreatInstances from "./retreat-instance-list";
-
-const DEFAULT_SLIDES = [
-  "/img/iStock-1929812569.jpg",
-  "/img/iStock-1812905796.jpg",
-  "/img/iStock-1550112895.jpg",
-  "/img/iStock-1507078404.jpg",
-  "/img/iStock-1490140364.jpg",
-  "/img/iStock-1291807006.jpg",
-];
+import PropertyLazyCarousel from "@/components/upcoming-carousel";
 
 export default async function RetreatPage({
   params,
@@ -32,10 +26,9 @@ export default async function RetreatPage({
   const parameters = await params;
 
   try {
-    const [retreatResponse, session, priceMods] = await Promise.all([
+    const [retreatResponse, session] = await Promise.all([
       getRetreat(parameters.id),
       auth(),
-      getRetreatPriceMods(parameters.id),
     ]);
 
     if (!retreatResponse.success || !retreatResponse.data) {
@@ -44,105 +37,106 @@ export default async function RetreatPage({
     }
 
     const retreat = retreatResponse.data;
-    // const images = await fetchImages(retreat.propertyId, "property");
+    const property = await getPropertyById(retreat.propertyId);
     const images = retreat.property.images;
+    const parkingAmenities = await getPropertyAmenitiesByCategory(
+      retreat.propertyId,
+      "parking-transportation"
+    );
 
-    const [title, subtitle] = retreat.name?.split("|") ?? [];
+    const retreatIds = await getPropertyEntityIds(
+      retreat.propertyId,
+      "retreat"
+    );
 
-    const coverImage = images[0]?.filePath || DEFAULT_SLIDES[0];
-    const imageSlides = images.map((img) => img.filePath);
+    // Handle images from both retreat and property
+    const coverImage = images[0]?.filePath || "/img/iStock-1550112895.jpg";
+    let imageSlides = images.map((img) => img.filePath);
 
-    const tabsData = [
-      {
-        value: "keyBenefits",
-        label: "Benefits",
-        content: <div>{retreat?.keyBenefits}</div>,
-      },
-      {
-        value: "programApproach",
-        label: "Approach",
-        content: <div>{retreat?.programApproach}</div>,
-      },
-      {
-        value: "whoIsthisFor",
-        label: "Who is this for?",
-        content: <div>{retreat?.whoIsthisFor}</div>,
-      },
-    ];
+    imageSlides.unshift(imageSlides.pop() || "");
 
-    const property = retreat.property;
     return (
-      <div className="relative mt-6 min-h-screen md:container">
-        <TitleImageBanner
-          name={property.name}
-          city={property.city}
-          country={property.country}
-          address={property?.address}
-          nearestAirport={property?.nearbyAirport}
-          imgHref={coverImage}
-        />
-        {/* Content Section with edge-to-edge gradient */}
-        <div className="">
-          <div className="container relative mx-auto py-16">
-            <div className="space-y-12">
-              {/* Detail Cards */}
-              <GlassCard className="rounded-lg p-6">
-                <RetreatDetailCards retreat={retreat} />
-              </GlassCard>
+      <div className="flex h-auto min-h-screen flex-col gap-16">
+        <section id="hero">
+          <TitleImageBanner
+            name={retreat.property.name}
+            city={retreat.property.city}
+            country={retreat.property.country}
+            address={retreat.property?.address}
+            nearestAirport={retreat.property?.nearbyAirport}
+            imgHref={coverImage}
+            taglist={retreat.property.tagList}
+          />
+        </section>
 
-              {/* Image Carousel */}
-              <Suspense
-                fallback={
-                  <div className="h-96 w-full animate-pulse rounded-lg bg-gray-100/20" />
-                }
-              >
-                {imageSlides.length > 0 && (
-                  <GlassCard className="rounded-lg p-6">
-                    <ThumbnailCarousel slides={imageSlides} />
-                  </GlassCard>
-                )}
-              </Suspense>
+        <div className="h-auto flex-col gap-y-16">
+          <div className="grid grid-cols-12 gap-8">
+            {/* Left Column - spans 8 columns */}
+            <div className="col-span-12 space-y-16 lg:col-span-8">
+              <section id="offerings">
+                <h2 className="mb-5 text-2xl font-semibold capitalize">
+                  Highlights
+                </h2>
+                <PropertyTabs property={property} />
+              </section>
 
-              {/* Description and Booking Section */}
-              <div className="relative mx-auto">
-                <div className="flex flex-col gap-8 lg:flex-row">
-                  {/* Left Column - Content */}
-                  <div className="flex w-full flex-col gap-y-6 lg:w-2/3">
-                    <GlassCard className="rounded-lg p-6">
-                      <CardTitle className="mb-2 text-3xl font-light">
-                        Overview
-                      </CardTitle>
-                      <RetreatDescription copy={retreat.desc} />
-                    </GlassCard>
+              <section id="section2">
+                <h2 className="mb-5 text-2xl font-semibold capitalize">
+                  Retreat Options
+                </h2>
+                <EntityInstancesTabs instances={retreat.retreatInstances} />
+              </section>
 
-                    <GlassCard className="w-full">
-                      <CatalogTabs tabs={tabsData} defaultTab="whoIsthisFor" />
-                    </GlassCard>
+              <section id="practical-information">
+                <h2 className="mb-5 text-2xl font-semibold capitalize">
+                  Practical Information
+                </h2>
+                <PropertyPolicies
+                  property={property}
+                  amenities={parkingAmenities}
+                  className="lg:grid-cols-2"
+                />
+              </section>
+            </div>
 
-                    <GlassCard className="rounded-lg p-6">
-                      <RetreatInstances instances={retreat.retreatInstances} />
-                    </GlassCard>
-                  </div>
-
-                  {/* Right Column - Booking */}
-                  <div className="w-full lg:w-1/3">
-                    <div className="sticky top-24">
-                      {/* <GlassCard className="rounded-lg p-6"> */}
-                      <FixedBooking
-                        type="retreat"
-                        userId={session?.user?.id}
-                        item={retreat}
-                        instances={retreat.retreatInstances}
-                        priceMods={priceMods.data ?? []}
-                      />
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <div className="mb-96"></div>
+            {/* Right Column - spans 4 columns */}
+            <div className="col-span-12 lg:col-span-4">
+              <aside className="sticky top-24">
+                <FixedBooking
+                  type="retreat"
+                  userId={session?.user?.id}
+                  item={retreat}
+                  instances={retreat.retreatInstances}
+                  priceMods={retreat.priceMods}
+                />
+              </aside>
             </div>
           </div>
         </div>
+
+        <section id="gallery">
+          <h2 className="mb-10 text-center text-3xl font-semibold capitalize">
+            Meet {property?.name}
+          </h2>
+          <p className="mx-auto mb-10 max-w-3xl text-center text-sm font-normal capitalize">
+            {property?.descShort}
+          </p>
+          <ThumbnailCarousel slides={imageSlides} />
+        </section>
+
+        {retreatIds.length > 0 && (
+          <section id="upcoming-retreats">
+            <QuickLink text="See All Retreats" href="/retreats" />
+            <h2 className="my-12 w-full text-center text-3xl font-semibold capitalize">
+              Other Offerings by {property?.name || ""}
+            </h2>
+            <PropertyLazyCarousel entityIds={retreatIds} entityType="retreat" />
+          </section>
+        )}
+
+        <section>
+          <SubscriptionSection />
+        </section>
       </div>
     );
   } catch (error) {
@@ -154,33 +148,4 @@ export default async function RetreatPage({
     });
     notFound();
   }
-}
-
-function RetreatDescription({ copy }: { copy: string | null }) {
-  if (!copy) return null;
-
-  return (
-    <div className="text-lg">
-      <p>{copy}</p>
-    </div>
-  );
-}
-
-function GlassCard({
-  children,
-  className,
-}: {
-  children: ReactNode;
-  className?: string;
-}) {
-  return (
-    <div
-      className={cn(
-        "relative rounded border bg-white/20 p-4 shadow backdrop-blur",
-        className
-      )}
-    >
-      {children}
-    </div>
-  );
 }

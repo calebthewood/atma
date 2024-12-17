@@ -3,7 +3,6 @@
 import React, { useCallback, useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { SearchResults } from "@/actions/search-actions";
-import { Program, Property, Retreat } from "@prisma/client";
 
 import { getCountryName } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -79,17 +78,6 @@ const isCountryGroup = (group: unknown): group is CountryGroup => {
   );
 };
 
-const isPropertyGroup = (group: unknown): group is PropertyGroup => {
-  return (
-    typeof group === "object" &&
-    group !== null &&
-    "propertyId" in group &&
-    "propertyName" in group &&
-    "items" in group &&
-    Array.isArray((group as PropertyGroup).items)
-  );
-};
-
 export default function SearchResultsPage({
   segment,
   searchFunction,
@@ -107,12 +95,6 @@ export default function SearchResultsPage({
   const pageSize = 10;
 
   const searchParams = useSearchParams();
-
-  interface SearchResult<T extends EntityWithLocation> {
-    success: true;
-    data: T[] | CountryGroup[] | PropertyGroup[];
-    type: "location" | "continent" | "all";
-  }
 
   const handleSearch = useCallback(async () => {
     let searchCriteria: SearchOptions = {
@@ -248,23 +230,15 @@ export default function SearchResultsPage({
     handleSearch();
   }, [searchParams, currentPage]);
 
-  const EntityList = ({
-    items,
-    label,
-  }: {
-    items: EntityWithLocation[];
-    label: string;
-  }) => (
-    <div className="flex flex-wrap justify-start gap-10">
-      {items.map((item, i) => (
-        <div key={item.id + `${i * 3.7}`} className="flex flex-col">
-          <NewLazyRetreatItem
-            key={item.id}
-            id={item.id}
-            segment={segment}
-            className="size-[330px]"
-          />
-        </div>
+  const EntityList = ({ items }: { items: EntityWithLocation[] }) => (
+    <div className="grid w-full grid-cols-1 justify-items-center gap-10 md:grid-cols-2 lg:grid-cols-3">
+      {items.map((item) => (
+        <NewLazyRetreatItem
+          key={item.id}
+          id={item.id}
+          segment={segment}
+          className="size-[250px] md:size-[300px] lg:size-[330px] xl:size-[380px]"
+        />
       ))}
     </div>
   );
@@ -285,7 +259,7 @@ export default function SearchResultsPage({
                 )
               </span>
             </h3>
-            <EntityList items={group.items} label={entityLabel.plural} />
+            <EntityList items={group.items} />
           </div>
         ))}
       </div>
@@ -319,7 +293,7 @@ export default function SearchResultsPage({
                 )
               </span>
             </h3>
-            <EntityList items={group.items} label={entityLabel.plural} />
+            <EntityList items={group.items} />
           </div>
         ))}
       </div>
@@ -330,7 +304,7 @@ export default function SearchResultsPage({
     const entities = results as EntityWithLocation[];
     return (
       <>
-        <EntityList items={entities} label={entityLabel.plural} />
+        <EntityList items={entities} />
         {hasMore && (
           <div className="mt-8 flex justify-center">
             <Button

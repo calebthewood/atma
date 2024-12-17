@@ -1,5 +1,7 @@
 import Image from "next/image";
 
+import { Badge } from "./ui/badge";
+
 export function TitleImageBanner({
   name,
   city,
@@ -7,6 +9,7 @@ export function TitleImageBanner({
   address,
   nearestAirport,
   imgHref,
+  taglist,
 }: {
   name: string;
   city: string | undefined | null;
@@ -14,16 +17,36 @@ export function TitleImageBanner({
   address: string | undefined | null;
   nearestAirport: string | undefined | null;
   imgHref: string;
+  taglist: string | undefined | null;
 }) {
   const line1 = name;
   const line2 = country ? `${city}, ${country}` : city;
   const line3 = nearestAirport ? `${address} / ${nearestAirport}` : address;
+  const tags = taglist
+    ?.split("|")
+    .filter((a) => a.length > 1)
+    .slice(0, 3);
   return (
     <div className="mx-auto">
       <div className="mb-8">
         <h1 className="text-3xl font-semibold capitalize">{line1}</h1>
-        <p className="uppercase/60 mt-2 text-xs font-medium">{line2}</p>
-        <p className="mt-2 text-sm font-medium">{line3}</p>
+        <div className="flex flex-row items-end justify-between">
+          <div>
+            <p className="uppercase/60 mt-2 text-xs font-medium">{line2}</p>
+            <p className="mt-2 text-sm font-medium">{line3}</p>
+          </div>
+          <div className="flex flex-row space-x-4">
+            {tags?.map((t) => (
+              <Badge
+                key={t}
+                variant="outline"
+                className="h-min cursor-default rounded-full px-3 py-2 text-center text-xs font-medium"
+              >
+                {t}
+              </Badge>
+            ))}
+          </div>
+        </div>
       </div>
 
       <div className="relative aspect-[16/9] w-full overflow-hidden rounded-lg md:aspect-[21/9]">
@@ -33,7 +56,7 @@ export function TitleImageBanner({
           src={imgHref}
           fill
           sizes="(max-width: 768px) 100vw, 90vw"
-          className="border-px border-muted rounded object-cover"
+          className="border-px rounded border-muted object-cover"
           quality={90}
         />
       </div>

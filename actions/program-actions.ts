@@ -105,6 +105,7 @@ export type ProgramWithAllRelations = Prisma.ProgramGetPayload<{
         country: true;
         nearbyAirport: true;
         address: true;
+        tagList: true;
       };
     };
     host: true;
@@ -130,6 +131,7 @@ export async function getProgram(
             name: true,
             nearbyAirport: true,
             address: true,
+            tagList: true,
           },
         },
         host: true,
@@ -202,6 +204,7 @@ export async function getPrograms(): ActionResponse<ProgramWithAllRelations[]> {
             country: true,
             nearbyAirport: true,
             address: true,
+            tagList: true,
           },
         },
         host: true,

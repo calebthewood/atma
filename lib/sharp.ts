@@ -126,7 +126,7 @@ export const imageProcessor = {
    */
   async processImages(
     files: File[],
-    onProgress?: (_progress: number) => void
+    onProgress?: (progress: number) => void
   ): Promise<File[]> {
     const processedFiles: File[] = [];
 

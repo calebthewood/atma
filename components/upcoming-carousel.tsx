@@ -1,6 +1,8 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
+import Image from "next/image";
+import Link from "next/link";
 import {
   getProgram,
   type ProgramWithAllRelations,
@@ -10,7 +12,9 @@ import {
   PropertyWithRelations,
 } from "@/actions/property-actions";
 import { getSimpleRetreat, SimpleRetreat } from "@/actions/retreat-actions";
+import { PriceMod } from "@prisma/client";
 import { format } from "date-fns";
+import { CirclePlus } from "lucide-react";
 
 import { cn } from "@/lib/utils";
 import {
@@ -20,9 +24,17 @@ import {
   CarouselNext,
   CarouselPrevious,
 } from "@/components/ui/carousel";
+import {
+  ContextMenu,
+  ContextMenuContent,
+  ContextMenuItem,
+  ContextMenuSeparator,
+  ContextMenuSub,
+  ContextMenuSubContent,
+  ContextMenuSubTrigger,
+  ContextMenuTrigger,
+} from "@/components/ui/context-menu";
 import { Skeleton } from "@/components/ui/skeleton";
-import { LazyRetreatItem, RetreatItem } from "@/components/retreat-item";
-import { PriceMod } from "@prisma/client";
 
 type PropertyLazyCarouselProps = {
   entityIds: string[];
@@ -35,7 +47,6 @@ export default function PropertyLazyCarousel({
 }: PropertyLazyCarouselProps) {
   if (!entityIds || entityIds.length <= 1) return null;
 
-  const entityLabel = entityType === "retreat" ? "Retreats" : "Programs";
   const segment = entityType === "retreat" ? "retreats" : "programs";
 
   return (
@@ -44,13 +55,13 @@ export default function PropertyLazyCarousel({
         <CarouselContent>
           {entityIds.map((id, i) => (
             <CarouselItem
-              key={id + `${i * 3.7}`}
+              key={`${id}-${i}-plc`}
               className="md:basis-1/2 lg:basis-1/3"
             >
               <NewLazyRetreatItem
                 id={id}
                 segment={segment}
-                className="w-[300px]"
+                className="size-[250px] md:size-[300px] lg:size-[330px] xl:size-[380px]"
               />
             </CarouselItem>
           ))}
@@ -168,17 +179,63 @@ export function NewLazyRetreatItem({ id, segment, className }: LazyCardProps) {
   };
 
   return (
-    <div className="flex flex-col">
-      <RetreatItem
-        retreat={item}
-        imgUrl={image}
-        segment={segment}
-        aspectRatio="square"
-        className="size-80"
-        width={330}
-        height={330}
-      />
-      <div className="mt-4 flex max-w-[300px] flex-col gap-1 px-2">
+    <div className={cn("flex flex-col")}>
+      <Link href={`/${segment}/${item?.id}`}>
+        <ContextMenu>
+          <ContextMenuTrigger>
+            <div
+              className={cn("relative overflow-hidden rounded-md", className)}
+            >
+              <Image
+                fill
+                src={image}
+                alt={item.name || "n/a"}
+                className={cn(
+                  "object-cover transition-all hover:scale-105",
+                  "aspect-square"
+                )}
+              />
+            </div>
+          </ContextMenuTrigger>
+          <ContextMenuContent className="w-40">
+            <ContextMenuItem>Add to Schedule</ContextMenuItem>
+            <ContextMenuSub>
+              <ContextMenuSubTrigger>Add to Wishlist</ContextMenuSubTrigger>
+              <ContextMenuSubContent className="w-48">
+                <ContextMenuItem>
+                  <CirclePlus className="mr-2 size-4" />
+                  New Item
+                </ContextMenuItem>
+                <ContextMenuSeparator />
+
+                <ContextMenuItem>
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth="2"
+                    className="mr-2 size-4"
+                    viewBox="0 0 24 24"
+                  >
+                    <path d="M21 15V6M18.5 18a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5ZM12 12H3M16 6H3M12 18H3" />
+                  </svg>
+                  Put somethin handy here?
+                </ContextMenuItem>
+              </ContextMenuSubContent>
+            </ContextMenuSub>
+            <ContextMenuSeparator />
+            <ContextMenuItem>View Retreat</ContextMenuItem>
+            <ContextMenuItem>Visit Partner Page</ContextMenuItem>
+            <ContextMenuItem>View Similar</ContextMenuItem>
+            <ContextMenuSeparator />
+            <ContextMenuItem>Like</ContextMenuItem>
+            <ContextMenuItem>Share</ContextMenuItem>
+          </ContextMenuContent>
+        </ContextMenu>
+      </Link>
+      <div className="mt-4 flex max-w-[300px] flex-col gap-1 px-px">
         <h4 className="text-lg font-semibold capitalize leading-[17.16px]">
           {displayData.name}
         </h4>

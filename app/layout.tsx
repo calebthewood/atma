@@ -47,7 +47,7 @@ export default async function RootLayout({ children }: RootLayoutProps) {
         <head />
         <body
           className={cn(
-            "bg-richBeige dark:bg-gradient-dark font-sans antialiased",
+            "bg-richBeige font-sans antialiased dark:bg-gradient-dark",
             fontSans.variable,
             fontTitle.variable
           )}

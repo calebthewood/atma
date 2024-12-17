@@ -138,12 +138,12 @@ export default async function Page({ params }: PageProps) {
     <div className="space-y-6">
       <div>
         <h3 className="text-lg font-medium">Edit Retreat</h3>
-        <p className="text-muted-foreground text-sm">Edit existing retreat.</p>
+        <p className="text-sm text-muted-foreground">Edit existing retreat.</p>
       </div>
 
       <div className="w-full max-w-2xl">
         <NavigationMenu>
-          <NavigationMenuList className="bg-muted inline-flex items-center justify-center rounded-lg p-1">
+          <NavigationMenuList className="inline-flex items-center justify-center rounded-lg bg-muted p-1">
             {tabs.map((tab) => (
               <NavigationMenuItem key={tab.value}>
                 <Link
@@ -156,7 +156,7 @@ export default async function Page({ params }: PageProps) {
                   <NavigationMenuLink
                     className={cn(
                       navigationMenuTriggerStyle(),
-                      "bg-muted w-24",
+                      "w-24 bg-muted",
                       "data-[active]:bg-primary-foreground data-[active]:font-semibold data-[active]:shadow"
                     )}
                     active={tab.value === resolvedParams.slug}

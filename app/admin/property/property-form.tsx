@@ -340,7 +340,7 @@ export function PropertyForm({ property }: PropertyFormProps) {
                         className="items-center gap-x-4"
                       >
                         <span>{config.label}</span>
-                        <span className="text-muted-foreground ml-2 text-xs">
+                        <span className="ml-2 text-xs text-muted-foreground">
                           {config.description}
                         </span>
                       </SelectItem>
@@ -1068,7 +1068,7 @@ const CategoryCheckboxes = ({ value, onChange }: CategoryCheckboxesProps) => {
         ))}
       </div>
       {uncategorizedTags.length > 0 && (
-        <p className="text-muted-foreground mt-2 text-sm">
+        <p className="mt-2 text-sm text-muted-foreground">
           Unmatched tags: {uncategorizedTags.join(", ")}
         </p>
       )}
