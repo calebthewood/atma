@@ -39,7 +39,7 @@ export default function ProgramSection({
       id="program-section"
       className="flex flex-col gap-y-5 md:container"
     >
-      <SectionHeader title="Tailored" subtitle="Year Round Programs" />
+      <SectionHeader title="Year Round Programs" subtitle="Tailored" />
       <motion.div
         className="scrollbar-hide flex w-full flex-row justify-center gap-6 overflow-x-auto pb-6"
         variants={containerVariants}
@@ -103,7 +103,7 @@ const ProgramCard = ({
               : "City, Country"}
           </div>
 
-          <div className="text-center font-broad text-lg font-normal uppercase tracking-wide">
+          <div className="font-broad text-center text-lg font-normal uppercase tracking-wide">
             {program.name || "Retreat Name"}
             <br />
             {program.duration || "7+ nights"}
