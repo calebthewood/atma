@@ -164,7 +164,11 @@ export async function getRetreat(
         priceMods: true,
         host: true,
         amenities: true,
-        images: true,
+        images: {
+          orderBy: {
+            order: "asc",
+          },
+        },
         retreatInstances: {
           include: {
             priceMods: true,

@@ -1,13 +1,16 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import {
-  InstanceFormData,
-  instanceFormSchema,
-} from "@/schemas/program-instance";
+import { InstanceFormData, instanceFormSchema } from "@/schemas/program-instance";
 import { PriceMod, type Program, type ProgramInstance } from "@prisma/client";
 
+
+
 import { prisma } from "@/lib/prisma";
+
+
+
+
 
 // ============================================================================
 // Types
@@ -105,7 +108,11 @@ export async function getInstance(
           name: true,
           propertyId: true,
           category: true,
-          images: true, // Move images into select
+          images: {
+            orderBy: {
+              order: "asc",
+            },
+          },
         },
       }),
       prisma.booking.findMany({

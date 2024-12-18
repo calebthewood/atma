@@ -125,7 +125,11 @@ export async function getProgram(
       include: {
         property: {
           select: {
-            images: true,
+            images: {
+              orderBy: {
+                order: "asc",
+              },
+            },
             city: true,
             country: true,
             name: true,
@@ -203,7 +207,11 @@ export async function getPrograms(): ActionResponse<ProgramWithAllRelations[]> {
         property: {
           select: {
             name: true,
-            images: true,
+            images: {
+              orderBy: {
+                order: "asc",
+              },
+            },
             city: true,
             country: true,
             nearbyAirport: true,
@@ -213,7 +221,11 @@ export async function getPrograms(): ActionResponse<ProgramWithAllRelations[]> {
         },
         host: true,
         amenities: true,
-        images: true,
+        images: {
+          orderBy: {
+            order: "asc",
+          },
+        },
         programs: true,
         priceMods: true,
       },
@@ -296,7 +308,11 @@ export async function getProgramsGroupedByProperty(): ActionResponse<
     const propertiesWithPrograms = await prisma.property.findMany({
       include: {
         programs: true,
-        images: true,
+        images: {
+          orderBy: {
+            order: "asc",
+          },
+        },
       },
       where: {
         programs: {

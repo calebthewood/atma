@@ -57,7 +57,14 @@ async function queryPrograms(options: SearchOptions) {
       status: "published",
       ...(options.category ? { category: options.category } : {}),
     },
-    include: { property: true, images: true },
+    include: {
+      property: true,
+      images: {
+        orderBy: {
+          order: "asc",
+        },
+      },
+    },
   });
 }
 
@@ -67,7 +74,14 @@ async function queryRetreats(options: SearchOptions) {
       status: "published",
       ...(options.category ? { category: options.category } : {}),
     },
-    include: { property: true, images: true },
+    include: {
+      property: true,
+      images: {
+        orderBy: {
+          order: "asc",
+        },
+      },
+    },
   });
 }
 

@@ -51,9 +51,7 @@ export default async function RetreatPage({
 
     // Handle images from both retreat and property
     const coverImage = images[0]?.filePath || "/img/iStock-1550112895.jpg";
-    let imageSlides = images.map((img) => img.filePath);
-
-    imageSlides.unshift(imageSlides.pop() || "");
+    const imageSlides = images.map((img) => img.filePath);
 
     return (
       <div className="flex h-auto min-h-screen flex-col gap-16">

@@ -162,7 +162,11 @@ export async function getProperties(): Promise<PropertiesWithImages[]> {
           id: true,
         },
       },
-      images: true,
+      images: {
+        orderBy: {
+          order: "asc",
+        },
+      },
     },
   });
   return properties;
@@ -215,7 +219,11 @@ export async function getPropertyById(
       id: propertyId,
     },
     include: {
-      images: true,
+      images: {
+        orderBy: {
+          order: "asc",
+        },
+      },
       retreats: true,
       programs: true,
       amenities: true,
