@@ -87,7 +87,7 @@ const ProgramCard = ({
       >
         <Image
           src={bgImg}
-          alt={program.name || "Program Image"}
+          alt={program?.name || "Program Image"}
           fill
           className="object-cover transition-transform duration-500 group-hover:scale-110"
           priority={false}
@@ -96,17 +96,17 @@ const ProgramCard = ({
 
         <div className="absolute inset-0 flex flex-col items-center justify-between p-8 text-sm font-normal text-white">
           <div className="text-center text-sm font-normal uppercase tracking-wide">
-            {program.property?.name || "PROPERTY NAME"}
+            {program?.property?.name || "PROPERTY NAME"}
             <br />
-            {program.property?.city && program.property?.country
-              ? `${program.property.city}, ${program.property.country}`
+            {program?.property?.city && program?.property?.country
+              ? `${program?.property.city}, ${program?.property?.country}`
               : "City, Country"}
           </div>
 
           <div className="font-broad text-center text-lg font-normal uppercase tracking-wide">
-            {program.name || "Retreat Name"}
+            {program?.name || "Retreat Name"}
             <br />
-            {program.duration || "7+ nights"}
+            {program?.duration || "7+ nights"}
           </div>
         </div>
       </motion.div>
