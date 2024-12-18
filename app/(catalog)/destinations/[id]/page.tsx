@@ -58,13 +58,13 @@ export default async function Page(props: { params: Promise<{ id: string }> }) {
     <div className="flex h-auto min-h-screen flex-col gap-16">
       <section id="hero">
         <TitleImageBanner
-          name={property.name}
-          city={property.city}
-          country={property.country}
-          address={property.address}
-          nearestAirport={property.nearbyAirport}
+          name={property?.name}
+          city={property?.city}
+          country={property?.country}
+          address={property?.address}
+          nearestAirport={property?.nearbyAirport}
           imgHref={coverImgPath}
-          taglist={property.tagList}
+          taglist={property?.tagList}
         />
       </section>
 

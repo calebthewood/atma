@@ -110,8 +110,8 @@ const ContinentCard = ({ name, icon: Icon, href }: ContinentCardProps) => {
       className="group relative flex aspect-square w-80 shrink-0 flex-col items-center justify-center rounded-2xl transition-all duration-300 hover:bg-black/10"
     >
       <Link href={href} className="flex flex-col items-center gap-4">
-        <Icon className="size-64 text-black/70 transition-transform duration-300 group-hover:scale-110" />
-        <span className="text-xl font-medium tracking-wide text-black/70">
+        <Icon className="size-64 text-black/70 transition-transform duration-300 group-hover:scale-110 dark:text-white/70" />
+        <span className="text-xl font-medium tracking-wide text-black/70 dark:text-white/70">
           {name}
         </span>
       </Link>

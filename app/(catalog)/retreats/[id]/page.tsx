@@ -59,13 +59,13 @@ export default async function RetreatPage({
       <div className="flex h-auto min-h-screen flex-col gap-16">
         <section id="hero">
           <TitleImageBanner
-            name={retreat.property.name}
-            city={retreat.property.city}
-            country={retreat.property.country}
+            name={retreat.property?.name}
+            city={retreat.property?.city}
+            country={retreat.property?.country}
             address={retreat.property?.address}
             nearestAirport={retreat.property?.nearbyAirport}
             imgHref={coverImage}
-            taglist={retreat.property.tagList}
+            taglist={retreat.property?.tagList}
           />
         </section>
 
@@ -106,8 +106,8 @@ export default async function RetreatPage({
                   type="retreat"
                   userId={session?.user?.id}
                   item={retreat}
-                  instances={retreat.retreatInstances}
-                  priceMods={retreat.priceMods}
+                  instances={retreat?.retreatInstances}
+                  priceMods={retreat?.priceMods}
                 />
               </aside>
             </div>

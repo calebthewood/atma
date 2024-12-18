@@ -58,13 +58,13 @@ export default async function ProgramPage({
       <div className="flex h-auto min-h-screen flex-col gap-16">
         <section id="hero">
           <TitleImageBanner
-            name={program.property.name}
-            city={program.property.city}
-            country={program.property.country}
-            address={program.property?.address}
-            nearestAirport={program.property?.nearbyAirport}
+            name={program?.property?.name}
+            city={program?.property?.city}
+            country={program?.property?.country}
+            address={program?.property?.address}
+            nearestAirport={program?.property?.nearbyAirport}
             imgHref={coverImage}
-            taglist={program.property.tagList}
+            taglist={program?.property?.tagList}
           />
         </section>
 
@@ -83,7 +83,7 @@ export default async function ProgramPage({
                 <h2 className="mb-5 text-2xl font-semibold capitalize">
                   Program Options
                 </h2>
-                <EntityInstancesTabs instances={program.programs} />
+                <EntityInstancesTabs instances={program?.programs} />
               </section>
 
               <section id="practical-information">
@@ -105,8 +105,8 @@ export default async function ProgramPage({
                   type="program"
                   userId={session?.user?.id}
                   item={program}
-                  instances={program.programs}
-                  priceMods={program.priceMods}
+                  instances={program?.programs}
+                  priceMods={program?.priceMods}
                 />
               </aside>
             </div>

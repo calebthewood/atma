@@ -127,7 +127,7 @@ function groupByProperty(
     } else {
       acc.push({
         propertyId: item.property?.id,
-        propertyName: item.property.name || "Unnamed Property",
+        propertyName: item.property?.name || "Unnamed Property",
         propertyLocation,
         items: [item],
       });

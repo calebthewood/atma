@@ -352,9 +352,9 @@ export async function getRetreatsGroupedByProperty(): ActionResponse<
 
     const groupedRetreats = propertiesWithRetreats.map((property) => ({
       propertyId: property?.id,
-      propertyName: property.name,
-      images: property.images,
-      retreats: property.retreats,
+      propertyName: property?.name,
+      images: property?.images,
+      retreats: property?.retreats,
     }));
 
     return { success: true, data: groupedRetreats };
