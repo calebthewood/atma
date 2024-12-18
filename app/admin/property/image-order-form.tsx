@@ -53,7 +53,7 @@ function ImageItem({
     const dragCleanup = draggable({
       element,
       getInitialData: () => ({
-        imageId: image.id,
+        imageId: image?.id,
         index: index,
       }),
       onDragStart: () => setIsDragging(true),
@@ -63,11 +63,11 @@ function ImageItem({
     const dropCleanup = dropTargetForElements({
       element,
       getData: () => ({
-        imageId: image.id,
+        imageId: image?.id,
         index: index,
       }),
       canDrop: ({ source }) => {
-        return source.data.imageId !== image.id;
+        return source.data.imageId !== image?.id;
       },
     });
 
@@ -75,12 +75,12 @@ function ImageItem({
       dragCleanup();
       dropCleanup();
     };
-  }, [image.id, index]);
+  }, [image?.id, index]);
 
   return (
     <div
       ref={ref}
-      data-testid={`image-item-${image.id}`}
+      data-testid={`image-item-${image?.id}`}
       className={`group relative flex cursor-move flex-col overflow-hidden rounded-md border border-gray-200 bg-white/20 shadow-sm backdrop-blur transition-all duration-200 ${
         isDragging ? "scale-95 opacity-50" : "opacity-100 hover:shadow-md"
       }`}
@@ -90,7 +90,7 @@ function ImageItem({
           size="icon"
           variant="outline"
           className="absolute right-2 top-2 z-10 opacity-0 transition-opacity group-hover:opacity-100"
-          onClick={() => onDelete(image.id)}
+          onClick={() => onDelete(image?.id)}
         >
           <X className="size-4" />
         </Button>
@@ -104,7 +104,7 @@ function ImageItem({
       </div>
       <Input
         value={image.desc ?? ""}
-        onChange={(e) => onDescriptionChange(image.id, e.target.value)}
+        onChange={(e) => onDescriptionChange(image?.id, e.target.value)}
         placeholder="Add description..."
         className="border-0 px-2 py-1 text-sm focus:ring-0"
       />
@@ -142,8 +142,8 @@ export function ImageGallery({ recordId, recordType }: ImageGalleryProps) {
         }
 
         const newImages = [...images];
-        const sourceIndex = newImages.findIndex((img) => img.id === sourceId);
-        const targetIndex = newImages.findIndex((img) => img.id === targetId);
+        const sourceIndex = newImages.findIndex((img) => img?.id === sourceId);
+        const targetIndex = newImages.findIndex((img) => img?.id === targetId);
 
         if (sourceIndex === -1 || targetIndex === -1) {
           console.log("Invalid source or target index");
@@ -200,7 +200,7 @@ export function ImageGallery({ recordId, recordType }: ImageGalleryProps) {
       await updateImageDescription(id, description);
       setImages(
         images.map((img) =>
-          img.id === id ? { ...img, desc: description } : img
+          img?.id === id ? { ...img, desc: description } : img
         )
       );
     } catch {
@@ -215,7 +215,7 @@ export function ImageGallery({ recordId, recordType }: ImageGalleryProps) {
   const handleDelete = async (id: string) => {
     try {
       await deleteImage(id);
-      setImages(images.filter((img) => img.id !== id));
+      setImages(images.filter((img) => img?.id !== id));
       toast({ title: "Success", description: "Image deleted" });
     } catch {
       toast({
@@ -237,7 +237,7 @@ export function ImageGallery({ recordId, recordType }: ImageGalleryProps) {
       >
         {images.map((image, index) => (
           <ImageItem
-            key={image.id}
+            key={image?.id}
             image={image}
             index={index}
             onDescriptionChange={handleDescriptionChange}

@@ -121,7 +121,7 @@ export default function DestinationPage({
         {searchResults.map((property, i) => (
           <NewLazyRetreatItem
             key={`search-result-${i}`}
-            id={property.id}
+            id={property?.id}
             segment="destinations"
             className="h-96 w-[250px] md:w-[300px] lg:w-[400px]"
           />

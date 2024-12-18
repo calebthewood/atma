@@ -525,25 +525,25 @@ function revalidateRelatedPaths(relations: Record<string, any>) {
   if (relations.host) {
     revalidatePath("/admin/host");
     if (relations.host.connect) {
-      revalidatePath(`/admin/host/${relations.host.connect.id}`);
+      revalidatePath(`/admin/host/${relations.host.connect?.id}`);
     }
   }
   if (relations.property) {
     revalidatePath("/admin/property");
     if (relations.property.connect) {
-      revalidatePath(`/admin/property/${relations.property.connect.id}`);
+      revalidatePath(`/admin/property/${relations.property.connect?.id}`);
     }
   }
   if (relations.program) {
     revalidatePath("/admin/program");
     if (relations.program.connect) {
-      revalidatePath(`/admin/program/${relations.program.connect.id}`);
+      revalidatePath(`/admin/program/${relations.program.connect?.id}`);
     }
   }
   if (relations.retreat) {
     revalidatePath("/admin/retreat");
     if (relations.retreat.connect) {
-      revalidatePath(`/admin/retreat/${relations.retreat.connect.id}`);
+      revalidatePath(`/admin/retreat/${relations.retreat.connect?.id}`);
     }
   }
 }

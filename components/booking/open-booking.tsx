@@ -110,7 +110,7 @@ function BookingItem({ item, guestCount, prices }: BookingItemProps) {
           {start} to {end}
         </Lead>
         {prices?.map((price, index) => (
-          <PriceItem key={price.id || index} price={price} />
+          <PriceItem key={price?.id || index} price={price} />
         ))}
       </div>
       <div className="flex basis-1/2 flex-col items-end">
@@ -149,7 +149,7 @@ function BookingEventsList({
   return (
     <CardContent>
       {events.map((event, index) => (
-        <div key={event.id || index}>
+        <div key={event?.id || index}>
           <BookingItem
             userId={userId}
             guestCount={guestCount}

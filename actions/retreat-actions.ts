@@ -6,7 +6,6 @@ import { Prisma, Retreat } from "@prisma/client";
 import { z } from "zod";
 
 import prisma from "@/lib/prisma";
-import { haversineDistance, shortNameToContinent } from "@/lib/utils";
 
 // ============================================================================
 // Types
@@ -352,7 +351,7 @@ export async function getRetreatsGroupedByProperty(): ActionResponse<
     });
 
     const groupedRetreats = propertiesWithRetreats.map((property) => ({
-      propertyId: property.id,
+      propertyId: property?.id,
       propertyName: property.name,
       images: property.images,
       retreats: property.retreats,

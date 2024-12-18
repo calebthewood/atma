@@ -27,7 +27,7 @@ export default async function RetreatPage({
 
   try {
     const [retreatResponse, session] = await Promise.all([
-      getRetreat(parameters.id),
+      getRetreat(parameters?.id),
       auth(),
     ]);
 

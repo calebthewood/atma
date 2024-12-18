@@ -26,7 +26,7 @@ export function UserList() {
   return (
     <div className="mt-8 space-y-4">
       {users.map((user) => (
-        <UserListItem key={user.id} user={user} />
+        <UserListItem key={user?.id} user={user} />
       ))}
     </div>
   );

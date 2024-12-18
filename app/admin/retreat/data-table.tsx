@@ -162,7 +162,7 @@ export function RetreatDataTable() {
               window.confirm("Are you sure you want to delete this retreat?")
             ) {
               try {
-                const response = await deleteRetreat(retreat.id);
+                const response = await deleteRetreat(retreat?.id);
                 if (!response.success) {
                   throw new Error(response.error);
                 }
@@ -187,8 +187,8 @@ export function RetreatDataTable() {
 
           return (
             <AdminActionMenu
-              editHref={`/admin/retreat/${retreat.id}/general`}
-              publicHref={`/retreats/${retreat.id}`}
+              editHref={`/admin/retreat/${retreat?.id}/general`}
+              publicHref={`/retreats/${retreat?.id}`}
               handleDelete={handleDelete}
             />
           );
@@ -243,14 +243,14 @@ export function RetreatDataTable() {
               .map((column) => {
                 return (
                   <DropdownMenuCheckboxItem
-                    key={column.id}
+                    key={column?.id}
                     className="capitalize"
                     checked={column.getIsVisible()}
                     onCheckedChange={(value) =>
                       column.toggleVisibility(!!value)
                     }
                   >
-                    {column.id}
+                    {column?.id}
                   </DropdownMenuCheckboxItem>
                 );
               })}
@@ -261,10 +261,10 @@ export function RetreatDataTable() {
         <Table>
           <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => (
-              <TableRow key={headerGroup.id}>
+              <TableRow key={headerGroup?.id}>
                 {headerGroup.headers.map((header) => {
                   return (
-                    <TableHead key={header.id}>
+                    <TableHead key={header?.id}>
                       {header.isPlaceholder
                         ? null
                         : flexRender(
@@ -281,11 +281,11 @@ export function RetreatDataTable() {
             {table.getRowModel().rows?.length ? (
               table.getRowModel().rows.map((row) => (
                 <TableRow
-                  key={row.id}
+                  key={row?.id}
                   data-state={row.getIsSelected() && "selected"}
                 >
                   {row.getVisibleCells().map((cell) => (
-                    <TableCell key={cell.id}>
+                    <TableCell key={cell?.id}>
                       {flexRender(
                         cell.column.columnDef.cell,
                         cell.getContext()

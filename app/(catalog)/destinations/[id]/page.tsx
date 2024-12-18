@@ -24,13 +24,13 @@ const DEFAULT_SLIDES = [
 
 export default async function Page(props: { params: Promise<{ id: string }> }) {
   const params = await props.params;
-  const property = await getPropertyById(params.id);
+  const property = await getPropertyById(params?.id);
   const parkingAmenities = await getPropertyAmenitiesByCategory(
-    params.id,
+    params?.id,
     "parking-transportation"
   );
-  const programIds = await getPropertyEntityIds(params.id, "program");
-  const retreatIds = await getPropertyEntityIds(params.id, "retreat");
+  const programIds = await getPropertyEntityIds(params?.id, "program");
+  const retreatIds = await getPropertyEntityIds(params?.id, "retreat");
   // const session = await auth();
 
   if (!property || !params) {

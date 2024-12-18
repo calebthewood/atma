@@ -173,7 +173,7 @@ export default function SearchResultsPage({
           if (!entity.property) return acc;
 
           const existingGroup = acc.find(
-            (g) => g.propertyId === entity.property!.id
+            (g) => g.propertyId === entity.property!?.id
           );
           const propertyLocation = [
             entity.property.city,
@@ -186,7 +186,7 @@ export default function SearchResultsPage({
             existingGroup.items.push(entity);
           } else {
             acc.push({
-              propertyId: entity.property.id,
+              propertyId: entity.property?.id,
               propertyName: entity.property.name || "Unnamed Property",
               propertyLocation,
               items: [entity],
@@ -234,8 +234,8 @@ export default function SearchResultsPage({
     <div className="grid w-full grid-cols-1 justify-items-center gap-10 md:grid-cols-2 lg:grid-cols-3">
       {items.map((item) => (
         <NewLazyRetreatItem
-          key={item.id}
-          id={item.id}
+          key={item?.id}
+          id={item?.id}
           segment={segment}
           className="size-[250px] md:size-[300px] lg:size-[330px] xl:size-[380px]"
         />

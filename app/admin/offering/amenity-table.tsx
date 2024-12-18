@@ -129,12 +129,12 @@ export function AmenityList() {
     });
 
   const handleEdit = (amenity: Amenity) => {
-    router.push(`/admin/offerings/${amenity.id}`);
+    router.push(`/admin/offerings/${amenity?.id}`);
   };
 
   const handleDelete = async (amenity: Amenity) => {
     try {
-      await deleteAmenity(amenity.id);
+      await deleteAmenity(amenity?.id);
       await fetchAmenities();
     } catch (error) {
       console.error("Error deleting amenity:", error);
@@ -257,7 +257,7 @@ export function AmenityList() {
         <TableBody>
           {filteredAmenities.map((amenity) => (
             <AmenityListItem
-              key={amenity.id}
+              key={amenity?.id}
               amenity={amenity}
               onEdit={handleEdit}
               onDelete={handleDelete}

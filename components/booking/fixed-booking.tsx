@@ -59,7 +59,7 @@ export function FixedBooking({
   const guestCount = parseInt(searchParams.get("guests") || "1");
   // Get the instance ID from search params
   const instanceId = searchParams.get("instance");
-  const currentInstance = instances.find((i) => i.id === instanceId);
+  const currentInstance = instances.find((i) => i?.id === instanceId);
 
   // Initialize maxGuests (fallback to 16 if not specified)
   const maxGuests =

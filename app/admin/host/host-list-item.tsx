@@ -32,7 +32,7 @@ export function HostListItem({ host }: HostListItemProps) {
       </TableCell>
       <TableCell className="hidden md:table-cell">{host.email}</TableCell>
       <TableCell className="hidden md:table-cell">{host.phone}</TableCell>
-      <TableCell className="hidden md:table-cell">{host.id}</TableCell>
+      <TableCell className="hidden md:table-cell">{host?.id}</TableCell>
       <TableCell>
         <DropdownMenu>
           <DropdownMenuTrigger asChild>

@@ -184,7 +184,7 @@ async function seedRetreatInstances() {
 
       const instance = await prisma.retreatInstance.create({
         data: {
-          retreatId: retreat.id,
+          retreatId: retreat?.id,
           startDate: startDate,
           endDate: endDate,
           minNights: minNight,
@@ -205,7 +205,7 @@ async function seedRetreatInstances() {
         await prisma.priceMod.create({
           data: {
             hostId: instance.hostId,
-            retreatInstanceId: instance.id,
+            retreatInstanceId: instance?.id,
             name: `${["Binary", "Quantum", "Neural"][k]} ${["Boost", "Upgrade", "Enhancement"][k]}`,
             description: `${["Elevate", "Amplify", "Maximize"][k]} your stay with our ${priceModCategories[k].toLowerCase()} options.`,
             type: priceModTypes[k],
@@ -228,7 +228,7 @@ async function seedImages() {
       await prisma.image.create({
         data: {
           filePath: imagePaths[Math.floor((i + j) % imagePaths.length)],
-          hostId: host.id,
+          hostId: host?.id,
         },
       });
     }
@@ -243,7 +243,7 @@ async function seedImages() {
       await prisma.image.create({
         data: {
           filePath: imagePaths[Math.floor((i + j + 1) % imagePaths.length)],
-          propertyId: property.id,
+          propertyId: property?.id,
         },
       });
     }
@@ -258,7 +258,7 @@ async function seedImages() {
       await prisma.image.create({
         data: {
           filePath: imagePaths[Math.floor((i + j + 2) % imagePaths.length)],
-          retreatId: retreat.id,
+          retreatId: retreat?.id,
         },
       });
     }
@@ -306,7 +306,7 @@ async function seedHostsPropsRetreats() {
           amenities:
             "Infinity Pool, Spa, Gourmet Restaurants, Private Beach, Fitness Center",
           rating: "0 / 0",
-          hostId: host.id,
+          hostId: host?.id,
           latitude: latitude,
           longitude: longitude,
           city: city.name,
@@ -324,7 +324,7 @@ async function seedHostsPropsRetreats() {
             bedType: ["Queen Bed", "King Bed", "California King Bed"][j - 1],
             minGuests: 1,
             maxGuests: j * 2,
-            propertyId: property.id,
+            propertyId: property?.id,
           },
         });
       }
@@ -340,8 +340,8 @@ async function seedHostsPropsRetreats() {
           price: `${1500 * i}`,
           minGuests: 1,
           maxGuests: 6,
-          hostId: host.id,
-          propertyId: property.id,
+          hostId: host?.id,
+          propertyId: property?.id,
         },
       });
     }
@@ -352,7 +352,7 @@ async function seedHostsPropsRetreats() {
     for (let k = 0; k < 3; k++) {
       await prisma.priceMod.create({
         data: {
-          hostId: host.id,
+          hostId: host?.id,
           name: `${["Binary", "Quantum", "Neural"][k]} ${["Boost", "Upgrade", "Enhancement"][k]}`,
           description: `${["Elevate", "Amplify", "Maximize"][k]} your stay with our ${priceModCategories[k].toLowerCase()} options.`,
           type: priceModTypes[k],

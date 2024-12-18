@@ -61,7 +61,7 @@ export function ProgramInstanceForm() {
   const params = useParams();
   const router = useRouter();
   const searchParams = useSearchParams();
-  const programId = params.id as string;
+  const programId = params?.id as string;
   const editId = searchParams.get("edit");
 
   const form = useForm<InstanceFormData>({
@@ -157,7 +157,7 @@ export function ProgramInstanceForm() {
     if (currentInstance) {
       try {
         const fieldValue = form.getValues(fieldName);
-        const response = await updateInstance(currentInstance.id, {
+        const response = await updateInstance(currentInstance?.id, {
           [fieldName]: fieldValue,
         });
 
@@ -185,7 +185,7 @@ export function ProgramInstanceForm() {
     setIsLoading(true);
     try {
       if (currentInstance) {
-        const response = await updateInstance(currentInstance.id, values);
+        const response = await updateInstance(currentInstance?.id, values);
         if (response.success) {
           toast({
             title: "Success",
@@ -274,7 +274,7 @@ export function ProgramInstanceForm() {
                     </FormControl>
                     <SelectContent>
                       {programs.map((program) => (
-                        <SelectItem key={program.id} value={program.id}>
+                        <SelectItem key={program?.id} value={program?.id}>
                           {program.name || "Unnamed Program"}
                         </SelectItem>
                       ))}

@@ -353,7 +353,7 @@ export async function getPropertyEntityIds(
           id: true,
         },
       });
-      return retreats.map((r) => r.id);
+      return retreats.map((r) => r?.id);
     } else {
       const programs = await prisma.program.findMany({
         where: {
@@ -368,7 +368,7 @@ export async function getPropertyEntityIds(
           id: true,
         },
       });
-      return programs.map((p) => p.id);
+      return programs.map((p) => p?.id);
     }
   } catch (error) {
     console.error(`Failed to fetch ${entityType} IDs:`, error);

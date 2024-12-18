@@ -78,7 +78,7 @@ export function ProgramDataTable() {
 
     try {
       const searchTerm =
-        (columnFilters.find((f) => f.id === "name")?.value as string) ?? "";
+        (columnFilters.find((f) => f?.id === "name")?.value as string) ?? "";
       const result = await getPaginatedPrograms(
         pagination.pageIndex + 1,
         pagination.pageSize,
@@ -194,9 +194,9 @@ export function ProgramDataTable() {
           const program = row.original;
           return (
             <AdminActionMenu
-              editHref={`/admin/program/${program.id}/general`}
-              publicHref={`/program/${program.id}`}
-              handleDelete={() => handleDelete(program.id)}
+              editHref={`/admin/program/${program?.id}/general`}
+              publicHref={`/program/${program?.id}`}
+              handleDelete={() => handleDelete(program?.id)}
             />
           );
         },
@@ -291,12 +291,12 @@ export function ProgramDataTable() {
               .filter((column) => column.getCanHide())
               .map((column) => (
                 <DropdownMenuCheckboxItem
-                  key={column.id}
+                  key={column?.id}
                   className="capitalize"
                   checked={column.getIsVisible()}
                   onCheckedChange={(value) => column.toggleVisibility(!!value)}
                 >
-                  {column.id}
+                  {column?.id}
                 </DropdownMenuCheckboxItem>
               ))}
           </DropdownMenuContent>
@@ -306,10 +306,10 @@ export function ProgramDataTable() {
         <Table>
           <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => (
-              <TableRow key={headerGroup.id}>
+              <TableRow key={headerGroup?.id}>
                 {headerGroup.headers.map((header) => {
                   return (
-                    <TableHead key={header.id}>
+                    <TableHead key={header?.id}>
                       {header.isPlaceholder
                         ? null
                         : flexRender(
@@ -326,11 +326,11 @@ export function ProgramDataTable() {
             {table.getRowModel().rows?.length ? (
               table.getRowModel().rows.map((row) => (
                 <TableRow
-                  key={row.id}
+                  key={row?.id}
                   data-state={row.getIsSelected() && "selected"}
                 >
                   {row.getVisibleCells().map((cell) => (
-                    <TableCell key={cell.id}>
+                    <TableCell key={cell?.id}>
                       {flexRender(
                         cell.column.columnDef.cell,
                         cell.getContext()

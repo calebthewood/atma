@@ -71,7 +71,7 @@ export function PropertyList() {
       </TableHeader>
       <TableBody>
         {properties.map((property) => (
-          <PropertyListItem key={property.id} property={property} />
+          <PropertyListItem key={property?.id} property={property} />
         ))}
       </TableBody>
     </Table>

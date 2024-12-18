@@ -31,7 +31,7 @@ interface PageProps {
 
 export default async function Page({ params }: PageProps) {
   const resolvedParams = await params;
-  const programResponse = await getProgram(resolvedParams.id);
+  const programResponse = await getProgram(resolvedParams?.id);
 
   if (!programResponse.success || !programResponse.data) {
     console.error("Failed to fetch program:", programResponse.error);
@@ -41,7 +41,7 @@ export default async function Page({ params }: PageProps) {
   const instancesResponse = await getPaginatedInstances(
     1, // Start with first page
     10, // Page size
-    resolvedParams.id
+    resolvedParams?.id
   );
 
   const instances = instancesResponse.success
@@ -52,7 +52,7 @@ export default async function Page({ params }: PageProps) {
     {
       value: "general",
       label: "General",
-      href: `/admin/program/${resolvedParams.id}/general`,
+      href: `/admin/program/${resolvedParams?.id}/general`,
       component: () => (
         <>
           <CardHeader>
@@ -70,7 +70,7 @@ export default async function Page({ params }: PageProps) {
     {
       value: "images",
       label: "Images",
-      href: `/admin/program/${resolvedParams.id}/images`,
+      href: `/admin/program/${resolvedParams?.id}/images`,
       component: () => (
         <Card>
           <CardHeader>
@@ -81,7 +81,7 @@ export default async function Page({ params }: PageProps) {
           </CardHeader>
           <CardContent className="space-y-6">
             <ImageManagement
-              recordId={resolvedParams.id}
+              recordId={resolvedParams?.id}
               recordType="program"
             />
           </CardContent>
@@ -91,11 +91,11 @@ export default async function Page({ params }: PageProps) {
     {
       value: "instances",
       label: "Instances",
-      href: `/admin/program/${resolvedParams.id}/instances`,
+      href: `/admin/program/${resolvedParams?.id}/instances`,
       component: () => (
         <>
           <ProgramInstancesList
-            programId={resolvedParams.id}
+            programId={resolvedParams?.id}
             initialInstances={instances}
           />
           <ProgramInstanceForm />
@@ -105,7 +105,7 @@ export default async function Page({ params }: PageProps) {
     {
       value: "prices",
       label: "Pricing",
-      href: `/admin/program/${resolvedParams.id}/prices`,
+      href: `/admin/program/${resolvedParams?.id}/prices`,
       component: () => (
         <>
           <CardHeader>
@@ -116,7 +116,7 @@ export default async function Page({ params }: PageProps) {
           </CardHeader>
           <CardContent>
             <ProgramInstancesList
-              programId={resolvedParams.id}
+              programId={resolvedParams?.id}
               initialInstances={instances}
             />
           </CardContent>

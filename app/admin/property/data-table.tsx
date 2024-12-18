@@ -90,7 +90,7 @@ const columns: ColumnDef<Property>[] = [
       const handleDelete = async () => {
         if (window.confirm("Are you sure you want to delete this property?")) {
           try {
-            await deleteProperty(property.id);
+            await deleteProperty(property?.id);
           } catch (error) {
             console.error("Failed to delete property:", error);
             alert("Failed to delete property. Please try again.");
@@ -100,8 +100,8 @@ const columns: ColumnDef<Property>[] = [
 
       return (
         <AdminActionMenu
-          editHref={`/admin/property/${property.id}/general`}
-          publicHref={`/destinations/${property.id}`}
+          editHref={`/admin/property/${property?.id}/general`}
+          publicHref={`/destinations/${property?.id}`}
           handleDelete={handleDelete}
         />
       );
@@ -182,14 +182,14 @@ export function PropertyDataTable() {
               .map((column) => {
                 return (
                   <DropdownMenuCheckboxItem
-                    key={column.id}
+                    key={column?.id}
                     className="capitalize"
                     checked={column.getIsVisible()}
                     onCheckedChange={(value) =>
                       column.toggleVisibility(!!value)
                     }
                   >
-                    {column.id}
+                    {column?.id}
                   </DropdownMenuCheckboxItem>
                 );
               })}
@@ -200,10 +200,10 @@ export function PropertyDataTable() {
         <Table>
           <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => (
-              <TableRow key={headerGroup.id}>
+              <TableRow key={headerGroup?.id}>
                 {headerGroup.headers.map((header) => {
                   return (
-                    <TableHead key={header.id}>
+                    <TableHead key={header?.id}>
                       {header.isPlaceholder
                         ? null
                         : flexRender(
@@ -220,11 +220,11 @@ export function PropertyDataTable() {
             {table.getRowModel().rows?.length ? (
               table.getRowModel().rows.map((row) => (
                 <TableRow
-                  key={row.id}
+                  key={row?.id}
                   data-state={row.getIsSelected() && "selected"}
                 >
                   {row.getVisibleCells().map((cell) => (
-                    <TableCell key={cell.id}>
+                    <TableCell key={cell?.id}>
                       {flexRender(
                         cell.column.columnDef.cell,
                         cell.getContext()

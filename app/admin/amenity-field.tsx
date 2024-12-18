@@ -60,7 +60,7 @@ export const AmenityCheckboxes = ({
         ]);
 
         setAmenities(allAmenities);
-        setSelectedAmenities(new Set(entityAmenities.map((a) => a.id)));
+        setSelectedAmenities(new Set(entityAmenities.map((a) => a?.id)));
       } catch (err) {
         let errorMessage = "Failed to load amenities";
         if (err instanceof z.ZodError) {
@@ -159,11 +159,11 @@ export const AmenityCheckboxes = ({
             <h3 className="font-medium">{category}</h3>
             <div className="grid grid-cols-2 gap-4 rounded bg-white/20 p-4 backdrop-blur md:grid-cols-2">
               {items.map((amenity) => (
-                <div key={amenity.id}>
+                <div key={amenity?.id}>
                   <label className="flex flex-row items-center space-x-3 space-y-0 text-sm font-normal">
                     <Checkbox
-                      checked={selectedAmenities.has(amenity.id)}
-                      onCheckedChange={() => handleToggle(amenity.id)}
+                      checked={selectedAmenities.has(amenity?.id)}
+                      onCheckedChange={() => handleToggle(amenity?.id)}
                       aria-label={`Toggle ${amenity.name}`}
                     />
                     <span className="text-nowrap">{amenity.name}</span>

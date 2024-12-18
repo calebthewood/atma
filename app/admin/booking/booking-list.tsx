@@ -62,7 +62,7 @@ export function BookingList() {
       </TableHeader>
       <TableBody>
         {bookings.map((booking) => (
-          <BookingListItem key={booking.id} booking={booking} />
+          <BookingListItem key={booking?.id} booking={booking} />
         ))}
       </TableBody>
     </Table>

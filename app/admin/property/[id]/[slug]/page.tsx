@@ -35,33 +35,33 @@ export default async function Page(props: {
   params: Promise<{ id: string; slug: string }>;
 }) {
   const params = await props.params;
-  const property = await getProperty(params.id);
+  const property = await getProperty(params?.id);
 
   const tabs = [
     {
       value: "general",
       label: "General",
-      href: `/admin/property/${params.id}/general`,
+      href: `/admin/property/${params?.id}/general`,
     },
     {
       value: "images",
       label: "Images",
-      href: `/admin/property/${params.id}/images`,
+      href: `/admin/property/${params?.id}/images`,
     },
     {
       value: "prices",
       label: "Pricing",
-      href: `/admin/property/${params.id}/prices`,
+      href: `/admin/property/${params?.id}/prices`,
     },
     {
       value: "amenities",
       label: "Amenities",
-      href: `/admin/property/${params.id}/amenities`,
+      href: `/admin/property/${params?.id}/amenities`,
     },
     {
       value: "activities",
       label: "Activities",
-      href: `/admin/property/${params.id}/activities`,
+      href: `/admin/property/${params?.id}/activities`,
     },
   ];
 
@@ -109,7 +109,7 @@ export default async function Page(props: {
             </CardHeader>
             <CardContent className="space-y-6">
               <TabContentWrapper>
-                <ImageManagement recordId={params.id} recordType="property" />
+                <ImageManagement recordId={params?.id} recordType="property" />
               </TabContentWrapper>
             </CardContent>
           </Card>
@@ -143,7 +143,7 @@ export default async function Page(props: {
             <CardContent>
               <TabContentWrapper>
                 <AmenitiesEntityForm
-                  recordId={params.id}
+                  recordId={params?.id}
                   recordType="property"
                   amenityType="amenity"
                 />
@@ -163,7 +163,7 @@ export default async function Page(props: {
             <CardContent>
               <TabContentWrapper>
                 <AmenitiesEntityForm
-                  recordId={params.id}
+                  recordId={params?.id}
                   recordType="property"
                   amenityType="activity"
                 />

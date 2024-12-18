@@ -31,13 +31,13 @@ interface PageProps {
 
 export default async function Page({ params }: PageProps) {
   const resolvedParams = await params;
-  const result = await getRetreat(resolvedParams.id);
+  const result = await getRetreat(resolvedParams?.id);
 
   // Use new instance actions with proper error handling
   const instancesResponse = await getPaginatedInstances(
     1, // Start with first page
     10, // Page size
-    resolvedParams.id
+    resolvedParams?.id
   );
 
   if (!instancesResponse.success) {
@@ -53,7 +53,7 @@ export default async function Page({ params }: PageProps) {
     {
       value: "general",
       label: "General",
-      href: `/admin/retreat/${resolvedParams.id}/general`,
+      href: `/admin/retreat/${resolvedParams?.id}/general`,
       component: () => (
         <>
           <CardHeader>
@@ -71,7 +71,7 @@ export default async function Page({ params }: PageProps) {
     {
       value: "images",
       label: "Images",
-      href: `/admin/retreat/${resolvedParams.id}/images`,
+      href: `/admin/retreat/${resolvedParams?.id}/images`,
       component: () => (
         <Card>
           <CardHeader>
@@ -82,7 +82,7 @@ export default async function Page({ params }: PageProps) {
           </CardHeader>
           <CardContent className="space-y-6">
             <ImageManagement
-              recordId={resolvedParams.id}
+              recordId={resolvedParams?.id}
               recordType="retreat"
             />
           </CardContent>
@@ -92,11 +92,11 @@ export default async function Page({ params }: PageProps) {
     {
       value: "instances",
       label: "Instances",
-      href: `/admin/retreat/${resolvedParams.id}/instances`,
+      href: `/admin/retreat/${resolvedParams?.id}/instances`,
       component: () => (
         <>
           <RetreatInstancesList
-            retreatId={resolvedParams.id}
+            retreatId={resolvedParams?.id}
             initialInstances={instances}
           />
           <RetreatInstanceForm />
@@ -106,7 +106,7 @@ export default async function Page({ params }: PageProps) {
     {
       value: "prices",
       label: "Pricing",
-      href: `/admin/retreat/${resolvedParams.id}/prices`,
+      href: `/admin/retreat/${resolvedParams?.id}/prices`,
       component: () => (
         <>
           <CardHeader>
@@ -117,7 +117,7 @@ export default async function Page({ params }: PageProps) {
           </CardHeader>
           <CardContent>
             <RetreatInstancesList
-              retreatId={resolvedParams.id}
+              retreatId={resolvedParams?.id}
               initialInstances={instances}
             />
           </CardContent>

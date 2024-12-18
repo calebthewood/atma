@@ -80,7 +80,7 @@ const ProgramCard = ({
   bgImg: string;
 }) => {
   return (
-    <Link prefetch href={`/programs/${program.id}`}>
+    <Link prefetch href={`/programs/${program?.id}`}>
       <motion.div
         className="group relative aspect-[3/4] w-80 shrink-0 overflow-hidden rounded-lg transition-transform duration-300 hover:scale-105"
         variants={cardVariants}

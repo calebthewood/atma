@@ -91,7 +91,7 @@ export default function Page() {
     return (
       <div className="flex space-x-4 pb-4">
         {results.map((property, i) => (
-          <div key={property.id + `${i * 3.7}`} className="flex flex-col">
+          <div key={property?.id + `${i * 3.7}`} className="flex flex-col">
             <RetreatItem
               retreat={property}
               imgUrl={property.images?.[0]?.filePath}

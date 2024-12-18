@@ -64,7 +64,7 @@ export function HostList() {
       </TableHeader>
       <TableBody>
         {hosts.map((host) => (
-          <HostListItem key={host.id} host={host} />
+          <HostListItem key={host?.id} host={host} />
         ))}
       </TableBody>
     </Table>

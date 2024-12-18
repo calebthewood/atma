@@ -47,7 +47,7 @@ const TabbedSearchResults = ({ results }: { results: CountryProperties[] }) => {
               <div className="flex flex-wrap gap-4">
                 {countryGroup.properties.map((property, i) => (
                   <div
-                    key={property.id + `${i * 3.7}`}
+                    key={property?.id + `${i * 3.7}`}
                     className="flex flex-col"
                   >
                     <RetreatItem
@@ -77,7 +77,7 @@ const TabbedSearchResults = ({ results }: { results: CountryProperties[] }) => {
             {results
               .find((r) => r.country === country)
               ?.properties.map((property, i) => (
-                <div key={property.id + `${i * 3.7}`} className="flex flex-col">
+                <div key={property?.id + `${i * 3.7}`} className="flex flex-col">
                   <RetreatItem
                     retreat={property}
                     imgUrl={property.images?.[0]?.filePath}

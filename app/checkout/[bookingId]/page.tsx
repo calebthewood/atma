@@ -39,7 +39,7 @@ export default async function Page({
               <CardTitle className="text-3xl font-bold text-primary">
                 Booking Confirmation
               </CardTitle>
-              <p className="mt-2">Booking ID: {booking.id}</p>
+              <p className="mt-2">Booking ID: {booking?.id}</p>
             </CardHeader>
 
             <CardContent className="space-y-6">

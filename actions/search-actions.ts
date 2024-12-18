@@ -117,7 +117,7 @@ function groupByProperty(
   return itemsWithDistance.reduce((acc: PropertyGroup[], item) => {
     if (!item.property) return acc;
 
-    const existingGroup = acc.find((g) => g.propertyId === item.property!.id);
+    const existingGroup = acc.find((g) => g.propertyId === item.property!?.id);
     const propertyLocation = [item.property.city, item.property.country]
       .filter(Boolean)
       .join(", ");
@@ -126,7 +126,7 @@ function groupByProperty(
       existingGroup.items.push(item);
     } else {
       acc.push({
-        propertyId: item.property.id,
+        propertyId: item.property?.id,
         propertyName: item.property.name || "Unnamed Property",
         propertyLocation,
         items: [item],

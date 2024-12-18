@@ -129,7 +129,7 @@ export function AmenityForm({ amenity }: AmenityFormProps) {
   const onSubmit = async (data: AmenityFormData) => {
     try {
       if (amenity) {
-        await updateAmenity(amenity.id, data);
+        await updateAmenity(amenity?.id, data);
         toast({
           title: "Success",
           description: "Amenity updated successfully",

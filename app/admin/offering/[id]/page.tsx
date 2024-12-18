@@ -17,7 +17,7 @@ export default async function Page(props: { params: Promise<{ id: string }> }) {
   const params = await props.params;
 
   const amenity = await prisma.amenity.findUnique({
-    where: { id: params.id },
+    where: { id: params?.id },
     include: {
       _count: {
         select: {

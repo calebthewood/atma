@@ -39,7 +39,7 @@ const RetreatInstances = ({ instances }: RetreatInstancesProps) => {
     // Only set the first instance if there are instances and no instance is currently selected
     if (instances.length > 0 && !searchParams.get("instance")) {
       const params = new URLSearchParams(searchParams);
-      params.set("instance", instances[0].id);
+      params.set("instance", instances[0]?.id);
       router.push(`?${params.toString()}`, { scroll: false });
     }
   }, [instances, searchParams, router]);
@@ -56,10 +56,10 @@ const RetreatInstances = ({ instances }: RetreatInstancesProps) => {
       <div className="grid gap-4">
         {instances.map((instance) => (
           <div
-            key={instance.id}
-            onClick={() => handleInstanceClick(instance.id)}
+            key={instance?.id}
+            onClick={() => handleInstanceClick(instance?.id)}
             className={`cursor-pointer rounded-lg border p-4 transition-all hover:border-richBlack hover:bg-richBlack/30 hover:shadow-md ${
-              selectedInstanceId === instance.id
+              selectedInstanceId === instance?.id
                 ? "bg-richWhite/10 border-richBlack"
                 : "border-gray-200/30"
             }`}

@@ -127,7 +127,7 @@ export async function updateImageOrder(images: ImageData[]) {
   try {
     const updates = images.map((image) =>
       prisma.image.update({
-        where: { id: image.id },
+        where: { id: image?.id },
         data: { order: image.order },
       })
     );

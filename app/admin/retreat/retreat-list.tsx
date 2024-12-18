@@ -98,7 +98,7 @@ export function RetreatList() {
       </TableHeader>
       <TableBody>
         {retreats.map((retreat) => (
-          <RetreatListItem key={retreat.id} retreat={retreat} />
+          <RetreatListItem key={retreat?.id} retreat={retreat} />
         ))}
       </TableBody>
     </Table>

@@ -35,7 +35,7 @@ export async function POST(req: Request) {
   }
 
   // Successfully constructed event.
-  console.log("✅ Success:", event.id);
+  console.log("✅ Success:", event?.id);
 
   const permittedEvents: string[] = [
     "checkout.session.completed",

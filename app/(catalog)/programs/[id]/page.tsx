@@ -27,7 +27,7 @@ export default async function ProgramPage({
 
   try {
     const [programResponse, session] = await Promise.all([
-      getProgram(parameters.id),
+      getProgram(parameters?.id),
       auth(),
     ]);
 

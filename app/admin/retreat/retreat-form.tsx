@@ -155,7 +155,7 @@ export function RetreatForm({ retreat }: RetreatFormProps) {
 
     try {
       const fieldValue = form.getValues(fieldName);
-      const response = await updateRetreat(retreat.id, {
+      const response = await updateRetreat(retreat?.id, {
         [fieldName]: fieldValue,
       });
 
@@ -201,7 +201,7 @@ export function RetreatForm({ retreat }: RetreatFormProps) {
       let response;
 
       if (retreat) {
-        response = await updateRetreat(retreat.id, values);
+        response = await updateRetreat(retreat?.id, values);
       } else {
         response = await createRetreat(values);
       }
@@ -356,7 +356,7 @@ export function RetreatForm({ retreat }: RetreatFormProps) {
                     </FormControl>
                     <SelectContent>
                       {hosts.map((host) => (
-                        <SelectItem key={host.id} value={host.id}>
+                        <SelectItem key={host?.id} value={host?.id}>
                           {host.name}
                         </SelectItem>
                       ))}
@@ -388,7 +388,7 @@ export function RetreatForm({ retreat }: RetreatFormProps) {
                     </FormControl>
                     <SelectContent>
                       {properties.map((property) => (
-                        <SelectItem key={property.id} value={property.id}>
+                        <SelectItem key={property?.id} value={property?.id}>
                           {property.name}
                         </SelectItem>
                       ))}

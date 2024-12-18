@@ -29,7 +29,7 @@ async function updatePropertiesWithGeoData() {
       const longitude = city.lon + getRandomOffset();
 
       await prisma.property.update({
-        where: { id: property.id },
+        where: { id: property?.id },
         data: {
           latitude: latitude,
           longitude: longitude,
@@ -45,7 +45,7 @@ async function updatePropertiesWithGeoData() {
       });
 
       console.log(
-        `Updated property ${property.id} with location: ${city.name} (${latitude}, ${longitude})`
+        `Updated property ${property?.id} with location: ${city.name} (${latitude}, ${longitude})`
       );
     }
 

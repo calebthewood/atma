@@ -176,10 +176,10 @@ export function ProgramInstancesList({
             window.confirm("Are you sure you want to delete this instance?")
           ) {
             try {
-              const response = await deleteInstance(instance.id);
+              const response = await deleteInstance(instance?.id);
 
               if (response.success) {
-                if (searchParams.get("edit") === instance.id) {
+                if (searchParams.get("edit") === instance?.id) {
                   updateSearchParams("edit", null);
                 }
 
@@ -204,8 +204,8 @@ export function ProgramInstancesList({
 
         return (
           <AdminActionMenu
-            editHref={`/admin/program/${programId}/instance?edit=${instance.id}`}
-            publicHref={`/program/${programId}/instance/${instance.id}`}
+            editHref={`/admin/program/${programId}/instance?edit=${instance?.id}`}
+            publicHref={`/program/${programId}/instance/${instance?.id}`}
             handleDelete={handleDelete}
           />
         );
@@ -304,14 +304,14 @@ export function ProgramInstancesList({
                 .map((column) => {
                   return (
                     <DropdownMenuCheckboxItem
-                      key={column.id}
+                      key={column?.id}
                       className="capitalize"
                       checked={column.getIsVisible()}
                       onCheckedChange={(value) =>
                         column.toggleVisibility(!!value)
                       }
                     >
-                      {column.id}
+                      {column?.id}
                     </DropdownMenuCheckboxItem>
                   );
                 })}
@@ -324,9 +324,9 @@ export function ProgramInstancesList({
         <Table>
           <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => (
-              <TableRow key={headerGroup.id}>
+              <TableRow key={headerGroup?.id}>
                 {headerGroup.headers.map((header) => (
-                  <TableHead key={header.id}>
+                  <TableHead key={header?.id}>
                     {header.isPlaceholder
                       ? null
                       : flexRender(
@@ -342,13 +342,13 @@ export function ProgramInstancesList({
             {table.getRowModel().rows?.length ? (
               table.getRowModel().rows.map((row) => (
                 <TableRow
-                  key={row.id}
+                  key={row?.id}
                   data-state={row.getIsSelected() && "selected"}
                   className="cursor-pointer hover:bg-muted/50"
-                  onClick={() => handleRowClick(row.original.id)}
+                  onClick={() => handleRowClick(row.original?.id)}
                 >
                   {row.getVisibleCells().map((cell) => (
-                    <TableCell key={cell.id}>
+                    <TableCell key={cell?.id}>
                       {flexRender(
                         cell.column.columnDef.cell,
                         cell.getContext()

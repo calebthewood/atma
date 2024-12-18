@@ -176,7 +176,7 @@ export function ProgramForm({ program }: ProgramFormProps) {
 
     try {
       const fieldValue = form.getValues(fieldName);
-      const result = await updateProgram(program.id, {
+      const result = await updateProgram(program?.id, {
         [fieldName]: fieldValue,
       });
 
@@ -220,7 +220,7 @@ export function ProgramForm({ program }: ProgramFormProps) {
     setIsLoading(true);
     try {
       if (program) {
-        const result = await updateProgram(program.id, values);
+        const result = await updateProgram(program?.id, values);
         if (!result.success) {
           throw new Error(result.error);
         }
@@ -381,7 +381,7 @@ export function ProgramForm({ program }: ProgramFormProps) {
                     </FormControl>
                     <SelectContent>
                       {hosts.map((host) => (
-                        <SelectItem key={host.id} value={host.id}>
+                        <SelectItem key={host?.id} value={host?.id}>
                           {host.name}
                         </SelectItem>
                       ))}
@@ -413,7 +413,7 @@ export function ProgramForm({ program }: ProgramFormProps) {
                     </FormControl>
                     <SelectContent>
                       {properties.map((property) => (
-                        <SelectItem key={property.id} value={property.id}>
+                        <SelectItem key={property?.id} value={property?.id}>
                           {property.name}
                         </SelectItem>
                       ))}

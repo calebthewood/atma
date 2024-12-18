@@ -108,7 +108,7 @@ export function PropertyForm({ property }: PropertyFormProps) {
     try {
       let res;
       if (property) {
-        res = await updateProperty(property.id, values);
+        res = await updateProperty(property?.id, values);
         toast({
           title: "Success",
           description: "Property updated successfully.",
@@ -119,7 +119,7 @@ export function PropertyForm({ property }: PropertyFormProps) {
           title: "Success",
           description: "Property created successfully.",
         });
-        router.replace("/admin/property/" + res.id);
+        router.replace("/admin/property/" + res?.id);
       }
       form.reset(values);
     } catch (error) {
@@ -231,7 +231,7 @@ export function PropertyForm({ property }: PropertyFormProps) {
 
     try {
       const fieldValue = form.getValues(fieldName);
-      await updateProperty(property.id, { [fieldName]: fieldValue });
+      await updateProperty(property?.id, { [fieldName]: fieldValue });
 
       toast({
         title: "Updated",
@@ -416,7 +416,7 @@ export function PropertyForm({ property }: PropertyFormProps) {
                 </FormControl>
                 <SelectContent>
                   {hosts.map((host) => (
-                    <SelectItem key={host.id} value={host.id}>
+                    <SelectItem key={host?.id} value={host?.id}>
                       {host.name}
                     </SelectItem>
                   ))}
@@ -925,20 +925,20 @@ export function PropertyForm({ property }: PropertyFormProps) {
               <div className="grid grid-cols-2 gap-4">
                 {paymentMethods.map((method) => (
                   <div
-                    key={method.id}
+                    key={method?.id}
                     className="flex flex-row items-start space-x-3 space-y-0"
                   >
                     <Checkbox
                       checked={field.value
                         ?.split(",")
                         .filter(Boolean)
-                        .includes(method.id)}
+                        .includes(method?.id)}
                       onCheckedChange={(checked) => {
                         const current =
                           field.value?.split(",").filter(Boolean) || [];
                         const updated = checked
-                          ? [...current, method.id]
-                          : current.filter((value) => value !== method.id);
+                          ? [...current, method?.id]
+                          : current.filter((value) => value !== method?.id);
 
                         const newValue =
                           updated.length > 0 ? updated.join(",") : "";
@@ -1031,7 +1031,7 @@ const CategoryCheckboxes = ({ value, onChange }: CategoryCheckboxesProps) => {
 
   useEffect(() => {
     const uncategorized = existingTags.filter(
-      (tag) => !CATEGORY_TAGS.some((cat) => cat.id === tag)
+      (tag) => !CATEGORY_TAGS.some((cat) => cat?.id === tag)
     );
     setUncategorizedTags(uncategorized);
   }, [value]);
@@ -1040,22 +1040,22 @@ const CategoryCheckboxes = ({ value, onChange }: CategoryCheckboxesProps) => {
     <>
       <div className="grid grid-cols-2 gap-4 rounded bg-white/20 p-4 backdrop-blur md:grid-cols-3 lg:grid-cols-4">
         {CATEGORY_TAGS.map((category) => (
-          <div key={category.id} className="">
+          <div key={category?.id} className="">
             <label className="flex flex-row items-center space-x-3 space-y-0 text-sm font-normal">
               <Checkbox
-                checked={existingTags.includes(category.id)}
+                checked={existingTags.includes(category?.id)}
                 onCheckedChange={(checked) => {
                   const currentTags = new Set(existingTags);
                   if (checked) {
-                    currentTags.add(category.id);
+                    currentTags.add(category?.id);
                   } else {
-                    currentTags.delete(category.id);
+                    currentTags.delete(category?.id);
                   }
                   // Convert back to pipe-separated string with proper formatting
                   const newValue = Array.from(currentTags)
                     .map(
                       (tag) =>
-                        CATEGORY_TAGS.find((cat) => cat.id === tag)?.label ||
+                        CATEGORY_TAGS.find((cat) => cat?.id === tag)?.label ||
                         tag
                     )
                     .join(" | ");

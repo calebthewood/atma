@@ -31,7 +31,7 @@ export function UserListItem({ user }: UserListItemProps) {
 
   const handleChange = async (role: string) => {
     if (role === value) return;
-    const res = await updateUser(user.id, { role });
+    const res = await updateUser(user?.id, { role });
     if (res) setValue(res.role);
   };
 

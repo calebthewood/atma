@@ -51,8 +51,8 @@ export function ScrollableList({
           <div className="flex space-x-4 pb-4">
             {items.map((item, index) => (
               <LazyRetreatItem
-                key={`${item.type}-${item.id}-${index}`}
-                id={item.id}
+                key={`${item.type}-${item?.id}-${index}`}
+                id={item?.id}
                 segment={getSegment(item.type)}
                 className={className ?? `w-[${width}px] h-auto`}
                 aspectRatio={aspectRatio}

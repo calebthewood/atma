@@ -72,7 +72,7 @@ export default function CheckoutButton({
     console.log(booking);
     const { client_secret, url } = await createCheckoutSession(
       data,
-      booking.id
+      booking?.id
     );
     if (uiMode === "embedded") return setClientSecret(client_secret);
     window.location.assign(url as string);

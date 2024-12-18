@@ -78,7 +78,7 @@ export function PriceModForm() {
   // Parse URL segments
   const segments = pathname.split("/").filter(Boolean);
   const entityType = segments[1] as EntityType; // After 'admin'
-  const entityId = params.id as string;
+  const entityId = params?.id as string;
   const instanceId = searchParams.get("edit");
   const priceModId = searchParams.get("price");
 

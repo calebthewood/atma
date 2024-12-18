@@ -61,7 +61,7 @@ export function RetreatInstanceForm() {
   const params = useParams();
   const router = useRouter();
   const searchParams = useSearchParams();
-  const retreatId = params.id as string;
+  const retreatId = params?.id as string;
   const editId = searchParams.get("edit");
 
   const form = useForm<InstanceFormData>({
@@ -161,7 +161,7 @@ export function RetreatInstanceForm() {
     if (currentInstance) {
       try {
         const fieldValue = form.getValues(fieldName);
-        const response = await updateInstance(currentInstance.id, {
+        const response = await updateInstance(currentInstance?.id, {
           [fieldName]: fieldValue,
         });
 
@@ -195,7 +195,7 @@ export function RetreatInstanceForm() {
     try {
       if (currentInstance) {
         const response = await updateInstance(
-          currentInstance.id,
+          currentInstance?.id,
           formattedValues
         );
         if (response.success) {
@@ -284,7 +284,7 @@ export function RetreatInstanceForm() {
                     </FormControl>
                     <SelectContent>
                       {retreats.map((retreat) => (
-                        <SelectItem key={retreat.id} value={retreat.id}>
+                        <SelectItem key={retreat?.id} value={retreat?.id}>
                           {retreat.name || "Unnamed Retreat"}
                         </SelectItem>
                       ))}

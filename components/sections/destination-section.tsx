@@ -76,7 +76,7 @@ export default function DestinationSection() {
       >
         {CONTINENTS.map((continent) => (
           <ContinentCard
-            key={continent.id}
+            key={continent?.id}
             name={continent.name}
             icon={continent.icon}
             href={continent.href}

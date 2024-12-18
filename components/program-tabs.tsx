@@ -12,7 +12,7 @@ const EntityInstancesTabs = ({ instances }: EntityInstancesTabsProps) => {
 
   // Create tab data from instances
   const tabsData = instances.map((instance) => ({
-    value: instance.id,
+    value: instance?.id,
     label: `${instance.duration} Nights`,
     content: instance.itinerary,
   }));

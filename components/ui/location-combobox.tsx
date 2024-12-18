@@ -104,14 +104,14 @@ export function LocationCombobox() {
       name: continent.name,
       lat: continent.lat,
       lon: continent.lon,
-      continent: continent.id,
+      continent: continent?.id,
     });
     setOpen(false);
     updateSearchParams({
       name: continent.name,
       lat: continent.lat,
       lon: continent.lon,
-      continent: continent.id,
+      continent: continent?.id,
     });
   };
 
@@ -189,7 +189,7 @@ export function LocationCombobox() {
                   ))
                 : DEFAULT_CONTINENTS.map((continent) => (
                     <CommandItem
-                      key={continent.id}
+                      key={continent?.id}
                       value={continent.name}
                       onSelect={() => handleContinentSelect(continent)}
                       className="flex items-center gap-2 py-3"
@@ -197,7 +197,7 @@ export function LocationCombobox() {
                       <Check
                         className={cn(
                           "mr-2 size-4",
-                          value?.continent === continent.id
+                          value?.continent === continent?.id
                             ? "opacity-100"
                             : "opacity-0"
                         )}

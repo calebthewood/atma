@@ -64,7 +64,7 @@ export function AmenitiesEntityForm({
       ]);
 
       setAmenities(allAmenities);
-      setConnectedAmenityIds(new Set(connectedAmenities.map((a) => a.id)));
+      setConnectedAmenityIds(new Set(connectedAmenities.map((a) => a?.id)));
     } catch (err) {
       let errorMessage = "Failed to load amenities";
       if (err instanceof z.ZodError) {
@@ -136,11 +136,11 @@ export function AmenitiesEntityForm({
               <h3 className="font-medium">{category}</h3>
               <div className="grid grid-cols-2 gap-4 rounded bg-white/20 p-4 backdrop-blur lg:grid-cols-3">
                 {items.map((amenity) => (
-                  <div key={amenity.id}>
+                  <div key={amenity?.id}>
                     <label className="flex flex-row items-center space-x-3 space-y-0 text-sm font-normal">
                       <Checkbox
-                        checked={connectedAmenityIds.has(amenity.id)}
-                        onCheckedChange={() => handleToggle(amenity.id)}
+                        checked={connectedAmenityIds.has(amenity?.id)}
+                        onCheckedChange={() => handleToggle(amenity?.id)}
                       />
                       <span>{amenity.name}</span>
                     </label>

@@ -302,7 +302,7 @@ export async function getProgramsGroupedByProperty(): ActionResponse<
     });
 
     const groupedPrograms = propertiesWithPrograms.map((property) => ({
-      propertyId: property.id,
+      propertyId: property?.id,
       propertyName: property.name,
       images: property.images,
       programs: property.programs,
