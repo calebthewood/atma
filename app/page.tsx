@@ -25,15 +25,19 @@ export default async function Page() {
     getPrograms(),
   ]);
 
-  return (
-    <>
-      <BookingBar />
-      <div className="flex flex-col gap-y-6 py-6 md:container">
-        <ProgramSection programs={programs.data?.slice(0, 3) ?? []} />
-        <DestinationSection />
-        <RetreatSection />
-        <SubscriptionSection />
-      </div>
-    </>
-  );
+  try {
+    return (
+      <>
+        <BookingBar />
+        <div className="flex flex-col gap-y-6 py-6 md:container">
+          <ProgramSection programs={programs.data?.slice(0, 3) ?? []} />
+          <DestinationSection />
+          <RetreatSection />
+          <SubscriptionSection />
+        </div>
+      </>
+    );
+  } catch (e) {
+    console.log("ROOT ERROR", e);
+  }
 }
