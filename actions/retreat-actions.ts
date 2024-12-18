@@ -201,7 +201,11 @@ export async function getSimpleRetreat(
           },
         },
         host: true,
-        images: true,
+        images: {
+          orderBy: {
+            order: "asc",
+          },
+        },
         priceMods: true,
       },
     });

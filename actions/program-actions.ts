@@ -136,7 +136,11 @@ export async function getProgram(
         },
         host: true,
         amenities: true,
-        images: true,
+        images: {
+          orderBy: {
+            order: "asc",
+          },
+        },
         programs: true,
         priceMods: true,
       },

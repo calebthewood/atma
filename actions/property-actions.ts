@@ -72,7 +72,11 @@ export async function getPropertyWithId(
       include: {
         host: true,
         amenities: true,
-        images: true,
+        images: {
+          orderBy: {
+            order: "asc",
+          },
+        },
         rooms: true,
         retreats: true,
         programs: true,
