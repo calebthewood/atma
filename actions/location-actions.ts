@@ -61,6 +61,7 @@ export async function getGroupedDestinations(): Promise<CountryProperties[]> {
       },
     },
     images: {
+      orderBy: { order: "asc" },
       select: {
         filePath: true,
         desc: true,
