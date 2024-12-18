@@ -29,6 +29,7 @@ export type SimpleRetreat = Prisma.RetreatGetPayload<{
     };
     host: true;
     priceMods: true;
+    images: true;
   };
 }>;
 

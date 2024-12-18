@@ -86,7 +86,7 @@ export async function createProgram(
       },
     });
 
-    revalidatePath("/admin/program");
+    revalidatePath("/admin");
     return { success: true, data: program };
   } catch (error) {
     console.error("Error creating program:", error);

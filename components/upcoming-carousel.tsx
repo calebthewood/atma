@@ -99,8 +99,9 @@ export function NewLazyRetreatItem({ id, segment, className }: LazyCardProps) {
 
   useEffect(() => {
     if (!id) return;
-
     async function fetchItem(id: string) {
+      console.log(segment);
+      segment += segment.endsWith("s") ? "" : "s";
       setIsLoading(true);
       try {
         let response;
@@ -108,25 +109,35 @@ export function NewLazyRetreatItem({ id, segment, className }: LazyCardProps) {
           case "retreats":
             response = await getSimpleRetreat(id);
             if (response.success && response.data) {
+              const rImgs = response.data.images;
+              const pImgs = response.data.property.images;
+              const img = rImgs.length > 0 ? rImgs[0] : pImgs[0];
+              setImage(img?.filePath || "/img/iStock-1490140364.jpg");
               setItem(response.data);
-              setImage(response?.data?.property?.images[0]?.filePath || "");
             }
             break;
           case "destinations":
             response = await getPropertyWithId(id);
             if (response.success) {
               setItem(response.property);
-              setImage(response?.property?.images[0]?.filePath || "");
+              setImage(
+                response?.property?.images[0]?.filePath ||
+                  "/img/iStock-1490140364.jpg"
+              );
             }
             break;
           case "programs":
             response = await getProgram(id);
             if (response.success && response.data) {
+              const rImgs = response.data.images;
+              const pImgs = response.data.property.images;
+              const img = rImgs.length > 0 ? rImgs[0] : pImgs[0];
+              setImage(img?.filePath || "/img/iStock-1490140364.jpg");
               setItem(response.data);
-              setImage(response?.data?.property?.images[0]?.filePath || "");
             }
             break;
         }
+        console.log(response);
       } catch (error) {
         console.error(`Error fetching ${segment}:`, error);
       } finally {

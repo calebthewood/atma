@@ -2,7 +2,6 @@ import React from "react";
 import { CountryProperties } from "@/actions/location-actions";
 
 import { cn, getCountryName } from "@/lib/utils";
-import { Separator } from "@/components/ui/separator";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { RetreatItem } from "@/components/retreat-item";
 
