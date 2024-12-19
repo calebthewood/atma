@@ -12,7 +12,7 @@ import { toast } from "@/components/ui/use-toast";
 import { FixedBooking } from "@/components/booking/fixed-booking";
 import EntityInstancesTabs from "@/components/program-tabs";
 import PropertyPolicies from "@/components/property-policies";
-import PropertyTabs from "@/components/property-tabs";
+import { EntityTabs } from "@/components/property-tabs";
 import SubscriptionSection from "@/components/sections/subscription-section";
 import { QuickLink } from "@/components/shared";
 import { TitleImageBanner } from "@/components/title-img-banner";
@@ -74,15 +74,17 @@ export default async function ProgramPage({
                 <h2 className="mb-5 text-2xl font-semibold capitalize">
                   Highlights
                 </h2>
-                <PropertyTabs property={property} />
+                <EntityTabs entity={program} />
               </section>
 
-              <section id="section2">
-                <h2 className="mb-5 text-2xl font-semibold capitalize">
-                  Program Options
-                </h2>
-                <EntityInstancesTabs instances={program?.programs} />
-              </section>
+              {program?.programs.length > 0 && (
+                <section id="section2">
+                  <h2 className="mb-5 text-2xl font-semibold capitalize">
+                    Program Options
+                  </h2>
+                  <EntityInstancesTabs instances={program?.programs} />
+                </section>
+              )}
 
               <section id="practical-information">
                 <h2 className="mb-5 text-2xl font-semibold capitalize">

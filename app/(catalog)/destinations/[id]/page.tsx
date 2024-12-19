@@ -7,7 +7,7 @@ import {
 import ThumbnailCarousel from "@/components/ui/carousel-thumbnail";
 import { LoadingSpinner } from "@/components/loading-spinner";
 import PropertyPolicies from "@/components/property-policies";
-import PropertyTabs from "@/components/property-tabs";
+import { PropertyTabs } from "@/components/property-tabs";
 import SubscriptionSection from "@/components/sections/subscription-section";
 import { QuickLink } from "@/components/shared";
 import { TitleImageBanner } from "@/components/title-img-banner";

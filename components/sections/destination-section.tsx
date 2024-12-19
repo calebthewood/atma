@@ -69,7 +69,7 @@ export default function DestinationSection() {
     >
       <SectionHeader title="Destinations" subtitle="Discover Wellness By" />
       <motion.div
-        className="scrollbar-hide flex w-full flex-wrap justify-center gap-1 lg:flex-nowrap"
+        className="scrollbar-hide grid w-full grid-cols-2 justify-center gap-1 md:grid-cols-2 lg:grid-cols-4"
         variants={containerVariants}
         initial="hidden"
         animate="visible"
@@ -107,11 +107,11 @@ const ContinentCard = ({ name, icon: Icon, href }: ContinentCardProps) => {
   return (
     <motion.div
       variants={cardVariants}
-      className="group relative flex aspect-square w-80 shrink-0 flex-col items-center justify-center rounded-2xl transition-all duration-300 hover:bg-black/10"
+      className="group relative m-1 flex aspect-square shrink-0 flex-col items-center justify-center rounded-2xl transition-all duration-300 hover:bg-black/10"
     >
       <Link href={href} className="flex flex-col items-center gap-4">
-        <Icon className="size-64 text-black/70 transition-transform duration-300 group-hover:scale-110 dark:text-white/70" />
-        <span className="text-xl font-medium tracking-wide text-black/70 dark:text-white/70">
+        <Icon className="size-48 text-foreground/70 transition-transform duration-300 group-hover:scale-110 md:size-48 lg:size-56 xl:size-64" />
+        <span className="text-xl font-medium tracking-wide text-foreground/70">
           {name}
         </span>
       </Link>

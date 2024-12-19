@@ -142,7 +142,7 @@ export function FixedBooking({
   // }
 
   return (
-    <Card className="min-w-fit max-w-md">
+    <Card className="min-w-fit max-w-md m-1 md:p-0">
       <CardHeader>
         <CardTitle className="text-lg">
           {basePrice ? toUSD(basePrice.value) : "Price on request"}

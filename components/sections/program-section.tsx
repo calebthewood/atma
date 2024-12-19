@@ -5,6 +5,7 @@ import Link from "next/link";
 import { ProgramWithAllRelations } from "@/actions/program-actions";
 import { motion } from "framer-motion";
 
+import { QuickLink } from "../shared";
 import { Button } from "../ui/button";
 import { SectionHeader } from "./components";
 

@@ -39,7 +39,7 @@ const HeroCarousel = ({ slides }: { slides: Slide[] }) => {
           {slides.map((slide, index) => (
             <CarouselItem key={index} className="mx-4 basis-full lg:basis-3/4">
               <div className="relative flex flex-col items-center">
-                <div className="relative h-[436px] w-[821px] overflow-hidden rounded-lg">
+                <div className="relative h-[436px] w-80 md:w-[821px] overflow-hidden rounded-lg">
                   <Image
                     src={slide.image}
                     alt={slide.title}

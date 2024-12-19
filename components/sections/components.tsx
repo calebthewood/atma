@@ -7,10 +7,10 @@ export const SectionHeader = ({
 }) => {
   return (
     <>
-      <p className="w-full text-center text-xs font-semibold uppercase tracking-widest text-black/60">
+      <p className="w-full text-center text-xs font-semibold uppercase tracking-widest text-foreground/70">
         {subtitle}
       </p>
-      <h2 className="mb-5 w-full text-center text-4xl font-semibold capitalize text-black">
+      <h2 className="mb-5 w-full text-center text-4xl font-semibold capitalize">
         {title}
       </h2>
     </>

@@ -12,7 +12,7 @@ import { toast } from "@/components/ui/use-toast";
 import { FixedBooking } from "@/components/booking/fixed-booking";
 import EntityInstancesTabs from "@/components/program-tabs";
 import PropertyPolicies from "@/components/property-policies";
-import PropertyTabs from "@/components/property-tabs";
+import { EntityTabs, PropertyTabs } from "@/components/property-tabs";
 import SubscriptionSection from "@/components/sections/subscription-section";
 import { QuickLink } from "@/components/shared";
 import { TitleImageBanner } from "@/components/title-img-banner";
@@ -75,15 +75,17 @@ export default async function RetreatPage({
                 <h2 className="mb-5 text-2xl font-semibold capitalize">
                   Highlights
                 </h2>
-                <PropertyTabs property={property} />
+                <EntityTabs entity={retreat} />
               </section>
 
-              <section id="section2">
-                <h2 className="mb-5 text-2xl font-semibold capitalize">
-                  Retreat Options
-                </h2>
-                <EntityInstancesTabs instances={retreat.retreatInstances} />
-              </section>
+              {retreat.retreatInstances.length > 0 && (
+                <section id="section2">
+                  <h2 className="mb-5 text-2xl font-semibold capitalize">
+                    Retreat Options
+                  </h2>
+                  <EntityInstancesTabs instances={retreat.retreatInstances} />
+                </section>
+              )}
 
               <section id="practical-information">
                 <h2 className="mb-5 text-2xl font-semibold capitalize">
