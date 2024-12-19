@@ -12,7 +12,7 @@ import { toast } from "@/components/ui/use-toast";
 import { FixedBooking } from "@/components/booking/fixed-booking";
 import EntityInstancesTabs from "@/components/program-tabs";
 import PropertyPolicies from "@/components/property-policies";
-import { EntityTabs, PropertyTabs } from "@/components/property-tabs";
+import { EntityTabs } from "@/components/property-tabs";
 import SubscriptionSection from "@/components/sections/subscription-section";
 import { QuickLink } from "@/components/shared";
 import { TitleImageBanner } from "@/components/title-img-banner";
@@ -57,7 +57,7 @@ export default async function RetreatPage({
       <div className="flex h-auto min-h-screen flex-col gap-16">
         <section id="hero">
           <TitleImageBanner
-            name={retreat.property?.name}
+            name={retreat?.name ?? ""}
             city={retreat.property?.city}
             country={retreat.property?.country}
             address={retreat.property?.address}

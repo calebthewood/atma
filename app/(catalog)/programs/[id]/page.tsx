@@ -56,7 +56,7 @@ export default async function ProgramPage({
       <div className="flex h-auto min-h-screen flex-col gap-16">
         <section id="hero">
           <TitleImageBanner
-            name={program?.property?.name}
+            name={program?.name ?? ""}
             city={program?.property?.city}
             country={program?.property?.country}
             address={program?.property?.address}
