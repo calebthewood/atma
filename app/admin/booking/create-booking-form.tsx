@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { createBooking } from "@/actions/booking-actions";
+import { BookingWithDetails, createBooking } from "@/actions/booking-actions";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
@@ -10,7 +10,6 @@ import { Button } from "@/components/ui/button";
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -26,50 +25,52 @@ import {
 } from "@/components/ui/select";
 
 const formSchema = z.object({
-  propertyId: z.string().min(1, { message: "Property ID is required." }),
-  checkInDate: z.string().refine((val) => !isNaN(Date.parse(val)), {
-    message: "Invalid check-in date.",
-  }),
-  checkOutDate: z.string().refine((val) => !isNaN(Date.parse(val)), {
-    message: "Invalid check-out date.",
-  }),
-  guestCount: z.number().min(1, { message: "Guest count must be at least 1." }),
-  totalPrice: z.string().min(1, { message: "Total price is required." }),
+  checkInDate: z.string(),
+  checkOutDate: z.string(),
+  guestCount: z.string(), // Keep as string for form handling
+  propertyId: z.string(),
   status: z.enum(["pending", "confirmed", "cancelled"]),
-  userId: z.string().min(1, { message: "User ID is required." }),
+  totalPrice: z.string(),
+  userId: z.string(),
 });
 
-export function CreateBookingForm() {
-  const [isSubmitting, setIsSubmitting] = useState(false);
+type FormData = z.infer<typeof formSchema>;
 
-  const form = useForm<z.infer<typeof formSchema>>({
+export function BookingForm({ booking }: { booking: BookingWithDetails }) {
+  // Add property prop
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const property =
+    booking.programInstance?.program.property ||
+    booking.retreatInstance?.retreat.property;
+  const form = useForm<FormData>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      propertyId: "",
-      checkInDate: "",
-      checkOutDate: "",
-      guestCount: 1,
-      totalPrice: "",
       status: "pending",
-      userId: "",
+      guestCount: "1",
+      propertyId: property?.id,
     },
   });
 
-  async function onSubmit(values: z.infer<typeof formSchema>) {
+  async function onSubmit(values: FormData) {
     setIsSubmitting(true);
     try {
       const booking = await createBooking({
         ...values,
-        checkInDate: new Date(values.checkInDate),
-        checkOutDate: new Date(values.checkOutDate),
+        checkInDate: new Date(values.checkInDate).toDateString(),
+        checkOutDate: new Date(values.checkOutDate).toDateString(),
         guestCount: Number(values.guestCount),
+        hostId: property?.hostId || "", // Add the hostId from the property
       });
-      console.log("Booking created:", booking);
-      form.reset(); // Reset form after successful submission
-      // TODO: Add success message or redirect
+
+      if (booking.success) {
+        form.reset();
+        // Handle success (e.g., show toast, redirect)
+      } else {
+        // Handle error from the server action
+        console.error("Failed to create booking:", booking.error);
+      }
     } catch (error) {
       console.error("Error creating booking:", error);
-      // TODO: Add error message
     } finally {
       setIsSubmitting(false);
     }

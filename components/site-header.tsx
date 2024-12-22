@@ -3,7 +3,6 @@ import { getUser } from "@/actions/user-actions";
 import { auth, signOut } from "@/auth";
 import { Menu } from "lucide-react";
 
-import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,

@@ -8,6 +8,7 @@ import { HOST_TYPES, hostFormSchema } from "@/schemas/host-schema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import type { Host } from "@prisma/client";
 import { useForm } from "react-hook-form";
+
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -43,7 +44,7 @@ export function HostForm({ host, userId }: HostFormProps) {
   const form = useForm<HostFormData>({
     resolver: zodResolver(hostFormSchema),
     defaultValues: {
-      name: host?.name || "",
+      name: host?.name || "", //@ts-ignore
       type: host?.type || "Independent",
       desc: host?.desc || "",
       email: host?.email || "",
@@ -242,6 +243,7 @@ export function HostForm({ host, userId }: HostFormProps) {
                       className={getFieldStyles("desc")}
                       placeholder="Describe the host..."
                       {...field}
+                      value={field.value ?? ""}
                       onBlur={() => handleFieldBlur("desc")}
                     />
                   </FormControl>
@@ -269,6 +271,7 @@ export function HostForm({ host, userId }: HostFormProps) {
                       className={getFieldStyles("email")}
                       placeholder="email@example.com"
                       {...field}
+                      value={field.value ?? ""}
                       onBlur={() => handleFieldBlur("email")}
                     />
                   </FormControl>
@@ -289,6 +292,7 @@ export function HostForm({ host, userId }: HostFormProps) {
                       className={getFieldStyles("phone")}
                       placeholder="+1234567890"
                       {...field}
+                      value={field.value ?? ""}
                       onBlur={() => handleFieldBlur("phone")}
                     />
                   </FormControl>

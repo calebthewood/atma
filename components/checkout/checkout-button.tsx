@@ -2,7 +2,7 @@
 
 import React, { useState, type JSX } from "react";
 import { redirect } from "next/navigation";
-import { createBooking } from "@/actions/booking-actions";
+import { createBooking, createBookingOld } from "@/actions/booking-actions";
 import { createCheckoutSession } from "@/actions/stripe";
 import {
   EmbeddedCheckout,
@@ -58,7 +58,7 @@ export default function CheckoutButton({
       "uiMode"
     ) as Stripe.Checkout.SessionCreateParams.UiMode;
 
-    const booking = await createBooking({
+    const booking = await createBookingOld({
       userId,
       entity,
       entityId,

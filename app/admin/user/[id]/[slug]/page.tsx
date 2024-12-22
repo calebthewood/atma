@@ -20,8 +20,8 @@ import {
   navigationMenuTriggerStyle,
 } from "@/components/ui/navigation-menu";
 
-import { UserForm } from "../../user-form";
 import { HostUserForm } from "../../host-user-form";
+import { UserForm } from "../../user-form";
 
 interface PageProps {
   params: Promise<{ id: string; slug: string }>;
@@ -90,7 +90,7 @@ export default async function Page({ params }: PageProps) {
           <CardHeader>
             <CardTitle>Host Associations</CardTitle>
             <CardDescription>
-              Manage user's host relationships and permissions.
+              {`Manage user's host relationships and permissions`}
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -110,7 +110,7 @@ export default async function Page({ params }: PageProps) {
         <Card>
           <CardHeader>
             <CardTitle>Booking History</CardTitle>
-            <CardDescription>View and manage user's bookings.</CardDescription>
+            <CardDescription>{`View and manage user's bookings`}</CardDescription>
           </CardHeader>
           <CardContent>
             {/* Add BookingsTable component here */}
@@ -128,7 +128,7 @@ export default async function Page({ params }: PageProps) {
           <CardHeader>
             <CardTitle>User Activity</CardTitle>
             <CardDescription>
-              View user's reviews, messages, and notifications.
+              {`View user's reviews, messages, and notifications`}
             </CardDescription>
           </CardHeader>
           <CardContent>

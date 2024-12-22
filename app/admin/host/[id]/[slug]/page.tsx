@@ -2,12 +2,11 @@ import { getHost } from "@/actions/host-actions";
 
 import { HostForm } from "../../host-form";
 
-export default async function EditHostPage({
-  params,
-}: {
-  params: { id: string; slug: string };
+export default async function Page(props: {
+  params: Promise<{ id: string; slug: string }>;
 }) {
-  const result = await getHost(params.id);
+  const { id } = await props.params;
+  const result = await getHost(id);
 
   if (!result) {
     return <div>Error: {result}</div>;

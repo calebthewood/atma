@@ -39,7 +39,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         if (dbUser) {
           session.user.id = dbUser.id;
           session.user.role = dbUser.role;
-          session.user.hostId = dbUser.hostUsers[0].hostId
+          session.user.hostId = dbUser.hostUsers[0].hostId;
         }
       }
       return session;

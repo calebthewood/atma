@@ -1,16 +1,21 @@
+import { getBooking } from "@/actions/booking-actions";
+import { getProperty } from "@/actions/property-actions";
 import { getDashboardUser } from "@/actions/user-actions";
 
 import { Separator } from "@/components/ui/separator";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
-import { CreateBookingForm } from "./create-booking-form";
+import { BookingForm } from "./create-booking-form";
 import { BookingsDataTable } from "./data-table";
 
-export default async function Page() {
+export default async function Page(props: { params: Promise<{ id: string }> }) {
+  const { id } = await props.params;
   const userResponse = await getDashboardUser();
   if (!userResponse.ok) {
     return null;
   }
+
+  const booking = await getBooking(id);
   const isAdmin = userResponse.data?.role === "admin";
 
   const hostId = isAdmin ? "system" : userResponse.data?.hostUsers[0]?.hostId;
@@ -38,7 +43,7 @@ export default async function Page() {
           <TabsTrigger value="form">Create Booking</TabsTrigger>
         </TabsList>
         <TabsContent value="form">
-          <CreateBookingForm />
+          <BookingForm booking={booking} />
         </TabsContent>
         <TabsContent value="list">
           <BookingsDataTable />

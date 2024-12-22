@@ -40,7 +40,7 @@ export default function DestinationPage({
 
   const handleSearch = useCallback(async () => {
     const encodedPlace = searchParams.get("place");
-    const place = encodedPlace ? decodeURIComponent(encodedPlace) : "";
+    // const place = encodedPlace ? decodeURIComponent(encodedPlace) : "";
     const lat = searchParams.get("lat");
     const lon = searchParams.get("lon");
     const continent = searchParams.get("continent");

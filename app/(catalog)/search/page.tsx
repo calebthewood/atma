@@ -7,7 +7,6 @@ import {
   PropertyWithIncludes,
   searchProperties,
 } from "@/actions/location-actions";
-import { addDays } from "date-fns";
 
 import { LoadingSpinner } from "@/components/loading-spinner";
 import { RetreatItem } from "@/components/retreat-item";

@@ -1,12 +1,12 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
+import { auth } from "@/auth";
 import { retreatFormSchema } from "@/schemas/retreat-schema";
 import { Prisma, Retreat } from "@prisma/client";
 import { z } from "zod";
 
 import prisma from "@/lib/prisma";
-import { auth } from "@/auth";
 
 // ============================================================================
 // Types
@@ -113,35 +113,80 @@ type PriceModWithDetails = {
 // ============================================================================
 // Core CRUD Operations
 // ============================================================================
-
 export async function createRetreat(
   data: RetreatFormData
 ): ActionResponse<Retreat> {
   try {
     const { hostId, propertyId, date, ...restData } = data;
 
-    const retreat = await prisma.retreat.create({
-      data: {
-        ...restData,
-        date: date ? new Date(date) : null,
-        property: {
-          connect: { id: propertyId },
-        },
-        ...(hostId
-          ? {
-              host: {
-                connect: { id: hostId },
-              },
-            }
-          : {}),
+    const createData: Prisma.RetreatCreateInput = {
+      ...restData,
+      date: date ? new Date(date) : null,
+      property: {
+        connect: { id: propertyId },
       },
+      host: {
+        connect: { id: hostId || "" }, // Required host relation
+      },
+    };
+
+    const retreat = await prisma.retreat.create({
+      data: createData,
     });
 
     revalidatePath("/admin/retreat");
     return { success: true, data: retreat };
   } catch (error) {
     console.error("Error creating retreat:", error);
-    return { success: false, error: "Failed to create retreat" };
+    return {
+      success: false,
+      error:
+        error instanceof Error
+          ? error.message
+          : "Failed to create retreat. Host is required.",
+    };
+  }
+}
+
+export async function updateRetreat(
+  id: string,
+  data: Partial<RetreatFormData>
+): ActionResponse<Retreat> {
+  try {
+    const { hostId, date, ...restData } = data;
+
+    const updateData: Prisma.RetreatUpdateInput = {
+      ...restData,
+      ...(date !== undefined
+        ? {
+            date: date ? new Date(date) : null,
+          }
+        : {}),
+      // Only include host update if hostId is provided and not null
+      ...(hostId
+        ? {
+            host: {
+              connect: { id: hostId },
+            },
+          }
+        : {}),
+    };
+
+    const retreat = await prisma.retreat.update({
+      where: { id },
+      data: updateData,
+    });
+
+    revalidatePath("/admin/retreat");
+    revalidatePath(`/admin/retreat/${id}`);
+    return { success: true, data: retreat };
+  } catch (error) {
+    console.error("Failed to update retreat:", error);
+    return {
+      success: false,
+      error:
+        error instanceof Error ? error.message : "Failed to update retreat",
+    };
   }
 }
 
@@ -224,25 +269,6 @@ export async function getSimpleRetreat(
   } catch (error) {
     console.error("Failed to fetch retreat:", error);
     return { success: false, error: "Failed to fetch retreat" };
-  }
-}
-
-export async function updateRetreat(
-  id: string,
-  data: Partial<RetreatFormData>
-): ActionResponse<Retreat> {
-  try {
-    const retreat = await prisma.retreat.update({
-      where: { id },
-      data,
-    });
-
-    revalidatePath("/admin/retreats");
-    revalidatePath(`/admin/retreats/${id}`);
-    return { success: true, data: retreat };
-  } catch (error) {
-    console.error("Failed to update retreat:", error);
-    return { success: false, error: "Failed to update retreat" };
   }
 }
 
@@ -353,7 +379,7 @@ export async function getAdminPaginatedRetreats(
     // Build where clause based on role
     const whereClause: Prisma.RetreatWhereInput = {
       ...searchConditions,
-      ...(session.user.role !== 'admin' ? { hostId: session.user.hostId } : {})
+      ...(session.user.role !== "admin" ? { hostId: session.user.hostId } : {}),
     };
 
     const [retreats, totalCount] = await Promise.all([
@@ -368,19 +394,19 @@ export async function getAdminPaginatedRetreats(
               name: true,
               city: true,
               country: true,
-            }
+            },
           },
           host: {
             select: {
               name: true,
               id: true,
-            }
+            },
           },
           images: {
             take: 1,
             orderBy: {
-              order: 'asc'
-            }
+              order: "asc",
+            },
           },
           retreatInstances: {
             select: {
@@ -389,10 +415,10 @@ export async function getAdminPaginatedRetreats(
               availableSlots: true,
             },
             orderBy: {
-              startDate: 'asc'
+              startDate: "asc",
             },
-            take: 1
-          }
+            take: 1,
+          },
         },
       }),
       prisma.retreat.count({ where: whereClause }),
@@ -410,12 +436,11 @@ export async function getAdminPaginatedRetreats(
     console.error("Error fetching paginated retreats:", error);
     return {
       success: false,
-      error: error instanceof Error ? error.message : "Failed to fetch retreats"
+      error:
+        error instanceof Error ? error.message : "Failed to fetch retreats",
     };
   }
 }
-
-
 
 // ============================================================================
 // Property-Related Operations

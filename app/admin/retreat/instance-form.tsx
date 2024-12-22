@@ -74,6 +74,8 @@ export function RetreatInstanceForm() {
       itinerary: "Bulleted list of items, end each point with a semicolon;",
       availableSlots: 0,
       isFull: false,
+      notes: "",
+      verifiedBy: "",
     },
   });
 

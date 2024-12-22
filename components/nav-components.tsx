@@ -16,16 +16,12 @@ import {
 
 import { Separator } from "./ui/separator";
 
-interface MainMenuProps {
-  items?: NavItem[];
-}
-
 export function HeroTitle() {
   return (
     <Link href="/" className="max-w-xl hover:brightness-200">
-      <h1 className="font-broad mb-4 flex w-full justify-between text-3xl transition-all hover:scale-[97%] sm:px-0">
-        <span className="tracking-widester ml-1 font-normal">ATMA</span>
-        <span className="tracking-widester font-semibold">RESERVE</span>
+      <h1 className="mb-4 flex w-full justify-between font-broad text-3xl transition-all hover:scale-[97%] sm:px-0">
+        <span className="ml-1 font-normal tracking-widester">ATMA</span>
+        <span className="font-semibold tracking-widester">RESERVE</span>
       </h1>
       <p className="text-center text-xs font-thin uppercase leading-relaxed tracking-wider md:text-sm">
         {`THE WORLD'S DESTINATION FOR FINEST RETREATS`}

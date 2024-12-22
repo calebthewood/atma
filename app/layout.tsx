@@ -7,7 +7,6 @@ import { getRetreats } from "@/actions/retreat-actions";
 
 import { siteConfig } from "@/config/site";
 import { fontSans, fontTitle } from "@/lib/fonts/fonts";
-import prisma from "@/lib/prisma";
 import { cn } from "@/lib/utils";
 import FooterSection from "@/components/sections/footer-section";
 import { SiteHeader } from "@/components/site-header";

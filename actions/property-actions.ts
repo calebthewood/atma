@@ -7,7 +7,7 @@ import { Prisma, Property } from "@prisma/client";
 
 import { prisma } from "@/lib/prisma";
 
-import { getAuthenticatedUser } from "./auth-actions";
+import { ActionResponse } from "./program-actions";
 
 export async function getProperty(id: string) {
   try {
@@ -106,43 +106,84 @@ export async function getPropertyWithId(
     };
   }
 }
-
-export async function createProperty(data: PropertyFormData) {
+export async function createProperty(
+  data: PropertyFormData
+): ActionResponse<Property> {
   try {
-    const property = await prisma.property.create({
-      data: {
-        ...data,
-        lat: data.lat ? parseFloat(data.lat.toString()) : null,
-        lng: data.lng ? parseFloat(data.lng.toString()) : null,
+    const { hostId, ...restData } = data;
+
+    const createData: Prisma.PropertyCreateInput = {
+      ...restData,
+      lat: restData.lat ? parseFloat(restData.lat.toString()) : null,
+      lng: restData.lng ? parseFloat(restData.lng.toString()) : null,
+      host: {
+        connect: { id: hostId || "" }, // Since host is required, we'll let Prisma throw if hostId is invalid
       },
+    };
+
+    const property = await prisma.property.create({
+      data: createData,
     });
-    return property;
+
+    revalidatePath("/admin/property");
+    return { success: true, data: property };
   } catch (error) {
     console.error("Failed to create property:", error);
-    throw new Error("Failed to create property");
+    return {
+      success: false,
+      error:
+        error instanceof Error
+          ? error.message
+          : "Failed to create property. Host is required.",
+    };
   }
 }
 
 export async function updateProperty(
   id: string,
   data: Partial<PropertyFormData>
-) {
+): ActionResponse<Property> {
   try {
+    const { hostId, ...restData } = data;
+
+    const updateData: Prisma.PropertyUpdateInput = {
+      ...restData,
+      ...(restData.lat !== undefined
+        ? {
+            lat: restData.lat ? parseFloat(restData.lat.toString()) : null,
+          }
+        : {}),
+      ...(restData.lng !== undefined
+        ? {
+            lng: restData.lng ? parseFloat(restData.lng.toString()) : null,
+          }
+        : {}),
+      ...(hostId !== undefined
+        ? {
+            host: {
+              connect: { id: hostId }, // Since host is required, we'll let Prisma throw if hostId is invalid
+            },
+          }
+        : {}),
+    };
+
     const property = await prisma.property.update({
       where: { id },
-      data: {
-        ...data,
-        lat: data.lat ? parseFloat(data.lat.toString()) : undefined,
-        lng: data.lng ? parseFloat(data.lng.toString()) : undefined,
-      },
+      data: updateData,
     });
-    return property;
+
+    revalidatePath("/admin/property");
+    revalidatePath(`/admin/property/${id}`);
+    return { success: true, data: property };
   } catch (error) {
     console.error("Failed to update property:", error);
-    throw new Error("Failed to update property");
+    return {
+      success: false,
+      error:
+        error instanceof Error ? error.message : "Failed to update property",
+    };
   }
 }
-
 export type PropertiesWithImages = Prisma.PropertyGetPayload<{
   include: {
     host: {

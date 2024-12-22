@@ -2,7 +2,9 @@
 
 import { revalidatePath } from "next/cache";
 import { auth } from "@/auth";
+import { BookingFormData } from "@/schemas/booking-schema";
 import { Booking, Prisma } from "@prisma/client";
+import { z } from "zod";
 
 import prisma from "@/lib/prisma";
 
@@ -37,6 +39,7 @@ export type BookingWithDetails = Prisma.BookingGetPayload<{
         retreat: {
           select: {
             name: true;
+            property: true;
           };
         };
       };
@@ -46,6 +49,7 @@ export type BookingWithDetails = Prisma.BookingGetPayload<{
         program: {
           select: {
             name: true;
+            property: true;
           };
         };
       };
@@ -69,6 +73,165 @@ type ActionResponse<T> = Promise<{
 // Core Booking Operations
 // ============================================================================
 
+export async function createBookingOld(data: {
+  propertyId: string;
+  entity?: "retreat" | "program";
+  entityId?: string;
+  checkInDate: Date;
+  checkOutDate: Date;
+  guestCount: number;
+  totalPrice: string;
+  status: string;
+  userId: string;
+}) {
+  try {
+    const key = data.entity + "InstanceId";
+    const booking = await prisma.booking.create({
+      //@ts-ignore
+      data: {
+        propertyId: data.propertyId,
+        [key]: data.entityId,
+        checkInDate: data.checkInDate,
+        checkOutDate: data.checkOutDate,
+        guestCount: data.guestCount,
+        totalPrice: data.totalPrice,
+        status: data.status,
+        userId: data.userId,
+      },
+    });
+
+    return booking;
+  } catch (error) {
+    console.error("Error creating booking:", error);
+    throw new Error("Failed to create booking");
+  }
+}
+
+export async function createBooking(
+  data: BookingFormData
+): ActionResponse<Booking> {
+  try {
+    // Validate that at least one instance type is provided
+    if (
+      !data.propertyId &&
+      !data.retreatInstanceId &&
+      !data.programInstanceId
+    ) {
+      throw new Error(
+        "Must provide either a property, retreat instance, or program instance"
+      );
+    }
+
+    // Create the base booking data
+    const createData: Prisma.BookingCreateInput = {
+      checkInDate: new Date(data.checkInDate),
+      checkOutDate: new Date(data.checkOutDate),
+      guestCount: data.guestCount,
+      totalPrice: data.totalPrice,
+      status: data.status,
+      // Connect required host
+      host: {
+        connect: { id: data.hostId },
+      },
+      // Connect to the user
+      user: {
+        connect: { id: data.userId },
+      },
+      // Connect to the property if provided
+      ...(data.propertyId
+        ? {
+            property: {
+              connect: { id: data.propertyId },
+            },
+          }
+        : {}),
+      // Connect to the retreat instance if provided
+      ...(data.retreatInstanceId
+        ? {
+            retreatInstance: {
+              connect: { id: data.retreatInstanceId },
+            },
+          }
+        : {}),
+      // Connect to the program instance if provided
+      ...(data.programInstanceId
+        ? {
+            programInstance: {
+              connect: { id: data.programInstanceId },
+            },
+          }
+        : {}),
+    };
+
+    // Create the booking
+    const booking = await prisma.booking.create({
+      data: createData,
+      include: {
+        host: true,
+        user: {
+          select: {
+            name: true,
+            email: true,
+          },
+        },
+        property: true,
+        retreatInstance: {
+          include: {
+            retreat: {
+              include: {
+                property: true,
+              },
+            },
+          },
+        },
+        programInstance: {
+          include: {
+            program: {
+              include: {
+                property: true,
+              },
+            },
+          },
+        },
+        payments: {
+          orderBy: {
+            createdAt: "desc",
+          },
+        },
+      },
+    });
+
+    // Create a notification for the booking
+    await prisma.notification.create({
+      data: {
+        timestamp: new Date(),
+        status: "unread",
+        user: {
+          connect: { id: data.userId },
+        },
+        booking: {
+          connect: { id: booking.id },
+        },
+      },
+    });
+
+    revalidatePath("/bookings");
+    revalidatePath(`/booking/${booking.id}`);
+    revalidatePath("/admin/bookings");
+
+    return {
+      success: true,
+      data: booking,
+    };
+  } catch (error) {
+    console.error("Failed to create booking:", error);
+    return {
+      success: false,
+      error:
+        error instanceof Error ? error.message : "Failed to create booking",
+    };
+  }
+}
 export async function getAdminPaginatedBookings(
   page: number = 1,
   pageSize: number = 10,
@@ -192,64 +355,55 @@ export async function getAdminPaginatedBookings(
   }
 }
 
-export async function getBooking(id: string): ActionResponse<Booking> {
+export async function getBooking(id: string): Promise<BookingWithDetails> {
   try {
-    const session = await auth();
-    if (!session?.user?.id) {
-      return { success: false, error: "Unauthorized" };
-    }
-
-    const whereClause: Prisma.BookingWhereInput = {
-      id,
-      ...(session.user.role !== "admin"
-        ? {
-            property: {
-              hostId: session.user.hostId,
-            },
-          }
-        : {}),
-    };
-
-    const booking = await prisma.booking.findFirst({
-      where: whereClause,
+    const booking = await prisma.booking.findUnique({
+      where: { id },
       include: {
-        property: {
-          select: {
-            id: true,
-            name: true,
-          },
-        },
+        // Include user data
         user: {
           select: {
             name: true,
             email: true,
           },
         },
+        // Include retreat instance and its related data
+        retreatInstance: {
+          include: {
+            retreat: {
+              include: {
+                property: true,
+              },
+            },
+          },
+        },
+        // Include program instance and its related data
+        programInstance: {
+          include: {
+            program: {
+              include: {
+                property: true,
+              },
+            },
+          },
+        },
+        // Include payments ordered by most recent first
         payments: {
-          select: {
-            status: true,
-            amount: true,
-            paymentDate: true,
+          orderBy: {
+            createdAt: "desc",
           },
         },
       },
     });
 
     if (!booking) {
-      return { success: false, error: "Booking not found" };
+      throw new Error("Booking not found");
     }
 
-    return {
-      success: true,
-      data: booking,
-    };
+    return booking;
   } catch (error) {
-    console.error("Error fetching paginated bookings:", error);
-    return {
-      success: false,
-      error:
-        error instanceof Error ? error.message : "Failed to fetch bookings",
-    };
+    console.error("Failed to fetch booking:", error);
+    throw error;
   }
 }
 

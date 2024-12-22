@@ -34,10 +34,7 @@ export const hostFormSchema = z
       .nullable()
       .optional(),
 
-    phone: z
-      .string()
-      .nullable()
-      .optional(),
+    phone: z.string().nullable().optional(),
 
     profilePic: z
       .string()

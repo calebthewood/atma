@@ -35,7 +35,10 @@ export function AdminTitle({ isHost }: { isHost: boolean }) {
 
   return (
     <div
-      className={cn("space-y-0.5 p-3 rounded text-white", isHost ? "bg-[#29361a]" : "bg-[#9b1025]")}
+      className={cn(
+        "space-y-0.5 rounded p-3 text-white",
+        isHost ? "bg-[#29361a]" : "bg-[#9b1025]"
+      )}
     >
       <h2 className="text-3xl tracking-tight">
         {isHost ? "Host Dashboard " : "Admin Dashboard "}

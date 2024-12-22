@@ -141,7 +141,7 @@ model Property {
   petsAllowed              Boolean? // Pets Allowed
   serviceAnimalsAllowed    Boolean? // Service Animals Allowed
   minAgeForPrimary         Int? // Minimum Age for Primary Guest
-  hostId                   String
+  hostId                   String            @default("cm2h0yjtr000214g95bk5qze8")
   createdAt                DateTime          @default(now())
   updatedAt                DateTime          @updatedAt
   host                     Host              @relation(fields: [hostId], references: [id])
@@ -205,7 +205,7 @@ model HostUser {
   user        User     @relation(fields: [userId], references: [id])
   userId      String // relation scalar field (used in the `@relation` attribute above)
   host        Host     @relation(fields: [hostId], references: [id])
-  hostId      String // relation scalar field (used in the `@relation` attribute above)
+  hostId      String   @default("cm2h0yjtr000214g95bk5qze8") // relation scalar field (used in the `@relation` attribute above)
   permissions String   @default("crud") // create,read,update,delete. ex: cru permissions cant delete. When needed, implement defaults together with companyRole
   companyRole String   @default("admin") // admin, manager, staff, etc. Defaults to admin with full rights, implement other roles as requested
   assignedAt  DateTime @default(now())
@@ -237,7 +237,7 @@ model Retreat {
   notes                    String? // Admin notes
   images                   Image[]
   host                     Host              @relation(fields: [hostId], references: [id])
-  hostId                   String
+  hostId                   String            @default("cm2h0yjtr000214g95bk5qze8")
   property                 Property          @relation(fields: [propertyId], references: [id], onDelete: Cascade)
   propertyId               String
   createdAt                DateTime          @default(now())
@@ -272,7 +272,7 @@ model Program {
   notes                    String? // Admin notes
   images                   Image[]
   host                     Host              @relation(fields: [hostId], references: [id])
-  hostId                   String
+  hostId                   String            @default("cm2h0yjtr000214g95bk5qze8")
   property                 Property          @relation(fields: [propertyId], references: [id], onDelete: Cascade)
   propertyId               String
   createdAt                DateTime          @default(now())
@@ -329,7 +329,7 @@ model Booking {
   status            String // can be various initial stripe/booking stages, upcoming, completed or archived
   createdAt         DateTime         @default(now())
   updatedAt         DateTime         @updatedAt
-  hostId            String
+  hostId            String           @default("cm2h0yjtr000214g95bk5qze8")
   host              Host             @relation(fields: [hostId], references: [id], onDelete: SetDefault)
   propertyId        String?
   property          Property?        @relation(fields: [propertyId], references: [id], onDelete: SetNull)
@@ -366,7 +366,7 @@ model PriceMod {
   program           Program?         @relation(fields: [programId], references: [id], onDelete: Cascade)
   programId         String?
   host              Host             @relation(fields: [hostId], references: [id], onDelete: Cascade)
-  hostId            String
+  hostId            String           @default("cm2h0yjtr000214g95bk5qze8")
   retreat           Retreat?         @relation(fields: [retreatId], references: [id], onDelete: Cascade)
   retreatId         String?
   property          Property?        @relation(fields: [propertyId], references: [id], onDelete: Cascade)
@@ -493,7 +493,7 @@ model PropertyAmenity {
 
 model HostAmenity {
   host      Host     @relation(fields: [hostId], references: [id], onDelete: Cascade)
-  hostId    String
+  hostId    String   @default("cm2h0yjtr000214g95bk5qze8")
   amenity   Amenity  @relation(fields: [amenityId], references: [id], onDelete: Cascade)
   amenityId String
   createdAt DateTime @default(now())

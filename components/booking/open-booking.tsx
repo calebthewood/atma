@@ -100,7 +100,7 @@ interface BookingItemProps {
 function BookingItem({ item, guestCount, prices }: BookingItemProps) {
   const start = format(item.startDate, "EEE, MMM dd");
   const end = format(item.endDate, "EEE, MMM dd");
-  const basePrice = 250;
+  // const basePrice = 250;
   // const adjustedPrice = basePrice * guestCount;
 
   return (

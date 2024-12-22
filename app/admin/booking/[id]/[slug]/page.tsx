@@ -13,15 +13,11 @@ import {
   UserDetails,
 } from "./components";
 
-interface BookingPageProps {
-  params: {
-    id: string;
-    slug: string;
-  };
-}
-
-export default async function BookingPage({ params }: BookingPageProps) {
-  const result = await getAdminBooking(params.id);
+export default async function Page(props: {
+  params: Promise<{ id: string; slug: string }>;
+}) {
+  const { id, slug } = await props.params;
+  const result = await getAdminBooking(id);
 
   if (!result.success || !result.data) {
     notFound();
@@ -40,7 +36,7 @@ export default async function BookingPage({ params }: BookingPageProps) {
         </p>
       </div>
       <Separator />
-      <Tabs defaultValue={params.slug} className="space-y-4">
+      <Tabs defaultValue={slug} className="space-y-4">
         <TabsList>
           <TabsTrigger value="details">Overview</TabsTrigger>
           <TabsTrigger value="instance">

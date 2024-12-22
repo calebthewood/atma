@@ -1,3 +1,4 @@
+import React from "react";
 import { PropertyWithRelations } from "@/actions/property-actions";
 import { Program, Retreat } from "@prisma/client";
 
@@ -49,7 +50,7 @@ export function EntityTabs({ entity }: { entity: Program | Retreat | null }) {
   const BenefitsList = () => (
     <ul>
       {entity?.keyBenefits.split(";").map((kb, i) => (
-        <li className="list-disc pl-6 mx-10" key={`key-benefit-${i}`}>
+        <li className="mx-10 list-disc pl-6" key={`key-benefit-${i}`}>
           {kb}
         </li>
       ))}
@@ -94,7 +95,7 @@ const TabsComponent: React.FC<{ tabs: TabItem[] }> = ({ tabs }) => (
         <TabsTrigger
           key={tab.value}
           value={tab.value}
-          className="min-w-32 border-b border-primary bg-transparent py-5 md:py-2 text-sm font-semibold uppercase leading-none text-[#494846]/80 data-[state=active]:bg-transparent data-[state=active]:text-[#841729] data-[state=active]:shadow-none"
+          className="min-w-32 border-b border-primary bg-transparent py-5 text-sm font-semibold uppercase leading-none text-[#494846]/80 data-[state=active]:bg-transparent data-[state=active]:text-[#841729] data-[state=active]:shadow-none md:py-2"
         >
           {tab.label}
         </TabsTrigger>
@@ -102,7 +103,11 @@ const TabsComponent: React.FC<{ tabs: TabItem[] }> = ({ tabs }) => (
     </TabsList>
 
     {tabs.map((tab) => (
-      <TabsContent key={tab.value} value={tab.value} className="min-h-64 px-2 md:px-10 pt:16 md:pt-2">
+      <TabsContent
+        key={tab.value}
+        value={tab.value}
+        className="pt:16 min-h-64 px-2 md:px-10 md:pt-2"
+      >
         {tab.content}
       </TabsContent>
     ))}

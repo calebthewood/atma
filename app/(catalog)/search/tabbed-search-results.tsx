@@ -1,7 +1,7 @@
 import React from "react";
 import { CountryProperties } from "@/actions/location-actions";
 
-import { cn, getCountryName } from "@/lib/utils";
+import { getCountryName } from "@/lib/utils";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { RetreatItem } from "@/components/retreat-item";
 
@@ -76,7 +76,10 @@ const TabbedSearchResults = ({ results }: { results: CountryProperties[] }) => {
             {results
               .find((r) => r.country === country)
               ?.properties.map((property, i) => (
-                <div key={property?.id + `${i * 3.7}`} className="flex flex-col">
+                <div
+                  key={property?.id + `${i * 3.7}`}
+                  className="flex flex-col"
+                >
                   <RetreatItem
                     retreat={property}
                     imgUrl={property.images?.[0]?.filePath}

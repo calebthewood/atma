@@ -1,5 +1,5 @@
 import { notFound } from "next/navigation";
-import { getBookingWithRelations } from "@/actions/booking-actions";
+import { getBooking } from "@/actions/booking-actions";
 import { Calendar, MapPin, Users } from "lucide-react";
 
 import {
@@ -18,7 +18,7 @@ export default async function Page({
 }) {
   try {
     const { bookingId } = await params;
-    const booking = await getBookingWithRelations(bookingId);
+    const booking = await getBooking(bookingId);
     // Get property and experience details from either retreat or program
     const property =
       booking.retreatInstance?.retreat.property ||

@@ -5,7 +5,6 @@ import Link from "next/link";
 import { ProgramWithAllRelations } from "@/actions/program-actions";
 import { motion } from "framer-motion";
 
-import { QuickLink } from "../shared";
 import { Button } from "../ui/button";
 import { SectionHeader } from "./components";
 
@@ -104,7 +103,7 @@ const ProgramCard = ({
               : "City, Country"}
           </div>
 
-          <div className="font-broad text-center text-lg font-normal uppercase tracking-wide">
+          <div className="text-center font-broad text-lg font-normal uppercase tracking-wide">
             {program?.name || "Retreat Name"}
             <br />
             {program?.duration || "7+ nights"}

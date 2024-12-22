@@ -7,7 +7,6 @@ import { Prisma, Program } from "@prisma/client";
 import { z } from "zod";
 
 import prisma from "@/lib/prisma";
-import { haversineDistance, shortNameToContinent } from "@/lib/utils";
 
 // ============================================================================
 // Types
@@ -61,40 +60,84 @@ export type PaginatedProgramsResponse = {
 // ============================================================================
 // Core CRUD Operations
 // ============================================================================
-
 export async function createProgram(
   data: ProgramFormData
 ): ActionResponse<Program> {
   try {
-    // Destructure the properties we need to handle specially
     const { hostId, propertyId, date, ...restData } = data;
 
-    // Create the program with properly structured input
-    const program = await prisma.program.create({
-      data: {
-        ...restData,
-        date: date ? new Date(date) : null,
-        property: {
-          connect: { id: propertyId },
-        },
-        ...(hostId
-          ? {
-              host: {
-                connect: { id: hostId },
-              },
-            }
-          : {}),
+    // Since host is required, we need to include it in the base object
+    const createData: Prisma.ProgramCreateInput = {
+      ...restData,
+      date: date ? new Date(date) : null,
+      property: {
+        connect: { id: propertyId },
       },
+      host: {
+        connect: { id: hostId || "" }, // If hostId is null, this will throw an error which we'll catch
+      },
+    };
+
+    const program = await prisma.program.create({
+      data: createData,
     });
 
     revalidatePath("/admin");
     return { success: true, data: program };
   } catch (error) {
     console.error("Error creating program:", error);
-    return { success: false, error: "Failed to create program" };
+    return {
+      success: false,
+      error:
+        error instanceof Error
+          ? error.message
+          : "Failed to create program. Host is required.",
+    };
   }
 }
 
+export async function updateProgram(
+  id: string,
+  partialData: Partial<ProgramFormData>
+): ActionResponse<Program> {
+  try {
+    const { hostId, date, ...restData } = partialData;
+
+    const updateData: Prisma.ProgramUpdateInput = {
+      ...restData,
+      ...(date !== undefined
+        ? {
+            date: date ? new Date(date) : null,
+          }
+        : {}),
+      ...(hostId !== undefined
+        ? {
+            host: {
+              connect: { id: hostId || "" }, // If hostId is null, this will throw an error
+            },
+          }
+        : {}),
+    };
+
+    const program = await prisma.program.update({
+      where: { id },
+      data: updateData,
+    });
+
+    revalidatePath("/admin/program");
+    revalidatePath(`/admin/program/${id}`);
+    return { success: true, data: program };
+  } catch (error) {
+    console.error("Failed to update program:", error);
+    return {
+      success: false,
+      error:
+        error instanceof Error
+          ? error.message
+          : "Failed to update program. Host is required.",
+    };
+  }
+}
 // The function implementation
 export type ProgramWithAllRelations = Prisma.ProgramGetPayload<{
   include: {
@@ -159,25 +202,6 @@ export async function getProgram(
   } catch (error) {
     console.error("Failed to fetch program:", error);
     return { success: false, error: "Failed to fetch program" };
-  }
-}
-
-export async function updateProgram(
-  id: string,
-  data: Partial<ProgramFormData>
-): ActionResponse<Program> {
-  try {
-    const program = await prisma.program.update({
-      where: { id },
-      data,
-    });
-
-    revalidatePath("/admin/program");
-    revalidatePath(`/admin/program/${id}`);
-    return { success: true, data: program };
-  } catch (error) {
-    console.error("Failed to update program:", error);
-    return { success: false, error: "Failed to update program" };
   }
 }
 

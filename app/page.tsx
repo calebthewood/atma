@@ -18,7 +18,7 @@ export const metadata: Metadata = {
 
 export default async function Page() {
   const _session = await auth();
-  const [ _properties, _retreats, programs] = await Promise.all([
+  const [_, _properties, _retreats, programs] = await Promise.all([
     getHosts(),
     getPropertyIds(),
     getRetreats(),

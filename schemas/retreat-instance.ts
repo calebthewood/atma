@@ -11,6 +11,8 @@ export const instanceFormSchema = z.object({
     .default("Bulleted list of items, end each point with a semicolon;"),
   availableSlots: z.number(),
   isFull: z.boolean().default(false),
+  verifiedBy: z.string(),
+  notes: z.string(),
 });
 
 export type InstanceFormData = z.infer<typeof instanceFormSchema>;

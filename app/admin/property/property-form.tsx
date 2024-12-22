@@ -119,7 +119,7 @@ export function PropertyForm({ property }: PropertyFormProps) {
           title: "Success",
           description: "Property created successfully.",
         });
-        router.replace("/admin/property/" + res?.id);
+        router.refresh();
       }
       form.reset(values);
     } catch (error) {

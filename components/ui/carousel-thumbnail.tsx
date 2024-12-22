@@ -28,7 +28,7 @@ const ThumbnailCarousel: React.FC<PropType> = (props) => {
   const { slides, options } = props;
   const [selectedIndex, setSelectedIndex] = useState(0);
   const [mainApi, setMainApi] = useState<CarouselApi>();
-  const [thumbsApi, setThumbsApi] = useState<CarouselApi>();
+  const [_, setThumbsApi] = useState<CarouselApi>();
   const parallaxLayers = useRef<(HTMLElement | null)[]>([]);
 
   const onThumbClick = useCallback(
