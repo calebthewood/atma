@@ -4,6 +4,8 @@ import { redirect } from "next/navigation";
 import { getUser } from "@/actions/user-actions";
 import { auth } from "@/auth";
 
+import { canViewDashboard } from "@/lib/checks-and-balances";
+import { cn } from "@/lib/utils";
 import { Separator } from "@/components/ui/separator";
 import { Toaster } from "@/components/ui/toaster";
 
@@ -35,16 +37,14 @@ export default async function SettingsLayout({
   children,
 }: SettingsLayoutProps) {
   const session = await auth();
-  if (!session || !session.user || !session.user.email)
-    return redirect("/authentication");
-  const email = session.user.email;
-  const fullUser = await getUser({ email });
-  if (!fullUser || fullUser.role !== "admin") return redirect("/");
+
+  if (!session || !canViewDashboard(session.user.role)) return redirect("/");
+  const isHost = session.user.role === "host";
 
   return (
-    <>
+    <div className={cn(isHost ? "" : "")}>
       <div className="hidden space-y-6 p-10 pb-16 md:block">
-        <AdminTitle />
+        <AdminTitle isHost={isHost} />
         <Separator className="my-6" />
         <div className="flex flex-col space-y-8 lg:flex-row lg:space-x-12 lg:space-y-0">
           <aside className="-mx-4 lg:w-1/5">
@@ -54,6 +54,6 @@ export default async function SettingsLayout({
           <Toaster />
         </div>
       </div>
-    </>
+    </div>
   );
 }

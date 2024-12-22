@@ -1,10 +1,13 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
+import { auth } from "@/auth";
 import { PropertyFormData } from "@/schemas/property-schema";
-import { Prisma } from "@prisma/client";
+import { Prisma, Property } from "@prisma/client";
 
 import { prisma } from "@/lib/prisma";
+
+import { getAuthenticatedUser } from "./auth-actions";
 
 export async function getProperty(id: string) {
   try {
@@ -172,6 +175,82 @@ export async function getProperties(): Promise<PropertiesWithImages[]> {
   return properties;
 }
 
+export type PropertyWithHostAndImages = Prisma.PropertyGetPayload<{
+  include: {
+    host: {
+      select: {
+        name: true;
+        id: true;
+      };
+    };
+    images: true;
+  };
+}>;
+
+export async function getAdminProperties(): Promise<{
+  success: boolean;
+  data?: PropertyWithHostAndImages[];
+  error?: string;
+}> {
+  try {
+    const session = await auth();
+    if (!session?.user?.id) {
+      return { success: false, error: "Unauthorized" };
+    }
+
+    // If user is admin, return all properties
+    if (session.user.role === "admin") {
+      const properties = await prisma.property.findMany({
+        where: { status: "published" },
+        include: {
+          host: {
+            select: {
+              name: true,
+              id: true,
+            },
+          },
+          images: {
+            orderBy: {
+              order: "asc",
+            },
+          },
+        },
+      });
+      return { success: true, data: properties };
+    }
+
+    // For host users, return only their properties using hostId from session
+    const properties = await prisma.property.findMany({
+      where: {
+        status: "published",
+        hostId: session.user.hostId,
+      },
+      include: {
+        host: {
+          select: {
+            name: true,
+            id: true,
+          },
+        },
+        images: {
+          orderBy: {
+            order: "asc",
+          },
+        },
+      },
+    });
+
+    return { success: true, data: properties };
+  } catch (error) {
+    console.error("Error fetching properties:", error);
+    return {
+      success: false,
+      error:
+        error instanceof Error ? error.message : "Failed to fetch properties",
+    };
+  }
+}
+
 export async function getPropertyIds() {
   const properties = await prisma.property.findMany({
     where: {
@@ -259,6 +338,91 @@ export type PropertyAmenityWithDetails = {
     custom: boolean;
   };
 };
+
+export async function getAdminPaginatedProperties(
+  page: number = 1,
+  pageSize: number = 10,
+  searchTerm: string = ""
+): Promise<{
+  success: boolean;
+  data?: {
+    properties: Property[];
+    totalPages: number;
+    currentPage: number;
+  };
+  error?: string;
+}> {
+  try {
+    const session = await auth();
+    if (!session?.user?.id) {
+      return { success: false, error: "Unauthorized" };
+    }
+
+    const skip = (page - 1) * pageSize;
+
+    // Base search conditions
+    const searchConditions = searchTerm
+      ? {
+          OR: [
+            { name: { contains: searchTerm } },
+            { city: { contains: searchTerm } },
+            { country: { contains: searchTerm } },
+          ],
+        }
+      : {};
+
+    // Build where clause based on role
+    const whereClause = {
+      ...searchConditions,
+      ...(session.user.role !== "admin" ? { hostId: session.user.hostId } : {}),
+    };
+
+    // Execute queries in parallel for efficiency
+    const [properties, totalCount] = await Promise.all([
+      prisma.property.findMany({
+        where: whereClause,
+        skip,
+        take: pageSize,
+        orderBy: {
+          updatedAt: "desc",
+        },
+        include: {
+          host: {
+            select: {
+              name: true,
+              id: true,
+            },
+          },
+          images: {
+            take: 1,
+            orderBy: {
+              order: "asc",
+            },
+          },
+        },
+      }),
+      prisma.property.count({
+        where: whereClause,
+      }),
+    ]);
+
+    return {
+      success: true,
+      data: {
+        properties,
+        totalPages: Math.ceil(totalCount / pageSize),
+        currentPage: page,
+      },
+    };
+  } catch (error) {
+    console.error("Failed to fetch paginated properties:", error);
+    return {
+      success: false,
+      error:
+        error instanceof Error ? error.message : "Failed to fetch properties",
+    };
+  }
+}
 
 export async function getPropertyAmenities(
   propertyId: string

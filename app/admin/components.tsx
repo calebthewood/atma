@@ -4,6 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { DotsHorizontalIcon } from "@radix-ui/react-icons";
 
+import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -25,7 +26,7 @@ const sidebarNavItems = [
   { title: "Admin", href: "/admin" },
 ];
 
-export function AdminTitle() {
+export function AdminTitle({ isHost }: { isHost: boolean }) {
   const pathname = usePathname();
 
   const routeTitle =
@@ -33,12 +34,17 @@ export function AdminTitle() {
     "Admin Dashboard";
 
   return (
-    <div className="space-y-0.5">
+    <div
+      className={cn("space-y-0.5 p-3 rounded text-white", isHost ? "bg-[#29361a]" : "bg-[#9b1025]")}
+    >
       <h2 className="text-3xl tracking-tight">
-        Admin Dashboard <span className="text-primary/70">| {routeTitle}</span>
+        {isHost ? "Host Dashboard " : "Admin Dashboard "}
+        <span className="text-white/80">| {routeTitle}</span>
       </h2>
-      <p className="text-muted-foreground">
-        Create, Edit, or Delete database entries. More later...
+      <p className="text-white/80">
+        {isHost
+          ? "Manage your retreats, programs, and properties all from one place"
+          : "Create, edit, and manage ATMA Reserve from one place"}
       </p>
     </div>
   );
@@ -51,7 +57,7 @@ export function AdminActionMenu({
 }: {
   editHref: string;
   handleDelete: () => void;
-  publicHref: string;
+  publicHref?: string;
 }) {
   return (
     <DropdownMenu>
@@ -68,9 +74,11 @@ export function AdminActionMenu({
         </DropdownMenuItem>
         <DropdownMenuItem onClick={handleDelete}>Delete</DropdownMenuItem>
         <DropdownMenuSeparator />
-        <DropdownMenuItem>
-          <Link href={publicHref}>View Public Page</Link>
-        </DropdownMenuItem>
+        {publicHref && (
+          <DropdownMenuItem>
+            <Link href={publicHref}>View Public Page</Link>
+          </DropdownMenuItem>
+        )}
       </DropdownMenuContent>
     </DropdownMenu>
   );

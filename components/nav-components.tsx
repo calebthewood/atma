@@ -3,18 +3,9 @@
 import * as React from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Menu } from "lucide-react";
 
 import { NavItem } from "@/types/nav";
 import { cn } from "@/lib/utils";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
 import {
   NavigationMenu,
   NavigationMenuItem,
@@ -32,41 +23,14 @@ interface MainMenuProps {
 export function HeroTitle() {
   return (
     <Link href="/" className="max-w-xl hover:brightness-200">
-      <h1 className="mb-4 flex w-full justify-between font-broad text-3xl transition-all hover:scale-[97%] sm:px-0">
-        <span className="ml-1 font-normal tracking-widester">ATMA</span>
-        <span className="font-semibold tracking-widester">RESERVE</span>
+      <h1 className="font-broad mb-4 flex w-full justify-between text-3xl transition-all hover:scale-[97%] sm:px-0">
+        <span className="tracking-widester ml-1 font-normal">ATMA</span>
+        <span className="tracking-widester font-semibold">RESERVE</span>
       </h1>
-      <p className="text-center text-xs md:text-sm font-thin uppercase leading-relaxed tracking-wider">
+      <p className="text-center text-xs font-thin uppercase leading-relaxed tracking-wider md:text-sm">
         {`THE WORLD'S DESTINATION FOR FINEST RETREATS`}
       </p>
     </Link>
-  );
-}
-
-export function MainMenu({ items }: MainMenuProps) {
-  return (
-    <DropdownMenu>
-      <DropdownMenuTrigger className="hidden md:block">
-        <Menu className="stroke-foreground" strokeWidth={0.5} />
-      </DropdownMenuTrigger>
-      <DropdownMenuContent>
-        <DropdownMenuLabel>Your Menu</DropdownMenuLabel>
-        <DropdownMenuSeparator />
-        {items?.map((item, i) =>
-          item?.href ? (
-            <DropdownMenuItem key={`main-nav-dmi-${i}`}>
-              <Link prefetch href={item?.href}>
-                {item.title}
-              </Link>
-            </DropdownMenuItem>
-          ) : (
-            <DropdownMenuItem key={`main-nav-dmi-${i}`}>
-              {item.title}
-            </DropdownMenuItem>
-          )
-        )}
-      </DropdownMenuContent>
-    </DropdownMenu>
   );
 }
 
@@ -78,11 +42,11 @@ export function MainNavigationMenu() {
     "bg-transparent text-center text-base md:text-xl font-bold uppercase leading-relaxed",
     "opacity-50 transition-all hover:opacity-100"
   );
-
+  const isDashboard = paths.includes("admin");
   return (
-    <NavigationMenu className="my-16 w-full">
+    <NavigationMenu className={cn("my-16 w-full", isDashboard && "hidden")}>
       <NavigationMenuList className="w-full justify-evenly">
-        <div className="text-center text-xl font-normal uppercase leading-relaxed opacity-70 hidden md:block">
+        <div className="hidden text-center text-xl font-normal uppercase leading-relaxed opacity-70 md:block">
           BROWSE BY
         </div>
         <NavigationMenuItem>

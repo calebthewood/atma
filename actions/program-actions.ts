@@ -1,6 +1,7 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
+import { auth } from "@/auth";
 import { programFormSchema } from "@/schemas/program-schema";
 import { Prisma, Program } from "@prisma/client";
 import { z } from "zod";
@@ -237,35 +238,77 @@ export async function getPrograms(): ActionResponse<ProgramWithAllRelations[]> {
   }
 }
 
-export async function getPaginatedPrograms(
+export async function getAdminPaginatedPrograms(
   page: number = 1,
   pageSize: number = 10,
   searchTerm: string = ""
 ): ActionResponse<PaginatedProgramsResponse> {
   try {
+    const session = await auth();
+    if (!session?.user?.id) {
+      return { success: false, error: "Unauthorized" };
+    }
+
     const skip = (page - 1) * pageSize;
-    const where: Prisma.ProgramWhereInput = searchTerm
+
+    // Base search conditions
+    const searchConditions: Prisma.ProgramWhereInput = searchTerm
       ? {
           OR: [
             { name: { contains: searchTerm } },
             { duration: { contains: searchTerm } },
             { desc: { contains: searchTerm } },
+            { category: { contains: searchTerm } },
           ],
         }
       : {};
 
+    // Build where clause based on role
+    const whereClause: Prisma.ProgramWhereInput = {
+      ...searchConditions,
+      ...(session.user.role !== "admin" ? { hostId: session.user.hostId } : {}),
+    };
+
     const [programs, totalCount] = await Promise.all([
       prisma.program.findMany({
-        where,
+        where: whereClause,
         skip,
         take: pageSize,
         orderBy: { updatedAt: "desc" },
         include: {
-          property: { select: { name: true } },
-          host: { select: { name: true } },
+          property: {
+            select: {
+              name: true,
+              city: true,
+              country: true,
+            },
+          },
+          host: {
+            select: {
+              name: true,
+              id: true,
+            },
+          },
+          images: {
+            take: 1,
+            orderBy: {
+              order: "asc",
+            },
+          },
+          programs: {
+            select: {
+              startDate: true,
+              endDate: true,
+              availableSlots: true,
+            },
+            orderBy: {
+              startDate: "asc",
+            },
+            take: 1,
+          },
         },
       }),
-      prisma.program.count({ where }),
+      prisma.program.count({ where: whereClause }),
     ]);
 
     return {
@@ -278,7 +321,11 @@ export async function getPaginatedPrograms(
     };
   } catch (error) {
     console.error("Error fetching paginated programs:", error);
-    return { success: false, error: "Failed to fetch programs" };
+    return {
+      success: false,
+      error:
+        error instanceof Error ? error.message : "Failed to fetch programs",
+    };
   }
 }
 

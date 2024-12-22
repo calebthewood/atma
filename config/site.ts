@@ -12,14 +12,37 @@ export const siteConfig = {
       title: "Login",
       href: "/authentication",
     },
-    {
-      title: "Admin",
-      href: "/admin",
-    },
   ],
   links: {
     twitter: "https://twitter.com/shadcn",
     github: "https://github.com/calebthewood/",
     docs: "https://ui.shadcn.com",
+  },
+};
+
+export const errorPayloads = {
+  notFound: {
+    ok: false,
+    message: "User not found",
+    data: null,
+    error: {
+      code: "USER_NOT_FOUND",
+    },
+  },
+  notAuth: {
+    ok: false,
+    message: "User not authorized",
+    data: null,
+    error: {
+      code: "USER_NOT_AUTHORIZED",
+    },
+  },
+  missingHostId: {
+    ok: false,
+    message: "Host ID is required",
+    data: null,
+    error: {
+      code: "MISSING_HOST_ID",
+    },
   },
 };

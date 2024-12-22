@@ -4,7 +4,7 @@ import React, { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import {
   deleteRetreat,
-  getPaginatedRetreats,
+  getAdminPaginatedRetreats,
   type RetreatWithBasicRelations,
 } from "@/actions/retreat-actions";
 import { CaretSortIcon, ChevronDownIcon } from "@radix-ui/react-icons";
@@ -61,7 +61,7 @@ export function RetreatDataTable() {
     try {
       const searchTerm =
         (table.getColumn("name")?.getFilterValue() as string) ?? "";
-      const result = await getPaginatedRetreats(
+      const result = await getAdminPaginatedRetreats(
         pagination.pageIndex + 1,
         pagination.pageSize,
         searchTerm

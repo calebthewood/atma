@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from "react";
 import {
   deleteProperty,
-  getPaginatedProperties,
+  getAdminPaginatedProperties,
 } from "@/actions/property-actions";
 import { CaretSortIcon, ChevronDownIcon } from "@radix-ui/react-icons";
 import {
@@ -126,12 +126,15 @@ export function PropertyDataTable() {
 
   const fetchProperties = async () => {
     try {
-      const result = await getPaginatedProperties(
+      const result = await getAdminPaginatedProperties(
         pagination.pageIndex + 1,
         pagination.pageSize
       );
-      setData(result.properties);
-      setTotalPages(result.totalPages);
+
+      if (result.data) {
+        setData(result.data.properties);
+        setTotalPages(result.data.totalPages);
+      }
     } catch (error) {
       console.error("Failed to fetch properties:", error);
     }

@@ -4,7 +4,7 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import {
   deleteProgram,
-  getPaginatedPrograms,
+  getAdminPaginatedPrograms,
   type ProgramWithBasicRelations,
 } from "@/actions/program-actions";
 import {
@@ -45,20 +45,6 @@ import { toast } from "@/components/ui/use-toast";
 
 import { AdminActionMenu } from "../components";
 
-type Program = {
-  id: string;
-  name: string | null;
-  duration: string | null;
-  desc: string | null;
-  priceList: string | null;
-  sourceUrl: string | null;
-  propertyId: string | null;
-  hostId: string | null;
-  createdAt: Date;
-  updatedAt: Date;
-  verified: Date | null;
-};
-
 export function ProgramDataTable() {
   const [data, setData] = useState<ProgramWithBasicRelations[]>([]);
   const [sorting, setSorting] = useState<SortingState>([]);
@@ -79,7 +65,7 @@ export function ProgramDataTable() {
     try {
       const searchTerm =
         (columnFilters.find((f) => f?.id === "name")?.value as string) ?? "";
-      const result = await getPaginatedPrograms(
+      const result = await getAdminPaginatedPrograms(
         pagination.pageIndex + 1,
         pagination.pageSize,
         searchTerm

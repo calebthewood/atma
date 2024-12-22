@@ -1,122 +1,105 @@
 "use server";
 
+import { HostUser, Prisma } from "@prisma/client";
+
+import prisma from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
 
-import { prisma } from "@/lib/prisma";
+type ActionResponse<T = void> = Promise<{
+  success: boolean;
+  data?: T | null;
+  error?: string;
+}>;
 
-export async function createHostUser(data: {
+// Get all hosts for the select field
+export async function getHosts() {
+  try {
+    return await prisma.host.findMany({
+      select: {
+        id: true,
+        name: true,
+      },
+      orderBy: {
+        name: "asc",
+      },
+    });
+  } catch (error) {
+    console.error("Error fetching hosts:", error);
+    throw new Error("Failed to fetch hosts");
+  }
+}
+
+// Get the user's current host association if it exists
+export async function getCurrentHostUser(
+  userId: string
+): ActionResponse<HostUser> {
+  try {
+    const hostUser = await prisma.hostUser.findFirst({
+      where: { userId },
+      include: {
+        host: {
+          select: {
+            id: true,
+            name: true,
+          },
+        },
+      },
+    });
+
+    return { success: true, data: hostUser };
+  } catch (error) {
+    console.error("Error fetching host user:", error);
+    return { success: false, error: "Failed to fetch host user" };
+  }
+}
+
+// Update or create the host user association
+
+export async function upsertHostUser({
+  userId,
+  hostId,
+  permissions,
+  assignedBy,
+}: {
   userId: string;
   hostId: string;
+  permissions: string;
   assignedBy: string;
-}) {
+}): ActionResponse {
   try {
-    const hostUser = await prisma.hostUser.create({
-      data: {
-        userId: data.userId,
-        hostId: data.hostId,
-        assignedBy: data.assignedBy,
-      },
-    });
-
-    revalidatePath("/hostUsers");
-
-    return hostUser;
-  } catch (error) {
-    console.error("Error creating hostUser:", error);
-    throw new Error("Failed to create hostUser");
-  }
-}
-
-export async function getHostUsers() {
-  try {
-    const hostUsers = await prisma.hostUser.findMany();
-    return hostUsers;
-  } catch (error) {
-    console.error("Error fetching hostUsers:", error);
-    throw new Error("Failed to fetch hostUsers");
-  }
-}
-
-export async function getHostUserById(userId: string, hostId: string) {
-  try {
-    const hostUser = await prisma.hostUser.findUnique({
+    await prisma.hostUser.upsert({
       where: {
         userId_hostId: {
           userId,
           hostId,
         },
       },
+      update: {
+        permissions,
+        companyRole: "admin", // Hardcoded for now as specified
+      },
+      create: {
+        userId,
+        hostId,
+        permissions,
+        companyRole: "admin",
+        assignedBy,
+      },
     });
 
-    if (!hostUser) {
-      throw new Error("HostUser not found");
+    revalidatePath("/admin/user");
+    return { success: true };
+  } catch (error) {
+    console.error("Error upserting host user:", error);
+    if (error instanceof Prisma.PrismaClientKnownRequestError) {
+      // Handle specific Prisma errors (e.g., unique constraint violations)
+      if (error.code === "P2002") {
+        return {
+          success: false,
+          error: "This user-host association already exists",
+        };
+      }
     }
-
-    return hostUser;
-  } catch (error) {
-    console.error(
-      `Error fetching hostUser with userId ${userId} and hostId ${hostId}:`,
-      error
-    );
-    throw new Error(
-      `Failed to fetch hostUser with userId ${userId} and hostId ${hostId}`
-    );
-  }
-}
-
-export async function updateHostUser(
-  userId: string,
-  hostId: string,
-  data: {
-    assignedBy?: string;
-  }
-) {
-  try {
-    const hostUser = await prisma.hostUser.update({
-      where: {
-        userId_hostId: {
-          userId,
-          hostId,
-        },
-      },
-      data,
-    });
-
-    revalidatePath(`/hostUsers/${userId}/${hostId}`);
-
-    return hostUser;
-  } catch (error) {
-    console.error(
-      `Error updating hostUser with userId ${userId} and hostId ${hostId}:`,
-      error
-    );
-    throw new Error(
-      `Failed to update hostUser with userId ${userId} and hostId ${hostId}`
-    );
-  }
-}
-
-export async function deleteHostUser(userId: string, hostId: string) {
-  try {
-    const hostUser = await prisma.hostUser.delete({
-      where: {
-        userId_hostId: {
-          userId,
-          hostId,
-        },
-      },
-    });
-
-    revalidatePath("/hostUsers");
-
-    return hostUser;
-  } catch (error) {
-    console.error(
-      `Error deleting hostUser with userId ${userId} and hostId ${hostId}:`,
-      error
-    );
-    throw new Error(
-      `Failed to delete hostUser with userId ${userId} and hostId ${hostId}`
-    );
+    return { success: false, error: "Failed to update host user" };
   }
 }

@@ -1,27 +1,34 @@
+// app/admin/host/page.tsx
+import { getAuthenticatedUser } from "@/actions/auth-actions";
+
 import { Separator } from "@/components/ui/separator";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
-import { CreateHostForm } from "./create-host-form";
-import { HostList } from "./host-list";
+import { HostDataTable } from "./data-table";
+import { HostForm } from "./host-form";
 
-export default function Page() {
+export default async function HostPage() {
+  const user = await getAuthenticatedUser();
+
   return (
-    <div className="">
-      <h3 className="text-lg font-medium">Create New Host</h3>
-      <p className="text-sm text-muted-foreground">
-        Form allows admin user to create a new host
-      </p>
+    <div className="space-y-6">
+      <div>
+        <h3 className="text-lg font-medium">Create or Edit Host</h3>
+        <p className="text-sm text-muted-foreground">
+          Hosts can manage properties, retreats, and programs
+        </p>
+      </div>
       <Separator className="my-6" />
-      <Tabs defaultValue="form" className="">
+      <Tabs defaultValue="list" className="">
         <TabsList>
-          <TabsTrigger value="form">Create Host</TabsTrigger>
           <TabsTrigger value="list">View Hosts</TabsTrigger>
+          <TabsTrigger value="form">Create Host</TabsTrigger>
         </TabsList>
         <TabsContent value="form">
-          <CreateHostForm />
+          {user.data && <HostForm userId={user?.data.id} />}
         </TabsContent>
         <TabsContent value="list">
-          <HostList />
+          <HostDataTable />
         </TabsContent>
       </Tabs>
     </div>

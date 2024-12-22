@@ -6,6 +6,7 @@ import { Prisma, Retreat } from "@prisma/client";
 import { z } from "zod";
 
 import prisma from "@/lib/prisma";
+import { auth } from "@/auth";
 
 // ============================================================================
 // Types
@@ -323,6 +324,98 @@ export async function getPaginatedRetreats(
     return { success: false, error: "Failed to fetch retreats" };
   }
 }
+
+export async function getAdminPaginatedRetreats(
+  page: number = 1,
+  pageSize: number = 10,
+  searchTerm: string = ""
+): ActionResponse<PaginatedRetreatsResponse> {
+  try {
+    const session = await auth();
+    if (!session?.user?.id) {
+      return { success: false, error: "Unauthorized" };
+    }
+
+    const skip = (page - 1) * pageSize;
+
+    // Base search conditions
+    const searchConditions: Prisma.RetreatWhereInput = searchTerm
+      ? {
+          OR: [
+            { name: { contains: searchTerm } },
+            { duration: { contains: searchTerm } },
+            { desc: { contains: searchTerm } },
+            { category: { contains: searchTerm } },
+          ],
+        }
+      : {};
+
+    // Build where clause based on role
+    const whereClause: Prisma.RetreatWhereInput = {
+      ...searchConditions,
+      ...(session.user.role !== 'admin' ? { hostId: session.user.hostId } : {})
+    };
+
+    const [retreats, totalCount] = await Promise.all([
+      prisma.retreat.findMany({
+        where: whereClause,
+        skip,
+        take: pageSize,
+        orderBy: { updatedAt: "desc" },
+        include: {
+          property: {
+            select: {
+              name: true,
+              city: true,
+              country: true,
+            }
+          },
+          host: {
+            select: {
+              name: true,
+              id: true,
+            }
+          },
+          images: {
+            take: 1,
+            orderBy: {
+              order: 'asc'
+            }
+          },
+          retreatInstances: {
+            select: {
+              startDate: true,
+              endDate: true,
+              availableSlots: true,
+            },
+            orderBy: {
+              startDate: 'asc'
+            },
+            take: 1
+          }
+        },
+      }),
+      prisma.retreat.count({ where: whereClause }),
+    ]);
+
+    return {
+      success: true,
+      data: {
+        retreats,
+        totalPages: Math.ceil(totalCount / pageSize),
+        currentPage: page,
+      },
+    };
+  } catch (error) {
+    console.error("Error fetching paginated retreats:", error);
+    return {
+      success: false,
+      error: error instanceof Error ? error.message : "Failed to fetch retreats"
+    };
+  }
+}
+
+
 
 // ============================================================================
 // Property-Related Operations
