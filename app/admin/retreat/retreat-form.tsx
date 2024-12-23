@@ -2,11 +2,17 @@
 
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { getHosts } from "@/actions/host-actions";
-import { getProperties } from "@/actions/property-actions";
+import {
+  getAdminPaginatedHosts,
+  HostWithBasicRelations,
+} from "@/actions/host-actions";
+import {
+  getAdminPaginatedProperties,
+  PropertyWithBasicRelations,
+} from "@/actions/property-actions";
 import {
   createRetreat,
-  RetreatWithRelations,
+  RetreatWithBasicRelations,
   updateRetreat,
 } from "@/actions/retreat-actions";
 import { RetreatFormData, retreatFormSchema } from "@/schemas/retreat-schema";
@@ -66,13 +72,15 @@ const categories = [
 ];
 
 type RetreatFormProps = {
-  retreat?: RetreatWithRelations | null;
+  retreat?: RetreatWithBasicRelations;
 };
 
 export function RetreatForm({ retreat }: RetreatFormProps) {
   const [isLoading, setIsLoading] = useState(false);
-  const [hosts, setHosts] = useState<Host[]>([]);
-  const [properties, setProperties] = useState<Property[]>([]);
+  const [hosts, setHosts] = useState<HostWithBasicRelations[]>([]);
+  const [properties, setProperties] = useState<PropertyWithBasicRelations[]>(
+    []
+  );
 
   const router = useRouter();
 
@@ -110,11 +118,16 @@ export function RetreatForm({ retreat }: RetreatFormProps) {
     async function fetchData() {
       try {
         const [fetchedHosts, fetchedProperties] = await Promise.all([
-          getHosts(),
-          getProperties(),
+          getAdminPaginatedHosts(),
+          getAdminPaginatedProperties(),
         ]);
-        setHosts(fetchedHosts);
-        setProperties(fetchedProperties);
+        if (fetchedProperties.ok && fetchedProperties.data) {
+          const properties = fetchedProperties.data?.items;
+          setProperties(properties);
+        }
+        if (fetchedHosts.ok && fetchedHosts.data) {
+          setHosts(fetchedHosts.data.items);
+        }
       } catch (error) {
         console.error("Error fetching data:", error);
         toast({
@@ -159,8 +172,8 @@ export function RetreatForm({ retreat }: RetreatFormProps) {
         [fieldName]: fieldValue,
       });
 
-      if (!response.success) {
-        throw new Error(response.error);
+      if (!response.ok) {
+        throw new Error(response.message);
       }
 
       toast({
@@ -206,8 +219,8 @@ export function RetreatForm({ retreat }: RetreatFormProps) {
         response = await createRetreat(values);
       }
 
-      if (!response.success) {
-        throw new Error(response.error);
+      if (!response.ok) {
+        throw new Error(response.message);
       }
 
       toast({

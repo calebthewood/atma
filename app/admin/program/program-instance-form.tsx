@@ -95,7 +95,7 @@ export function ProgramInstanceForm() {
 
       try {
         const response = await getInstance(editId);
-        if (response.success && response.data) {
+        if (response.ok && response.data) {
           const instance = response.data;
           setCurrentInstance(instance);
           form.reset({
@@ -131,7 +131,7 @@ export function ProgramInstanceForm() {
     async function fetchPrograms() {
       try {
         const response = await getPrograms();
-        if (response.success && response.data) {
+        if (response.ok && response.data) {
           setPrograms(response.data);
         } else {
           toast({
@@ -161,13 +161,13 @@ export function ProgramInstanceForm() {
           [fieldName]: fieldValue,
         });
 
-        if (response.success) {
+        if (response.ok) {
           toast({
             title: "Updated",
             description: `${fieldName} has been updated.`,
           });
         } else {
-          throw new Error(response.error);
+          throw new Error(response.message);
         }
       } catch (error) {
         console.error(`Error updating ${fieldName}:`, error);
@@ -186,18 +186,18 @@ export function ProgramInstanceForm() {
     try {
       if (currentInstance) {
         const response = await updateInstance(currentInstance?.id, values);
-        if (response.success) {
+        if (response.ok) {
           toast({
             title: "Success",
             description: "Program instance updated successfully.",
           });
           router.push(`/admin/program/${programId}/instances`);
         } else {
-          throw new Error(response.error);
+          throw new Error(response.message);
         }
       } else {
         const response = await createInstance(values);
-        if (response.success) {
+        if (response.ok) {
           toast({
             title: "Success",
             description: "Program instance created successfully.",
@@ -205,7 +205,7 @@ export function ProgramInstanceForm() {
           form.reset();
           router.push(`/admin/program/${programId}/instances`);
         } else {
-          throw new Error(response.error);
+          throw new Error(response.message);
         }
       }
     } catch (error) {

@@ -39,6 +39,7 @@ const formSchema = z.object({
   status: z
     .enum(["active", "inactive", "suspended", "deleted", "archived"])
     .default("active"),
+  name: z.string().optional(), // New field to match UserFormData
 });
 
 type EditableFields = {
@@ -67,6 +68,7 @@ export function UserForm({ userId, initialData }: UserFormProps) {
     defaultValues: initialData || {
       fname: "",
       lname: "",
+      name: "",
       username: "",
       email: "",
       phone: "",
@@ -84,15 +86,18 @@ export function UserForm({ userId, initialData }: UserFormProps) {
   async function onSubmit(values: z.infer<typeof formSchema>) {
     setIsSubmitting(true);
     try {
+      // Compute the full name
+      const name = `${values.fname || ""} ${values.lname || ""}`.trim();
+
       if (userId) {
-        // Simplified update logic - only include edited fields
+        // Update logic
         const updatedFields = Object.entries(values)
           .filter(([key]) => editableFields[key as keyof EditableFields])
-          .reduce((obj, [key, value]) => ({ ...obj, [key]: value }), {});
-
+          .reduce((obj, [key, value]) => ({ ...obj, [key]: value }), { name }); // Include name
         await updateUser(userId, updatedFields);
       } else {
-        await createUser(values);
+        // Create logic
+        await createUser({ ...values, name });
       }
 
       form.reset();
@@ -102,7 +107,6 @@ export function UserForm({ userId, initialData }: UserFormProps) {
       setIsSubmitting(false);
     }
   }
-
   const renderField = (
     name: keyof typeof editableFields,
     label: string,

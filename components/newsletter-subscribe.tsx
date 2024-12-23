@@ -5,7 +5,8 @@ import { AnimatePresence, motion } from "framer-motion";
 
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/components/ui/use-toast";
-import { subscribeToNewsletter } from "@/actions/user-actions";
+
+// import { subscribeToNewsletter } from "@/actions/user-actions";
 
 export default function NewsletterSubscribe() {
   const [isExpanded, setIsExpanded] = useState(false);
@@ -32,9 +33,9 @@ export default function NewsletterSubscribe() {
     setIsSubmitting(true);
 
     try {
-      const result = await subscribeToNewsletter(email);
+      const result = setTimeout(() => console.log("Add this"), 500);
 
-      if (result.success) {
+      if (result) {
         setIsSubscribed(true);
         setIsExpanded(false);
         toast({
@@ -42,7 +43,7 @@ export default function NewsletterSubscribe() {
           description: "You've been subscribed to our newsletter.",
         });
       } else {
-        throw new Error(result.error || "Subscription failed");
+        throw new Error(result || "Subscription failed");
       }
     } catch (error) {
       toast({

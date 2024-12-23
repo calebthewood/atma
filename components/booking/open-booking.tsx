@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { RetreatWithRelations } from "@/actions/retreat-actions";
+import { RetreatWithAllRelations } from "@/actions/retreat-actions";
 import { PriceMod, RetreatInstance } from "@prisma/client";
 import { compareAsc, format } from "date-fns";
 
@@ -91,7 +91,7 @@ function PriceSummary({ prices }: PriceSummaryProps) {
 
 interface BookingItemProps {
   item: RetreatInstance;
-  retreat: RetreatWithRelations;
+  retreat: RetreatWithAllRelations;
   guestCount: number;
   userId: string | undefined;
   prices: PriceMod[] | null;
@@ -133,7 +133,7 @@ function BookingItem({ item, guestCount, prices }: BookingItemProps) {
 
 interface BookingEventsListProps {
   events: RetreatInstance[];
-  retreat: RetreatWithRelations;
+  retreat: RetreatWithAllRelations;
   userId: string | undefined;
   guestCount: number;
   prices: PriceMod[] | null;
@@ -166,7 +166,7 @@ function BookingEventsList({
 
 interface OpenBookingProps {
   events: RetreatInstance[];
-  retreat: RetreatWithRelations;
+  retreat: RetreatWithAllRelations;
   userId: string | undefined;
 }
 

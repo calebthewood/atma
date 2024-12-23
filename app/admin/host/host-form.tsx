@@ -3,10 +3,14 @@
 
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { upsertHost, type HostFormData } from "@/actions/host-actions";
+import {
+  createHost,
+  HostWithAllRelations,
+  updateHost,
+  type HostFormData,
+} from "@/actions/host-actions";
 import { HOST_TYPES, hostFormSchema } from "@/schemas/host-schema";
 import { zodResolver } from "@hookform/resolvers/zod";
-import type { Host } from "@prisma/client";
 import { useForm } from "react-hook-form";
 
 import { cn } from "@/lib/utils";
@@ -15,7 +19,6 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -33,7 +36,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { toast } from "@/components/ui/use-toast";
 
 type HostFormProps = {
-  host?: Host;
+  host?: HostWithAllRelations;
   userId?: string;
 };
 
@@ -100,10 +103,11 @@ export function HostForm({ host, userId }: HostFormProps) {
       // @ts-ignore Update only the changed field
       updateData[fieldName] = fieldValue;
 
-      const result = await upsertHost(host.id, updateData);
-
-      if (!result.success) {
-        throw new Error(result.error);
+      if (host) {
+        const result = await updateHost(host.id, updateData);
+        if (!result.ok) {
+          throw new Error(result.message);
+        }
       }
 
       toast({
@@ -141,9 +145,12 @@ export function HostForm({ host, userId }: HostFormProps) {
   async function onSubmit(values: HostFormData) {
     setIsLoading(true);
     try {
-      const result = await upsertHost(host?.id, values);
-      if (!result.success) {
-        throw new Error(result.error);
+      const result = host
+        ? await updateHost(host.id, values)
+        : await createHost(values);
+
+      if (!result.ok) {
+        throw new Error(result.message);
       }
 
       toast({

@@ -1,8 +1,8 @@
 import { notFound } from "next/navigation";
 import { getProgram } from "@/actions/program-actions";
 import {
-  getPropertyAmenitiesByCategory,
-  getPropertyById,
+  getProperty,
+  getPropertyAmenities,
   getPropertyEntityIds,
 } from "@/actions/property-actions";
 import { auth } from "@/auth";
@@ -18,36 +18,37 @@ import { QuickLink } from "@/components/shared";
 import { TitleImageBanner } from "@/components/title-img-banner";
 import PropertyLazyCarousel from "@/components/upcoming-carousel";
 
-export default async function ProgramPage({
-  params,
-}: {
-  params: Promise<{ id: string }>;
-}) {
-  const parameters = await params;
+export default async function Page(props: { params: Promise<{ id: string }> }) {
+  const { id } = await props.params;
 
   try {
     const [programResponse, session] = await Promise.all([
-      getProgram(parameters?.id),
+      getProgram(id),
       auth(),
     ]);
 
-    if (!programResponse.success || !programResponse.data) {
-      console.error("Failed to fetch program:", programResponse.error);
+    if (!programResponse.ok || !programResponse.data) {
+      console.error("Failed to fetch program:", programResponse.message);
       notFound();
     }
 
     const program = programResponse.data;
-    const property = await getPropertyById(program.propertyId);
-    const images = program.property.images;
-    const parkingAmenities = await getPropertyAmenitiesByCategory(
-      program.propertyId,
-      "parking-transportation"
-    );
 
-    const programIds = await getPropertyEntityIds(
+    const propertyRes = await getProperty(id);
+    if (!propertyRes.data) {
+      throw new Error(propertyRes.message);
+    }
+    const property = propertyRes.data;
+    const images = program?.images || property?.images || [];
+    const amenities = await getPropertyAmenities(id);
+    const parkingAmenities = amenities.data?.filter(
+      (a) => a.amenityId === "parking-transportation"
+    );
+    const programIdRes = await getPropertyEntityIds(
       program.propertyId,
       "program"
     );
+    const programIds = programIdRes.data || [];
     // Handle images from both program and property
     const coverImage = images[0]?.filePath || "/img/iStock-1550112895.jpg";
     const imageSlides = images.map((img) => img.filePath);
@@ -92,7 +93,7 @@ export default async function ProgramPage({
                 </h2>
                 <PropertyPolicies
                   property={property}
-                  amenities={parkingAmenities}
+                  amenities={parkingAmenities || []}
                   className="lg:grid-cols-2"
                 />
               </section>

@@ -9,6 +9,8 @@ import { PriceMod, type Program, type ProgramInstance } from "@prisma/client";
 
 import { prisma } from "@/lib/prisma";
 
+import { ActionResponse, PaginatedResponse } from "./shared";
+
 // ============================================================================
 // Types
 // ============================================================================
@@ -64,12 +66,6 @@ export type PaginatedInstancesResponse = {
   totalInstances: number;
 };
 
-export type ActionResponse<T = void> = Promise<{
-  success: boolean;
-  data?: T;
-  error?: string;
-}>;
-
 // ============================================================================
 // Core CRUD Operations
 // ============================================================================
@@ -78,8 +74,10 @@ export async function getInstance(
 ): ActionResponse<InstanceWithRelations> {
   if (!id) {
     return {
-      success: false,
-      error: "Instance ID is required",
+      ok: false,
+      data: null,
+
+      message: "Instance ID is required",
     };
   }
 
@@ -91,8 +89,9 @@ export async function getInstance(
 
     if (!basicInstance) {
       return {
-        success: false,
-        error: "Instance not found",
+        ok: false,
+        data: null,
+        message: "Instance not found",
       };
     }
 
@@ -134,14 +133,16 @@ export async function getInstance(
     };
 
     return {
-      success: true,
+      ok: true,
+      message: "Successfully fetched instance",
       data: fullInstance,
     };
   } catch (error) {
     console.error("Server error in getInstance:", error);
     return {
-      success: false,
-      error: "Failed to fetch instance",
+      ok: false,
+      data: null,
+      message: "Failed to fetch instance",
     };
   }
 }
@@ -156,7 +157,7 @@ export async function createInstance(
     });
 
     if (!program) {
-      return { success: false, error: "Program not found" };
+      return { ok: false, data: null, message: "Program not found" };
     }
 
     // Parse dates
@@ -164,7 +165,11 @@ export async function createInstance(
     const endDate = new Date(data.endDate);
 
     if (endDate <= startDate) {
-      return { success: false, error: "End date must be after start date" };
+      return {
+        ok: false,
+        data: null,
+        message: "End date must be after start date",
+      };
     }
 
     // Calculate duration if not provided
@@ -187,10 +192,14 @@ export async function createInstance(
     });
 
     revalidatePath("/admin/program");
-    return { success: true, data: instance };
+    return {
+      ok: true,
+      message: "Successfully fetched instance",
+      data: instance,
+    };
   } catch (error) {
     console.error("Error creating instance:", error);
-    return { success: false, error: "Failed to create instance" };
+    return { ok: false, data: null, message: "Failed to create instance" };
   }
 }
 
@@ -205,7 +214,11 @@ export async function updateInstance(
       const endDate = new Date(data.endDate);
 
       if (endDate <= startDate) {
-        return { success: false, error: "End date must be after start date" };
+        return {
+          ok: false,
+          data: null,
+          message: "End date must be after start date",
+        };
       }
 
       if (!duration) {
@@ -227,10 +240,14 @@ export async function updateInstance(
     });
 
     revalidatePath("/admin/programs");
-    return { success: true, data: instance };
+    return {
+      ok: true,
+      message: "Successfully fetched instance",
+      data: instance,
+    };
   } catch (error) {
     console.error("Failed to update instance:", error);
-    return { success: false, error: "Failed to update instance" };
+    return { ok: false, data: null, message: "Failed to update instance" };
   }
 }
 
@@ -238,10 +255,10 @@ export async function deleteInstance(id: string): ActionResponse {
   try {
     await prisma.programInstance.delete({ where: { id } });
     revalidatePath("/admin/programs");
-    return { success: true };
+    return { ok: true, data: null, message: "Success" };
   } catch (error) {
     console.error("Error deleting instance:", error);
-    return { success: false, error: "Failed to delete instance" };
+    return { ok: false, data: null, message: "Failed to delete instance" };
   }
 }
 
@@ -265,10 +282,14 @@ export async function getInstances(
       },
       orderBy: { startDate: "asc" },
     });
-    return { success: true, data: instances };
+    return {
+      ok: true,
+      message: "Successfully fetched instance",
+      data: instances,
+    };
   } catch (error) {
     console.error("Error finding instances:", error);
-    return { success: false, error: "Failed to find instances" };
+    return { ok: false, data: null, message: "Failed to find instances" };
   }
 }
 
@@ -276,7 +297,7 @@ export async function getPaginatedInstances(
   page: number = 1,
   pageSize: number = 10,
   programId?: string
-): ActionResponse<PaginatedInstancesResponse> {
+): Promise<ActionResponse<PaginatedResponse<InstanceWithRelations>>> {
   try {
     const where = programId ? { programId } : {};
     const skip = (page - 1) * pageSize;
@@ -322,16 +343,16 @@ export async function getPaginatedInstances(
     ]);
 
     return {
-      success: true,
+      ok: true,
+      message: "Successfully fetched instance",
       data: {
-        instances: instances as InstanceWithRelations[],
+        items: instances,
         totalPages: Math.ceil(totalCount / pageSize),
         currentPage: page,
-        totalInstances: totalCount,
       },
     };
   } catch (error) {
     console.error("Error fetching paginated instances:", error);
-    return { success: false, error: "Failed to fetch instances" };
+    return { ok: false, data: null, message: "Failed to fetch instances" };
   }
 }

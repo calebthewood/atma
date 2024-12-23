@@ -2,8 +2,6 @@ import "@/styles/globals.css";
 
 import React from "react";
 import { Metadata, Viewport } from "next";
-import { getPropertyIds } from "@/actions/property-actions";
-import { getRetreats } from "@/actions/retreat-actions";
 
 import { siteConfig } from "@/config/site";
 import { fontSans, fontTitle } from "@/lib/fonts/fonts";
@@ -38,9 +36,6 @@ interface RootLayoutProps {
 }
 
 export default async function RootLayout({ children }: RootLayoutProps) {
-  const _properties = await getPropertyIds();
-  const _retreats = await getRetreats();
-
   return (
     <>
       <html lang="en" suppressHydrationWarning>

@@ -109,7 +109,7 @@ export function AmenityForm({ amenity }: AmenityFormProps) {
       }
     });
     return () => subscription.unsubscribe();
-  }, [form]);
+  }, []);
 
   // Update category name when value changes
   useEffect(() => {

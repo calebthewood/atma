@@ -19,7 +19,7 @@ function SubmitButton() {
 }
 
 export function ImageUploadForm() {
-  const [file, setFile] = useState<File | null>(null);
+  const [_, setFile] = useState<File | null>(null);
   const [preview, setPreview] = useState<string | null>(null);
   const formRef = useRef<HTMLFormElement>(null);
 
@@ -37,14 +37,14 @@ export function ImageUploadForm() {
 
   const handleSubmit = async (formData: FormData) => {
     const result = await uploadImage(formData);
-    if (result.success) {
+    if (result.ok) {
       // Handle success (e.g., show a success message, reset the form)
       setFile(null);
       setPreview(null);
       formRef.current?.reset();
     } else {
       // Handle error
-      console.error("Upload failed:", result.error);
+      console.error("Upload failed:", result.message);
     }
   };
 

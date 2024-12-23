@@ -35,7 +35,7 @@ export default async function Page(props: {
   params: Promise<{ id: string; slug: string }>;
 }) {
   const params = await props.params;
-  const property = await getProperty(params?.id);
+  const res = await getProperty(params?.id);
 
   const tabs = [
     {
@@ -93,7 +93,7 @@ export default async function Page(props: {
             </CardHeader>
             <CardContent>
               <TabContentWrapper>
-                <PropertyForm property={property} />
+                <PropertyForm property={res.data} />
               </TabContentWrapper>
             </CardContent>
           </Card>

@@ -64,7 +64,7 @@ export interface SearchResultsPageProps {
 }
 
 export interface SearchResult {
-  success: true;
+  ok: true;
   data: EntityWithLocation[] | PropertyGroup[] | CountryGroup[];
   type: "location" | "continent" | "all";
 }
@@ -104,7 +104,7 @@ export default function SearchResultsPage({
     const place = searchParams.get("place");
     const purpose = searchParams.get("purpose");
     const lat = searchParams.get("lat");
-    const lon = searchParams.get("lon");
+    const lng = searchParams.get("lng");
     const continent = searchParams.get("continent");
 
     setIsLoading(true);
@@ -112,17 +112,17 @@ export default function SearchResultsPage({
 
     try {
       // Build search criteria
-      if (continent || lat || lon || purpose) {
+      if (continent || lat || lng || purpose) {
         if (continent) {
           setSearchType("continent");
           searchCriteria.continent = continent;
-        } else if (lat && lon) {
+        } else if (lat && lng) {
           setSearchType("location");
           searchCriteria = {
             ...searchCriteria,
             latitude: parseFloat(lat),
-            longitude: parseFloat(lon),
-            radiusMiles: 1000,
+            longitude: parseFloat(lng),
+            radiusMiles: 200,
           };
         }
 
@@ -140,7 +140,7 @@ export default function SearchResultsPage({
 
       const response = await searchFunction(searchCriteria);
 
-      // if (!response.success) {
+      // if (!response.ok) {
       //   throw new Error(response.error);
       // }
 

@@ -1,8 +1,7 @@
 import { NextResponse } from "next/server";
-import { createBooking, updateBookingStatus } from "@/actions/booking-actions";
+import { updateBookingStatus } from "@/actions/booking-actions";
 import type { Stripe } from "stripe";
 
-import { sendEmail } from "@/lib/sendgrid";
 import { stripe } from "@/lib/stripe";
 
 /* ReadMe
@@ -57,7 +56,7 @@ export async function POST(req: Request) {
 
           if (data.metadata) {
             const bookingId = data.metadata.bookingId;
-            const res = await updateBookingStatus(bookingId, "completed");
+            const res = await updateBookingStatus(bookingId, "confirmed");
 
             if (res) {
               console.log(`💰💰 Booking status: completed`);

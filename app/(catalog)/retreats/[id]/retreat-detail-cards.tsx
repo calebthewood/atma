@@ -1,6 +1,6 @@
 "use client";
 import React from "react";
-import { RetreatWithRelations } from "@/actions/retreat-actions";
+import { RetreatWithAllRelations } from "@/actions/retreat-actions";
 import {
   BedSingle,
   Calendar,
@@ -35,13 +35,13 @@ interface DetailCardProps {
 }
 
 interface RetreatDetailCardsProps {
-  retreat: RetreatWithRelations;
+  retreat: RetreatWithAllRelations;
 }
 
 interface BookingSelectorProps {
   type: string | null;
   userId?: string;
-  retreat: RetreatWithRelations;
+  retreat: RetreatWithAllRelations;
 }
 
 // ============================================================================

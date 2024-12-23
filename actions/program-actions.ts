@@ -6,93 +6,115 @@ import { programFormSchema } from "@/schemas/program-schema";
 import { Prisma, Program } from "@prisma/client";
 import { z } from "zod";
 
+import { ActionResponse } from "./shared";
 import prisma from "@/lib/prisma";
+import { PaginatedResponse } from "./shared";
+
+// ============================================================================
+// Shared Query Configurations
+// ============================================================================
+
+const PROGRAM_INCLUDE_FULL = {
+  property: {
+    select: {
+      images: { orderBy: { order: "asc" } },
+      name: true,
+      city: true,
+      country: true,
+      nearbyAirport: true,
+      address: true,
+      tagList: true,
+    },
+  },
+  host: true,
+  amenities: true,
+  images: { orderBy: { order: "asc" } },
+  programs: true,
+  priceMods: true,
+} as const;
+
+const PROGRAM_INCLUDE_ADMIN_LIST = {
+  property: {
+    select: {
+      name: true,
+      city: true,
+      country: true,
+    },
+  },
+  host: {
+    select: {
+      name: true,
+      id: true,
+    },
+  },
+  images: {
+    take: 1,
+    orderBy: { order: "asc" },
+  },
+  programs: {
+    select: {
+      startDate: true,
+      endDate: true,
+      availableSlots: true,
+    },
+    orderBy: { startDate: "asc" },
+    take: 1,
+  },
+} as const;
 
 // ============================================================================
 // Types
 // ============================================================================
 
-export type BaseProgram = Program & {
-  property?: { name: string };
-  host?: { name: string | null };
-};
-
-export type Base = Prisma.ProgramGetPayload<{
-  include: {
-    property: { select: { images: true; city: true; country: true } };
-    host: true;
-    amenities: true;
-    images: true;
-    programs: true;
-    priceMods: true;
-  };
-}>;
-
-export type ActionResponse<T = void> = Promise<{
-  success: boolean;
-  data?: T;
-  error?: string;
-}>;
-
 export type ProgramFormData = z.infer<typeof programFormSchema>;
-
-export type ProgramWithPropertyGroup = {
-  propertyId: string;
-  propertyName: string;
-  images: any[]; // Replace with proper Image type if available
-  programs: Program[];
-};
-
-// Define types that exactly match what Prisma returns
-export type ProgramWithBasicRelations = Prisma.ProgramGetPayload<{
-  include: {
-    property: { select: { name: true } };
-    host: { select: { name: true } };
-  };
+export type ProgramWithAllRelations = Prisma.ProgramGetPayload<{
+  include: typeof PROGRAM_INCLUDE_FULL;
 }>;
-
-export type PaginatedProgramsResponse = {
-  programs: ProgramWithBasicRelations[];
-  totalPages: number;
-  currentPage: number;
-};
+export type ProgramWithBasicRelations = Prisma.ProgramGetPayload<{
+  include: typeof PROGRAM_INCLUDE_ADMIN_LIST;
+}>;
 
 // ============================================================================
 // Core CRUD Operations
 // ============================================================================
+
 export async function createProgram(
   data: ProgramFormData
 ): ActionResponse<Program> {
   try {
     const { hostId, propertyId, date, ...restData } = data;
-
-    // Since host is required, we need to include it in the base object
-    const createData: Prisma.ProgramCreateInput = {
-      ...restData,
-      date: date ? new Date(date) : null,
-      property: {
-        connect: { id: propertyId },
-      },
-      host: {
-        connect: { id: hostId || "" }, // If hostId is null, this will throw an error which we'll catch
-      },
-    };
-
     const program = await prisma.program.create({
-      data: createData,
+      data: {
+        ...restData,
+        date: date ? new Date(date) : null,
+        property: { connect: { id: propertyId } },
+        host: { connect: { id: hostId || "" } },
+      },
     });
 
-    revalidatePath("/admin");
-    return { success: true, data: program };
+    revalidatePath("/admin/program");
+    return { ok: true, data: program, message: "Successfully created program" };
   } catch (error) {
-    console.error("Error creating program:", error);
-    return {
-      success: false,
-      error:
-        error instanceof Error
-          ? error.message
-          : "Failed to create program. Host is required.",
-    };
+    return { ok: false, data: null, message: "Error creating program" };
+  }
+}
+
+export async function getProgram(
+  id: string
+): ActionResponse<ProgramWithAllRelations> {
+  try {
+    const program = await prisma.program.findUnique({
+      where: { id },
+      include: PROGRAM_INCLUDE_FULL,
+    });
+
+    if (!program) {
+      return { ok: false, data: null, message: "Program not found" };
+    }
+
+    return { ok: true, data: program, message: "Successfully fetched program" };
+  } catch (error) {
+    return { ok: false, data: null, message: "Error fetching program" };
   }
 }
 
@@ -126,139 +148,41 @@ export async function updateProgram(
 
     revalidatePath("/admin/program");
     revalidatePath(`/admin/program/${id}`);
-    return { success: true, data: program };
+    return { ok: true, data: program, message: "Succesfully updated program." };
   } catch (error) {
     console.error("Failed to update program:", error);
     return {
-      success: false,
-      error:
-        error instanceof Error
-          ? error.message
-          : "Failed to update program. Host is required.",
+      ok: false,
+      data: null,
+      message: "Failed to update program. Host is required.",
     };
-  }
-}
-// The function implementation
-export type ProgramWithAllRelations = Prisma.ProgramGetPayload<{
-  include: {
-    property: {
-      select: {
-        images: true;
-        name: true;
-        city: true;
-        country: true;
-        nearbyAirport: true;
-        address: true;
-        tagList: true;
-      };
-    };
-    host: true;
-    amenities: true;
-    images: true;
-    programs: true;
-    priceMods: true;
-  };
-}>;
-
-export async function getProgram(
-  id: string
-): ActionResponse<ProgramWithAllRelations> {
-  try {
-    const program = await prisma.program.findUnique({
-      where: { id },
-      include: {
-        property: {
-          select: {
-            images: {
-              orderBy: {
-                order: "asc",
-              },
-            },
-            city: true,
-            country: true,
-            name: true,
-            nearbyAirport: true,
-            address: true,
-            tagList: true,
-          },
-        },
-        host: true,
-        amenities: true,
-        images: {
-          orderBy: {
-            order: "asc",
-          },
-        },
-        programs: true,
-        priceMods: true,
-      },
-    });
-
-    if (!program) {
-      return { success: false, error: "Program not found" };
-    }
-
-    return { success: true, data: program };
-  } catch (error) {
-    console.error("Failed to fetch program:", error);
-    return { success: false, error: "Failed to fetch program" };
   }
 }
 
 export async function deleteProgram(id: string): ActionResponse {
   try {
-    await prisma.program.delete({
-      where: { id },
-    });
-
+    await prisma.program.delete({ where: { id } });
     revalidatePath("/admin/program");
     revalidatePath(`/admin/program/${id}`);
-    return { success: true };
+    return { ok: true, data: null, message: "Successfully deleted program" };
   } catch (error) {
-    console.error("Error deleting program:", error);
-    return { success: false, error: "Failed to delete program" };
+    return { ok: false, data: null, message: "Error deleting program" };
   }
 }
-
-// ============================================================================
-// List & Query Operations
-// ============================================================================
 
 export async function getPrograms(): ActionResponse<ProgramWithAllRelations[]> {
   try {
     const programs = await prisma.program.findMany({
       where: { status: "published" },
-      include: {
-        property: {
-          select: {
-            name: true,
-            images: {
-              orderBy: {
-                order: "asc",
-              },
-            },
-            city: true,
-            country: true,
-            nearbyAirport: true,
-            address: true,
-            tagList: true,
-          },
-        },
-        host: true,
-        amenities: true,
-        images: {
-          orderBy: {
-            order: "asc",
-          },
-        },
-        programs: true,
-        priceMods: true,
-      },
+      include: PROGRAM_INCLUDE_FULL,
     });
-    return { success: true, data: programs };
+    return {
+      ok: true,
+      data: programs,
+      message: "Successfully fetched programs",
+    };
   } catch (error) {
-    console.error("Error finding programs:", error);
-    return { success: false, error: "Failed to find programs" };
+    return { ok: false, data: null, message: "Error fetching programs" };
   }
 }
 
@@ -266,181 +190,53 @@ export async function getAdminPaginatedPrograms(
   page: number = 1,
   pageSize: number = 10,
   searchTerm: string = ""
-): ActionResponse<PaginatedProgramsResponse> {
+): Promise<ActionResponse<PaginatedResponse<ProgramWithBasicRelations>>> {
   try {
     const session = await auth();
     if (!session?.user?.id) {
-      return { success: false, error: "Unauthorized" };
+      return { ok: false, data: null, message: "Unauthorized access" };
     }
 
-    const skip = (page - 1) * pageSize;
-
-    // Base search conditions
-    const searchConditions: Prisma.ProgramWhereInput = searchTerm
-      ? {
-          OR: [
-            { name: { contains: searchTerm } },
-            { duration: { contains: searchTerm } },
-            { desc: { contains: searchTerm } },
-            { category: { contains: searchTerm } },
-          ],
-        }
-      : {};
-
-    // Build where clause based on role
-    const whereClause: Prisma.ProgramWhereInput = {
-      ...searchConditions,
+    const whereClause = {
+      ...(searchTerm
+        ? {
+            OR: [
+              { name: { contains: searchTerm } },
+              { duration: { contains: searchTerm } },
+              { desc: { contains: searchTerm } },
+              { category: { contains: searchTerm } },
+            ],
+          }
+        : {}),
       ...(session.user.role !== "admin" ? { hostId: session.user.hostId } : {}),
     };
 
     const [programs, totalCount] = await Promise.all([
       prisma.program.findMany({
         where: whereClause,
-        skip,
+        skip: (page - 1) * pageSize,
         take: pageSize,
         orderBy: { updatedAt: "desc" },
-        include: {
-          property: {
-            select: {
-              name: true,
-              city: true,
-              country: true,
-            },
-          },
-          host: {
-            select: {
-              name: true,
-              id: true,
-            },
-          },
-          images: {
-            take: 1,
-            orderBy: {
-              order: "asc",
-            },
-          },
-          programs: {
-            select: {
-              startDate: true,
-              endDate: true,
-              availableSlots: true,
-            },
-            orderBy: {
-              startDate: "asc",
-            },
-            take: 1,
-          },
-        },
+        include: PROGRAM_INCLUDE_ADMIN_LIST,
       }),
       prisma.program.count({ where: whereClause }),
     ]);
 
     return {
-      success: true,
+      ok: true,
       data: {
-        programs,
+        items: programs,
         totalPages: Math.ceil(totalCount / pageSize),
         currentPage: page,
       },
+      message: "Successfully fetched paginated programs",
     };
   } catch (error) {
-    console.error("Error fetching paginated programs:", error);
+    console.error("Error in getAdminPaginatedPrograms:", error);
     return {
-      success: false,
-      error:
-        error instanceof Error ? error.message : "Failed to fetch programs",
+      ok: false,
+      data: null,
+      message: "Error fetching paginated programs",
     };
-  }
-}
-
-// ============================================================================
-// Property-Related Operations
-// ============================================================================
-
-export async function getProgramsByProperty(
-  propertyId: string
-): ActionResponse<BaseProgram[]> {
-  try {
-    const programs = await prisma.program.findMany({
-      where: { propertyId },
-      include: { property: true },
-    });
-    return { success: true, data: programs };
-  } catch (error) {
-    console.error("Error finding programs:", error);
-    return { success: false, error: "Failed to find programs" };
-  }
-}
-
-export async function getProgramsGroupedByProperty(): ActionResponse<
-  ProgramWithPropertyGroup[]
-> {
-  try {
-    const propertiesWithPrograms = await prisma.property.findMany({
-      include: {
-        programs: true,
-        images: {
-          orderBy: {
-            order: "asc",
-          },
-        },
-      },
-      where: {
-        programs: {
-          some: {},
-        },
-      },
-    });
-
-    const groupedPrograms = propertiesWithPrograms.map((property) => ({
-      propertyId: property?.id,
-      propertyName: property?.name,
-      images: property?.images,
-      programs: property?.programs,
-    }));
-
-    return { success: true, data: groupedPrograms };
-  } catch (error) {
-    console.error("Error finding programs grouped by property:", error);
-    return {
-      success: false,
-      error: "Failed to find programs grouped by property",
-    };
-  }
-}
-
-export async function getProgramsWithNoProperty(): ActionResponse<Program[]> {
-  try {
-    const programs = await prisma.program.findMany({
-      where: {
-        propertyId: undefined,
-      },
-    });
-    return { success: true, data: programs };
-  } catch (error) {
-    console.error("Error finding programs with no property:", error);
-    return {
-      success: false,
-      error: "Failed to find programs with no property",
-    };
-  }
-}
-
-export async function joinProgramAndProperty(
-  programId: string,
-  propertyId: string
-): ActionResponse<Program> {
-  try {
-    const program = await prisma.program.update({
-      where: { id: programId },
-      data: {
-        property: { connect: { id: propertyId } },
-      },
-      include: { property: true },
-    });
-    return { success: true, data: program };
-  } catch (error) {
-    console.error("Error joining program and property:", error);
-    return { success: false, error: "Failed to join program and property" };
   }
 }

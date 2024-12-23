@@ -8,10 +8,10 @@ import {
   type ProgramWithAllRelations,
 } from "@/actions/program-actions";
 import {
-  getPropertyWithId,
-  PropertyWithRelations,
+  getProperty,
+  PropertyWithAllRelations,
 } from "@/actions/property-actions";
-import { getSimpleRetreat, SimpleRetreat } from "@/actions/retreat-actions";
+import { getRetreat, RetreatWithAllRelations } from "@/actions/retreat-actions";
 import { Host, Program, Property, Retreat } from "@prisma/client";
 import { CirclePlus } from "lucide-react";
 
@@ -132,7 +132,10 @@ interface LazyRetreatCardProps {
   className?: string;
   segment: string; //"retreats" | "destinations" | "programs" | "hosts";
 }
-type ItemType = SimpleRetreat | PropertyWithRelations | ProgramWithAllRelations;
+type ItemType =
+  | RetreatWithAllRelations
+  | PropertyWithAllRelations
+  | ProgramWithAllRelations;
 
 export function LazyRetreatItem({
   id,
@@ -156,8 +159,8 @@ export function LazyRetreatItem({
         let response;
         switch (segment) {
           case "retreats":
-            response = await getSimpleRetreat(id);
-            if (response.success && response.data) {
+            response = await getRetreat(id);
+            if (response.ok && response.data) {
               setItem(response.data);
               const img = response?.data?.property?.images[0]?.filePath;
               if (img) {
@@ -166,10 +169,10 @@ export function LazyRetreatItem({
             }
             break;
           case "destinations":
-            response = await getPropertyWithId(id);
-            if (response.success) {
-              setItem(response.property);
-              const img = response?.property?.images[0]?.filePath;
+            response = await getProperty(id);
+            if (response.ok && response.data) {
+              setItem(response.data);
+              const img = response?.data?.images[0]?.filePath;
               if (img) {
                 setImage(img);
               }
@@ -177,7 +180,7 @@ export function LazyRetreatItem({
             break;
           case "programs":
             response = await getProgram(id);
-            if (response.success && response.data) {
+            if (response.ok && response.data) {
               setItem(response.data);
               const img = response?.data?.property?.images[0]?.filePath;
               if (img) {
@@ -214,7 +217,7 @@ export function LazyRetreatItem({
     );
   }
   // Type guards
-  const isRetreat = (item: ItemType): item is SimpleRetreat => {
+  const isRetreat = (item: ItemType): item is RetreatWithAllRelations => {
     return "retreatInstances" in item;
   };
 

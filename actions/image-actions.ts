@@ -1,233 +1,266 @@
+// actions/image-actions.ts
 "use server";
 
 import { cache } from "react";
 import { revalidatePath } from "next/cache";
-import {
-  DeleteObjectCommand,
-  PutObjectCommand,
-  S3Client,
-} from "@aws-sdk/client-s3";
-import { Image, Retreat } from "@prisma/client";
-import { v4 as uuidv4 } from "uuid";
+import { auth } from "@/auth";
+import { ImageDirectorySchema, ImageSchema } from "@/schemas/image-schema";
+import { Image } from "@prisma/client";
 import { z } from "zod";
 
 import prisma from "@/lib/prisma";
-import { getFileExtension } from "@/lib/utils";
+import { deleteFromS3, S3Response, uploadToS3 } from "@/lib/s3";
 
-const s3 = new S3Client({
-  region: process.env.AWS_REGION as string,
-  credentials: {
-    accessKeyId: process.env.AWS_ACCESS_KEY_ID as string,
-    secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY as string,
-  },
-});
+import { ActionResponse } from "./shared";
 
-export async function uploadImage(formData: FormData) {
-  const bucket = process.env.S3_BUCKET_NAME;
-  if (!bucket) {
-    throw new Error("ERROR: Bad Environment");
-  }
+/** Table of Contents
+ * Types and Schemas:
+ *   - ImageSchema
+ *   - RecordTypeSchema
+ *
+ * Core Operations:
+ *   - uploadImage(formData: FormData): Promise<ActionResponse<Image>>
+ *   - updateImageOrder(images: ImageData[]): Promise<ActionResponse>
+ *   - updateImageDescription(id: string, description: string): Promise<ActionResponse>
+ *   - deleteImage(id: string): Promise<ActionResponse>
+ *
+ * Query Operations:
+ *   - fetchImages(recordId: string, recordType: RecordType): Promise<ActionResponse<Image[]>>
+ *   - getRetreatImages(retreatId: string): Promise<ActionResponse<Image[]>>
+ *   - getPropertyImages(propertyId: string): Promise<ActionResponse<Image[]>>
+ */
 
-  const file = formData.get("file") as File;
-  const recordType = formData.get("recordType") as RecordType;
-  const recordId = formData.get("recordId") as string;
+// ============================================================================
+// Types and Schemas
+// ============================================================================
 
-  if (!file || !recordType || !recordId) {
-    throw new Error("Missing required fields");
-  }
+export type ImageData = z.infer<typeof ImageSchema>;
+export type RecordType = z.infer<typeof ImageDirectorySchema>;
 
-  const fileExtension = getFileExtension(file.name);
-  const s3Filename = `${recordType}s/${uuidv4()}${fileExtension}`;
+// ============================================================================
+// Core Operations
+// ============================================================================
 
+export async function uploadImage(
+  formData: FormData
+): Promise<ActionResponse<Image>> {
   try {
-    // Upload to S3
-    const imgBuffer = await file.arrayBuffer();
-    const buffer = Buffer.from(imgBuffer);
+    const session = await auth();
+    if (!session?.user?.id) {
+      return { ok: false, data: null, message: "Unauthorized" };
+    }
 
-    const uploadParams = {
-      Bucket: bucket,
-      Key: s3Filename,
-      Body: buffer,
-      ContentType: file.type,
+    const file = formData.get("file") as File;
+    const recordType = formData.get("recordType") as RecordType;
+    const recordId = formData.get("recordId") as string;
+
+    if (!file || !recordType || !recordId) {
+      return { ok: false, data: null, message: "Missing required fields" };
+    }
+
+    // Step 1: Validate type and upload to S3
+    try {
+      const validatedType = ImageDirectorySchema.parse(recordType);
+      const s3Result = await uploadToS3(file, validatedType);
+
+      if (!s3Result.ok || !s3Result.data) {
+        return { ok: false, data: null, message: s3Result.message };
+      }
+
+      // Step 2: Get current max order
+      let newOrder = 0;
+      try {
+        const currentMaxOrder = await prisma.image.findFirst({
+          where: { [`${validatedType}Id`]: recordId },
+          orderBy: { order: "desc" },
+          select: { order: true },
+        });
+        newOrder = (currentMaxOrder?.order ?? -1) + 1;
+      } catch (error) {
+        console.error("Error getting max order:", error);
+        // Continue with default order 0
+      }
+
+      // Step 3: Create database entry
+      try {
+        const image = await prisma.image.create({
+          data: {
+            filePath: s3Result.data,
+            order: newOrder,
+            [`${validatedType}Id`]: recordId,
+          },
+        });
+
+        revalidatePath(`/admin/${validatedType}/${recordId}/images`);
+        return {
+          ok: true,
+          data: image,
+          message: "Successfully uploaded image",
+        };
+      } catch (dbError) {
+        console.error("Database creation error:", dbError);
+        return {
+          ok: false,
+          data: null,
+          message:
+            dbError instanceof Error
+              ? `Database error: ${dbError.message}`
+              : "Failed to create image record",
+        };
+      }
+    } catch (processingError) {
+      console.error("Processing error:", processingError);
+      return {
+        ok: false,
+        data: null,
+        message:
+          processingError instanceof Error
+            ? processingError.message
+            : "Failed to process image",
+      };
+    }
+  } catch (error) {
+    // Safe error logging that won't cause type errors
+    if (error instanceof Error) {
+      console.error("Image upload error:", error.message);
+    } else {
+      console.error("Unknown image upload error");
+    }
+
+    return {
+      ok: false,
+      data: null,
+      message: "Failed to upload image",
     };
-
-    const uploadCommand = new PutObjectCommand(uploadParams);
-    await s3.send(uploadCommand);
-
-    // Create database entry
-    const imageUrl = `https://${bucket}.s3.${process.env.AWS_REGION}.amazonaws.com/${s3Filename}`;
-
-    const currentMaxOrder = await prisma.image.findFirst({
-      where: { [recordType + "Id"]: recordId },
-      orderBy: { order: "desc" },
-      select: { order: true },
-    });
-
-    const newOrder = (currentMaxOrder?.order ?? -1) + 1;
-
-    const image = await prisma.image.create({
-      data: {
-        filePath: imageUrl,
-        [recordType + "Id"]: recordId,
-        order: newOrder,
-      },
-    });
-    // revalidatePath(getImageRoute(image));
-    return { success: true, image };
-  } catch (error) {
-    console.error("Error uploading to S3:", error);
-    throw new Error("Failed to upload image");
   }
 }
 
-function getImageRoute(img: Image) {
-  let path = "admin/";
-  if (img.programId) path += "program/" + img.programId;
-  if (img.propertyId) path += "property/" + img.propertyId;
-  if (img.retreatId) path += "retreat/" + img.retreatId;
-  return path + "/image";
-}
-
-export type RecordType = "property" | "program" | "host" | "retreat" | "room";
-
-const ImageSchema = z.object({
-  id: z.string(),
-  filePath: z.string(),
-  desc: z.string().nullable(),
-  order: z.number(),
-});
-
-type ImageData = z.infer<typeof ImageSchema>;
-
-export async function fetchImages(recordId: string, recordType: RecordType) {
+export async function updateImageOrder(
+  images: ImageData[]
+): Promise<ActionResponse> {
   try {
-    const images = await prisma.image.findMany({
-      where: {
-        [recordType + "Id"]: recordId,
-      },
-      orderBy: {
-        order: "asc",
-      },
-      select: {
-        id: true,
-        filePath: true,
-        desc: true,
-        order: true,
-      },
-    });
+    const session = await auth();
+    if (!session?.user?.id) {
+      return { ok: false, data: null, message: "Unauthorized" };
+    }
 
-    return images;
-  } catch (error) {
-    console.error("Error fetching images:", error);
-    throw new Error("Failed to fetch images");
-  }
-}
-
-export async function updateImageOrder(images: ImageData[]) {
-  try {
     const updates = images.map((image) =>
       prisma.image.update({
-        where: { id: image?.id },
+        where: { id: image.id },
         data: { order: image.order },
       })
     );
 
     await prisma.$transaction(updates);
+
+    return {
+      ok: true,
+      data: null,
+      message: "Successfully updated image order",
+    };
   } catch (error) {
     console.error("Error updating image order:", error);
-    throw new Error("Failed to update image order");
+    return { ok: false, data: null, message: "Failed to update image order" };
   }
 }
 
-export async function updateImageDescription(id: string, description: string) {
+export async function updateImageDescription(
+  id: string,
+  description: string
+): Promise<ActionResponse<Image>> {
   try {
-    const updatedImage = await prisma.image.update({
+    const session = await auth();
+    if (!session?.user?.id) {
+      return { ok: false, data: null, message: "Unauthorized" };
+    }
+
+    const image = await prisma.image.update({
       where: { id },
       data: { desc: description },
-      select: {
-        propertyId: true,
-        programId: true,
-        hostId: true,
-        retreatId: true,
-        roomId: true,
-      },
     });
 
-    return updatedImage;
+    return {
+      ok: true,
+      data: image,
+      message: "Successfully updated image description",
+    };
   } catch (error) {
     console.error("Error updating image description:", error);
-    throw new Error("Failed to update image description");
+    return {
+      ok: false,
+      data: null,
+      message: "Failed to update image description",
+    };
   }
 }
 
-export async function deleteImage(id: string) {
-  const bucket = process.env.S3_BUCKET_NAME;
-  if (!bucket) {
-    throw new Error("ERROR: S3 bucket name not configured");
-  }
-
+export async function deleteImage(
+  id: string
+): Promise<ActionResponse<S3Response>> {
   try {
-    // First, get the image details from the database
+    const session = await auth();
+    if (!session?.user?.id) {
+      return { ok: false, data: null, message: "Unauthorized" };
+    }
+
     const image = await prisma.image.findUnique({
       where: { id },
       select: { filePath: true },
     });
 
     if (!image) {
-      throw new Error("Image not found");
+      return { ok: false, data: null, message: "Image not found" };
     }
 
-    // Extract the S3 key from the URL
-    // Example URL: https://bucket-name.s3.region.amazonaws.com/properties/image.jpg
-    const s3Key = image.filePath.split(".com/").pop();
-    if (!s3Key) {
-      throw new Error("Invalid S3 URL format");
-    }
-
-    try {
-      // Delete from S3
-      const deleteCommand = new DeleteObjectCommand({
-        Bucket: bucket,
-        Key: s3Key,
-      });
-
-      await s3.send(deleteCommand);
-    } catch (s3Error) {
-      console.error("Error deleting from S3:", s3Error);
-      throw new Error("Failed to delete image from S3");
+    // Delete from S3
+    const s3Result = await deleteFromS3(image.filePath);
+    if (!s3Result.ok) {
+      return { ok: false, data: s3Result, message: "Image not found" };
     }
 
     // Delete from database
-    await prisma.image.delete({
-      where: { id },
+    await prisma.image.delete({ where: { id } });
+
+    return { ok: true, data: null, message: "Successfully deleted image" };
+  } catch (error) {
+    console.error("Error deleting image:", error);
+    return { ok: false, data: null, message: "Failed to delete image" };
+  }
+}
+
+// ============================================================================
+// Query Operations
+// ============================================================================
+
+export async function fetchImages(
+  recordId: string,
+  recordType: RecordType
+): Promise<ActionResponse<Image[]>> {
+  try {
+    const images = await prisma.image.findMany({
+      where: { [recordType + "Id"]: recordId },
+      orderBy: { order: "asc" },
     });
 
-    return { success: true };
+    return { ok: true, data: images, message: "Successfully fetched images" };
   } catch (error) {
-    console.error("Error in deleteImage:", error);
-
-    if (error instanceof Error) {
-      throw new Error(`Failed to delete image: ${error.message}`);
-    }
-
-    throw new Error("Failed to delete image");
+    console.error("Error fetching images:", error);
+    return { ok: false, data: null, message: "Failed to fetch images" };
   }
 }
 
 export const getRetreatImages = cache(
-  async (retreatId: string): Promise<Image[]> => {
+  async (retreatId: string): Promise<ActionResponse<Image[]>> => {
     try {
-      // First get the retreat to find its property ID
       const retreat = await prisma.retreat.findUnique({
         where: { id: retreatId },
         select: { propertyId: true },
       });
 
       if (!retreat) {
-        return [];
+        return { ok: false, data: [], message: "Retreat not found" };
       }
 
-      // Get both retreat-specific images and property images
       const images = await prisma.image.findMany({
         where: {
           OR: [{ retreatId }, { propertyId: retreat.propertyId }],
@@ -235,27 +268,38 @@ export const getRetreatImages = cache(
         orderBy: [{ order: "asc" }, { createdAt: "desc" }],
       });
 
-      return images;
+      return {
+        ok: true,
+        data: images,
+        message: "Successfully fetched retreat images",
+      };
     } catch (error) {
       console.error("Error fetching retreat images:", error);
-      return [];
+      return { ok: false, data: [], message: "Failed to fetch retreat images" };
     }
   }
 );
 
-// Optional: If you need specific property images
 export const getPropertyImages = cache(
-  async (propertyId: string): Promise<Image[]> => {
+  async (propertyId: string): Promise<ActionResponse<Image[]>> => {
     try {
       const images = await prisma.image.findMany({
         where: { propertyId },
         orderBy: [{ order: "asc" }, { createdAt: "desc" }],
       });
 
-      return images;
+      return {
+        ok: true,
+        data: images,
+        message: "Successfully fetched property images",
+      };
     } catch (error) {
       console.error("Error fetching property images:", error);
-      return [];
+      return {
+        ok: false,
+        data: [],
+        message: "Failed to fetch property images",
+      };
     }
   }
 );

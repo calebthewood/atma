@@ -1,10 +1,10 @@
 import { Separator } from "@/components/ui/separator";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
-import { UsersDataTable } from "./data-table";
+import { UserDataTable } from "./user-data-table";
 import { UserForm } from "./user-form";
 
-export default function UsersPage() {
+export default function UserPage() {
   return (
     <div className="container mx-auto py-6">
       <div className="flex items-center justify-between">
@@ -27,7 +27,7 @@ export default function UsersPage() {
         </div>
 
         <TabsContent value="list" className="space-y-4">
-          <UsersDataTable />
+          <UserDataTable />
         </TabsContent>
 
         <TabsContent value="create">

@@ -8,13 +8,13 @@ import { toast } from "@/components/ui/use-toast";
 import { H3, Lead } from "@/components/typography";
 
 import {
-  Amenity,
   AmenityType,
   EntityType,
   getAmenitiesByType,
   getEntityAmenities,
   updateEntityAmenity,
 } from "../../actions/amenity";
+import { Amenity } from "@prisma/client";
 
 interface AmenityCheckboxesProps {
   entityId: string;
@@ -59,8 +59,12 @@ export const AmenityCheckboxes = ({
           getEntityAmenities(entityType, entityId, amenityType),
         ]);
 
-        setAmenities(allAmenities);
-        setSelectedAmenities(new Set(entityAmenities.map((a) => a?.id)));
+        if (allAmenities.data) {
+          setAmenities(allAmenities.data);
+        }
+        if (entityAmenities.data) {
+          setSelectedAmenities(new Set(entityAmenities.data.map((a) => a?.id)));
+        }
       } catch (err) {
         let errorMessage = "Failed to load amenities";
         if (err instanceof z.ZodError) {

@@ -1,4 +1,4 @@
-import { getDatabaseCounts } from "@/actions/admin";
+import { getDatabaseCounts } from "@/actions/admin-misc";
 
 import {
   Card,

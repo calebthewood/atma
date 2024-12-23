@@ -3,9 +3,9 @@
 import React, { useCallback, useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import {
-  CountryProperties,
-  PropertyWithIncludes,
   searchProperties,
+  type CountryProperties,
+  type PropertyWithIncludes,
 } from "@/actions/location-actions";
 
 import { LoadingSpinner } from "@/components/loading-spinner";
@@ -14,64 +14,76 @@ import { Lead } from "@/components/typography";
 
 import TabbedSearchResults from "./tabbed-search-results";
 
-export default function Page() {
+type SearchMode = "location" | "continent";
+
+export default function SearchPage() {
   const [searchResults, setSearchResults] = useState<
     PropertyWithIncludes[] | CountryProperties[]
   >([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [searchType, setSearchType] = useState<"location" | "continent">(
-    "location"
-  );
+  const [searchMode, setSearchMode] = useState<SearchMode>("location");
 
   const searchParams = useSearchParams();
 
   const handleSearch = useCallback(async () => {
-    // const encodedPlace = searchParams.get("place");
-    // const place = encodedPlace ? decodeURIComponent(encodedPlace) : "";
+    const place = searchParams.get("place");
     const lat = searchParams.get("lat");
-    const lon = searchParams.get("lon");
+    const lng = searchParams.get("lng");
     const continent = searchParams.get("continent");
-    // const from = searchParams.get("from");
-    // const to = searchParams.get("to");
-    // const guests = searchParams.get("guests");
 
-    // const today = new Date();
-    // const twoDaysFromNow = addDays(today, 2);
+    if (!place && !continent && !lat && !lng) {
+      setError("Please provide a valid location or continent to search.");
+      return;
+    }
 
     setIsLoading(true);
     setError(null);
 
     try {
       if (continent) {
-        // Handle continent search
-        setSearchType("continent");
-        const results = await searchProperties({
+        setSearchMode("continent");
+        const result = await searchProperties({
           continent,
           includeHost: true,
           includeImages: true,
         });
-        setSearchResults(results);
-      } else if (lat && lon) {
-        // Handle location search
-        setSearchType("location");
-        const searchCriteria = {
+
+        if (!result.ok) {
+          throw new Error(result.message);
+        }
+
+        setSearchResults(result.data || []);
+      } else if (lat && lng) {
+        setSearchMode("location");
+        const result = await searchProperties({
           latitude: parseFloat(lat),
-          longitude: parseFloat(lon),
+          longitude: parseFloat(lng),
           radiusMiles: 200,
           limit: 10,
           includeHost: true,
           includeImages: true,
-        };
+        });
 
-        const places = await searchProperties(searchCriteria);
-        setSearchResults(places);
-      } else {
-        setError("Please provide a valid location or continent to search.");
+        if (!result.ok) {
+          throw new Error(result.message);
+        }
+
+        setSearchResults(result.data || []);
+      } else if (place) {
+        // For place-based search, we could implement geocoding here
+        // For now, we'll show an error
+        setError(
+          "Location search requires latitude and longitude coordinates."
+        );
       }
     } catch (err) {
       console.error("Error during search:", err);
-      setError("An error occurred while searching. Please try again.");
+      setError(
+        err instanceof Error
+          ? err.message
+          : "An error occurred while searching."
+      );
     } finally {
       setIsLoading(false);
     }
@@ -87,10 +99,12 @@ export default function Page() {
 
   const renderLocationResults = () => {
     const results = searchResults as PropertyWithIncludes[];
+    if (!results.length) return <Lead>No properties found in this area.</Lead>;
+
     return (
-      <div className="flex space-x-4 pb-4">
-        {results.map((property, i) => (
-          <div key={property?.id + `${i * 3.7}`} className="flex flex-col">
+      <div className="flex space-x-4 overflow-x-auto pb-4">
+        {results.map((property) => (
+          <div key={property.id} className="flex flex-col">
             <RetreatItem
               retreat={property}
               imgUrl={property.images?.[0]?.filePath}
@@ -100,14 +114,20 @@ export default function Page() {
               width={250}
               height={330}
             />
-            <div>{property.address}</div>
+            <div className="mt-2 text-sm text-muted-foreground">
+              {property.address || `${property.city}, ${property.country}`}
+            </div>
           </div>
         ))}
       </div>
     );
   };
+
   const renderContinentResults = () => {
     const results = searchResults as CountryProperties[];
+    if (!results.length)
+      return <Lead>No properties found in this continent.</Lead>;
+
     return <TabbedSearchResults results={results} />;
   };
 
@@ -119,20 +139,20 @@ export default function Page() {
             Search Results
           </h2>
           <p className="text-sm text-muted-foreground">
-            {searchType === "location"
+            {searchMode === "location"
               ? "Properties within range"
               : "Properties by country"}
           </p>
         </div>
       </div>
-      <div className="relative">
+      <div className="relative mt-6">
         {isLoading ? (
           <LoadingSpinner />
         ) : error ? (
           <Lead className="mt-4 text-red-500">{error}</Lead>
         ) : searchResults.length === 0 ? (
           <Lead className="mt-4">No results found.</Lead>
-        ) : searchType === "location" ? (
+        ) : searchMode === "location" ? (
           renderLocationResults()
         ) : (
           renderContinentResults()

@@ -19,7 +19,7 @@ export default async function Page(props: {
   const { id, slug } = await props.params;
   const result = await getAdminBooking(id);
 
-  if (!result.success || !result.data) {
+  if (!result.ok || !result.data) {
     notFound();
   }
 

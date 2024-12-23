@@ -62,9 +62,14 @@ export function AmenitiesEntityForm({
         getAmenitiesByType(amenityType),
         getEntityAmenities(recordType, recordId, amenityType),
       ]);
-
-      setAmenities(allAmenities);
-      setConnectedAmenityIds(new Set(connectedAmenities.map((a) => a?.id)));
+      if (allAmenities.data) {
+        setAmenities(allAmenities.data);
+      }
+      if (connectedAmenities.data) {
+        setConnectedAmenityIds(
+          new Set(connectedAmenities.data.map((a) => a?.id))
+        );
+      }
     } catch (err) {
       let errorMessage = "Failed to load amenities";
       if (err instanceof z.ZodError) {

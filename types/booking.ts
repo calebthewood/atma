@@ -4,7 +4,7 @@ export interface BookingData {
   checkOutDate: Date;
   guestCount: number;
   totalPrice: number;
-  status: string;
+  status: "pending" | "confirmed" | "cancelled";
   userId: string;
   retreatInstanceId: string;
 }

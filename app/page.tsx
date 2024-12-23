@@ -1,9 +1,5 @@
 import { Metadata } from "next";
-import { getHosts } from "@/actions/host-actions";
 import { getPrograms } from "@/actions/program-actions";
-import { getPropertyIds } from "@/actions/property-actions";
-import { getRetreats } from "@/actions/retreat-actions";
-import { auth } from "@/auth";
 
 import { BookingBar } from "@/components/booking-bar";
 import DestinationSection from "@/components/sections/destination-section";
@@ -17,13 +13,7 @@ export const metadata: Metadata = {
 };
 
 export default async function Page() {
-  const _session = await auth();
-  const [_, _properties, _retreats, programs] = await Promise.all([
-    getHosts(),
-    getPropertyIds(),
-    getRetreats(),
-    getPrograms(),
-  ]);
+  const programs = await getPrograms();
 
   return (
     <>

@@ -2,10 +2,10 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { getHosts } from "@/actions/host-actions";
+import { getAdminPaginatedHosts } from "@/actions/host-actions";
 import {
   createProperty,
-  getProperties,
+  PropertyWithAllRelations,
   updateProperty,
 } from "@/actions/property-actions";
 import {
@@ -23,7 +23,6 @@ import { Checkbox } from "@/components/ui/checkbox";
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -44,12 +43,13 @@ import CountrySelect from "@/components/country-select";
 import { Lead } from "@/components/typography";
 
 type PropertyFormProps = {
-  property?: Property | null;
+  property?: PropertyWithAllRelations | null;
 };
 
 export function PropertyForm({ property }: PropertyFormProps) {
   const [isLoading, setIsLoading] = useState(false);
-  const place = usePlaceDetails(property?.addressRaw);
+  const [locationUpdated, setLocationUpdated] = useState(false);
+  const place = usePlaceDetails(property?.addressRaw || property?.address);
   const [hosts, setHosts] = useState<Host[]>([]);
 
   const router = useRouter();
@@ -62,8 +62,8 @@ export function PropertyForm({ property }: PropertyFormProps) {
       phone: property?.phone || "",
       descShort: property?.descShort || "",
       descList: property?.descList || "",
-      lat: property?.lat || undefined,
-      lng: property?.lng || undefined,
+      lat: property?.lat || 999,
+      lng: property?.lng || 999,
       coordType: property?.coordType || "",
       city: property?.city || "",
       country: property?.country || "",
@@ -137,11 +137,10 @@ export function PropertyForm({ property }: PropertyFormProps) {
   useEffect(() => {
     async function fetchData() {
       try {
-        const [fetchedHosts, fetchedProperties] = await Promise.all([
-          getHosts(),
-          getProperties(),
-        ]);
-        setHosts(fetchedHosts);
+        const fetchedHosts = await getAdminPaginatedHosts();
+        if (fetchedHosts.ok && fetchedHosts.data) {
+          setHosts(fetchedHosts.data.items);
+        }
       } catch (error) {
         console.error("Error fetching data:", error);
         toast({
@@ -175,35 +174,74 @@ export function PropertyForm({ property }: PropertyFormProps) {
   ]);
 
   useEffect(() => {
-    if (!property?.addressRaw) return;
-    let changed = false;
+    if (locationUpdated) return;
+    if (!property?.addressRaw && !property?.address) return;
+    if (place.isLoading) return;
+
+    let hasUpdates = false;
+    //@ts-ignore
+    const updates: Record<keyof PropertyFormData, any> = {};
+
+    // Only update empty fields
     if (!property?.city && place.city) {
-      form.setValue("city", place.city);
-      handleFieldBlur("city");
-      changed = true;
+      updates.city = place.city;
+      hasUpdates = true;
     }
+
     if (!property?.country && place.countryCode) {
-      form.setValue("country", place.countryCode);
-      handleFieldBlur("country");
-      changed = true;
+      updates.country = place.countryCode;
+      hasUpdates = true;
     }
-    if (!property?.city && place.city) {
-      form.setValue("city", place.city);
-      handleFieldBlur("city");
-      changed = true;
+
+    // Bundle coordinate updates together
+    if (!property?.lat && !property?.lng && place.lat && place.lng) {
+      updates.lat = place.lat;
+      updates.lng = place.lng;
+      updates.coordType = "exact"; // Set coordinate type when updating from Places API
+      hasUpdates = true;
     }
-    if (!property?.lat && place.lat && place.lng) {
-      form.setValue("lat", place.lat);
-      form.setValue("lng", place.lng);
-      handleFieldBlur("lat");
-      handleFieldBlur("lng");
-      changed = true;
+
+    // Only update address if it's empty and we have a formatted one
+    if (!property?.address && (place.streetAddress || place.formattedAddress)) {
+      updates.address = place.streetAddress || place.formattedAddress;
+      hasUpdates = true;
     }
-    if (changed && place.streetAddress) {
-      form.setValue("address", place.streetAddress);
-      handleFieldBlur("address");
+
+    // Apply updates if we have any
+    if (hasUpdates) {
+      // Update all fields at once
+      Object.entries(updates).forEach(([key, value]) => {
+        form.setValue(key as keyof PropertyFormData, value);
+        if (property?.id) {
+          handleFieldBlur(key as keyof PropertyFormData);
+        }
+      });
+
+      setLocationUpdated(true);
+
+      toast({
+        title: "Location Updated",
+        description:
+          "Property location details have been populated from address.",
+      });
     }
-  }, [place, property]);
+  }, [
+    place.isLoading,
+    place.city,
+    place.countryCode,
+    place.lat,
+    place.lng,
+    place.streetAddress,
+    place.formattedAddress,
+    property?.id,
+    property?.address,
+    property?.addressRaw,
+    property?.city,
+    property?.country,
+    property?.lat,
+    property?.lng,
+    locationUpdated,
+  ]);
 
   useEffect(() => {
     if (!property) return;
@@ -323,6 +361,7 @@ export function PropertyForm({ property }: PropertyFormProps) {
                   </div>
                 </div>
                 <Select
+                  {...field}
                   defaultValue={field.value || ""}
                   onValueChange={(value) => {
                     field.onChange(value);
@@ -379,7 +418,7 @@ export function PropertyForm({ property }: PropertyFormProps) {
               <FormLabel className={getFieldStyles("type")}>
                 Property Type
               </FormLabel>
-              <Select onValueChange={field.onChange} defaultValue={field.value}>
+              <Select {...field}>
                 <FormControl>
                   <SelectTrigger className={getFieldStyles("type")}>
                     <SelectValue placeholder="Select property type" />
@@ -408,7 +447,11 @@ export function PropertyForm({ property }: PropertyFormProps) {
           render={({ field }) => (
             <FormItem>
               <FormLabel className={getFieldStyles("hostId")}>Host</FormLabel>
-              <Select onValueChange={field.onChange} defaultValue={field.value}>
+              <Select
+                {...field}
+                onValueChange={field.onChange}
+                defaultValue={field.value}
+              >
                 <FormControl>
                   <SelectTrigger className={getFieldStyles("hostId")}>
                     <SelectValue placeholder="Select a host" />
@@ -454,9 +497,9 @@ export function PropertyForm({ property }: PropertyFormProps) {
               <FormLabel className={getFieldStyles("phone")}>Phone</FormLabel>
               <FormControl>
                 <Input
+                  {...field}
                   className={getFieldStyles("phone")}
                   placeholder="Customer service phone number"
-                  {...field}
                   onBlur={() => handleFieldBlur("phone")}
                 />
               </FormControl>
@@ -476,9 +519,9 @@ export function PropertyForm({ property }: PropertyFormProps) {
                 </FormLabel>
                 <FormControl>
                   <Input
+                    {...field}
                     className={getFieldStyles("address")}
                     placeholder=""
-                    {...field}
                   />
                 </FormControl>
                 <FormMessage />
@@ -528,6 +571,7 @@ export function PropertyForm({ property }: PropertyFormProps) {
                         type="number"
                         step="any"
                         {...field}
+                        value={field.value === 999 ? "" : field.value}
                         onChange={(e) =>
                           field.onChange(parseFloat(e.target.value))
                         }
@@ -549,6 +593,7 @@ export function PropertyForm({ property }: PropertyFormProps) {
                         type="number"
                         step="any"
                         {...field}
+                        value={field.value === 999 ? "" : field.value}
                         onChange={(e) =>
                           field.onChange(parseFloat(e.target.value))
                         }
@@ -569,6 +614,7 @@ export function PropertyForm({ property }: PropertyFormProps) {
                   <Select
                     onValueChange={field.onChange}
                     defaultValue={field.value}
+                    {...field}
                   >
                     <FormControl>
                       <SelectTrigger>

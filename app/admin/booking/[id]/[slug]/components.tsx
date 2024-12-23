@@ -1,9 +1,9 @@
-import { BookingWithDetails } from "@/actions/booking-actions";
+import { BookingWithBasicRelations } from "@/actions/booking-actions";
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 interface DetailProps {
-  booking: BookingWithDetails;
+  booking: BookingWithBasicRelations;
 }
 
 export function BookingDetails({ booking }: DetailProps) {
@@ -45,7 +45,7 @@ export function BookingDetails({ booking }: DetailProps) {
 }
 
 export function InstanceDetails({ booking }: DetailProps) {
-  const instance = booking.retreatInstance || booking.programInstance;
+  // const instance = booking.retreatInstance || booking.programInstance;
   const type = booking.retreatInstance ? "Retreat" : "Program";
   const name =
     booking.retreatInstance?.retreat.name ||
@@ -61,7 +61,6 @@ export function InstanceDetails({ booking }: DetailProps) {
           <p className="text-sm font-medium">Name</p>
           <p>{name}</p>
         </div>
-        {/* Add more instance details as needed */}
       </CardContent>
     </Card>
   );

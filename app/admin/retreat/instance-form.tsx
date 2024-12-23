@@ -2,7 +2,7 @@
 import React from "react";
 import { useEffect, useState } from "react";
 import { useParams, useRouter, useSearchParams } from "next/navigation";
-import { BaseRetreat, getRetreats } from "@/actions/retreat-actions";
+import { RetreatWithBasicRelations, getAdminPaginatedRetreats } from "@/actions/retreat-actions";
 import {
   createInstance,
   getInstance,
@@ -53,7 +53,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { toast } from "@/components/ui/use-toast";
 
 export function RetreatInstanceForm() {
-  const [retreats, setRetreats] = useState<BaseRetreat[]>([]);
+  const [retreats, setRetreats] = useState<RetreatWithBasicRelations[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [currentInstance, setCurrentInstance] =
     useState<RetreatInstance | null>(null);
@@ -101,7 +101,7 @@ export function RetreatInstanceForm() {
         console.log("INSTANCE FORM ", editId);
         const response = await getInstance(editId);
         console.log("INSTANCE FORM ", response);
-        if (response.success && response.data) {
+        if (response.ok && response.data) {
           const instance = response.data;
           setCurrentInstance(instance);
           form.reset({
@@ -136,13 +136,13 @@ export function RetreatInstanceForm() {
   useEffect(() => {
     async function fetchRetreats() {
       try {
-        const response = await getRetreats();
-        if (response.success && response.data) {
-          setRetreats(response.data);
+        const response = await getAdminPaginatedRetreats();
+        if (response.ok && response.data) {
+          setRetreats(response.data.items);
         } else {
           toast({
             title: "Error",
-            description: response.error || "Failed to load retreats",
+            description: response.message || "Failed to load retreats",
             variant: "destructive",
           });
         }
@@ -167,13 +167,13 @@ export function RetreatInstanceForm() {
           [fieldName]: fieldValue,
         });
 
-        if (response.success) {
+        if (response.ok) {
           toast({
             title: "Updated",
             description: `${fieldName} has been updated.`,
           });
         } else {
-          throw new Error(response.error);
+          throw new Error(response.message);
         }
       } catch (error) {
         console.error(`Error updating ${fieldName}:`, error);
@@ -200,18 +200,18 @@ export function RetreatInstanceForm() {
           currentInstance?.id,
           formattedValues
         );
-        if (response.success) {
+        if (response.ok) {
           toast({
             title: "Success",
             description: "Retreat instance updated successfully.",
           });
           router.push(`/admin/retreat/${retreatId}/instances`);
         } else {
-          throw new Error(response.error);
+          throw new Error(response.message);
         }
       } else {
         const response = await createInstance(formattedValues);
-        if (response.success) {
+        if (response.ok) {
           toast({
             title: "Success",
             description: "Retreat instance created successfully.",
@@ -219,7 +219,7 @@ export function RetreatInstanceForm() {
           form.reset();
           router.push(`/admin/retreat/${retreatId}/instances`);
         } else {
-          throw new Error(response.error);
+          throw new Error(response.message);
         }
       }
     } catch (error) {

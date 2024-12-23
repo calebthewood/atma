@@ -101,7 +101,9 @@ export function AmenityList() {
     try {
       setIsLoading(true);
       const fetchedAmenities = await getAmenitiesByType(type);
-      setAmenities(fetchedAmenities);
+      if (fetchedAmenities.data) {
+        setAmenities(fetchedAmenities.data);
+      }
       setError(null);
     } catch (error) {
       console.error("Error fetching amenities:", error);

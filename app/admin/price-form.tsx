@@ -60,11 +60,6 @@ type EntityType =
   | "retreatInstance"
   | "property";
 
-interface PriceModFormProps {
-  entityType: EntityType;
-  entityId: string;
-}
-
 export function PriceModForm() {
   const [isLoading, setIsLoading] = useState(false);
   const [noDateRange, setNoDateRange] = useState(true);
@@ -157,7 +152,7 @@ export function PriceModForm() {
         result = await createPriceMod(payload);
       }
 
-      if (!result.success) {
+      if (!result.ok) {
         throw new Error(result.error || "Failed to save price modification");
       }
 
@@ -193,7 +188,7 @@ export function PriceModForm() {
         setIsLoading(true);
         const response = await getPriceMod(priceModId);
 
-        if (response.success && response.data) {
+        if (response.ok && response.data) {
           const priceMod = response.data;
 
           setNoDateRange(!priceMod.dateStart && !priceMod.dateEnd);

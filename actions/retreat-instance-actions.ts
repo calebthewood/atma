@@ -2,12 +2,13 @@
 
 import { revalidatePath } from "next/cache";
 import {
-  InstanceFormData,
   instanceFormSchema,
 } from "@/schemas/retreat-instance";
 import { PriceMod, type Retreat, type RetreatInstance } from "@prisma/client";
 
 import { prisma } from "@/lib/prisma";
+
+import { ActionResponse } from "./shared";
 
 // ============================================================================
 // Types
@@ -64,20 +65,15 @@ export type PaginatedInstancesResponse = {
   totalInstances: number;
 };
 
-export type ActionResponse<T = void> = Promise<{
-  success: boolean;
-  data?: T;
-  error?: string;
-}>;
-
 // ============================================================================
 // Core CRUD Operations
 // ============================================================================
 export async function getInstance(id: string): ActionResponse<RetreatInstance> {
   if (!id) {
     return {
-      success: false,
-      error: "Instance ID is required",
+      ok: false,
+      data: null,
+      message: "Instance ID is required",
     };
   }
 
@@ -88,20 +84,23 @@ export async function getInstance(id: string): ActionResponse<RetreatInstance> {
 
     if (!instance) {
       return {
-        success: false,
-        error: "Instance not found",
+        ok: false,
+        data: null,
+        message: "Instance not found",
       };
     }
 
     return {
-      success: true,
+      ok: true,
+      message: "Success",
       data: instance,
     };
   } catch (error) {
     console.error("Error fetching instance:", error);
     return {
-      success: false,
-      error: "Failed to fetch instance",
+      ok: false,
+      data: null,
+      message: "Failed to fetch instance",
     };
   }
 }
@@ -112,8 +111,9 @@ export async function updateInstance(
 ): ActionResponse<RetreatInstance> {
   if (!id) {
     return {
-      success: false,
-      error: "Instance ID is required",
+      ok: false,
+      data: null,
+      message: "Instance ID is required",
     };
   }
 
@@ -126,14 +126,16 @@ export async function updateInstance(
     });
 
     return {
-      success: true,
+      ok: true,
+      message: "Success",
       data: instance,
     };
   } catch (error) {
     console.error("Error updating instance:", error);
     return {
-      success: false,
-      error: "Failed to update instance",
+      ok: false,
+      data: null,
+      message: "Failed to update instance",
     };
   }
 }
@@ -149,14 +151,16 @@ export async function createInstance(
     });
 
     return {
-      success: true,
+      ok: true,
+      message: "Success",
       data: instance,
     };
   } catch (error) {
     console.error("Error creating instance:", error);
     return {
-      success: false,
-      error: "Failed to create instance",
+      ok: false,
+      data: null,
+      message: "Failed to create instance",
     };
   }
 }
@@ -165,10 +169,10 @@ export async function deleteInstance(id: string): ActionResponse {
   try {
     await prisma.retreatInstance.delete({ where: { id } });
     revalidatePath("/admin/retreats");
-    return { success: true };
+    return { ok: true, data: null, message: "Success" };
   } catch (error) {
     console.error("Error deleting instance:", error);
-    return { success: false, error: "Failed to delete instance" };
+    return { ok: false, data: null, message: "Failed to delete instance" };
   }
 }
 
@@ -192,10 +196,10 @@ export async function getInstances(
       },
       orderBy: { startDate: "asc" },
     });
-    return { success: true, data: instances };
+    return { ok: true, message: "Success", data: instances };
   } catch (error) {
     console.error("Error finding instances:", error);
-    return { success: false, error: "Failed to find instances" };
+    return { ok: false, data: null, message: "Failed to find instances" };
   }
 }
 
@@ -249,7 +253,8 @@ export async function getPaginatedInstances(
     ]);
 
     return {
-      success: true,
+      ok: true,
+      message: "Success",
       data: {
         instances: instances as InstanceWithRelations[],
         totalPages: Math.ceil(totalCount / pageSize),
@@ -259,6 +264,6 @@ export async function getPaginatedInstances(
     };
   } catch (error) {
     console.error("Error fetching paginated instances:", error);
-    return { success: false, error: "Failed to fetch instances" };
+    return { ok: false, data: null, message: "Failed to fetch instances" };
   }
 }

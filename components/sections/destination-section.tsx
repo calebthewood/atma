@@ -18,25 +18,25 @@ const CONTINENTS = [
     id: "asia",
     name: "Asia",
     icon: AsiaIcon,
-    href: "/destinations/asia",
+    href: "/destinations?continent=asia",
   },
   {
     id: "europe",
     name: "Europe",
     icon: EuropeIcon,
-    href: "/destinations/europe",
+    href: "/destinations?continent=europe",
   },
   {
     id: "north-america",
     name: "North America",
     icon: NorthAmericaIcon,
-    href: "/destinations/north-america",
+    href: "/destinations?continent=north-america",
   },
   {
     id: "south-america",
     name: "South America",
     icon: SouthAmericaIcon,
-    href: "/destinations/south-america",
+    href: "/destinations?continent=south-america",
   },
 ];
 

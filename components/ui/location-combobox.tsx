@@ -30,7 +30,7 @@ import {
 interface SelectedPlace {
   name: string;
   lat: number;
-  lon: number;
+  lng: number;
   continent?: string;
 }
 
@@ -40,28 +40,28 @@ const DEFAULT_CONTINENTS = [
     name: "Asia",
     icon: AsiaIcon,
     lat: 34.047863,
-    lon: 100.619655,
+    lng: 100.619655,
   },
   {
     id: "europe",
     name: "Europe",
     icon: EuropeIcon,
     lat: 54.525961,
-    lon: 15.255119,
+    lng: 15.255119,
   },
   {
     id: "north-america",
     name: "North America",
     icon: NorthAmericaIcon,
     lat: 54.526,
-    lon: -105.255119,
+    lng: -105.255119,
   },
   {
     id: "south-america",
     name: "South America",
     icon: SouthAmericaIcon,
     lat: -8.783195,
-    lon: -55.491477,
+    lng: -55.491477,
   },
 ];
 
@@ -103,14 +103,14 @@ export function LocationCombobox() {
     setValue({
       name: continent.name,
       lat: continent.lat,
-      lon: continent.lon,
+      lng: continent.lng,
       continent: continent?.id,
     });
     setOpen(false);
     updateSearchParams({
       name: continent.name,
       lat: continent.lat,
-      lon: continent.lon,
+      lng: continent.lng,
       continent: continent?.id,
     });
   };
@@ -121,7 +121,7 @@ export function LocationCombobox() {
     // Clear all location-related params first
     current.delete("place");
     current.delete("lat");
-    current.delete("lon");
+    current.delete("lng");
     current.delete("continent");
 
     if (place.continent) {
@@ -131,7 +131,7 @@ export function LocationCombobox() {
       // If it's a place selection
       current.set("place", encodeURIComponent(place.name));
       current.set("lat", place.lat.toString());
-      current.set("lon", place.lon.toString());
+      current.set("lng", place.lng.toString());
     }
 
     const search = current.toString();

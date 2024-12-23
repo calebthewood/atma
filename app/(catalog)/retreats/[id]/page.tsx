@@ -1,7 +1,7 @@
 import { notFound } from "next/navigation";
 import {
-  getPropertyAmenitiesByCategory,
-  getPropertyById,
+  getProperty,
+  getPropertyAmenities,
   getPropertyEntityIds,
 } from "@/actions/property-actions";
 import { getRetreat } from "@/actions/retreat-actions";
@@ -18,40 +18,42 @@ import { QuickLink } from "@/components/shared";
 import { TitleImageBanner } from "@/components/title-img-banner";
 import PropertyLazyCarousel from "@/components/upcoming-carousel";
 
-export default async function RetreatPage({
-  params,
-}: {
-  params: Promise<{ id: string }>;
-}) {
-  const parameters = await params;
+export default async function Page(props: { params: Promise<{ id: string }> }) {
+  const { id } = await props.params;
 
   try {
     const [retreatResponse, session] = await Promise.all([
-      getRetreat(parameters?.id),
+      getRetreat(id),
       auth(),
     ]);
 
-    if (!retreatResponse.success || !retreatResponse.data) {
-      console.error("Failed to fetch retreat:", retreatResponse.error);
-      notFound();
+    if (!retreatResponse.data) {
+      throw new Error(retreatResponse.message);
+    }
+    const retreat = retreatResponse.data;
+
+    const propertyRes = await getProperty(id);
+    if (!propertyRes.data) {
+      throw new Error(propertyRes.message);
     }
 
-    const retreat = retreatResponse.data;
-    const property = await getPropertyById(retreat.propertyId);
-    const images = retreat.property.images;
-    const parkingAmenities = await getPropertyAmenitiesByCategory(
-      retreat.propertyId,
-      "parking-transportation"
+    const property = propertyRes.data;
+    const propertyImages = property?.images || [];
+    const retreatImages =
+      retreat.images.length > 0 ? retreat.images : propertyImages;
+    console.log(property);
+    const amenities = await getPropertyAmenities(id);
+    const parkingAmenities = amenities.data?.filter(
+      (a) => a.amenityId === "parking-transportation"
     );
-
-    const retreatIds = await getPropertyEntityIds(
+    const programIdRes = await getPropertyEntityIds(
       retreat.propertyId,
-      "retreat"
+      "program"
     );
-
-    // Handle images from both retreat and property
-    const coverImage = images[0]?.filePath || "/img/iStock-1550112895.jpg";
-    const imageSlides = images.map((img) => img.filePath);
+    const retreatIds = programIdRes.data || [];
+    const coverImage =
+      retreatImages[0]?.filePath || "/img/iStock-1550112895.jpg";
+    const imageSlides = propertyImages.map((img) => img.filePath);
 
     return (
       <div className="flex h-auto min-h-screen flex-col gap-16">
@@ -93,7 +95,7 @@ export default async function RetreatPage({
                 </h2>
                 <PropertyPolicies
                   property={property}
-                  amenities={parkingAmenities}
+                  amenities={parkingAmenities || []}
                   className="lg:grid-cols-2"
                 />
               </section>

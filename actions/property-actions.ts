@@ -5,107 +5,137 @@ import { auth } from "@/auth";
 import { PropertyFormData } from "@/schemas/property-schema";
 import { Prisma, Property } from "@prisma/client";
 
-import { prisma } from "@/lib/prisma";
+import prisma from "@/lib/prisma";
 
-import { ActionResponse } from "./program-actions";
+import {
+  ActionResponse,
+  getPaginationParams,
+  PaginatedResponse,
+} from "./shared";
 
-export async function getProperty(id: string) {
-  try {
-    const property = await prisma.property.findUnique({
-      where: { id },
-    });
-    return property;
-  } catch (error) {
-    console.error("Failed to get property:", error);
-    throw new Error("Failed to get property");
-  }
-}
+/** ToC
+ * Core CRUD Operations:
+ *   - createProperty(data: PropertyFormData): Promise<ActionResponse<Property>>
+ *   - getProperty(id: string): Promise<ActionResponse<PropertyWithAllRelations>>
+ *   - updateProperty(id: string, data: Partial<PropertyFormData>): Promise<ActionResponse<Property>>
+ *   - deleteProperty(id: string): Promise<ActionResponse>
+ *
+ * Admin List Operations:
+ *   - getAdminPaginatedProperties(page?: number, pageSize?: number, searchTerm?: string): Promise<ActionResponse<PaginatedResponse<PropertyWithBasicRelations>>>
+ *
+ * Public List Operations:
+ *   - getPublicProperties(): Promise<ActionResponse<PropertyWithAllRelations[]>>
+ *   - getPropertyAmenities(propertyId: string): Promise<ActionResponse<PropertyAmenityWithDetails[]>>
+ *
+ * Related Entity Operations:
+ *   - getPropertyEntityIds(propertyId: string, entityType: "retreat" | "program"): Promise<ActionResponse<string[]>>
+ */
 
-export type PropertyWithRelations = Prisma.PropertyGetPayload<{
-  include: {
-    images: true;
-    retreats: true;
-    programs: true;
-    amenities: true;
-    priceMods: true;
-  };
+// ============================================================================
+// Shared Query Configurations
+// ============================================================================
+
+const COMMON_ADMIN_LIST_INCLUDE = {
+  host: {
+    select: {
+      id: true,
+      name: true,
+    },
+  },
+  images: {
+    take: 1,
+    orderBy: {
+      order: "asc",
+    },
+    select: {
+      id: true,
+      filePath: true,
+    },
+  },
+} as const;
+
+// Then define the property-specific include
+const PROPERTY_INCLUDE_ADMIN_LIST = {
+  ...COMMON_ADMIN_LIST_INCLUDE,
+  rooms: {
+    select: {
+      id: true,
+      type: true,
+      roomCount: true,
+    },
+  },
+} satisfies Prisma.PropertyInclude;
+
+const PROPERTY_INCLUDE_FULL = {
+  host: true,
+  amenities: {
+    include: {
+      amenity: true,
+    },
+  },
+  images: {
+    orderBy: {
+      order: "asc",
+    },
+  },
+  rooms: true,
+  retreats: {
+    where: {
+      status: "published",
+    },
+    take: 10,
+    orderBy: {
+      date: "asc",
+    },
+  },
+  programs: {
+    where: {
+      status: "published",
+    },
+    take: 10,
+    orderBy: {
+      date: "asc",
+    },
+  },
+  priceMods: true,
+} satisfies Prisma.PropertyInclude;
+
+// ============================================================================
+// Types
+// ============================================================================
+
+export type PropertyWithAllRelations = Prisma.PropertyGetPayload<{
+  include: typeof PROPERTY_INCLUDE_FULL;
 }>;
 
-export type GetPropertyResponse =
-  | {
-      success: true;
-      property: PropertyWithRelations;
-    }
-  | {
-      success: false;
-      error: string;
-    };
+export type PropertyWithBasicRelations = Prisma.PropertyGetPayload<{
+  include: typeof PROPERTY_INCLUDE_ADMIN_LIST;
+}>;
 
-export type GetPaginatedPropertiesResponse =
-  | {
-      success: true;
-      properties: PropertyWithRelations[];
-      totalPages: number;
-      currentPage: number;
-      totalProperties: number;
-    }
-  | {
-      success: false;
-      error: string;
-    };
+export type PropertyAmenityWithDetails = Prisma.PropertyAmenityGetPayload<{
+  include: { amenity: true };
+}>;
 
-// Type for property search/filter parameters
-export type PropertyFilterParams = {
-  search?: string;
-  hostId?: string;
-  verified?: boolean;
-  type?: string;
-  country?: string;
-  minRating?: number;
-  amenities?: string[];
-};
+// Helper to build property-specific search conditions
+function buildPropertySearchConditions(
+  searchTerm: string
+): Prisma.PropertyWhereInput {
+  if (!searchTerm) return {};
 
-// Main actions
-export async function getPropertyWithId(
-  id: string
-): Promise<GetPropertyResponse> {
-  try {
-    const property = await prisma.property.findUnique({
-      where: { id, status: "published" },
-      include: {
-        host: true,
-        amenities: true,
-        images: {
-          orderBy: {
-            order: "asc",
-          },
-        },
-        rooms: true,
-        retreats: true,
-        programs: true,
-        priceMods: true,
-      },
-    });
-
-    if (!property) {
-      return {
-        success: false,
-        error: "Property not found",
-      };
-    }
-
-    return {
-      success: true,
-      property,
-    };
-  } catch (error) {
-    console.error("Error fetching property:", error);
-    return {
-      success: false,
-      error: "Failed to fetch property",
-    };
-  }
+  return {
+    OR: [
+      { name: { contains: searchTerm } },
+      { city: { contains: searchTerm } },
+      { country: { contains: searchTerm } },
+      { type: { contains: searchTerm } },
+    ],
+  };
 }
+
+// ============================================================================
+// Core CRUD Operations
+// ============================================================================
+
 export async function createProperty(
   data: PropertyFormData
 ): ActionResponse<Property> {
@@ -117,7 +147,7 @@ export async function createProperty(
       lat: restData.lat ? parseFloat(restData.lat.toString()) : null,
       lng: restData.lng ? parseFloat(restData.lng.toString()) : null,
       host: {
-        connect: { id: hostId || "" }, // Since host is required, we'll let Prisma throw if hostId is invalid
+        connect: { id: hostId || "" },
       },
     };
 
@@ -126,15 +156,48 @@ export async function createProperty(
     });
 
     revalidatePath("/admin/property");
-    return { success: true, data: property };
+    return {
+      ok: true,
+      data: property,
+      message: "Successfully created property",
+    };
   } catch (error) {
     console.error("Failed to create property:", error);
     return {
-      success: false,
-      error:
-        error instanceof Error
-          ? error.message
-          : "Failed to create property. Host is required.",
+      ok: false,
+      data: null,
+      message: "Failed to create property. Host is required.",
+    };
+  }
+}
+
+export async function getProperty(
+  id: string
+): ActionResponse<PropertyWithAllRelations> {
+  try {
+    const property = await prisma.property.findUnique({
+      where: { id },
+      include: PROPERTY_INCLUDE_FULL,
+    });
+
+    if (!property) {
+      return {
+        ok: false,
+        data: null,
+        message: "Property not found",
+      };
+    }
+
+    return {
+      ok: true,
+      data: property,
+      message: "Successfully fetched property",
+    };
+  } catch (error) {
+    return {
+      ok: false,
+      data: null,
+      message: "Error fetching property",
     };
   }
 }
@@ -160,9 +223,7 @@ export async function updateProperty(
         : {}),
       ...(hostId !== undefined
         ? {
-            host: {
-              connect: { id: hostId }, // Since host is required, we'll let Prisma throw if hostId is invalid
-            },
+            host: { connect: { id: hostId } },
           }
         : {}),
     };
@@ -174,421 +235,200 @@ export async function updateProperty(
 
     revalidatePath("/admin/property");
     revalidatePath(`/admin/property/${id}`);
-    return { success: true, data: property };
+    return {
+      ok: true,
+      data: property,
+      message: "Successfully updated property",
+    };
   } catch (error) {
     console.error("Failed to update property:", error);
     return {
-      success: false,
-      error:
-        error instanceof Error ? error.message : "Failed to update property",
-    };
-  }
-}
-export type PropertiesWithImages = Prisma.PropertyGetPayload<{
-  include: {
-    host: {
-      select: {
-        name: true;
-        id: true;
-      };
-    };
-    images: true;
-  };
-}>;
-
-export async function getProperties(): Promise<PropertiesWithImages[]> {
-  const properties = await prisma.property.findMany({
-    where: { status: "published" },
-    include: {
-      host: {
-        select: {
-          name: true,
-          id: true,
-        },
-      },
-      images: {
-        orderBy: {
-          order: "asc",
-        },
-      },
-    },
-  });
-  return properties;
-}
-
-export type PropertyWithHostAndImages = Prisma.PropertyGetPayload<{
-  include: {
-    host: {
-      select: {
-        name: true;
-        id: true;
-      };
-    };
-    images: true;
-  };
-}>;
-
-export async function getAdminProperties(): Promise<{
-  success: boolean;
-  data?: PropertyWithHostAndImages[];
-  error?: string;
-}> {
-  try {
-    const session = await auth();
-    if (!session?.user?.id) {
-      return { success: false, error: "Unauthorized" };
-    }
-
-    // If user is admin, return all properties
-    if (session.user.role === "admin") {
-      const properties = await prisma.property.findMany({
-        where: { status: "published" },
-        include: {
-          host: {
-            select: {
-              name: true,
-              id: true,
-            },
-          },
-          images: {
-            orderBy: {
-              order: "asc",
-            },
-          },
-        },
-      });
-      return { success: true, data: properties };
-    }
-
-    // For host users, return only their properties using hostId from session
-    const properties = await prisma.property.findMany({
-      where: {
-        status: "published",
-        hostId: session.user.hostId,
-      },
-      include: {
-        host: {
-          select: {
-            name: true,
-            id: true,
-          },
-        },
-        images: {
-          orderBy: {
-            order: "asc",
-          },
-        },
-      },
-    });
-
-    return { success: true, data: properties };
-  } catch (error) {
-    console.error("Error fetching properties:", error);
-    return {
-      success: false,
-      error:
-        error instanceof Error ? error.message : "Failed to fetch properties",
+      ok: false,
+      data: null,
+      message: "Failed to update property",
     };
   }
 }
 
-export async function getPropertyIds() {
-  const properties = await prisma.property.findMany({
-    where: {
-      status: "published",
-    },
-    select: {
-      id: true,
-    },
-  });
-  return properties;
-}
-
-export async function getPaginatedProperties(
-  page: number = 1,
-  pageSize: number = 10
-) {
+export async function deleteProperty(id: string): ActionResponse {
   try {
-    const [properties, totalCount] = await Promise.all([
-      prisma.property.findMany({
-        skip: (page - 1) * pageSize,
-        take: pageSize,
-        orderBy: {
-          createdAt: "desc",
-        },
-      }),
-      prisma.property.count(),
-    ]);
-
+    await prisma.property.delete({ where: { id } });
+    revalidatePath("/admin/property");
+    revalidatePath(`/admin/property/${id}`);
     return {
-      properties,
-      totalPages: Math.ceil(totalCount / pageSize),
-      currentPage: page,
+      ok: true,
+      data: null,
+      message: "Successfully deleted property",
     };
   } catch (error) {
-    console.error("Failed to fetch properties:", error);
-    throw new Error("Failed to fetch properties");
+    return {
+      ok: false,
+      data: null,
+      message: "Error deleting property",
+    };
   }
 }
-
-export async function getPropertyById(
-  propertyId: string
-): Promise<PropertyWithRelations | null> {
-  const property = await prisma.property.findUnique({
-    where: {
-      id: propertyId,
-    },
-    include: {
-      images: {
-        orderBy: {
-          order: "asc",
-        },
-      },
-      retreats: true,
-      programs: true,
-      amenities: true,
-      priceMods: true,
-    },
-  });
-
-  return property;
-}
-
-export async function deleteProperty(id: string) {
-  const property = await prisma.property.delete({
-    where: { id },
-  });
-
-  revalidatePath("/admin/property");
-  revalidatePath(`/admin/property/${id}`);
-  return property;
-}
-
-export type PropertyAmenityWithDetails = {
-  propertyId: string;
-  amenityId: string;
-  createdAt: Date;
-  updatedAt: Date;
-  amenity: {
-    id: string;
-    type: string;
-    categoryValue: string | null;
-    categoryName: string | null;
-    name: string;
-    value: string;
-    custom: boolean;
-  };
-};
+// ============================================================================
+// Admin List Operations
+// ============================================================================
 
 export async function getAdminPaginatedProperties(
   page: number = 1,
   pageSize: number = 10,
   searchTerm: string = ""
-): Promise<{
-  success: boolean;
-  data?: {
-    properties: Property[];
-    totalPages: number;
-    currentPage: number;
-  };
-  error?: string;
-}> {
+): Promise<ActionResponse<PaginatedResponse<PropertyWithBasicRelations>>> {
   try {
     const session = await auth();
-    if (!session?.user?.id) {
-      return { success: false, error: "Unauthorized" };
+
+    if (!session?.user) {
+      return {
+        ok: false,
+        data: null,
+        message: "Authentication required",
+      };
     }
 
-    const skip = (page - 1) * pageSize;
+    const { skip, take } = getPaginationParams({ page, pageSize });
+    const searchConditions = buildPropertySearchConditions(searchTerm);
 
-    // Base search conditions
-    const searchConditions = searchTerm
-      ? {
-          OR: [
-            { name: { contains: searchTerm } },
-            { city: { contains: searchTerm } },
-            { country: { contains: searchTerm } },
-          ],
-        }
-      : {};
-
-    // Build where clause based on role
     const whereClause = {
       ...searchConditions,
-      ...(session.user.role !== "admin" ? { hostId: session.user.hostId } : {}),
+      ...(session.user.role !== "admin" && session.user.hostId
+        ? { hostId: session.user.hostId }
+        : {}),
     };
 
-    // Execute queries in parallel for efficiency
     const [properties, totalCount] = await Promise.all([
       prisma.property.findMany({
         where: whereClause,
         skip,
-        take: pageSize,
-        orderBy: {
-          updatedAt: "desc",
-        },
-        include: {
-          host: {
-            select: {
-              name: true,
-              id: true,
-            },
-          },
-          images: {
-            take: 1,
-            orderBy: {
-              order: "asc",
-            },
-          },
-        },
+        take,
+        orderBy: { updatedAt: "desc" },
+        include: PROPERTY_INCLUDE_ADMIN_LIST,
       }),
-      prisma.property.count({
-        where: whereClause,
-      }),
+      prisma.property.count({ where: whereClause }),
     ]);
 
     return {
-      success: true,
+      ok: true,
       data: {
-        properties,
+        items: properties,
         totalPages: Math.ceil(totalCount / pageSize),
         currentPage: page,
       },
+      message: "Successfully fetched paginated properties",
     };
   } catch (error) {
-    console.error("Failed to fetch paginated properties:", error);
+    console.error("Error in getAdminPaginatedProperties:", error);
     return {
-      success: false,
-      error:
-        error instanceof Error ? error.message : "Failed to fetch properties",
+      ok: false,
+      data: null,
+      message:
+        error instanceof Error
+          ? error.message
+          : "Error fetching paginated properties",
+    };
+  }
+}
+
+// ============================================================================
+// Public List Operations
+// ============================================================================
+
+export async function getPublicProperties(): ActionResponse<
+  PropertyWithAllRelations[]
+> {
+  try {
+    const properties = await prisma.property.findMany({
+      where: { status: "published" },
+      include: PROPERTY_INCLUDE_FULL,
+    });
+
+    return {
+      ok: true,
+      data: properties,
+      message: "Successfully fetched public properties",
+    };
+  } catch (error) {
+    return {
+      ok: false,
+      data: null,
+      message: "Error fetching public properties",
     };
   }
 }
 
 export async function getPropertyAmenities(
   propertyId: string
-): Promise<PropertyAmenityWithDetails[]> {
+): ActionResponse<PropertyAmenityWithDetails[]> {
   try {
     const amenities = await prisma.propertyAmenity.findMany({
-      where: {
-        propertyId: propertyId,
-      },
-      include: {
-        amenity: true,
-      },
+      where: { propertyId },
+      include: { amenity: true },
       orderBy: [
-        {
-          amenity: {
-            type: "asc",
-          },
-        },
-        {
-          amenity: {
-            categoryValue: "asc",
-          },
-        },
-        {
-          amenity: {
-            name: "asc",
-          },
-        },
+        { amenity: { type: "asc" } },
+        { amenity: { categoryValue: "asc" } },
+        { amenity: { name: "asc" } },
       ],
     });
 
-    return amenities;
+    return {
+      ok: true,
+      data: amenities,
+      message: "Successfully fetched property amenities",
+    };
   } catch (error) {
-    console.error("Failed to fetch property amenities:", error);
-    throw new Error("Failed to fetch property amenities");
+    return {
+      ok: false,
+      data: null,
+      message: "Error fetching property amenities",
+    };
   }
 }
 
-// Optional: Helper function to get amenities by category
-export async function getPropertyAmenitiesByCategory(
-  propertyId: string,
-  category: string
-): Promise<PropertyAmenityWithDetails[]> {
-  try {
-    const amenities = await prisma.propertyAmenity.findMany({
-      where: {
-        propertyId: propertyId,
-        amenity: {
-          categoryValue: category,
-        },
-      },
-      include: {
-        amenity: true,
-      },
-      orderBy: {
-        amenity: {
-          name: "asc",
-        },
-      },
-    });
-
-    return amenities;
-  } catch (error) {
-    console.error(
-      `Failed to fetch property amenities for category ${category}:`,
-      error
-    );
-    throw new Error(
-      `Failed to fetch property amenities for category ${category}`
-    );
-  }
-}
-
-export type EntityWithDetails = {
-  id: string;
-  name: string | null;
-  images: { filePath: string }[];
-  city?: string | null;
-  country?: string | null;
-  date?: Date | null;
-  endDate?: Date | null;
-  priceMods: {
-    type: string;
-    value: number;
-  }[];
-};
+// ============================================================================
+// Related Entity Operations
+// ============================================================================
 
 export async function getPropertyEntityIds(
   propertyId: string,
   entityType: "retreat" | "program"
-) {
+): ActionResponse<string[]> {
   try {
-    if (entityType === "retreat") {
-      const retreats = await prisma.retreat.findMany({
-        where: {
-          propertyId,
-          status: "published",
-        },
-        take: 10,
-        orderBy: {
-          date: "asc",
-        },
-        select: {
-          id: true,
-        },
-      });
-      return retreats.map((r) => r?.id);
-    } else {
-      const programs = await prisma.program.findMany({
-        where: {
-          propertyId,
-          status: "published",
-        },
-        take: 10,
-        orderBy: {
-          date: "asc",
-        },
-        select: {
-          id: true,
-        },
-      });
-      return programs.map((p) => p?.id);
-    }
+    const query =
+      entityType === "retreat"
+        ? prisma.retreat.findMany({
+            where: {
+              propertyId,
+              status: "published",
+            },
+            take: 10,
+            orderBy: { date: "asc" },
+            select: { id: true },
+          })
+        : prisma.program.findMany({
+            where: {
+              propertyId,
+              status: "published",
+            },
+            take: 10,
+            orderBy: { date: "asc" },
+            select: { id: true },
+          });
+
+    const entities = await query;
+    const ids = entities.map((e) => e.id);
+
+    return {
+      ok: true,
+      data: ids,
+      message: `Successfully fetched property ${entityType} IDs`,
+    };
   } catch (error) {
-    console.error(`Failed to fetch ${entityType} IDs:`, error);
-    throw new Error(`Failed to fetch ${entityType} IDs`);
+    return {
+      ok: false,
+      data: null,
+      message: `Error fetching property ${entityType} IDs`,
+    };
   }
 }

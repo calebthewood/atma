@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 import {
   deleteInstance,
   getPaginatedInstances,
@@ -41,10 +41,11 @@ import {
 import { toast } from "@/components/ui/use-toast";
 
 import { AdminActionMenu } from "../components";
+import { PaginatedResponse } from "@/actions/shared";
 
 interface ProgramInstancesListProps {
   programId: string;
-  initialInstances?: PaginatedInstancesResponse;
+  initialInstances?: PaginatedResponse<InstanceWithRelations>;
 }
 
 export function ProgramInstancesList({
@@ -55,7 +56,7 @@ export function ProgramInstancesList({
   const updateSearchParams = useUpdateSearchParam();
 
   const [data, setData] = useState<InstanceWithRelations[]>(
-    initialInstances?.instances || []
+    initialInstances?.items || []
   );
   const [sorting, setSorting] = useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
@@ -178,7 +179,7 @@ export function ProgramInstancesList({
             try {
               const response = await deleteInstance(instance?.id);
 
-              if (response.success) {
+              if (response.ok) {
                 if (searchParams.get("edit") === instance?.id) {
                   updateSearchParams("edit", null);
                 }
@@ -189,7 +190,7 @@ export function ProgramInstancesList({
                   description: "Program instance deleted successfully",
                 });
               } else {
-                throw new Error(response.error || "Failed to delete");
+                throw new Error(response.message || "Failed to delete");
               }
             } catch (error) {
               console.error("Failed to delete program instance:", error);
@@ -243,13 +244,13 @@ export function ProgramInstancesList({
         programId
       );
 
-      if (result.success && result.data) {
-        setData(result.data.instances);
+      if (result.ok && result.data) {
+        setData(result.data.items);
         setTotalPages(result.data.totalPages);
       } else {
         toast({
           title: "Error",
-          description: result.error || "Failed to load program instances",
+          description: result.message || "Failed to load program instances",
           variant: "destructive",
         });
       }

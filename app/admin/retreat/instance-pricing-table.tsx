@@ -177,7 +177,7 @@ export function PriceModsTable() {
             try {
               const response = await deletePriceMod(priceMod?.id);
 
-              if (response.success) {
+              if (response.ok) {
                 // Clear price param if deleting the currently edited price mod
                 if (searchParams.get("price") === priceMod?.id) {
                   updateSearchParams({ price: null });
@@ -242,7 +242,7 @@ export function PriceModsTable() {
         ? await getPriceModsByRetreatInstance(instanceId)
         : await getPriceModsByProgramInstance(instanceId);
 
-      if (response.success && response.data) {
+      if (response.ok && response.data) {
         setData(response.data);
       } else {
         toast({

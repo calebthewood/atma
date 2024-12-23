@@ -3,7 +3,8 @@
 import { useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { ProgramWithAllRelations } from "@/actions/program-actions";
-import { type RetreatWithRelations } from "@/actions/retreat-actions";
+import { type RetreatWithBasicRelations } from "@/actions/retreat-actions";
+import { getUser } from "@/actions/user-actions";
 import {
   PriceMod,
   type ProgramInstance,
@@ -36,7 +37,7 @@ import { DatePickerFixedRange } from "../ui/date-pickers";
 const today = new Date();
 interface BookingProps {
   type: "program" | "retreat";
-  item: ProgramWithAllRelations | RetreatWithRelations;
+  item: ProgramWithAllRelations | RetreatWithBasicRelations;
   instances: RetreatInstance[] | ProgramInstance[];
   userId: string | undefined;
   priceMods: PriceMod[];
@@ -194,6 +195,7 @@ export function FixedBooking({
       <CardFooter className="justify-end">
         <CheckoutButton
           uiMode="embedded"
+          hostId={item.hostId}
           price={total}
           userId={userId}
           entity={type}

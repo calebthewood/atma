@@ -5,9 +5,37 @@ import { getCountryName } from "@/lib/utils";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { RetreatItem } from "@/components/retreat-item";
 
-const TabbedSearchResults = ({ results }: { results: CountryProperties[] }) => {
+/// app/(catalog)/search/tabbed-search-results.tsx
+type TabbedSearchResultsProps = {
+  results: CountryProperties[] | null;
+  error?: string | null;
+};
+
+const TabbedSearchResults = ({ results, error }: TabbedSearchResultsProps) => {
+  if (error) {
+    return <div className="p-4 text-red-500">Error: {error}</div>;
+  }
+
+  if (!results || !Array.isArray(results) || results.length === 0) {
+    return (
+      <div className="flex min-h-96 items-center justify-center text-muted-foreground">
+        No destinations found.
+      </div>
+    );
+  }
+
   // Create a "All" tab plus a tab for each country
-  const countries: string[] = [...new Set(results.map((r) => r.country))];
+  const countries = Array.from(
+    new Set(results.filter((r) => r?.country).map((r) => r.country))
+  );
+
+  if (countries.length === 0) {
+    return (
+      <div className="flex min-h-96 items-center justify-center text-muted-foreground">
+        No countries found.
+      </div>
+    );
+  }
 
   return (
     <Tabs defaultValue="all" className="w-full">
@@ -40,7 +68,9 @@ const TabbedSearchResults = ({ results }: { results: CountryProperties[] }) => {
               <h3 className="mb-4 text-xl font-semibold">
                 {getCountryName(countryGroup.country)}
                 <span className="ml-2 text-sm font-normal">
-                  {`${countryGroup.properties.length} destination${countryGroup.properties.length > 1 ? "s" : ""}`}
+                  {`${countryGroup.properties.length} destination${
+                    countryGroup.properties.length > 1 ? "s" : ""
+                  }`}
                 </span>
               </h3>
               <div className="flex flex-wrap gap-4">
@@ -74,7 +104,7 @@ const TabbedSearchResults = ({ results }: { results: CountryProperties[] }) => {
         <TabsContent key={country} value={country} className="min-h-96">
           <div className="flex flex-wrap gap-4">
             {results
-              .find((r) => r.country === country)
+              .find((r) => r?.country === country)
               ?.properties.map((property, i) => (
                 <div
                   key={property?.id + `${i * 3.7}`}

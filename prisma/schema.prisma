@@ -409,9 +409,9 @@ model Message {
   id        String   @id @default(cuid())
   timestamp DateTime
 
-  booking   Booking @relation(fields: [bookingId], references: [id])
-  bookingId String
-
+  booking    Booking  @relation(fields: [bookingId], references: [id])
+  bookingId  String
+  content    String
   sender     User     @relation(name: "sentMessages", fields: [senderId], references: [id])
   senderId   String
   receiver   User     @relation(name: "receivedMessages", fields: [receiverId], references: [id])

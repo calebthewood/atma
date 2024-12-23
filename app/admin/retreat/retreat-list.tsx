@@ -1,19 +1,17 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { getRetreats } from "@/actions/retreat-actions"; // Adjust this import path as needed
-
+import { getAdminPaginatedRetreats } from "@/actions/retreat-actions";
 import { Host, Property, Retreat } from "@prisma/client";
 
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
+
+
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { toast } from "@/components/ui/use-toast";
+
+
+
+
 
 type ExtendedRetreat = Retreat & {
   host: Host;
@@ -49,9 +47,9 @@ export function RetreatList() {
     async function fetchRetreats() {
       try {
         setIsLoading(true);
-        const response = await getRetreats();
-        if (response.success && response.data) {
-          setRetreats(response.data);
+        const response = await getAdminPaginatedRetreats();
+        if (response.ok && response.data) {
+          setRetreats(response.data.items);
         } else {
           toast({
             title: "Error",

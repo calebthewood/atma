@@ -184,7 +184,16 @@ export function ImageGallery({ recordId, recordType }: ImageGalleryProps) {
   const loadImages = async () => {
     try {
       const fetchedImages = await fetchImages(recordId, recordType);
-      setImages(fetchedImages.sort((a, b) => a.order - b.order));
+      if (fetchedImages.ok && fetchedImages.data) {
+        setImages(fetchedImages.data.sort((a, b) => a.order - b.order));
+      } else {
+        console.error("Error fetching images:", fetchedImages.message);
+        toast({
+          title: "Error",
+          description: "Failed to load images",
+          variant: "destructive",
+        });
+      }
     } catch (error) {
       console.error("Error fetching images:", error);
       toast({

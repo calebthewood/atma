@@ -1,31 +1,29 @@
 "use client";
 
 import { useState } from "react";
-import { RetreatWithRelations } from "@/actions/retreat-actions";
+import { RetreatWithAllRelations } from "@/actions/retreat-actions";
 import { PriceMod, RetreatInstance } from "@prisma/client";
 import { addDays, differenceInCalendarDays, formatDistance } from "date-fns";
 import { DateRange } from "react-day-picker";
 
+
+
 import { toUSD } from "@/lib/utils";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+
+
 
 import { P, Small } from "../typography";
 import { DatePickerWithRange } from "../ui/date-pickers";
 import { GuestSelect } from "./guest-select";
+
 
 interface RetreatIntanceWithMods extends RetreatInstance {
   priceMods: PriceMod[];
 }
 interface BookingListProps {
   events: RetreatIntanceWithMods[];
-  retreat: RetreatWithRelations;
+  retreat: RetreatWithAllRelations;
   userId: string | undefined;
 }
 

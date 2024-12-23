@@ -269,12 +269,12 @@ async function seedImages() {
 async function seedHostsPropsRetreats() {
   const types = ["open", "fixed_range", "flexible_range"];
   const cities = [
-    { name: "London", lat: 51.5074, lon: -0.1278 },
-    { name: "Stockholm", lat: 59.3293, lon: 18.0686 },
-    { name: "New York", lat: 40.7128, lon: -74.006 },
-    { name: "Honolulu", lat: 21.3069, lon: -157.8583 },
-    { name: "Tokyo", lat: 35.6762, lon: 139.6503 },
-    { name: "Hong Kong", lat: 22.3193, lon: 114.1694 },
+    { name: "London", lat: 51.5074, lng: -0.1278 },
+    { name: "Stockholm", lat: 59.3293, lng: 18.0686 },
+    { name: "New York", lat: 40.7128, lng: -74.006 },
+    { name: "Honolulu", lat: 21.3069, lng: -157.8583 },
+    { name: "Tokyo", lat: 35.6762, lng: 139.6503 },
+    { name: "Hong Kong", lat: 22.3193, lng: 114.1694 },
   ];
 
   function getRandomCity() {
@@ -292,7 +292,7 @@ async function seedHostsPropsRetreats() {
     for (let i = 1; i <= 3; i++) {
       const city = getRandomCity();
       const latitude = city.lat + getRandomOffset();
-      const longitude = city.lon + getRandomOffset();
+      const longitude = city.lng + getRandomOffset();
       const property = await prisma.property.create({
         data: {
           email: `property${i}@${host.name.toLowerCase().replace(/\s/g, "")}.com`,

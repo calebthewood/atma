@@ -18,13 +18,13 @@ export type PriceModWithRelations = Prisma.PriceModGetPayload<{
 }>;
 
 export type PriceModResponse = {
-  success: boolean;
+  ok: boolean;
   error?: string;
   data?: PriceModWithRelations;
 };
 
 export type PriceModListResponse = {
-  success: boolean;
+  ok: boolean;
   error?: string;
   data?: PriceModWithRelations[];
 };
@@ -34,7 +34,7 @@ export type PriceModWithSource = PriceMod & {
 };
 
 type GetAllPriceModsResponse = {
-  success: boolean;
+  ok: boolean;
   data?: {
     allPriceMods: PriceModWithSource[];
     propertyId?: string;
@@ -59,7 +59,7 @@ interface ProgramPriceModResult extends BasePriceModResult {
 }
 
 export async function getRetreatPriceMods(retreatId: string): Promise<{
-  success: boolean;
+  ok: boolean;
   data?: PriceMod[];
   error?: string;
 }> {
@@ -70,13 +70,13 @@ export async function getRetreatPriceMods(retreatId: string): Promise<{
     });
 
     return {
-      success: true,
+      ok: true,
       data: priceMods,
     };
   } catch (error) {
     console.error("Error fetching retreat price mods:", error);
     return {
-      success: false,
+      ok: false,
       error: "Failed to fetch price modifications",
     };
   }
@@ -191,7 +191,7 @@ export async function getAllPriceMods(
     const ids = await getRelatedIds(instanceId, type);
     if (!ids) {
       return {
-        success: false,
+        ok: false,
         error: `${type} instance not found`,
       };
     }
@@ -209,7 +209,7 @@ export async function getAllPriceMods(
     const sortedPriceMods = sortPriceMods(allPriceMods);
 
     return {
-      success: true,
+      ok: true,
       data: {
         allPriceMods: sortedPriceMods,
         propertyId: ids.propertyId,
@@ -220,7 +220,7 @@ export async function getAllPriceMods(
   } catch (error) {
     console.error("Error fetching price modifications:", error);
     return {
-      success: false,
+      ok: false,
       error: "Failed to fetch price modifications",
     };
   }
@@ -304,13 +304,13 @@ export async function createPriceMod(
     revalidateRelatedPaths(relations);
 
     return {
-      success: true,
+      ok: true,
       data: priceMod,
     };
   } catch (error) {
     console.error("Error creating price modification:", error);
     return {
-      success: false,
+      ok: false,
       error:
         error instanceof Error
           ? error.message
@@ -337,19 +337,19 @@ export async function getPriceMod(id: string): Promise<PriceModResponse> {
 
     if (!priceMod) {
       return {
-        success: false,
+        ok: false,
         error: "Price modification not found",
       };
     }
 
     return {
-      success: true,
+      ok: true,
       data: priceMod,
     };
   } catch (error) {
     console.error("Error fetching price modification:", error);
     return {
-      success: false,
+      ok: false,
       error: "Failed to fetch price modification",
     };
   }
@@ -375,13 +375,13 @@ export async function getPriceModsByRetreatInstance(
     });
 
     return {
-      success: true,
+      ok: true,
       data: priceMods,
     };
   } catch (error) {
     console.error("Error fetching price modifications:", error);
     return {
-      success: false,
+      ok: false,
       error: "Failed to fetch price modifications",
     };
   }
@@ -404,13 +404,13 @@ export async function getPriceModsByProgramInstance(
     });
 
     return {
-      success: true,
+      ok: true,
       data: priceMods,
     };
   } catch (error) {
     console.error("Error fetching price modifications:", error);
     return {
-      success: false,
+      ok: false,
       error: "Failed to fetch price modifications",
     };
   }
@@ -480,13 +480,13 @@ export async function updatePriceMod(
     revalidateRelatedPaths(relations);
 
     return {
-      success: true,
+      ok: true,
       data: priceMod,
     };
   } catch (error) {
     console.error("Error updating price modification:", error);
     return {
-      success: false,
+      ok: false,
       error:
         error instanceof Error
           ? error.message
@@ -500,19 +500,19 @@ export async function updatePriceMod(
  */
 export async function deletePriceMod(
   id: string
-): Promise<{ success: boolean; error?: string }> {
+): Promise<{ ok: boolean; error?: string }> {
   try {
     await prisma.priceMod.delete({
       where: { id },
     });
 
     return {
-      success: true,
+      ok: true,
     };
   } catch (error) {
     console.error("Error deleting price modification:", error);
     return {
-      success: false,
+      ok: false,
       error: "Failed to delete price modification",
     };
   }

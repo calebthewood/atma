@@ -11,7 +11,7 @@ interface Place {
 interface PlaceDetails {
   name: string;
   lat: number;
-  lon: number;
+  lng: number;
 }
 
 interface UsePlacesAutocompleteReturn {
@@ -122,7 +122,7 @@ export function usePlacesAutocomplete(): UsePlacesAutocompleteReturn {
             resolve({
               name: description,
               lat: place.geometry.location.lat(),
-              lon: place.geometry.location.lng(),
+              lng: place.geometry.location.lng(),
             });
           } else {
             reject(new Error("Failed to get place details"));

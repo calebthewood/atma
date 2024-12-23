@@ -2,15 +2,20 @@
 
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { getHosts } from "@/actions/host-actions";
+import {
+  getAdminPaginatedHosts,
+  HostWithBasicRelations,
+} from "@/actions/host-actions";
 import {
   createProgram,
   updateProgram,
   type ProgramWithAllRelations,
 } from "@/actions/program-actions";
-import { getProperties } from "@/actions/property-actions";
+import {
+  getAdminPaginatedProperties,
+  PropertyWithBasicRelations,
+} from "@/actions/property-actions";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Host, Property } from "@prisma/client";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 
@@ -95,8 +100,10 @@ type ProgramFormProps = {
 };
 export function ProgramForm({ program }: ProgramFormProps) {
   const [isLoading, setIsLoading] = useState(false);
-  const [hosts, setHosts] = useState<Host[]>([]);
-  const [properties, setProperties] = useState<Property[]>([]);
+  const [hosts, setHosts] = useState<HostWithBasicRelations[]>([]);
+  const [properties, setProperties] = useState<PropertyWithBasicRelations[]>(
+    []
+  );
 
   const router = useRouter();
 
@@ -132,11 +139,16 @@ export function ProgramForm({ program }: ProgramFormProps) {
     async function fetchData() {
       try {
         const [fetchedHosts, fetchedProperties] = await Promise.all([
-          getHosts(),
-          getProperties(),
+          getAdminPaginatedHosts(),
+          getAdminPaginatedProperties(),
         ]);
-        setHosts(fetchedHosts);
-        setProperties(fetchedProperties);
+        if (fetchedProperties.ok && fetchedProperties.data) {
+          const properties = fetchedProperties.data?.items;
+          setProperties(properties);
+        }
+        if (fetchedHosts.ok && fetchedHosts.data) {
+          setHosts(fetchedHosts.data.items);
+        }
       } catch (error) {
         console.error("Error fetching data:", error);
         toast({
@@ -180,8 +192,8 @@ export function ProgramForm({ program }: ProgramFormProps) {
         [fieldName]: fieldValue,
       });
 
-      if (!result.success) {
-        throw new Error(result.error);
+      if (!result.ok) {
+        throw new Error(result.message);
       }
 
       toast({
@@ -221,8 +233,8 @@ export function ProgramForm({ program }: ProgramFormProps) {
     try {
       if (program) {
         const result = await updateProgram(program?.id, values);
-        if (!result.success) {
-          throw new Error(result.error);
+        if (!result.ok) {
+          throw new Error(result.message);
         }
         toast({
           title: "Success",
@@ -230,8 +242,8 @@ export function ProgramForm({ program }: ProgramFormProps) {
         });
       } else {
         const result = await createProgram(values);
-        if (!result.success) {
-          throw new Error(result.error);
+        if (!result.ok) {
+          throw new Error(result.message);
         }
         toast({
           title: "Success",

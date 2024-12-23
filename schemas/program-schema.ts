@@ -13,9 +13,7 @@ export const programFormSchema = z.object({
   whoIsthisFor: z.string(),
   policyCancel: z.string(),
   duration: z.string().min(1, { message: "Duration is required." }),
-  date: z.string().refine((val) => !isNaN(Date.parse(val)), {
-    message: "Invalid date format.",
-  }),
+  date: z.string().date().optional(),
   minGuests: z.number().int().min(1),
   maxGuests: z.number().int().min(-1),
   sourceUrl: z.string().optional(),

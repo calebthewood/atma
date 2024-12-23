@@ -1,8 +1,8 @@
 "use client";
 
-import React, { useState, type JSX } from "react";
+import React, { useState } from "react";
 import { redirect } from "next/navigation";
-import { createBooking, createBookingOld } from "@/actions/booking-actions";
+import { createBooking } from "@/actions/booking-actions";
 import { createCheckoutSession } from "@/actions/stripe";
 import {
   EmbeddedCheckout,
@@ -23,6 +23,7 @@ import { Button } from "../ui/button";
 
 interface CheckoutFormProps {
   uiMode?: Stripe.Checkout.SessionCreateParams.UiMode;
+  hostId: string;
   price: number;
   userId: string | undefined;
   entity: "retreat" | "program";
@@ -35,6 +36,7 @@ interface CheckoutFormProps {
 /** TODO: if userId is undefined, take user to signin then back to checkout */
 export default function CheckoutButton({
   uiMode,
+  hostId,
   price,
   userId,
   entity,
@@ -43,7 +45,7 @@ export default function CheckoutButton({
   checkInDate,
   checkOutDate,
   guestCount,
-}: CheckoutFormProps): JSX.Element {
+}: CheckoutFormProps) {
   const [loading] = useState<boolean>(false);
   const [input, _] = useState({ price });
   const [clientSecret, setClientSecret] = useState<string | null>(null);
@@ -58,21 +60,26 @@ export default function CheckoutButton({
       "uiMode"
     ) as Stripe.Checkout.SessionCreateParams.UiMode;
 
-    const booking = await createBookingOld({
+    const booking = await createBooking({
       userId,
-      entity,
-      entityId,
+      hostId,
+      retreatInstanceId: entity === "retreat" ? entityId : undefined,
+      programInstanceId: entity === "program" ? entityId : undefined,
       propertyId,
-      checkInDate,
-      checkOutDate,
+      checkInDate: checkInDate.toDateString(),
+      checkOutDate: checkOutDate.toDateString(),
       guestCount,
       totalPrice: String(price),
       status: "checkout-initiated",
     });
-    console.log(booking);
+
+    if (!booking.data) {
+      throw new Error(booking.message);
+    }
+
     const { client_secret, url } = await createCheckoutSession(
       data,
-      booking?.id
+      booking.data.id
     );
     if (uiMode === "embedded") return setClientSecret(client_secret);
     window.location.assign(url as string);

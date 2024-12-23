@@ -1,6 +1,6 @@
 import {
-  getPropertyAmenitiesByCategory,
-  getPropertyById,
+  getProperty,
+  getPropertyAmenities,
   getPropertyEntityIds,
 } from "@/actions/property-actions";
 
@@ -24,16 +24,18 @@ const DEFAULT_SLIDES = [
 
 export default async function Page(props: { params: Promise<{ id: string }> }) {
   const params = await props.params;
-  const property = await getPropertyById(params?.id);
-  const parkingAmenities = await getPropertyAmenitiesByCategory(
-    params?.id,
-    "parking-transportation"
+  const propertyRes = await getProperty(params?.id);
+  const amenities = await getPropertyAmenities(params?.id);
+  const parkingAmenities = amenities.data?.filter(
+    (a) => a.amenityId === "parking-transportation"
   );
-  const programIds = await getPropertyEntityIds(params?.id, "program");
-  const retreatIds = await getPropertyEntityIds(params?.id, "retreat");
+  const programIdRes = await getPropertyEntityIds(params?.id, "program");
+  const programIds = programIdRes.data || [];
+  const retreatIdRes = await getPropertyEntityIds(params?.id, "retreat");
+  const retreatIds = retreatIdRes.data || [];
   // const session = await auth();
 
-  if (!property || !params) {
+  if (!propertyRes.ok || !propertyRes.data || !params) {
     return (
       <div className="flex size-full items-center justify-center">
         <LoadingSpinner />
@@ -41,9 +43,11 @@ export default async function Page(props: { params: Promise<{ id: string }> }) {
     );
   }
 
-  const coverImgPath =
-    property?.images.sort((a, b) => a.order - b.order)[0]?.filePath ||
-    "/img/iStock-1490140364.jpg";
+  const property = propertyRes.data;
+
+  const coverImgPath = property
+    ? property.images.sort((a, b) => a.order - b.order)[0]?.filePath
+    : "/img/iStock-1490140364.jpg";
 
   const slides =
     property.images.length > 0
@@ -86,7 +90,10 @@ export default async function Page(props: { params: Promise<{ id: string }> }) {
         <h2 className="mb-5 text-2xl font-semibold capitalize">
           Practical Information
         </h2>
-        <PropertyPolicies property={property} amenities={parkingAmenities} />
+        <PropertyPolicies
+          property={property}
+          amenities={parkingAmenities ?? []}
+        />
       </section>
 
       {programIds.length > 0 && (

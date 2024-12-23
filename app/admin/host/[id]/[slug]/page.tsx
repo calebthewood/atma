@@ -20,7 +20,8 @@ export default async function Page(props: {
           Update host information and settings
         </p>
       </div>
-      <HostForm host={result} />
+      {/* @ts-ignore */}
+      <HostForm host={result.data} />
     </div>
   );
 }

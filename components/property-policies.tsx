@@ -1,5 +1,5 @@
 import React from "react";
-import { PropertyWithRelations } from "@/actions/property-actions";
+import { PropertyWithBasicRelations } from "@/actions/property-actions";
 
 import { cn } from "@/lib/utils";
 import { Card, CardContent } from "@/components/ui/card";
@@ -20,7 +20,7 @@ type PropertyAmenity = {
 };
 
 type PropertyPoliciesProps = {
-  property: PropertyWithRelations | null;
+  property: PropertyWithBasicRelations;
   amenities: PropertyAmenity[];
   className?: string;
 };

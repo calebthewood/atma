@@ -39,12 +39,12 @@ interface SearchOptions {
 
 export type SearchResults =
   | {
-      success: true;
+      ok: true;
       type: "location" | "continent" | "all" | "na";
       data: EntityWithIncludes[] | PropertyGroup[] | CountryGroup[];
     }
   | {
-      success: false;
+      ok: false;
       error: string;
       type: "na";
       data: [];
@@ -170,7 +170,7 @@ async function executeSearch(
 
     if (options.continent) {
       return {
-        success: true,
+        ok: true,
         type: "continent",
         data: groupByCountry(items, options.continent),
       };
@@ -178,7 +178,7 @@ async function executeSearch(
 
     if (options.latitude && options.longitude) {
       return {
-        success: true,
+        ok: true,
         type: "location",
         data: groupByProperty(
           items,
@@ -190,14 +190,14 @@ async function executeSearch(
     }
 
     return {
-      success: true,
+      ok: true,
       type: "all",
       data: paginateItems(items, options.page || 1, options.pageSize || 10),
     };
   } catch (error) {
     console.error(`Error searching ${modelName}:`, error);
     return {
-      success: false,
+      ok: false,
       error: `Failed to search ${modelName}`,
       type: "na",
       data: [],

@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 import {
   deleteInstance,
   getPaginatedInstances,
@@ -178,7 +178,7 @@ export function RetreatInstancesList({
             try {
               const response = await deleteInstance(instance?.id);
 
-              if (response.success) {
+              if (response.ok) {
                 if (searchParams.get("edit") === instance?.id) {
                   updateSearchParams("edit", null);
                 }
@@ -189,7 +189,7 @@ export function RetreatInstancesList({
                   description: "Retreat instance deleted successfully",
                 });
               } else {
-                throw new Error(response.error || "Failed to delete");
+                throw new Error(response.message || "Failed to delete");
               }
             } catch (error) {
               console.error("Failed to delete retreat instance:", error);
@@ -243,13 +243,13 @@ export function RetreatInstancesList({
         retreatId
       );
 
-      if (result.success && result.data) {
+      if (result.ok && result.data) {
         setData(result.data.instances);
         setTotalPages(result.data.totalPages);
       } else {
         toast({
           title: "Error",
-          description: result.error || "Failed to load retreat instances",
+          description: result.message || "Failed to load retreat instances",
           variant: "destructive",
         });
       }

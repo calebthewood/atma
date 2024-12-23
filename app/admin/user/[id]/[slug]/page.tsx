@@ -1,7 +1,7 @@
 // app/admin/user/[id]/[slug]/page.tsx
 import Link from "next/link";
 import { getAuthenticatedUser } from "@/actions/auth-actions";
-import { getUserWithRelations } from "@/actions/user-actions";
+import { getUser } from "@/actions/user-actions";
 
 import { UserFormData } from "@/types/shared";
 import { cn } from "@/lib/utils";
@@ -28,16 +28,18 @@ interface PageProps {
 }
 
 export default async function Page({ params }: PageProps) {
-  const resolvedParams = await params;
-  const res = await getUserWithRelations({ id: resolvedParams?.id });
+  const { id, slug } = await params;
+
+  const res = await getUser({ id });
   const userRes = await getAuthenticatedUser();
+  const hostUserRes = await getUser({ id });
   const adminUser = userRes.data;
   if (!res.ok || !res.data || !adminUser) {
     return <div>Error loading user: {res.message}</div>;
   }
 
   const user = res.data;
-
+  const hostUser = hostUserRes.data?.hostUsers[0];
   // Transform the data to match the form's expected shape
   const formData: UserFormData = {
     role: user.role as "user" | "host" | "admin",
@@ -66,7 +68,7 @@ export default async function Page({ params }: PageProps) {
     {
       value: "general",
       label: "General",
-      href: `/admin/user/${resolvedParams?.id}/general`,
+      href: `/admin/user/${id}/general`,
       component: () => (
         <>
           <CardHeader>
@@ -76,7 +78,7 @@ export default async function Page({ params }: PageProps) {
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <UserForm userId={resolvedParams?.id} initialData={formData} />
+            <UserForm userId={id} initialData={formData} />
           </CardContent>
         </>
       ),
@@ -84,7 +86,7 @@ export default async function Page({ params }: PageProps) {
     {
       value: "hosts",
       label: "Hosts",
-      href: `/admin/user/${resolvedParams?.id}/hosts`,
+      href: `/admin/user/${id}/hosts`,
       component: () => (
         <Card>
           <CardHeader>
@@ -94,10 +96,7 @@ export default async function Page({ params }: PageProps) {
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <HostUserForm
-              subjectUserId={resolvedParams.id}
-              adminUserId={adminUser.id}
-            />
+            <HostUserForm userId={id} hostUser={hostUser} />
           </CardContent>
         </Card>
       ),
@@ -105,7 +104,7 @@ export default async function Page({ params }: PageProps) {
     {
       value: "bookings",
       label: "Bookings",
-      href: `/admin/user/${resolvedParams?.id}/bookings`,
+      href: `/admin/user/${id}/bookings`,
       component: () => (
         <Card>
           <CardHeader>
@@ -122,7 +121,7 @@ export default async function Page({ params }: PageProps) {
     {
       value: "activity",
       label: "Activity",
-      href: `/admin/user/${resolvedParams?.id}/activity`,
+      href: `/admin/user/${id}/activity`,
       component: () => (
         <Card>
           <CardHeader>
@@ -140,7 +139,7 @@ export default async function Page({ params }: PageProps) {
     },
   ];
 
-  const Output = tabs.find((t) => t.value === resolvedParams.slug)?.component;
+  const Output = tabs.find((t) => t.value === slug)?.component;
 
   return (
     <div className="space-y-6">
@@ -169,7 +168,7 @@ export default async function Page({ params }: PageProps) {
                       "w-24 bg-muted",
                       "data-[active]:bg-primary-foreground data-[active]:font-semibold data-[active]:shadow"
                     )}
-                    active={tab.value === resolvedParams.slug}
+                    active={tab.value === slug}
                   >
                     {tab.label}
                   </NavigationMenuLink>

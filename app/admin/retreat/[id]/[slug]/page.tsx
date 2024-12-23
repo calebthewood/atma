@@ -32,6 +32,11 @@ interface PageProps {
 export default async function Page({ params }: PageProps) {
   const resolvedParams = await params;
   const result = await getRetreat(resolvedParams?.id);
+  if (!result.data) {
+    throw new Error(result.message);
+  }
+
+  const retreat = result.data;
 
   // Use new instance actions with proper error handling
   const instancesResponse = await getPaginatedInstances(
@@ -40,14 +45,13 @@ export default async function Page({ params }: PageProps) {
     resolvedParams?.id
   );
 
-  if (!instancesResponse.success) {
-    console.error("Failed to load instances:", instancesResponse.error);
+  if (!instancesResponse.data) {
+    console.error("Failed to load instances:", instancesResponse.message);
+    throw new Error(instancesResponse.message);
   }
 
   // Safely access data using the new response structure
-  const instances = instancesResponse.success
-    ? instancesResponse.data
-    : { instances: [], totalPages: 0, currentPage: 1, totalInstances: 0 };
+  const instances = instancesResponse.data;
 
   const tabs = [
     {
@@ -63,7 +67,7 @@ export default async function Page({ params }: PageProps) {
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <RetreatForm retreat={result.data} />
+            <RetreatForm retreat={retreat} />
           </CardContent>
         </>
       ),

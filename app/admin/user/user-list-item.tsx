@@ -24,15 +24,16 @@ import {
 interface UserListItemProps {
   user: User;
 }
+type UserRoles = "user" | "host" | "admin" | undefined;
 
 export function UserListItem({ user }: UserListItemProps) {
   const [open, setOpen] = useState(false);
   const [value, setValue] = useState(user.role);
 
-  const handleChange = async (role: string) => {
+  const handleChange = async (role: "user" | "host" | "admin" | undefined) => {
     if (role === value) return;
     const res = await updateUser(user?.id, { role });
-    if (res) setValue(res.role);
+    if (res.data) setValue(res.data.role);
   };
 
   return (
@@ -67,7 +68,9 @@ export function UserListItem({ user }: UserListItemProps) {
                   value="user"
                   className="teamaspace-y-1 flex flex-col items-start px-4 py-2"
                   onSelect={(currentValue) => {
-                    handleChange(currentValue);
+                    handleChange(
+                      currentValue as UserRoles
+                    );
                     setOpen(false);
                   }}
                 >
@@ -80,7 +83,7 @@ export function UserListItem({ user }: UserListItemProps) {
                   value="admin"
                   className="teamaspace-y-1 flex flex-col items-start px-4 py-2"
                   onSelect={(currentValue) => {
-                    handleChange(currentValue);
+                    handleChange(currentValue as UserRoles);
                     setOpen(false);
                   }}
                 >
@@ -93,7 +96,7 @@ export function UserListItem({ user }: UserListItemProps) {
                   value="host"
                   className="teamaspace-y-1 flex flex-col items-start px-4 py-2"
                   onSelect={(currentValue) => {
-                    handleChange(currentValue);
+                    handleChange(currentValue as UserRoles);
                     setOpen(false);
                   }}
                 >

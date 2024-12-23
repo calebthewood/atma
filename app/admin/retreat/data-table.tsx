@@ -1,98 +1,26 @@
+// components/admin/retreat-table.tsx
 "use client";
 
-import React, { useEffect, useMemo, useState } from "react";
+import { useMemo } from "react";
 import { useRouter } from "next/navigation";
 import {
   deleteRetreat,
   getAdminPaginatedRetreats,
   type RetreatWithBasicRelations,
 } from "@/actions/retreat-actions";
-import { CaretSortIcon, ChevronDownIcon } from "@radix-ui/react-icons";
-import {
-  ColumnDef,
-  ColumnFiltersState,
-  flexRender,
-  getCoreRowModel,
-  getFilteredRowModel,
-  getPaginationRowModel,
-  getSortedRowModel,
-  SortingState,
-  useReactTable,
-  VisibilityState,
-} from "@tanstack/react-table";
+import { CaretSortIcon } from "@radix-ui/react-icons";
+import { ColumnDef } from "@tanstack/react-table";
 
 import { Button } from "@/components/ui/button";
-import {
-  DropdownMenu,
-  DropdownMenuCheckboxItem,
-  DropdownMenuContent,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import { Input } from "@/components/ui/input";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
 import { toast } from "@/components/ui/use-toast";
+import { BaseDataTable } from "@/components/admin/base-data-table";
 
 import { AdminActionMenu } from "../components";
 
 export function RetreatDataTable() {
-  const [data, setData] = useState<RetreatWithBasicRelations[]>([]);
-  const [sorting, setSorting] = useState<SortingState>([]);
-  const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
-  const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
-  const [pagination, setPagination] = useState({
-    pageIndex: 0,
-    pageSize: 10,
-  });
   const router = useRouter();
 
-  const [totalPages, setTotalPages] = useState(0);
-  useEffect(() => {
-    fetchRetreats();
-  }, [pagination.pageIndex, pagination.pageSize, columnFilters]);
-
-  const fetchRetreats = async () => {
-    try {
-      const searchTerm =
-        (table.getColumn("name")?.getFilterValue() as string) ?? "";
-      const result = await getAdminPaginatedRetreats(
-        pagination.pageIndex + 1,
-        pagination.pageSize,
-        searchTerm
-      );
-
-      if (!result.success || !result.data) {
-        toast({
-          title: "Error",
-          description: result.error || "Failed to fetch retreats",
-          variant: "destructive",
-        });
-        setData([]); // Set empty data when there's an error
-        setTotalPages(0);
-        return;
-      }
-      setData(result.data.retreats ?? []); // Ensure we have retreats before setting the data
-      setTotalPages(result.data.totalPages);
-    } catch (error) {
-      console.error("Failed to fetch retreats:", error);
-      toast({
-        title: "Error",
-        description: "An unexpected error occurred while fetching retreats",
-        variant: "destructive",
-      });
-
-      setData([]); // Set empty data on error
-      setTotalPages(0);
-    }
-  };
-
-  const columns: ColumnDef<RetreatWithBasicRelations>[] = useMemo(
+  const columns = useMemo<ColumnDef<RetreatWithBasicRelations>[]>(
     () => [
       {
         accessorKey: "name",
@@ -156,182 +84,52 @@ export function RetreatDataTable() {
         id: "actions",
         cell: ({ row }) => {
           const retreat = row.original;
-
-          const handleDelete = async () => {
-            if (
-              window.confirm("Are you sure you want to delete this retreat?")
-            ) {
-              try {
-                const response = await deleteRetreat(retreat?.id);
-                if (!response.success) {
-                  throw new Error(response.error);
-                }
-                toast({
-                  title: "Success",
-                  description: "Retreat deleted successfully",
-                });
-                router.refresh();
-              } catch (error) {
-                console.error("Failed to delete retreat:", error);
-                toast({
-                  title: "Error",
-                  description:
-                    error instanceof Error
-                      ? error.message
-                      : "Failed to delete retreat. Please try again.",
-                  variant: "destructive",
-                });
-              }
-            }
-          };
-
           return (
             <AdminActionMenu
               editHref={`/admin/retreat/${retreat?.id}/general`}
               publicHref={`/retreats/${retreat?.id}`}
-              handleDelete={handleDelete}
+              handleDelete={() => handleDelete(retreat.id)}
             />
           );
         },
       },
     ],
-    []
+    [router]
   );
 
-  const table = useReactTable({
-    data,
-    columns,
-    onSortingChange: setSorting,
-    onColumnFiltersChange: setColumnFilters,
-    getCoreRowModel: getCoreRowModel(),
-    getPaginationRowModel: getPaginationRowModel(),
-    getSortedRowModel: getSortedRowModel(),
-    getFilteredRowModel: getFilteredRowModel(),
-    onColumnVisibilityChange: setColumnVisibility,
-    onPaginationChange: setPagination,
-    state: {
-      sorting,
-      columnFilters,
-      columnVisibility,
-      pagination,
-    },
-    manualPagination: true,
-    pageCount: totalPages,
-  });
+  const handleDelete = async (id: string) => {
+    if (!window.confirm("Are you sure you want to delete this retreat?")) {
+      return;
+    }
+
+    const result = await deleteRetreat(id);
+    if (result.ok) {
+      toast({
+        title: "Success",
+        description: "Retreat deleted successfully",
+      });
+      router.refresh();
+    } else {
+      toast({
+        title: "Error",
+        description: "Failed to delete retreat",
+        variant: "destructive",
+      });
+    }
+    return;
+  };
+
+  const handleRowClick = (retreat: RetreatWithBasicRelations) => {
+    router.push(`/admin/retreat/${retreat.id}/general`);
+  };
 
   return (
-    <div className="w-full">
-      <div className="flex items-center py-4">
-        <Input
-          placeholder="Filter retreats..."
-          value={(table.getColumn("name")?.getFilterValue() as string) ?? ""}
-          onChange={(event) =>
-            table.getColumn("name")?.setFilterValue(event.target.value)
-          }
-          className="max-w-sm"
-        />
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="outline" className="ml-auto">
-              Columns <ChevronDownIcon className="ml-2 size-4" />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            {table
-              .getAllColumns()
-              .filter((column) => column.getCanHide())
-              .map((column) => {
-                return (
-                  <DropdownMenuCheckboxItem
-                    key={column?.id}
-                    className="capitalize"
-                    checked={column.getIsVisible()}
-                    onCheckedChange={(value) =>
-                      column.toggleVisibility(!!value)
-                    }
-                  >
-                    {column?.id}
-                  </DropdownMenuCheckboxItem>
-                );
-              })}
-          </DropdownMenuContent>
-        </DropdownMenu>
-      </div>
-      <div className="rounded-md border">
-        <Table>
-          <TableHeader>
-            {table.getHeaderGroups().map((headerGroup) => (
-              <TableRow key={headerGroup?.id}>
-                {headerGroup.headers.map((header) => {
-                  return (
-                    <TableHead key={header?.id}>
-                      {header.isPlaceholder
-                        ? null
-                        : flexRender(
-                            header.column.columnDef.header,
-                            header.getContext()
-                          )}
-                    </TableHead>
-                  );
-                })}
-              </TableRow>
-            ))}
-          </TableHeader>
-          <TableBody>
-            {table.getRowModel().rows?.length ? (
-              table.getRowModel().rows.map((row) => (
-                <TableRow
-                  key={row?.id}
-                  data-state={row.getIsSelected() && "selected"}
-                >
-                  {row.getVisibleCells().map((cell) => (
-                    <TableCell key={cell?.id}>
-                      {flexRender(
-                        cell.column.columnDef.cell,
-                        cell.getContext()
-                      )}
-                    </TableCell>
-                  ))}
-                </TableRow>
-              ))
-            ) : (
-              <TableRow>
-                <TableCell
-                  colSpan={columns.length}
-                  className="h-24 text-center"
-                >
-                  No results.
-                </TableCell>
-              </TableRow>
-            )}
-          </TableBody>
-        </Table>
-      </div>
-      <div className="flex items-center justify-between space-x-2 py-4">
-        <span>
-          {pagination.pageIndex + 1}/{totalPages}
-        </span>
-        <div className="space-x-2">
-          <Button
-            variant="outline"
-            size="sm"
-            className="w-24"
-            onClick={() => table.previousPage()}
-            disabled={!table.getCanPreviousPage()}
-          >
-            Previous
-          </Button>
-          <Button
-            variant="outline"
-            size="sm"
-            className="w-24"
-            onClick={() => table.nextPage()}
-            disabled={!table.getCanNextPage()}
-          >
-            Next
-          </Button>
-        </div>
-      </div>
-    </div>
+    <BaseDataTable
+      columns={columns}
+      fetchData={getAdminPaginatedRetreats}
+      deleteItem={handleDelete}
+      onRowClick={handleRowClick}
+      searchPlaceholder="Filter retreats..."
+    />
   );
 }

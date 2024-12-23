@@ -5,7 +5,7 @@ import { Button } from "../ui/button";
 
 export function GoogleSignInButton({ isLoading }: { isLoading: boolean }) {
   return (
-    <form className="w-full" action={async () => await googleSignIn()}>
+    <form className="w-full" action={googleSignIn}>
       <Button
         variant="outline"
         type="submit"
