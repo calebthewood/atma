@@ -8,6 +8,21 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
+function formatGroupSize(min: number | null, max: number | null): string {
+  if (!min && !max) return "Contact for details";
+  if (!max || max < 0) return `${min || 1}+ guests`;
+  if (min === max) return `${min} guests`;
+  return `${min || 1} - ${max} guests`;
+}
+
+function formatLocation(
+  city: string | null | undefined,
+  country: string | null | undefined
+): string {
+  if (!city && !country) return "Contact for details";
+  return [city, country].filter(Boolean).join(", ");
+}
+
 export const toUSD = (value: number | undefined): string => {
   if (typeof value !== "number") return "XX";
   const n = Number(value);

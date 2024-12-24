@@ -20,6 +20,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
+import { ENTITY_CATEGORIES } from "@/app/admin/entity-categories";
 
 const buttonClasses =
   "h-12 pb-0 w-full rounded rounded-b-none border-b-2 border-transparent border-b-black bg-transparent text-left shadow-none px-0";
@@ -32,34 +33,6 @@ export function PurposeCombobox() {
     const purposes = searchParams.get("purpose")?.split(",") || [];
     return purposes.filter(Boolean);
   });
-
-  const categories = [
-    "Ayurveda",
-    "Couples & Relationships",
-    "Creative & Artistic",
-    "Detox & Cleanse",
-    "Detoxification",
-    "Emotional Healing",
-    "Family & Group Wellness",
-    "Fitness & Active",
-    "Healthy Aging",
-    "Holistic Wellness & Longevity",
-    "Hydrotherapy",
-    "Luxury Adventure",
-    "Medical Wellness",
-    "Meditation",
-    "Mental Health & Emotional Wellness",
-    "Mindfulness",
-    "Motherhood",
-    "Nutrition & Wellness Coaching",
-    "Optimal Weight",
-    "Relaxation",
-    "Sleep & Restorative Wellness",
-    "Spa",
-    "Spiritual & Self-Discovery",
-    "Traditional Healing",
-    "Therapeutic Fasting",
-  ];
 
   useEffect(() => {
     const params = new URLSearchParams(searchParams);
@@ -128,21 +101,21 @@ export function PurposeCombobox() {
               </>
             )}
             <CommandGroup heading="All Purposes">
-              {categories
-                .filter((category) => !selectedItems.includes(category))
-                .map((category) => (
-                  <CommandItem
-                    key={category}
-                    value={category}
-                    onSelect={() => {
-                      toggleItem(category);
-                      setOpen(true);
-                    }}
-                  >
-                    <Check className={cn("mr-2 h-4 w-4 opacity-0")} />
-                    {category}
-                  </CommandItem>
-                ))}
+              {ENTITY_CATEGORIES.filter(
+                (category) => !selectedItems.includes(category)
+              ).map((category) => (
+                <CommandItem
+                  key={category}
+                  value={category}
+                  onSelect={() => {
+                    toggleItem(category);
+                    setOpen(true);
+                  }}
+                >
+                  <Check className={cn("mr-2 h-4 w-4 opacity-0")} />
+                  {category}
+                </CommandItem>
+              ))}
             </CommandGroup>
           </CommandList>
         </Command>

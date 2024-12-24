@@ -72,7 +72,7 @@ export default async function Page(props: {
         <p className="text-sm text-muted-foreground">Edit existing property.</p>
       </div>
 
-      <Tabs defaultValue={params.slug} className="w-full max-w-2xl">
+      <Tabs defaultValue={params.slug} className="w-full">
         <TabsList>
           {tabs.map((tab) => (
             <TabsTrigger key={tab.value} asChild value={tab.value}>

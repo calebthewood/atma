@@ -12,8 +12,6 @@ export const programFormSchema = z.object({
   programApproach: z.string(),
   whoIsthisFor: z.string(),
   policyCancel: z.string(),
-  duration: z.string().min(1, { message: "Duration is required." }),
-  date: z.string().date().optional(),
   minGuests: z.number().int().min(1),
   maxGuests: z.number().int().min(-1),
   sourceUrl: z.string().optional(),

@@ -103,10 +103,10 @@ const ProgramCard = ({
               : "City, Country"}
           </div>
 
-          <div className="text-center font-broad text-lg font-normal uppercase tracking-wide">
+          <div className="font-broad text-center text-lg font-normal uppercase tracking-wide">
             {program?.name || "Retreat Name"}
             <br />
-            {program?.duration || "7+ nights"}
+            {program?.programs?.[0]?.duration || "7+ nights"}
           </div>
         </div>
       </motion.div>

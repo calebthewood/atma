@@ -106,9 +106,12 @@ export function NewLazyRetreatItem({ id, segment, className }: LazyCardProps) {
       setIsLoading(true);
       try {
         let response;
+        console.log("switch", segment);
         switch (segment) {
           case "retreats":
+            console.log("segment ==== retreats");
             response = await getRetreat(id);
+            console.log("response", response)
             if (response.ok && response.data) {
               const rImgs = response.data.images;
               const pImgs = response.data.property.images;
@@ -185,8 +188,6 @@ export function NewLazyRetreatItem({ id, segment, className }: LazyCardProps) {
       : isProgram(item)
         ? item.property?.country
         : item.country,
-    date: isRetreat(item) || isProgram(item) ? item.date : undefined,
-    endDate: isRetreat(item) || isProgram(item) ? item.date : undefined,
     priceMods: isRetreat(item) || isProgram(item) ? item?.priceMods : undefined,
   };
 
@@ -258,7 +259,7 @@ export function NewLazyRetreatItem({ id, segment, className }: LazyCardProps) {
               displayData.city ||
               "Location not specified"}
         </div>
-        {(displayData.date || displayData.endDate) && (
+        {/* {(displayData.date || displayData.endDate) && (
           <div className="text-[10px] font-medium uppercase leading-[15px] opacity-60">
             {displayData.date &&
               format(new Date(displayData.date), "MMM d, yyyy")}
@@ -266,7 +267,7 @@ export function NewLazyRetreatItem({ id, segment, className }: LazyCardProps) {
             {displayData.endDate &&
               format(new Date(displayData.endDate), "MMM d, yyyy")}
           </div>
-        )}
+        )} */}
         <div className="text-[10px] font-medium uppercase leading-[15px] opacity-60">
           From {formatCurrency(displayData.priceMods)}
         </div>

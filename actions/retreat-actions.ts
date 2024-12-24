@@ -82,12 +82,11 @@ export async function createRetreat(
   data: RetreatFormData
 ): ActionResponse<Retreat> {
   try {
-    const { hostId, propertyId, date, ...restData } = data;
+    const { hostId, propertyId, ...restData } = data;
 
     const retreat = await prisma.retreat.create({
       data: {
         ...restData,
-        date: date ? new Date(date) : null,
         property: { connect: { id: propertyId } },
         host: { connect: { id: hostId || "" } },
       },
@@ -145,11 +144,10 @@ export async function updateRetreat(
   partialData: Partial<RetreatFormData>
 ): ActionResponse<Retreat> {
   try {
-    const { hostId, date, ...restData } = partialData;
+    const { hostId, ...restData } = partialData;
 
     const updateData: Prisma.RetreatUpdateInput = {
       ...restData,
-      ...(date !== undefined ? { date: date ? new Date(date) : null } : {}),
       ...(hostId !== undefined
         ? { host: { connect: { id: hostId || "" } } }
         : {}),

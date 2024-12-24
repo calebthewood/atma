@@ -42,33 +42,7 @@ import {
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "@/components/ui/use-toast";
 
-const categories = [
-  "Ayurveda",
-  "Couples & Relationships",
-  "Creative & Artistic",
-  "Detox & Cleanse",
-  "Detoxification",
-  "Emotional Healing",
-  "Family & Group Wellness",
-  "Fitness & Active",
-  "Healthy Aging",
-  "Holistic Wellness & Longevity",
-  "Hydrotherapy",
-  "Luxury Adventure",
-  "Medical Wellness",
-  "Meditation",
-  "Mental Health & Emotional Wellness",
-  "Mindfulness",
-  "Motherhood",
-  "Nutrition & Wellness Coaching",
-  "Optimal Weight",
-  "Relaxation",
-  "Sleep & Restorative Wellness",
-  "Spa",
-  "Spiritual & Self-Discovery",
-  "Traditional Healing",
-  "Therapeutic Fasting",
-];
+import { ENTITY_CATEGORIES } from "../entity-categories";
 
 const formSchema = z.object({
   bookingType: z.string(),
@@ -82,10 +56,6 @@ const formSchema = z.object({
   programApproach: z.string(),
   whoIsthisFor: z.string(),
   policyCancel: z.string(),
-  duration: z.string().min(1, { message: "Duration is required." }),
-  date: z.string().refine((val) => !isNaN(Date.parse(val)), {
-    message: "Invalid date format.",
-  }),
   minGuests: z.number().int().min(1),
   maxGuests: z.number().int().min(-1),
   sourceUrl: z.string().optional(),
@@ -119,8 +89,6 @@ export function ProgramForm({ program }: ProgramFormProps) {
       programApproach: program?.programApproach || "",
       whoIsthisFor: program?.whoIsthisFor || "",
       policyCancel: program?.policyCancel || "",
-      duration: program?.duration || "",
-      date: program?.date ? program.date.toISOString().split("T")[0] : "",
       minGuests: program?.minGuests ?? 1,
       maxGuests: program?.maxGuests ?? -1,
       sourceUrl: program?.sourceUrl ?? undefined,
@@ -349,12 +317,12 @@ export function ProgramForm({ program }: ProgramFormProps) {
           <CardHeader>
             <CardTitle>Program Overview</CardTitle>
           </CardHeader>
-          <CardContent>
+          <CardContent className="space-y-6">
             <FormField
               control={form.control}
               name="name"
               render={({ field }) => (
-                <FormItem className="my-2">
+                <FormItem>
                   <FormLabel className={getFieldStyles("name")}>
                     Program Name
                   </FormLabel>
@@ -375,7 +343,7 @@ export function ProgramForm({ program }: ProgramFormProps) {
               control={form.control}
               name="hostId"
               render={({ field }) => (
-                <FormItem className="my-2">
+                <FormItem>
                   <FormLabel className={getFieldStyles("hostId")}>
                     Host
                   </FormLabel>
@@ -407,7 +375,7 @@ export function ProgramForm({ program }: ProgramFormProps) {
               control={form.control}
               name="propertyId"
               render={({ field }) => (
-                <FormItem className="my-2">
+                <FormItem>
                   <FormLabel className={getFieldStyles("propertyId")}>
                     Property
                   </FormLabel>
@@ -439,7 +407,7 @@ export function ProgramForm({ program }: ProgramFormProps) {
               control={form.control}
               name="category"
               render={({ field }) => (
-                <FormItem className="my-2">
+                <FormItem>
                   <FormLabel className={getFieldStyles("category")}>
                     Program Category
                   </FormLabel>
@@ -456,7 +424,7 @@ export function ProgramForm({ program }: ProgramFormProps) {
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
-                      {categories.map((category, i) => (
+                      {ENTITY_CATEGORIES.map((category, i) => (
                         <SelectItem key={`category-${i}`} value={category}>
                           {category}
                         </SelectItem>
@@ -471,7 +439,7 @@ export function ProgramForm({ program }: ProgramFormProps) {
               control={form.control}
               name="bookingType"
               render={({ field }) => (
-                <FormItem className="my-2">
+                <FormItem>
                   <FormLabel className={getFieldStyles("bookingType")}>
                     Booking Type
                   </FormLabel>
@@ -480,7 +448,8 @@ export function ProgramForm({ program }: ProgramFormProps) {
                       field.onChange(value);
                       handleFieldBlur("bookingType");
                     }}
-                    defaultValue={field.value || "Flexible"}
+                    defaultValue={field.value}
+                    disabled
                   >
                     <FormControl>
                       <SelectTrigger className={getFieldStyles("bookingType")}>
@@ -494,51 +463,8 @@ export function ProgramForm({ program }: ProgramFormProps) {
                     </SelectContent>
                   </Select>
                   <FormDescription>
-                    Flexible: Fixed Start Open End. Fixed: Fixed Start Fixed
-                    End. Open: Open Start Open End
+                    Fixed is only option at present.
                   </FormDescription>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name="duration"
-              render={({ field }) => (
-                <FormItem className="my-2">
-                  <FormLabel className={getFieldStyles("duration")}>
-                    Duration
-                  </FormLabel>
-                  <FormControl>
-                    <Input
-                      className={getFieldStyles("duration")}
-                      placeholder="e.g., 7 days"
-                      {...field}
-                      onBlur={() => handleFieldBlur("duration")}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name="date"
-              render={({ field }) => (
-                <FormItem className="my-2">
-                  <FormLabel className={getFieldStyles("date")}>
-                    Start Date
-                  </FormLabel>
-                  <FormControl>
-                    <Input
-                      type="date"
-                      className={getFieldStyles("date")}
-                      {...field}
-                      onBlur={() => handleFieldBlur("date")}
-                    />
-                  </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
@@ -548,7 +474,7 @@ export function ProgramForm({ program }: ProgramFormProps) {
                 control={form.control}
                 name="minGuests"
                 render={({ field }) => (
-                  <FormItem className="my-2">
+                  <FormItem>
                     <FormLabel className={getFieldStyles("minGuests")}>
                       Minimum Guests
                     </FormLabel>
@@ -577,7 +503,7 @@ export function ProgramForm({ program }: ProgramFormProps) {
                 control={form.control}
                 name="maxGuests"
                 render={({ field }) => (
-                  <FormItem className="my-2">
+                  <FormItem>
                     <FormLabel className={getFieldStyles("maxGuests")}>
                       Maximum Guests
                     </FormLabel>
@@ -617,7 +543,7 @@ export function ProgramForm({ program }: ProgramFormProps) {
               control={form.control}
               name="desc"
               render={({ field }) => (
-                <FormItem className="my-2">
+                <FormItem>
                   <FormLabel className={getFieldStyles("desc")}>
                     Overview
                   </FormLabel>
@@ -638,7 +564,7 @@ export function ProgramForm({ program }: ProgramFormProps) {
               control={form.control}
               name="keyBenefits"
               render={({ field }) => (
-                <FormItem className="my-2">
+                <FormItem>
                   <FormLabel className={getFieldStyles("keyBenefits")}>
                     Key Benefits
                   </FormLabel>
@@ -659,7 +585,7 @@ export function ProgramForm({ program }: ProgramFormProps) {
               control={form.control}
               name="programApproach"
               render={({ field }) => (
-                <FormItem className="my-2">
+                <FormItem>
                   <FormLabel className={getFieldStyles("programApproach")}>
                     Program Approach
                   </FormLabel>
@@ -680,7 +606,7 @@ export function ProgramForm({ program }: ProgramFormProps) {
               control={form.control}
               name="whoIsthisFor"
               render={({ field }) => (
-                <FormItem className="my-2">
+                <FormItem>
                   <FormLabel className={getFieldStyles("whoIsthisFor")}>
                     Who is this for?
                   </FormLabel>
@@ -707,7 +633,7 @@ export function ProgramForm({ program }: ProgramFormProps) {
               control={form.control}
               name="policyCancel"
               render={({ field }) => (
-                <FormItem className="my-2">
+                <FormItem>
                   <FormLabel className={getFieldStyles("policyCancel")}>
                     Cancellation policy
                   </FormLabel>
@@ -730,7 +656,7 @@ export function ProgramForm({ program }: ProgramFormProps) {
           control={form.control}
           name="sourceUrl"
           render={({ field }) => (
-            <FormItem className="my-2">
+            <FormItem>
               <FormLabel className={getFieldStyles("sourceUrl")}>
                 Source URL
               </FormLabel>

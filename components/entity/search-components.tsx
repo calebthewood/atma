@@ -84,6 +84,7 @@ export default function SearchResultsPage({
   entityLabel,
 }: SearchResultsPageProps) {
   type SearchResults = EntityWithLocation[] | PropertyGroup[] | CountryGroup[];
+
   const [results, setResults] = useState<SearchResults>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);

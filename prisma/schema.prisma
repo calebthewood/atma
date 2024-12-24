@@ -228,10 +228,8 @@ model Retreat {
   policyCancel             String            @default("Policy cancel")
   transportationAndParking String            @default("Transportation and parking")
   policyPet                String            @default("Pet policy")
-  duration                 String            @default("1 Night")
-  date                     DateTime?
   minGuests                Int?              @default(1)
-  maxGuests                Int?              @default(-1)
+  maxGuests                Int?              @default(0)
   sourceUrl                String?
   verifiedBy               String? // userId of admin who verified
   notes                    String? // Admin notes
@@ -263,8 +261,6 @@ model Program {
   policyCancel             String            @default("Policy cancel")
   transportationAndParking String            @default("Transportation and parking")
   policyPet                String            @default("Pet policy")
-  duration                 String            @default("1 Night")
-  date                     DateTime?
   minGuests                Int?              @default(1)
   maxGuests                Int?              @default(-1)
   sourceUrl                String?

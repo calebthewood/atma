@@ -17,7 +17,6 @@ import {
 } from "@/actions/retreat-actions";
 import { RetreatFormData, retreatFormSchema } from "@/schemas/retreat-schema";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Host, Property } from "@prisma/client";
 import { useForm } from "react-hook-form";
 
 import { cn } from "@/lib/utils";
@@ -43,33 +42,7 @@ import {
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "@/components/ui/use-toast";
 
-const categories = [
-  "Ayurveda",
-  "Couples & Relationships",
-  "Creative & Artistic",
-  "Detox & Cleanse",
-  "Detoxification",
-  "Emotional Healing",
-  "Family & Group Wellness",
-  "Fitness & Active",
-  "Healthy Aging",
-  "Holistic Wellness & Longevity",
-  "Hydrotherapy",
-  "Luxury Adventure",
-  "Medical Wellness",
-  "Meditation",
-  "Mental Health & Emotional Wellness",
-  "Mindfulness",
-  "Motherhood",
-  "Nutrition & Wellness Coaching",
-  "Optimal Weight",
-  "Relaxation",
-  "Sleep & Restorative Wellness",
-  "Spa",
-  "Spiritual & Self-Discovery",
-  "Traditional Healing",
-  "Therapeutic Fasting",
-];
+import { ENTITY_CATEGORIES } from "../entity-categories";
 
 type RetreatFormProps = {
   retreat?: RetreatWithBasicRelations;
@@ -96,8 +69,6 @@ export function RetreatForm({ retreat }: RetreatFormProps) {
       programApproach: retreat?.programApproach || "",
       whoIsthisFor: retreat?.whoIsthisFor || "",
       policyCancel: retreat?.policyCancel || "",
-      duration: retreat?.duration || "",
-      date: retreat?.date ? retreat?.date.toISOString().split("T")[0] : "",
       minGuests: retreat?.minGuests ?? 1,
       maxGuests: retreat?.maxGuests ?? -1,
       sourceUrl: retreat?.sourceUrl || "",
@@ -325,7 +296,7 @@ export function RetreatForm({ retreat }: RetreatFormProps) {
           <CardHeader>
             <CardTitle>Retreat Overview</CardTitle>
           </CardHeader>
-          <CardContent>
+          <CardContent className="space-y-6">
             <FormField
               control={form.control}
               name="name"
@@ -432,7 +403,7 @@ export function RetreatForm({ retreat }: RetreatFormProps) {
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
-                      {categories.map((category, i) => (
+                      {ENTITY_CATEGORIES.map((category, i) => (
                         <SelectItem key={`category-${i}`} value={category}>
                           {category}
                         </SelectItem>
@@ -456,7 +427,8 @@ export function RetreatForm({ retreat }: RetreatFormProps) {
                       field.onChange(value);
                       handleFieldBlur("bookingType");
                     }}
-                    defaultValue={field.value || "Flexible"}
+                    disabled
+                    defaultValue={field.value || "Fixed"}
                   >
                     <FormControl>
                       <SelectTrigger className={getFieldStyles("bookingType")}>
@@ -470,51 +442,8 @@ export function RetreatForm({ retreat }: RetreatFormProps) {
                     </SelectContent>
                   </Select>
                   <FormDescription>
-                    Flexible: Fixed Start Open End. Fixed: Fixed Start Fixed
-                    End. Open: Open Start Open End
+                    Only fixed booking currently offered
                   </FormDescription>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name="duration"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel className={getFieldStyles("duration")}>
-                    Duration
-                  </FormLabel>
-                  <FormControl>
-                    <Input
-                      className={getFieldStyles("duration")}
-                      placeholder="e.g., 7 days"
-                      {...field}
-                      onBlur={() => handleFieldBlur("duration")}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name="date"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel className={getFieldStyles("date")}>
-                    Start Date
-                  </FormLabel>
-                  <FormControl>
-                    <Input
-                      type="date"
-                      className={getFieldStyles("date")}
-                      {...field}
-                      onBlur={() => handleFieldBlur("date")}
-                    />
-                  </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
@@ -588,7 +517,7 @@ export function RetreatForm({ retreat }: RetreatFormProps) {
           <CardHeader>
             <CardTitle>Retreat Highlights</CardTitle>
           </CardHeader>
-          <CardContent>
+          <CardContent className="space-y-6">
             <FormField
               control={form.control}
               name="desc"

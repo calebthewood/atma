@@ -131,7 +131,7 @@ export default async function Page({ params }: PageProps) {
         <p className="text-sm text-muted-foreground">Edit existing program.</p>
       </div>
 
-      <div className="w-full max-w-2xl">
+      <div className="w-full">
         <NavigationMenu>
           <NavigationMenuList className="inline-flex items-center justify-center rounded-lg bg-muted p-1">
             {tabs.map((tab) => (

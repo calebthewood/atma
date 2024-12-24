@@ -32,7 +32,7 @@ export default async function Page(props: { params: Promise<{ id: string }> }) {
     }
     const retreat = retreatResponse.data;
 
-    const propertyRes = await getProperty(id);
+    const propertyRes = await getProperty(retreatResponse.data.propertyId);
     if (!propertyRes.data) {
       throw new Error(propertyRes.message);
     }
@@ -41,7 +41,7 @@ export default async function Page(props: { params: Promise<{ id: string }> }) {
     const propertyImages = property?.images || [];
     const retreatImages =
       retreat.images.length > 0 ? retreat.images : propertyImages;
-    console.log(property);
+
     const amenities = await getPropertyAmenities(id);
     const parkingAmenities = amenities.data?.filter(
       (a) => a.amenityId === "parking-transportation"

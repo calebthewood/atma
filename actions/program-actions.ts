@@ -82,11 +82,10 @@ export async function createProgram(
   data: ProgramFormData
 ): ActionResponse<Program> {
   try {
-    const { hostId, propertyId, date, ...restData } = data;
+    const { hostId, propertyId, ...restData } = data;
     const program = await prisma.program.create({
       data: {
         ...restData,
-        date: date ? new Date(date) : null,
         property: { connect: { id: propertyId } },
         host: { connect: { id: hostId || "" } },
       },
@@ -123,15 +122,10 @@ export async function updateProgram(
   partialData: Partial<ProgramFormData>
 ): ActionResponse<Program> {
   try {
-    const { hostId, date, ...restData } = partialData;
+    const { hostId, ...restData } = partialData;
 
     const updateData: Prisma.ProgramUpdateInput = {
       ...restData,
-      ...(date !== undefined
-        ? {
-            date: date ? new Date(date) : null,
-          }
-        : {}),
       ...(hostId !== undefined
         ? {
             host: {
