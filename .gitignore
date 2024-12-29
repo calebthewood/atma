@@ -34,10 +34,14 @@ yarn-error.log*
 
 .contentlayer
 .env
+.env.development
+.env.production
+.env.local
 
 # dev db setup
 ingest/
 # SQLite database files
+dev.db
 *.db
 *.sqlite
 *.sqlite3

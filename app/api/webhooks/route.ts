@@ -22,7 +22,7 @@ export async function POST(req: Request) {
     event = stripe.webhooks.constructEvent(
       body,
       signature,
-      "whsec_3c066c9fc68c1d7321b1cefe4c5b1f676f848d3dafa7ee81b8328962afda191d"
+      process.env.STRIPE_WEBHOOK_SECRET as string
     );
   } catch (err) {
     const errorMessage = err instanceof Error ? err.message : "Unknown error";
