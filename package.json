@@ -9,8 +9,6 @@
     "reseed": "npx prisma db push --force-reset && npx prisma db push && node prisma/seed.js",
     "db:push": "npx prisma db push",
     "dev": "next dev",
-    "build:stage": "NODE_ENV=development next build",
-    "start:stage": "NODE_ENV=development next start",
     "build": "next build",
     "start": "next start",
     "deploy": "bash deploy-staging.sh",
