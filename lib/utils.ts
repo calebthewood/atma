@@ -15,7 +15,7 @@ function formatGroupSize(min: number | null, max: number | null): string {
   return `${min || 1} - ${max} guests`;
 }
 
-function formatLocation(
+function formatCityCountry(
   city: string | null | undefined,
   country: string | null | undefined
 ): string {
@@ -23,14 +23,17 @@ function formatLocation(
   return [city, country].filter(Boolean).join(", ");
 }
 
-export const toUSD = (value: number | undefined): string => {
-  if (typeof value !== "number") return "XX";
+export const toUSD = (
+  value: number | string | undefined,
+  showCents = false
+): string => {
   const n = Number(value);
   if (isNaN(n)) return "$";
+  if (typeof n !== "number") return "XX";
   return n.toLocaleString("en-US", {
     style: "currency",
     currency: "USD",
-    minimumFractionDigits: 0,
+    minimumFractionDigits: showCents ? 2 : 0,
   });
 };
 
@@ -368,4 +371,12 @@ export const getCountryName = (countryCode: string): string => {
     console.warn("Intl.DisplayNames not supported:", error);
     return countryCode;
   }
+};
+
+export const formatDate = (date: Date) => {
+  return new Intl.DateTimeFormat("en-US", {
+    weekday: "short",
+    month: "short",
+    day: "numeric",
+  }).format(new Date(date));
 };

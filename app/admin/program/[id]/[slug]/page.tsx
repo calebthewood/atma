@@ -2,21 +2,28 @@ import Link from "next/link";
 import { getProgram } from "@/actions/program-actions";
 import { getPaginatedInstances } from "@/actions/program-instance-actions";
 
-
-
 import { cn } from "@/lib/utils";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { NavigationMenu, NavigationMenuItem, NavigationMenuLink, NavigationMenuList, navigationMenuTriggerStyle } from "@/components/ui/navigation-menu";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import {
+  NavigationMenu,
+  NavigationMenuItem,
+  NavigationMenuLink,
+  NavigationMenuList,
+  navigationMenuTriggerStyle,
+} from "@/components/ui/navigation-menu";
 import { PriceModsTable } from "@/app/admin/retreat/instance-pricing-table";
-
-
 
 import { PriceModForm } from "../../../price-form";
 import { ImageManagement } from "../../../property/image-management";
 import { ProgramForm } from "../../program-form";
 import { ProgramInstanceForm } from "../../program-instance-form";
 import { ProgramInstancesList } from "../../program-instance-table";
-
 
 interface PageProps {
   params: Promise<{ id: string; slug: string }>;

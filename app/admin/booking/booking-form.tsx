@@ -1,232 +1,435 @@
-"use client";
+// "use client";
 
-import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
-import {
-  BookingWithAllRelations,
-  createBooking,
-  updateBooking,
-} from "@/actions/booking-actions";
-import { BookingFormData, bookingFormSchema } from "@/schemas/booking-schema";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
+// import { useEffect, useState } from "react";
+// import { useRouter } from "next/navigation";
+// import {
+//   BookingWithAllRelations,
+//   createProgramBooking,
+//   createRetreatBooking,
+//   updateBooking,
+// } from "@/actions/booking-actions";
+// import { BookingFormData, bookingFormSchema } from "@/schemas/booking-schema";
+// import { Host, Property } from "@prisma/client";
+// import { zodResolver } from "@hookform/resolvers/zod";
+// import { useForm } from "react-hook-form";
 
-import { cn } from "@/lib/utils";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form";
+// import { cn } from "@/lib/utils";
+// import { Button } from "@/components/ui/button";
+// import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+// import {
+//   Form,
+//   FormControl,
+//   FormField,
+//   FormItem,
+//   FormLabel,
+//   FormMessage,
+// } from "@/components/ui/form";
+// import { Input } from "@/components/ui/input";
+// import {
+//   Select,
+//   SelectContent,
+//   SelectItem,
+//   SelectTrigger,
+//   SelectValue,
+// } from "@/components/ui/select";
+// import { toast } from "@/components/ui/use-toast";
+// import { useSession } from "next-auth/react";
+// import { ProgramWithAllRelations } from "@/actions/program-actions";
+// import { RetreatWithAllRelations } from "@/actions/retreat-actions";
 
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import { toast } from "@/components/ui/use-toast";
+// type BookingFormProps = {
+//   booking?: BookingWithAllRelations;
+//   // Add these props to pass in data
+//   hosts: Host[];
+//   properties: Property[];
+//   programs: ProgramWithAllRelations[];
+//   retreats: RetreatWithAllRelations[];
+// };
 
-type BookingFormProps = {
-  booking?: BookingWithAllRelations;
-};
+// const formatDate = (date: Date) => {
+//   return new Date(date).toISOString().split("T")[0];
+// };
 
-export function BookingForm({ booking }: BookingFormProps) {
-  const [isLoading, setIsLoading] = useState(false);
-  const router = useRouter();
+// export function BookingForm({ booking, hosts, properties, programs, retreats }: BookingFormProps) {
+//   const [isLoading, setIsLoading] = useState(false);
+//   const router = useRouter();
+//   const { data: session } = useSession();
 
-  const property =
-    booking?.programInstance?.program.property ||
-    booking?.retreatInstance?.retreat.property;
+//   // State for cascading selects
+//   const [selectedHostId, setSelectedHostId] = useState<string>(booking?.hostId || "");
+//   const [selectedPropertyId, setSelectedPropertyId] = useState<string>(booking?.propertyId || "");
+//   const [bookingType, setBookingType] = useState<"program" | "retreat" | null>(
+//     booking?.programInstanceId ? "program" : booking?.retreatInstanceId ? "retreat" : null
+//   );
 
-  const form = useForm<BookingFormData>({
-    resolver: zodResolver(bookingFormSchema),
-    defaultValues: {
-      checkInDate: booking?.checkInDate
-        ? new Date(booking.checkInDate).toISOString().split("T")[0]
-        : "",
-      checkOutDate: booking?.checkOutDate
-        ? new Date(booking.checkOutDate).toISOString().split("T")[0]
-        : "",
-      guestCount: booking?.guestCount || 1,
-      propertyId: booking?.propertyId || property?.id,
-      retreatInstanceId: booking?.retreatInstanceId || undefined,
-      programInstanceId: booking?.programInstanceId || undefined,
-      status: booking?.status || "pending",
-      totalPrice: booking?.totalPrice || "",
-      userId: booking?.userId || "",
-      hostId: booking?.hostId || property?.hostId || "",
-    },
-  });
+//   // Filter data based on selections
+//   const filteredHosts = hosts.filter(host =>
+//     session?.user?.role === "admin" || host.id === session?.user?.hostId
+//   );
 
-  // Fields that should update on change rather than blur
-  const ON_CHANGE_FIELDS = new Set(["status", "guestCount"]);
+//   const filteredProperties = properties.filter(property =>
+//     property.hostId === selectedHostId
+//   );
 
-  // Update fields on blur when editing
-  useEffect(() => {
-    if (!booking) return;
+//   const filteredPrograms = programs.filter(program =>
+//     program.propertyId === selectedPropertyId
+//   );
 
-    const subscription = form.watch(async (value, { name, type }) => {
-      if (
-        name &&
-        form.formState.dirtyFields[name] &&
-        !form.formState.isSubmitting &&
-        (type === "blur" || (type === "change" && ON_CHANGE_FIELDS.has(name)))
-      ) {
-        try {
-          await handleFieldBlur(name as keyof BookingFormData);
-        } catch (error) {
-          console.error(`Error updating ${name}:`, error);
-        }
-      }
-    });
+//   const filteredRetreats = retreats.filter(retreat =>
+//     retreat.propertyId === selectedPropertyId
+//   );
 
-    return () => subscription.unsubscribe();
-  }, [booking, form]);
+//   const form = useForm<BookingFormData>({
+//     resolver: zodResolver(bookingFormSchema),
+//     defaultValues: {
+//       checkInDate: booking?.checkInDate ? formatDate(booking.checkInDate) : "",
+//       checkOutDate: booking?.checkOutDate ? formatDate(booking.checkOutDate) : "",
+//       guestCount: booking?.guestCount || 1,
+//       propertyId: booking?.propertyId || "",
+//       hostId: booking?.hostId || "",
+//       retreatInstanceId: booking?.retreatInstanceId || "",
+//       programInstanceId: booking?.programInstanceId || "",
+//       status: booking?.status || "pending",
+//       totalPrice: booking?.totalPrice || "",
+//       userId: booking?.userId || session?.user?.id || "",
+//     },
+//   });
 
-  const handleFieldBlur = async (fieldName: keyof BookingFormData) => {
-    if (!booking) return;
+//   // Handle host selection
+//   const handleHostChange = (hostId: string) => {
+//     setSelectedHostId(hostId);
+//     setSelectedPropertyId("");
+//     form.setValue("hostId", hostId);
+//     form.setValue("propertyId", "");
+//     form.setValue("programInstanceId", "");
+//     form.setValue("retreatInstanceId", "");
+//   };
 
-    try {
-      const fieldValue = form.getValues(fieldName);
-      const result = await updateBooking(booking.id, {
-        [fieldName]: fieldValue,
-      });
+//   // Handle property selection
+//   const handlePropertyChange = (propertyId: string) => {
+//     setSelectedPropertyId(propertyId);
+//     form.setValue("propertyId", propertyId);
+//     form.setValue("programInstanceId", "");
+//     form.setValue("retreatInstanceId", "");
+//   };
 
-      if (!result.ok) {
-        throw new Error(result.message);
-      }
+//   // Handle type selection
+//   const handleTypeChange = (type: "program" | "retreat") => {
+//     setBookingType(type);
+//     form.setValue("programInstanceId", "");
+//     form.setValue("retreatInstanceId", "");
+//   };
 
-      toast({
-        title: "Updated",
-        description: `${fieldName} has been updated.`,
-      });
-    } catch (error) {
-      console.error(`Error updating ${fieldName}:`, error);
+//   // Update fields on blur when editing
+//   useEffect(() => {
+//     if (!booking) return;
 
-      toast({
-        title: "Error",
-        description: `Failed to update ${fieldName}. Please try again.`,
-        variant: "destructive",
-      });
+//     const subscription = form.watch(async (value, { name, type }) => {
+//       if (name && form.formState.dirtyFields[name] && !form.formState.isSubmitting && type === "blur") {
+//         try {
+//           await handleFieldBlur(name as keyof BookingFormData);
+//         } catch (error) {
+//           console.error(`Error updating ${name}:`, error);
+//         }
+//       }
+//     });
 
-      form.setError(fieldName, {
-        type: "manual",
-        message: "Update failed",
-      });
-    }
-  };
+//     return () => subscription.unsubscribe();
+//   }, [booking, form]);
 
-  const getFieldStyles = (fieldName: keyof BookingFormData) => {
-    const isSubmitting = form.formState.isSubmitting;
-    const isValid = !form.formState.errors[fieldName];
-    const isDirty = form.formState.dirtyFields[fieldName];
+//   const handleFieldBlur = async (fieldName: keyof BookingFormData) => {
+//     if (!booking) return;
 
-    return cn("transition-colors duration-300", {
-      "border-yellow-500": isSubmitting,
-      "border-green-500": isValid && isDirty && !isSubmitting,
-      "border-red-500": !isValid && !isSubmitting,
-    });
-  };
+//     try {
+//       const fieldValue = form.getValues(fieldName);
+//       const result = await updateBooking(booking.id, {
+//         [fieldName]: fieldValue,
+//       });
 
-  async function onSubmit(values: BookingFormData) {
-    setIsLoading(true);
-    try {
-      if (booking) {
-        const result = await updateBooking(booking.id, values);
-        if (!result.ok) {
-          throw new Error(result.message);
-        }
-        toast({
-          title: "Success",
-          description: "Booking updated successfully.",
-        });
-      } else {
-        const result = await createBooking(values);
-        if (!result.ok) {
-          throw new Error(result.message);
-        }
-        toast({
-          title: "Success",
-          description: "Booking created successfully.",
-        });
-      }
-      form.reset(values);
-      router.push("/admin/booking");
-    } catch (error) {
-      console.error("Error submitting booking:", error);
-      toast({
-        title: "Error",
-        description:
-          error instanceof Error ? error.message : "Failed to save booking",
-        variant: "destructive",
-      });
-    } finally {
-      setIsLoading(false);
-    }
-  }
+//       if (!result.ok) throw new Error(result.message);
 
-  return (
-    <Form {...form}>
-      <form
-        onSubmit={form.handleSubmit(onSubmit)}
-        className="max-w-xl space-y-8"
-      >
-        <Card>
-          <CardHeader>
-            <CardTitle>Booking Details</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            {/* Existing form fields with updated styling and blur handlers */}
-            <FormField
-              control={form.control}
-              name="status"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Status</FormLabel>
-                  <Select
-                    onValueChange={field.onChange}
-                    defaultValue={field.value}
-                  >
-                    <FormControl>
-                      <SelectTrigger className={getFieldStyles("status")}>
-                        <SelectValue placeholder="Select status" />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent>
-                      <SelectItem value="pending">Pending</SelectItem>
-                      <SelectItem value="confirmed">Confirmed</SelectItem>
-                      <SelectItem value="cancelled">Cancelled</SelectItem>
-                    </SelectContent>
-                  </Select>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            {/* Rest of your form fields following the same pattern */}
-          </CardContent>
-        </Card>
+//       toast({
+//         title: "Updated",
+//         description: `${fieldName} has been updated.`,
+//       });
+//     } catch (error) {
+//       console.error(`Error updating ${fieldName}:`, error);
+//       toast({
+//         title: "Error",
+//         description: `Failed to update ${fieldName}. Please try again.`,
+//         variant: "destructive",
+//       });
+//     }
+//   };
 
-        <Button
-          type="submit"
-          disabled={isLoading}
-          className={cn({
-            "bg-yellow-500": isLoading || form.formState.isDirty,
-            "bg-green-500": form.formState.isSubmitSuccessful,
-          })}
-        >
-          {isLoading
-            ? "Saving..."
-            : booking
-              ? "Update Booking"
-              : "Create Booking"}
-        </Button>
-      </form>
-    </Form>
-  );
-}
+//   async function onSubmit(values: BookingFormData) {
+//     setIsLoading(true);
+//     try {
+//       if (booking) {
+//         const result = await updateBooking(booking.id, values);
+//         if (!result.ok) throw new Error(result.message);
+//       } else {
+//         const createFn = bookingType === "program" ? createProgramBooking : createRetreatBooking;
+//         const result = await createFn(values);
+//         if (!result.ok) throw new Error(result.message);
+//       }
+
+//       toast({
+//         title: "Success",
+//         description: `Booking ${booking ? "updated" : "created"} successfully.`,
+//       });
+
+//       router.push("/admin/bookings");
+//     } catch (error) {
+//       console.error("Error submitting booking:", error);
+//       toast({
+//         title: "Error",
+//         description: error instanceof Error ? error.message : "Failed to save booking",
+//         variant: "destructive",
+//       });
+//     } finally {
+//       setIsLoading(false);
+//     }
+//   }
+
+//   return (
+//     <Form {...form}>
+//       <form onSubmit={form.handleSubmit(onSubmit)} className="max-w-xl space-y-8">
+//         <Card>
+//           <CardHeader>
+//             <CardTitle>Booking Details</CardTitle>
+//           </CardHeader>
+//           <CardContent className="space-y-4">
+//             {/* Host Selection */}
+//             <FormField
+//               control={form.control}
+//               name="hostId"
+//               render={({ field }) => (
+//                 <FormItem>
+//                   <FormLabel>Host</FormLabel>
+//                   <Select
+//                     onValueChange={(value) => handleHostChange(value)}
+//                     value={field.value}
+//                   >
+//                     <FormControl>
+//                       <SelectTrigger>
+//                         <SelectValue placeholder="Select host" />
+//                       </SelectTrigger>
+//                     </FormControl>
+//                     <SelectContent>
+//                       {filteredHosts.map((host) => (
+//                         <SelectItem key={host.id} value={host.id}>
+//                           {host.name}
+//                         </SelectItem>
+//                       ))}
+//                     </SelectContent>
+//                   </Select>
+//                   <FormMessage />
+//                 </FormItem>
+//               )}
+//             />
+
+//             {/* Property Selection */}
+//             {selectedHostId && (
+//               <FormField
+//                 control={form.control}
+//                 name="propertyId"
+//                 render={({ field }) => (
+//                   <FormItem>
+//                     <FormLabel>Property</FormLabel>
+//                     <Select
+//                       onValueChange={(value) => handlePropertyChange(value)}
+//                       value={field.value}
+//                     >
+//                       <FormControl>
+//                         <SelectTrigger>
+//                           <SelectValue placeholder="Select property" />
+//                         </SelectTrigger>
+//                       </FormControl>
+//                       <SelectContent>
+//                         {filteredProperties.map((property) => (
+//                           <SelectItem key={property.id} value={property.id}>
+//                             {property.name}
+//                           </SelectItem>
+//                         ))}
+//                       </SelectContent>
+//                     </Select>
+//                     <FormMessage />
+//                   </FormItem>
+//                 )}
+//               />
+//             )}
+
+//             {/* Booking Type Selection */}
+//             {selectedPropertyId && (
+//               <FormItem>
+//                 <FormLabel>Booking Type</FormLabel>
+//                 <Select
+//                   onValueChange={(value: "program" | "retreat") => handleTypeChange(value)}
+//                   value={bookingType || undefined}
+//                 >
+//                   <FormControl>
+//                     <SelectTrigger>
+//                       <SelectValue placeholder="Select type" />
+//                     </SelectTrigger>
+//                   </FormControl>
+//                   <SelectContent>
+//                     <SelectItem value="program">Program</SelectItem>
+//                     <SelectItem value="retreat">Retreat</SelectItem>
+//                   </SelectContent>
+//                 </Select>
+//                 <FormMessage />
+//               </FormItem>
+//             )}
+
+//             {/* Program/Retreat Instance Selection */}
+//             {bookingType === "program" && (
+//               <FormField
+//                 control={form.control}
+//                 name="programInstanceId"
+//                 render={({ field }) => (
+//                   <FormItem>
+//                     <FormLabel>Program</FormLabel>
+//                     <Select onValueChange={field.onChange} value={field.value}>
+//                       <FormControl>
+//                         <SelectTrigger>
+//                           <SelectValue placeholder="Select program" />
+//                         </SelectTrigger>
+//                       </FormControl>
+//                       <SelectContent>
+//                         {filteredPrograms.map((program) => (
+//                           <SelectItem key={program.id} value={program.id}>
+//                             {program.program.name} ({formatDate(program.startDate)} - {formatDate(program.endDate)})
+//                           </SelectItem>
+//                         ))}
+//                       </SelectContent>
+//                     </Select>
+//                     <FormMessage />
+//                   </FormItem>
+//                 )}
+//               />
+//             )}
+
+//             {bookingType === "retreat" && (
+//               <FormField
+//                 control={form.control}
+//                 name="retreatInstanceId"
+//                 render={({ field }) => (
+//                   <FormItem>
+//                     <FormLabel>Retreat</FormLabel>
+//                     <Select onValueChange={field.onChange} value={field.value}>
+//                       <FormControl>
+//                         <SelectTrigger>
+//                           <SelectValue placeholder="Select retreat" />
+//                         </SelectTrigger>
+//                       </FormControl>
+//                       <SelectContent>
+//                         {filteredRetreats.map((retreat) => (
+//                           <SelectItem key={retreat.id} value={retreat.id}>
+//                             {retreat.retreat.name} ({formatDate(retreat.startDate)} - {formatDate(retreat.endDate)})
+//                           </SelectItem>
+//                         ))}
+//                       </SelectContent>
+//                     </Select>
+//                     <FormMessage />
+//                   </FormItem>
+//                 )}
+//               />
+//             )}
+
+//             {/* Common Booking Fields */}
+//             <FormField
+//               control={form.control}
+//               name="checkInDate"
+//               render={({ field }) => (
+//                 <FormItem>
+//                   <FormLabel>Check-in Date</FormLabel>
+//                   <FormControl>
+//                     <Input type="date" {...field} />
+//                   </FormControl>
+//                   <FormMessage />
+//                 </FormItem>
+//               )}
+//             />
+
+//             <FormField
+//               control={form.control}
+//               name="checkOutDate"
+//               render={({ field }) => (
+//                 <FormItem>
+//                   <FormLabel>Check-out Date</FormLabel>
+//                   <FormControl>
+//                     <Input type="date" {...field} />
+//                   </FormControl>
+//                   <FormMessage />
+//                 </FormItem>
+//               )}
+//             />
+
+//             <FormField
+//               control={form.control}
+//               name="guestCount"
+//               render={({ field }) => (
+//                 <FormItem>
+//                   <FormLabel>Number of Guests</FormLabel>
+//                   <FormControl>
+//                     <Input type="number" min="1" {...field} />
+//                   </FormControl>
+//                   <FormMessage />
+//                 </FormItem>
+//               )}
+//             />
+
+//             <FormField
+//               control={form.control}
+//               name="totalPrice"
+//               render={({ field }) => (
+//                 <FormItem>
+//                   <FormLabel>Total Price</FormLabel>
+//                   <FormControl>
+//                     <Input {...field} />
+//                   </FormControl>
+//                   <FormMessage />
+//                 </FormItem>
+//               )}
+//             />
+
+//             <FormField
+//               control={form.control}
+//               name="status"
+//               render={({ field }) => (
+//                 <FormItem>
+//                   <FormLabel>Status</FormLabel>
+//                   <Select onValueChange={field.onChange} value={field.value}>
+//                     <FormControl>
+//                       <SelectTrigger>
+//                         <SelectValue placeholder="Select status" />
+//                       </SelectTrigger>
+//                     </FormControl>
+//                     <SelectContent>
+//                       <SelectItem value="pending">Pending</SelectItem>
+//                       <SelectItem value="confirmed">Confirmed</SelectItem>
+//                       <SelectItem value="cancelled">Cancelled</SelectItem>
+//                     </SelectContent>
+//                   </Select>
+//                   <FormMessage />
+//                 </FormItem>
+//               )}
+//             />
+//           </CardContent>
+//         </Card>
+
+//         <Button
+//           type="submit"
+//           disabled={isLoading}
+//           className={cn({
+//             "bg-yellow-500": isLoading,
+//             "bg-green-500": form.formState.isSubmitSuccessful,
+//           })}
+//         >
+//           {isLoading ? "Saving..." : booking ? "Update Booking" : "Create Booking"}
+//         </Button>
+//       </form>
+//     </Form>
+//   );
+// }

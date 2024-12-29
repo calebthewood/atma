@@ -2,9 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import {
-  getAdminPaginatedHosts,
-} from "@/actions/host-actions";
+import { getAdminPaginatedHosts } from "@/actions/host-actions";
 import { updateUser } from "@/actions/user-actions";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Host, HostUser } from "@prisma/client";

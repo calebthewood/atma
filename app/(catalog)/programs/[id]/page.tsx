@@ -10,7 +10,7 @@ import { auth } from "@/auth";
 import ThumbnailCarousel from "@/components/ui/carousel-thumbnail";
 import { toast } from "@/components/ui/use-toast";
 import { FixedBooking } from "@/components/booking/fixed-booking";
-import EntityInstancesTabs from "@/components/program-tabs";
+import EntityInstancesTabs from "@/components/entity-instance-tabs";
 import PropertyPolicies from "@/components/property-policies";
 import { EntityTabs } from "@/components/property-tabs";
 import SubscriptionSection from "@/components/sections/subscription-section";
@@ -33,14 +33,14 @@ export default async function Page(props: { params: Promise<{ id: string }> }) {
     }
 
     const program = programResponse.data;
+    const propertyRes = await getProperty(program.propertyId);
 
-    const propertyRes = await getProperty(id);
     if (!propertyRes.data) {
       throw new Error(propertyRes.message);
     }
     const property = propertyRes.data;
     const images = program?.images || property?.images || [];
-    const amenities = await getPropertyAmenities(id);
+    const amenities = await getPropertyAmenities(program.propertyId);
     const parkingAmenities = amenities.data?.filter(
       (a) => a.amenityId === "parking-transportation"
     );

@@ -4,7 +4,7 @@
 import { revalidatePath } from "next/cache";
 import { auth } from "@/auth";
 import { BookingFormData } from "@/schemas/booking-schema";
-import { Prisma } from "@prisma/client";
+import { Booking, Prisma } from "@prisma/client";
 
 import prisma from "@/lib/prisma";
 
@@ -42,29 +42,26 @@ const BOOKING_INCLUDE_FULL = {
     },
   },
   retreatInstance: {
-    include: {
+    select: {
       retreat: {
-        include: {
-          property: true,
-        },
+        select: { name: true },
       },
     },
   },
   programInstance: {
-    include: {
+    select: {
       program: {
-        include: {
-          property: true,
-        },
+        select: { name: true },
       },
     },
   },
+  property: { select: { name: true, address: true } },
   payments: {
     orderBy: {
       createdAt: "desc",
     },
   },
-} satisfies Prisma.BookingInclude;
+} satisfies Prisma.BookingSelect;
 
 const BOOKING_ADMIN_SELECT = {
   id: true,
@@ -154,75 +151,93 @@ function buildBookingSearchConditions(
 // Core CRUD Operations
 // ============================================================================
 
-export async function createBooking(
-  data: BookingFormData
+type BaseBookingData = {
+  userId: string;
+  hostId: string;
+  propertyId: string;
+  checkInDate: string;
+  checkOutDate: string;
+  guestCount: number;
+  totalPrice: string;
+  status: string;
+};
+
+type RetreatBookingData = BaseBookingData & {
+  retreatInstanceId: string;
+};
+
+type ProgramBookingData = BaseBookingData & {
+  programInstanceId: string;
+};
+
+async function createBookingWithNotification(
+  createData: Prisma.BookingCreateInput
 ): Promise<ActionResponse<BookingWithAllRelations>> {
-  try {
-    if (
-      !data.propertyId &&
-      !data.retreatInstanceId &&
-      !data.programInstanceId
-    ) {
-      return {
-        ok: false,
-        data: null,
-        message:
-          "Must provide either a property, retreat instance, or program instance",
-      };
-    }
+  console.log("createData", createData);
 
-    const createData: Prisma.BookingCreateInput = {
-      checkInDate: new Date(data.checkInDate),
-      checkOutDate: new Date(data.checkOutDate),
-      guestCount: data.guestCount,
-      totalPrice: data.totalPrice,
-      status: data.status,
-      host: { connect: { id: data.hostId } },
-      user: { connect: { id: data.userId } },
-      ...(data.propertyId
-        ? { property: { connect: { id: data.propertyId } } }
-        : {}),
-      ...(data.retreatInstanceId
-        ? { retreatInstance: { connect: { id: data.retreatInstanceId } } }
-        : {}),
-      ...(data.programInstanceId
-        ? { programInstance: { connect: { id: data.programInstanceId } } }
-        : {}),
-    };
+  const booking = await prisma.booking.create({
+    data: createData,
+    include: BOOKING_INCLUDE_FULL,
+  });
 
-    const [booking] = await prisma.$transaction([
-      prisma.booking.create({
-        data: createData,
-        include: BOOKING_INCLUDE_FULL,
-      }),
-      prisma.notification.create({
-        data: {
-          timestamp: new Date(),
-          status: "pending",
-          user: { connect: { id: data.userId } },
-          booking: { connect: { id: createData.id } },
-        },
-      }),
-    ]);
+  await prisma.notification.create({
+    data: {
+      timestamp: new Date(),
+      status: "pending",
+      user: { connect: { id: createData.user.connect!.id } },
+      booking: { connect: { id: booking.id } },
+    },
+  });
 
-    revalidatePath("/bookings");
-    revalidatePath(`/booking/${booking.id}`);
-    revalidatePath("/admin/bookings");
+  revalidatePath("/admin/bookings");
+  return {
+    ok: true,
+    data: booking,
+    message: "Successfully created booking",
+  };
 
-    return {
-      ok: true,
-      data: booking,
-      message: "Successfully created booking",
-    };
-  } catch (error) {
-    console.error("Failed to create booking:", error);
-    return {
-      ok: false,
-      data: null,
-      message:
-        error instanceof Error ? error.message : "Failed to create booking",
-    };
-  }
+  // console.error("Failed to create booking:", error);
+  // return {
+  //   ok: false,
+  //   data: null,
+  //   message: error instanceof Error ? error.message : "Failed to create booking",
+  // };
+}
+
+export async function createRetreatBooking(
+  data: RetreatBookingData
+): Promise<ActionResponse<BookingWithAllRelations>> {
+  const createData: Prisma.BookingCreateInput = {
+    checkInDate: new Date(data.checkInDate),
+    checkOutDate: new Date(data.checkOutDate),
+    guestCount: data.guestCount,
+    totalPrice: data.totalPrice,
+    status: data.status,
+    property: { connect: { id: data.propertyId } },
+    host: { connect: { id: data.hostId } },
+    user: { connect: { id: data.userId } },
+    retreatInstance: { connect: { id: data.retreatInstanceId } },
+  };
+  console.log("data.retreatInstanceId", data.retreatInstanceId);
+  return await createBookingWithNotification(createData);
+}
+
+export async function createProgramBooking(
+  data: ProgramBookingData
+): Promise<ActionResponse<BookingWithAllRelations>> {
+  const createData: Prisma.BookingCreateInput = {
+    checkInDate: new Date(data.checkInDate),
+    checkOutDate: new Date(data.checkOutDate),
+    guestCount: data.guestCount,
+    totalPrice: data.totalPrice,
+    status: data.status,
+    property: { connect: { id: data.propertyId } },
+    host: { connect: { id: data.hostId } },
+    user: { connect: { id: data.userId } },
+    programInstance: { connect: { id: data.programInstanceId } },
+  };
+
+  return await createBookingWithNotification(createData);
 }
 
 export async function getBooking(
@@ -269,35 +284,29 @@ export async function getBooking(
 export async function updateBookingStatus(
   id: string,
   status: "pending" | "confirmed" | "cancelled"
-): Promise<ActionResponse> {
+): Promise<ActionResponse<BookingWithAllRelations>> {
   try {
-    const session = await auth();
-    if (!session?.user?.id) {
-      return { ok: false, data: null, message: "Unauthorized" };
-    }
+    // const session = await auth();
+    // if (!session?.user?.id) {
+    //   return { ok: false, data: null, message: "Unauthorized" };
+    // }
+    const bookingExists = await prisma.booking.findFirst({
+      where: { id },
 
-    const whereClause = {
-      id,
-      ...(session.user.role !== "admin"
-        ? {
-            property: { hostId: session.user.hostId },
-          }
-        : {}),
-    };
+    });
 
-    const booking = await prisma.booking.findFirst({ where: whereClause });
-
-    if (!booking) {
+    if (!bookingExists) {
       return {
         ok: false,
         data: null,
-        message: "Booking not found or access denied",
+        message: "Booking not found",
       };
     }
 
-    await prisma.booking.update({
+    const booking = await prisma.booking.update({
       where: { id },
       data: { status },
+      include: BOOKING_INCLUDE_FULL,
     });
 
     revalidatePath("/admin/bookings");
@@ -305,7 +314,7 @@ export async function updateBookingStatus(
 
     return {
       ok: true,
-      data: null,
+      data: booking,
       message: "Successfully updated booking status",
     };
   } catch (error) {
@@ -332,8 +341,8 @@ export async function updateBooking(
       id,
       ...(session.user.role !== "admin"
         ? {
-            property: { hostId: session.user.hostId },
-          }
+          property: { hostId: session.user.hostId },
+        }
         : {}),
     };
 
@@ -408,8 +417,8 @@ export async function deleteBooking(id: string): Promise<ActionResponse> {
       id,
       ...(session.user.role !== "admin"
         ? {
-            property: { hostId: session.user.hostId },
-          }
+          property: { hostId: session.user.hostId },
+        }
         : {}),
     };
 

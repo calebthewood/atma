@@ -1,3 +1,7 @@
+"use client";
+
+import { useEffect } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import { ProgramInstance, RetreatInstance } from "@prisma/client";
 
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -7,15 +11,36 @@ type EntityInstancesTabsProps = {
 };
 
 const EntityInstancesTabs = ({ instances }: EntityInstancesTabsProps) => {
-  // If no instances, don't render anything
-  if (!instances?.length) return null;
+  const router = useRouter();
+  const searchParams = useSearchParams();
+
+  // Early return if no instances
 
   // Create tab data from instances
   const tabsData = instances.map((instance) => ({
-    value: instance?.id,
+    value: instance.id,
     label: `${instance.duration} Nights`,
     content: instance.itinerary,
   }));
+
+  // Set initial instance in URL if not present
+  useEffect(() => {
+    if (!searchParams.get("instance") && tabsData.length > 0) {
+      const params = new URLSearchParams(searchParams.toString());
+      params.set("instance", tabsData[0].value);
+      router.push(`?${params.toString()}`, { scroll: false });
+    }
+  }, [searchParams, router, tabsData]);
+
+  // Get current instance from URL or default to first instance
+  const currentInstance = searchParams.get("instance") || tabsData[0].value;
+
+  // Update URL when tab changes
+  const handleTabChange = (value: string) => {
+    const params = new URLSearchParams(searchParams.toString());
+    params.set("instance", value);
+    router.push(`?${params.toString()}`, { scroll: false });
+  };
 
   // Format itinerary content into bullet points
   const formatItinerary = (content: string) => {
@@ -28,10 +53,11 @@ const EntityInstancesTabs = ({ instances }: EntityInstancesTabsProps) => {
         </li>
       ));
   };
-
+  if (!instances?.length) return null;
   return (
     <Tabs
-      defaultValue={tabsData[0]?.value}
+      value={currentInstance}
+      onValueChange={handleTabChange}
       className="mx-auto w-full max-w-3xl"
     >
       <TabsList className="mb-4 w-full flex-wrap justify-evenly bg-transparent">

@@ -1,9 +1,7 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import {
-  instanceFormSchema,
-} from "@/schemas/retreat-instance";
+import { instanceFormSchema } from "@/schemas/retreat-instance";
 import { PriceMod, type Retreat, type RetreatInstance } from "@prisma/client";
 
 import { prisma } from "@/lib/prisma";

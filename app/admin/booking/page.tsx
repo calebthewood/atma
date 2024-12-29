@@ -4,7 +4,6 @@ import { Separator } from "@/components/ui/separator";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 import { BookingsDataTable } from "./booking-data-table";
-import { BookingForm } from "./booking-form";
 
 export default async function BookingPage() {
   const userResponse = await getDashboardUser();
@@ -39,7 +38,8 @@ export default async function BookingPage() {
           <TabsTrigger value="form">Create Booking</TabsTrigger>
         </TabsList>
         <TabsContent value="form">
-          <BookingForm />
+          See stripe dashboard for booking & payment details.
+          {/* <BookingForm /> */}
         </TabsContent>
         <TabsContent value="list">
           <BookingsDataTable />

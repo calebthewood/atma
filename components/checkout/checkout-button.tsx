@@ -2,7 +2,10 @@
 
 import React, { useState } from "react";
 import { redirect } from "next/navigation";
-import { createBooking } from "@/actions/booking-actions";
+import {
+  createProgramBooking,
+  createRetreatBooking,
+} from "@/actions/booking-actions";
 import { createCheckoutSession } from "@/actions/stripe";
 import {
   EmbeddedCheckout,
@@ -24,11 +27,11 @@ import { Button } from "../ui/button";
 interface CheckoutFormProps {
   uiMode?: Stripe.Checkout.SessionCreateParams.UiMode;
   hostId: string;
+  propertyId: string;
   price: number;
   userId: string | undefined;
   entity: "retreat" | "program";
   entityId: string;
-  propertyId: string;
   checkInDate: Date | undefined;
   checkOutDate: Date | undefined;
   guestCount: number;
@@ -37,60 +40,100 @@ interface CheckoutFormProps {
 export default function CheckoutButton({
   uiMode,
   hostId,
+  propertyId,
   price,
   userId,
   entity,
   entityId,
-  propertyId,
   checkInDate,
   checkOutDate,
   guestCount,
 }: CheckoutFormProps) {
-  const [loading] = useState<boolean>(false);
+  const [loading, setLoading] = useState<boolean>(false);
   const [input, _] = useState({ price });
   const [clientSecret, setClientSecret] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null);
+
+  const createBookingRecord = async ({ userId }: { userId: string }) => {
+    try {
+      if (entity === "retreat") {
+        console.log("creating retreat booking");
+        return await createRetreatBooking({
+          userId,
+          hostId,
+          propertyId,
+          retreatInstanceId: entityId,
+          checkInDate: checkInDate?.toDateString() || "",
+          checkOutDate: checkOutDate?.toDateString() || "",
+          guestCount,
+          totalPrice: String(price),
+          status: "checkout-initiated",
+        });
+      } else {
+        return await createProgramBooking({
+          userId,
+          hostId,
+          propertyId,
+          programInstanceId: entityId,
+          checkInDate: checkInDate?.toDateString() || "",
+          checkOutDate: checkOutDate?.toDateString() || "",
+          guestCount,
+          totalPrice: String(price),
+          status: "checkout-initiated",
+        });
+      }
+    } catch (err) {
+      throw new Error(`Failed to create ${entity} booking: ${err}`);
+    }
+  };
 
   const formAction = async (data: FormData): Promise<void> => {
-    if (userId === undefined) redirect("/authentication"); // TODO: create redirect flow that brings user back to checkout
-    if (!checkInDate || !checkOutDate) {
-      console.log("failed on dates");
-      return;
+    try {
+      setLoading(true);
+      setError(null);
+
+      if (userId === undefined) {
+        redirect("/authentication"); // TODO: create redirect flow that brings user back to checkout
+      }
+
+      if (!checkInDate || !checkOutDate) {
+        throw new Error("Please select check-in and check-out dates");
+      }
+
+      const uiMode = data.get(
+        "uiMode"
+      ) as Stripe.Checkout.SessionCreateParams.UiMode;
+
+      const booking = await createBookingRecord({ userId });
+
+      if (!booking.data) {
+        throw new Error(booking.message);
+      }
+
+      const { client_secret, url } = await createCheckoutSession(
+        data,
+        booking.data.id
+      );
+
+      if (uiMode === "embedded") {
+        setClientSecret(client_secret);
+      } else {
+        window.location.assign(url as string);
+      }
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "An error occurred");
+    } finally {
+      setLoading(false);
     }
-    const uiMode = data.get(
-      "uiMode"
-    ) as Stripe.Checkout.SessionCreateParams.UiMode;
-
-    const booking = await createBooking({
-      userId,
-      hostId,
-      retreatInstanceId: entity === "retreat" ? entityId : undefined,
-      programInstanceId: entity === "program" ? entityId : undefined,
-      propertyId,
-      checkInDate: checkInDate.toDateString(),
-      checkOutDate: checkOutDate.toDateString(),
-      guestCount,
-      totalPrice: String(price),
-      status: "checkout-initiated",
-    });
-
-    if (!booking.data) {
-      throw new Error(booking.message);
-    }
-
-    const { client_secret, url } = await createCheckoutSession(
-      data,
-      booking.data.id
-    );
-    if (uiMode === "embedded") return setClientSecret(client_secret);
-    window.location.assign(url as string);
   };
+
   const disabled = !userId || !checkInDate || !checkOutDate;
 
   return (
     <>
       {userId === undefined ? (
         <Button className="w-min-fit" type="button" disabled={disabled}>
-          {userId === undefined ? "Login to book" : "Select dates"}
+          Login to book
         </Button>
       ) : (
         <Dialog>
@@ -99,11 +142,14 @@ export default function CheckoutButton({
             <input type="hidden" name="price" value={input.price.toString()} />
             <DialogTrigger asChild>
               <Button type="submit" disabled={loading}>
-                Book Retreat
+                {loading
+                  ? "Processing..."
+                  : `Book ${entity === "retreat" ? "Retreat" : "Program"}`}
               </Button>
             </DialogTrigger>
           </form>
-          {clientSecret ? (
+          {error && <p className="mt-2 text-sm text-red-500">{error}</p>}
+          {clientSecret && (
             <DialogContent className="max-h-[720px] overflow-auto">
               <DialogHeader>
                 <DialogTitle>Checkout</DialogTitle>
@@ -117,7 +163,7 @@ export default function CheckoutButton({
                 </div>
               </DialogHeader>
             </DialogContent>
-          ) : null}
+          )}
         </Dialog>
       )}
     </>

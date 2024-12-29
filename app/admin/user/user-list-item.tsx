@@ -68,9 +68,7 @@ export function UserListItem({ user }: UserListItemProps) {
                   value="user"
                   className="teamaspace-y-1 flex flex-col items-start px-4 py-2"
                   onSelect={(currentValue) => {
-                    handleChange(
-                      currentValue as UserRoles
-                    );
+                    handleChange(currentValue as UserRoles);
                     setOpen(false);
                   }}
                 >

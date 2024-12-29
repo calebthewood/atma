@@ -2,7 +2,10 @@
 import React from "react";
 import { useEffect, useState } from "react";
 import { useParams, useRouter, useSearchParams } from "next/navigation";
-import { RetreatWithBasicRelations, getAdminPaginatedRetreats } from "@/actions/retreat-actions";
+import {
+  RetreatWithBasicRelations,
+  getAdminPaginatedRetreats,
+} from "@/actions/retreat-actions";
 import {
   createInstance,
   getInstance,

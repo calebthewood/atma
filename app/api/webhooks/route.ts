@@ -3,6 +3,8 @@ import { updateBookingStatus } from "@/actions/booking-actions";
 import type { Stripe } from "stripe";
 
 import { stripe } from "@/lib/stripe";
+import { sendEmail } from "@/lib/sendgrid";
+import { formatDate, toUSD } from "@/lib/utils";
 
 /* ReadMe
   to test locally, run "stripe listen --forward-to localhost:3000/api/webhooks" in
@@ -20,7 +22,7 @@ export async function POST(req: Request) {
     event = stripe.webhooks.constructEvent(
       body,
       signature,
-      process.env.STRIPE_WEBHOOK_SECRET as string
+      "whsec_3c066c9fc68c1d7321b1cefe4c5b1f676f848d3dafa7ee81b8328962afda191d"
     );
   } catch (err) {
     const errorMessage = err instanceof Error ? err.message : "Unknown error";
@@ -41,13 +43,11 @@ export async function POST(req: Request) {
     "payment_intent.succeeded",
     "payment_intent.payment_failed",
     "charge.updated",
-    "booking",
-    "checkout.session.completed",
   ];
 
   if (permittedEvents.includes(event.type)) {
     let data;
-    console.log("[event.data.object] ", event.data.object);
+
     try {
       switch (event.type) {
         case "checkout.session.completed":
@@ -57,21 +57,53 @@ export async function POST(req: Request) {
           if (data.metadata) {
             const bookingId = data.metadata.bookingId;
             const res = await updateBookingStatus(bookingId, "confirmed");
+            const booking = res.data;
 
-            if (res) {
+            console.log("METADATA ", data.metadata);
+            console.log("RES ", res);
+
+            if (res.ok && booking && booking.user.email) {
+              const payload = {
+                checkin: formatDate(booking.checkInDate),
+                checkout: formatDate(booking.checkOutDate),
+                retreat_name:
+                  booking.retreatInstance?.retreat.name ||
+                  booking.programInstance?.program.name ||
+                  "",
+                hotel_name: booking.property?.name || "",
+                location: booking.property?.address || "",
+                price: toUSD(booking.totalPrice, true) || "",
+              };
+
+              await sendEmail({
+                template: "confirmed",
+                to: booking.user.email,
+                payload,
+              });
+
               console.log(`💰💰 Booking status: completed`);
+              console.log(`✅📧 Email sent`);
+            } else {
+              console.log(`❌📧 Email not sent`);
             }
           }
-
           break;
+
         case "payment_intent.payment_failed":
           data = event.data.object as Stripe.PaymentIntent;
           console.log(`❌ Payment failed: ${data.last_payment_error?.message}`);
           break;
+
         case "payment_intent.succeeded":
           data = event.data.object as Stripe.PaymentIntent;
           console.log(`💰 PaymentIntent status: ${data.status}`);
           break;
+
+        case "charge.updated":
+          data = event.data.object as Stripe.Charge;
+          console.log(`💰 Charge Updated: ${data.status}`);
+          break;
+
         default:
           throw new Error(`Unhandled event: ${event.type}`);
       }

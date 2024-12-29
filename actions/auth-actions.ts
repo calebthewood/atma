@@ -9,7 +9,7 @@ import { ActionResponse } from "./shared";
 import prisma from "@/lib/prisma";
 import { AuthErrorCode } from "@/schemas/auth-schema";
 
-/** Table of Contents
+/** ToC
  * Types:
  *   - AuthErrorCode type
  *   - AuthErrorDetails type
@@ -38,11 +38,11 @@ export type AuthErrorDetails = {
  * Initiates Google OAuth sign-in flow
  */
 export async function googleSignIn() {
-    await signIn("google", {
-      provider: "google",
-      redirectTo: "/",
-      redirect: true,
-    });
+  await signIn("google", {
+    provider: "google",
+    redirectTo: "/",
+    redirect: true,
+  });
 }
 
 /**

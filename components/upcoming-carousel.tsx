@@ -13,7 +13,7 @@ import {
 } from "@/actions/property-actions";
 import { getRetreat, RetreatWithAllRelations } from "@/actions/retreat-actions";
 import { PriceMod } from "@prisma/client";
-import { format } from "date-fns";
+
 import { CirclePlus } from "lucide-react";
 
 import { cn } from "@/lib/utils";
@@ -101,17 +101,15 @@ export function NewLazyRetreatItem({ id, segment, className }: LazyCardProps) {
   useEffect(() => {
     if (!id) return;
     async function fetchItem(id: string) {
-      console.log(segment);
       segment += segment.endsWith("s") ? "" : "s";
       setIsLoading(true);
       try {
         let response;
-        console.log("switch", segment);
+
         switch (segment) {
           case "retreats":
-            console.log("segment ==== retreats");
             response = await getRetreat(id);
-            console.log("response", response)
+
             if (response.ok && response.data) {
               const rImgs = response.data.images;
               const pImgs = response.data.property.images;
@@ -141,7 +139,6 @@ export function NewLazyRetreatItem({ id, segment, className }: LazyCardProps) {
             }
             break;
         }
-        console.log(response);
       } catch (error) {
         console.error(`Error fetching ${segment}:`, error);
       } finally {

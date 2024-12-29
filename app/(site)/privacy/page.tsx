@@ -1,5 +1,3 @@
-
-
 export default function Page() {
   return (
     <div className="mx-auto mt-24 max-w-prose font-mono text-lg antialiased md:subpixel-antialiased">

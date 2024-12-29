@@ -169,7 +169,6 @@ export async function getProperty(
   id: string
 ): ActionResponse<PropertyWithAllRelations> {
   try {
-    console.log("hit", id);
     const property = await prisma.property.findUnique({
       where: { id },
       include: PROPERTY_INCLUDE_FULL,

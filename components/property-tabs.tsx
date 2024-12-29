@@ -2,13 +2,7 @@ import React from "react";
 import { PropertyWithBasicRelations } from "@/actions/property-actions";
 import { Program, Retreat } from "@prisma/client";
 
-
-
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-
-
-
-
 
 interface TabItem {
   value: string;

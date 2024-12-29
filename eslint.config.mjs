@@ -16,7 +16,7 @@ const compat = new FlatCompat({
   allConfig: js.configs.all,
 });
 
-export default [
+const config = [
   // Ignore patterns
   {
     ignores: [
@@ -81,3 +81,5 @@ export default [
   },
   prettier,
 ];
+
+export default config;

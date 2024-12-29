@@ -332,7 +332,7 @@ model Booking {
   user              User             @relation(fields: [userId], references: [id])
   userId            String
   message           Message[]
-  notification      Notification?
+  notifications     Notification[]
   retreatInstance   RetreatInstance? @relation(fields: [retreatInstanceId], references: [id])
   retreatInstanceId String?
   programInstance   ProgramInstance? @relation(fields: [programInstanceId], references: [id])
@@ -421,9 +421,9 @@ model Notification {
   timestamp DateTime
   status    String
   user      User     @relation(fields: [userId], references: [id])
-  userId    String   @unique
+  userId    String
   booking   Booking  @relation(fields: [bookingId], references: [id])
-  bookingId String   @unique
+  bookingId String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }

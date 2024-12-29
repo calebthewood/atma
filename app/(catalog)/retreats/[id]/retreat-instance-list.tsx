@@ -3,6 +3,7 @@
 import { useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Calendar, Clock, Users } from "lucide-react";
+import { formatDate } from "@/lib/utils";
 
 interface RetreatInstance {
   id: string;
@@ -25,14 +26,6 @@ const RetreatInstances = ({ instances }: RetreatInstancesProps) => {
     const params = new URLSearchParams(searchParams);
     params.set("instance", instanceId);
     router.push(`?${params.toString()}`, { scroll: false });
-  };
-
-  const formatDate = (date: Date) => {
-    return new Intl.DateTimeFormat("en-US", {
-      weekday: "short",
-      month: "short",
-      day: "numeric",
-    }).format(new Date(date));
   };
 
   useEffect(() => {
