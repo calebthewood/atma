@@ -3,11 +3,10 @@
 import * as React from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { useRouter, useSearchParams } from "next/navigation";
 import { ArrowLeftCircle, MailCheck, MailX } from "lucide-react";
 
 import { cn } from "@/lib/utils";
-import { Button, buttonVariants } from "@/components/ui/button";
+import { Button } from "@/components/ui/button";
 import {
   EmailSignIn,
   GoogleSignInButton,
@@ -17,23 +16,24 @@ import { LoadingSpinner } from "@/components/loading-spinner";
 interface UserAuthFormProps extends React.HTMLAttributes<HTMLDivElement> {}
 
 type AuthView = "signin" | "success" | "loading" | "error";
+type AuthMessage = string | null;
 
 export function UserAuthForm({ className, ...props }: UserAuthFormProps) {
-  const router = useRouter();
-  const searchParams = useSearchParams();
-  const view = (searchParams.get("view") as AuthView) || "signin";
-  const message = searchParams.get("msg");
+  const [view, setView] = React.useState<AuthView>("signin");
+  const [message, setMessage] = React.useState<AuthMessage>(null);
 
-  const clearParams = () => {
-    router.push("/authentication");
+  const resetView = () => {
+    setView("signin");
+    setMessage(null);
   };
+
   return (
     <div className="container relative hidden h-[800px] flex-col items-center justify-center md:grid lg:max-w-none lg:grid-cols-2 lg:px-0">
       {(view === "error" || view === "success") && (
         <Button
           variant="ghost"
           className="absolute right-4 top-4 h-8 w-8 p-0 md:right-8 md:top-8"
-          onClick={clearParams}
+          onClick={resetView}
         >
           <ArrowLeftCircle className="size-6 stroke-1" />
         </Button>
@@ -70,7 +70,17 @@ export function UserAuthForm({ className, ...props }: UserAuthFormProps) {
           <div className={cn("grid gap-6")}>
             {view === "signin" && (
               <>
-                <EmailSignIn />
+                <EmailSignIn
+                  onSuccess={(msg) => {
+                    setView("success");
+                    setMessage(msg);
+                  }}
+                  onError={(msg) => {
+                    setView("error");
+                    setMessage(msg);
+                  }}
+                  onLoading={() => setView("loading")}
+                />
                 <div className="relative">
                   <div className="absolute inset-0 flex items-center">
                     <span className="w-full border-t" />

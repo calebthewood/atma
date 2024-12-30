@@ -1,12 +1,15 @@
 import * as React from "react";
-import { useRouter, useSearchParams } from "next/navigation";
 import { googleSignIn, sendgridSignIn } from "@/actions/auth-actions";
-
-import { cn } from "@/lib/utils";
 
 import { Icons } from "../icons";
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
+
+interface EmailSignInProps {
+  onSuccess?: (message: string) => void;
+  onError?: (message: string) => void;
+  onLoading?: () => void;
+}
 
 export function GoogleSignInButton() {
   return (
@@ -17,22 +20,26 @@ export function GoogleSignInButton() {
   );
 }
 
-export function EmailSignIn() {
-  const router = useRouter();
-
+export function EmailSignIn({
+  onSuccess,
+  onError,
+  onLoading,
+}: EmailSignInProps) {
   async function handleSubmit(formData: FormData) {
-    router.push("/authentication?view=loading");
+    onLoading?.();
+
     try {
       const email = formData.get("email") as string;
       const result = await sendgridSignIn(formData);
 
       if (result.error) {
-        router.push(`/authentication?view=error&msg=${result.error}`);
+        onError?.(result.error);
       } else {
-        router.push(`/authentication?view=success&msg=${email}`);
+        onSuccess?.(email);
       }
     } catch (error) {
-      router.push("/authentication?view=error&msg=Something went wrong");
+      console.error(error);
+      onError?.("Something went wrong");
     }
   }
 

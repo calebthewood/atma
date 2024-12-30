@@ -42,10 +42,11 @@ export type AuthErrorDetails = {
  *  won't work (currently) with redirect
  */
 export async function googleSignIn() {
-  await signIn("google");
+  await signIn("google", { redirectTo: "/" });
 }
 /**
  * Initiates Sendgrid Magic Link sign-in
+ *  Note that sendgrid and google auth handle the rediorect differently
  */
 
 const SignInSchema = z.object({
@@ -64,6 +65,7 @@ export async function sendgridSignIn(formData: FormData) {
     await signIn("sendgrid", {
       email: result.data.email,
       redirect: false,
+      redirectTo: "/",
     });
     return { success: true };
   } catch (error) {
