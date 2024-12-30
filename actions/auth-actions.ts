@@ -37,18 +37,12 @@ export type AuthErrorDetails = {
 // ============================================================================
 
 /**
- * Initiates Google OAuth sign-in
+ * Initiates Google OAuth sign-in.
+ *  won't work in a try-catch block,
+ *  won't work (currently) with redirect
  */
 export async function googleSignIn() {
-  try {
-    await signIn("google", {
-      redirect: false,
-    });
-    return { success: true };
-  } catch (error) {
-    console.error(error);
-    return { error: "Failed to sign in with Google" };
-  }
+  await signIn("google");
 }
 /**
  * Initiates Sendgrid Magic Link sign-in

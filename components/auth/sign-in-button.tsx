@@ -9,22 +9,8 @@ import { Button } from "../ui/button";
 import { Input } from "../ui/input";
 
 export function GoogleSignInButton() {
-  const router = useRouter();
-
-  async function handleGoogleSignIn() {
-    router.push("/authentication?view=loading");
-    try {
-      const result = await googleSignIn();
-      if (result.error) {
-        router.push(`/authentication?view=error&msg=${result.error}`);
-      }
-    } catch (error) {
-      router.push("/authentication?view=error&msg=Something went wrong");
-    }
-  }
-
   return (
-    <Button variant="outline" onClick={handleGoogleSignIn} className="w-full">
+    <Button onClick={googleSignIn} variant="outline" className="w-full">
       <Icons.google className="mr-2 size-4" />
       Google
     </Button>
