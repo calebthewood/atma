@@ -13,12 +13,12 @@ import {
 } from "@/components/auth/sign-in-button";
 import { LoadingSpinner } from "@/components/loading-spinner";
 
-interface UserAuthFormProps extends React.HTMLAttributes<HTMLDivElement> {}
+// interface UserAuthFormProps extends React.HTMLAttributes<HTMLDivElement> {}
 
 type AuthView = "signin" | "success" | "loading" | "error";
 type AuthMessage = string | null;
 
-export function UserAuthForm({ className, ...props }: UserAuthFormProps) {
+export function UserAuthForm() {
   const [view, setView] = React.useState<AuthView>("signin");
   const [message, setMessage] = React.useState<AuthMessage>(null);
 
