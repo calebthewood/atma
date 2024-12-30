@@ -36,6 +36,18 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     }),
   ],
   callbacks: {
+    async signIn({ user }) {
+      try {
+        // Clean up any existing sessions for this user before creating a new one
+        await prisma.session.deleteMany({
+          where: { userId: user.id },
+        });
+        return true;
+      } catch (error) {
+        console.error("Error in signIn callback:", error);
+        return true; // Still allow sign in even if cleanup fails
+      }
+    },
     async session({ session, user }) {
       if (!session.user) return session;
 
