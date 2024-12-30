@@ -42,10 +42,25 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
           where: { id: user.id },
           select: { id: true, role: true, hostUsers: true },
         });
-        if (dbUser) {
-          session.user.id = dbUser.id;
-          session.user.role = dbUser.role;
-          session.user.hostId = dbUser.hostUsers[0].hostId;
+
+        if (dbUser && dbUser.role !== "user") {
+          if (dbUser?.id) {
+            session.user.id = dbUser.id;
+          }
+
+          if (dbUser?.role) {
+            session.user.role = dbUser.role;
+          }
+          if (dbUser?.hostUsers.length > 0) {
+            session.user.hostId = dbUser.hostUsers[0]?.hostId;
+          } else {
+            const host = await prisma.host.findFirst({
+              where: { name: "System" },
+            });
+            if (host) {
+              session.user.hostId = host.id;
+            }
+          }
         }
       }
       return session;
