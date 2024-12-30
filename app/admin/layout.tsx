@@ -41,6 +41,11 @@ export default async function SettingsLayout({
   if (!session || !canViewDashboard(session.user.role)) return redirect("/");
   const isHost = session.user.role === "host";
 
+  if (isHost) {
+    sidebarNavItems.shift();
+    sidebarNavItems.pop();
+  }
+
   return (
     <div className={cn(isHost ? "" : "")}>
       <div className="hidden space-y-6 p-10 pb-16 md:block">

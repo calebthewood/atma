@@ -176,6 +176,7 @@ export function BookingsDataTable() {
       searchPlaceholder="Filter by event name..."
       onRowClick={handleRowClick}
       searchField="instanceName"
+      type="none"
     />
   );
 }

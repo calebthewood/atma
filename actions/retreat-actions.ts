@@ -92,7 +92,6 @@ export async function createRetreat(
       },
     });
 
-    revalidatePath("/admin/retreat");
     return {
       ok: true,
       data: retreat,

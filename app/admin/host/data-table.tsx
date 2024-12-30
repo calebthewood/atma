@@ -121,6 +121,7 @@ export function HostDataTable() {
       fetchData={getAdminPaginatedHosts}
       onRowClick={handleRowClick}
       searchPlaceholder="Filter hosts..."
+      type="host"
     />
   );
 }

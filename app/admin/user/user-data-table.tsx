@@ -220,6 +220,7 @@ export function UserDataTable() {
       fetchData={getAdminPaginatedUsers}
       searchPlaceholder="Search users..."
       onRowClick={handleRowClick}
+      type="none"
     />
   );
 }

@@ -119,17 +119,14 @@ export function RetreatDataTable() {
     return;
   };
 
-  const handleRowClick = (retreat: RetreatWithBasicRelations) => {
-    router.push(`/admin/retreat/${retreat.id}/general`);
-  };
-
   return (
     <BaseDataTable
       columns={columns}
       fetchData={getAdminPaginatedRetreats}
       deleteItem={handleDelete}
-      onRowClick={handleRowClick}
+      // onRowClick={handleRowClick}
       searchPlaceholder="Filter retreats..."
+      type="retreat"
     />
   );
 }

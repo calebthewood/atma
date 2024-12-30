@@ -1,8 +1,6 @@
 import { Separator } from "@/components/ui/separator";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 import { RetreatDataTable } from "./data-table";
-import { RetreatForm } from "./retreat-form";
 
 export default function Page() {
   return (
@@ -14,19 +12,7 @@ export default function Page() {
         </p>
       </div>
       <Separator className="my-6" />
-
-      <Tabs defaultValue="list" className="">
-        <TabsList>
-          <TabsTrigger value="list">View Retreats</TabsTrigger>
-          <TabsTrigger value="form">Create Retreat</TabsTrigger>
-        </TabsList>
-        <TabsContent value="form">
-          <RetreatForm />
-        </TabsContent>
-        <TabsContent value="list">
-          <RetreatDataTable />
-        </TabsContent>
-      </Tabs>
+      <RetreatDataTable />
     </div>
   );
 }

@@ -126,9 +126,11 @@ export function BaseDataTable<TData>({
           }
           className="max-w-sm"
         />
-        <Button asChild className="ml-auto self-end">
-          <Link href={`/admin/${type}/000`}>Create {type}</Link>
-        </Button>
+        {type !== "none" && (
+          <Button asChild className="ml-auto self-end">
+            <Link href={`/admin/${type}/000`}>Create {type}</Link>
+          </Button>
+        )}
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button variant="outline" className="">

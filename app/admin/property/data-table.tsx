@@ -120,6 +120,7 @@ export function PropertyDataTable() {
       deleteItem={handleDelete}
       onRowClick={handleRowClick}
       searchPlaceholder="Filter properties..."
+      type="none"
     />
   );
 }
