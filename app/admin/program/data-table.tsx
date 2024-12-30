@@ -76,6 +76,7 @@ export function ProgramDataTable() {
       },
       {
         id: "actions",
+        header: "Actions",
         cell: ({ row }) => {
           const program = row.original;
           return (
@@ -112,17 +113,13 @@ export function ProgramDataTable() {
     return;
   };
 
-  const handleRowClick = (program: ProgramWithBasicRelations) => {
-    router.push(`/admin/program/${program.id}/general`);
-  };
-
   return (
     <BaseDataTable<ProgramWithBasicRelations>
       columns={columns}
       fetchData={getAdminPaginatedPrograms}
       deleteItem={handleDelete}
       searchPlaceholder="Filter programs..."
-      onRowClick={handleRowClick}
+      type={"program"}
     />
   );
 }

@@ -277,6 +277,11 @@ export async function createPriceMod(
         connect: { id: validatedData.retreatInstanceId },
       };
     }
+    if (validatedData.programInstanceId) {
+      relations.programInstance = {
+        connect: { id: validatedData.programInstanceId },
+      };
+    }
 
     const {
       hostId,
@@ -284,6 +289,7 @@ export async function createPriceMod(
       programId,
       retreatId,
       retreatInstanceId,
+      programInstanceId,
       ...priceModData
     } = validatedData;
 
@@ -298,6 +304,7 @@ export async function createPriceMod(
         program: true,
         retreat: true,
         retreatInstance: true,
+        programInstance: true,
       },
     });
 
@@ -452,6 +459,11 @@ export async function updatePriceMod(
         ? { connect: { id: validatedData.retreatInstanceId } }
         : { disconnect: true };
     }
+    if (validatedData.programInstanceId !== undefined) {
+      relations.programInstance = validatedData.programInstanceId
+        ? { connect: { id: validatedData.programInstanceId } }
+        : { disconnect: true };
+    }
 
     const {
       hostId,
@@ -459,6 +471,7 @@ export async function updatePriceMod(
       programId,
       retreatId,
       retreatInstanceId,
+      programInstanceId,
       ...priceModData
     } = validatedData;
 
@@ -474,6 +487,7 @@ export async function updatePriceMod(
         program: true,
         retreat: true,
         retreatInstance: true,
+        programInstance: true,
       },
     });
 

@@ -75,7 +75,14 @@ export function AdminActionMenu({
         <DropdownMenuItem asChild>
           <Link href={editHref}>Edit</Link>
         </DropdownMenuItem>
-        <DropdownMenuItem onClick={handleDelete}>Delete</DropdownMenuItem>
+        <DropdownMenuItem
+          onClick={(e) => {
+            e.preventDefault();
+            handleDelete();
+          }}
+        >
+          Delete
+        </DropdownMenuItem>
         <DropdownMenuSeparator />
         {publicHref && (
           <DropdownMenuItem>

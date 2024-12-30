@@ -6,9 +6,9 @@ import { programFormSchema } from "@/schemas/program-schema";
 import { Prisma, Program } from "@prisma/client";
 import { z } from "zod";
 
-import { ActionResponse } from "./shared";
 import prisma from "@/lib/prisma";
-import { PaginatedResponse } from "./shared";
+
+import { ActionResponse, PaginatedResponse } from "./shared";
 
 // ============================================================================
 // Shared Query Configurations
@@ -90,10 +90,10 @@ export async function createProgram(
         host: { connect: { id: hostId || "" } },
       },
     });
-
-    revalidatePath("/admin/program");
+    console.log("createProgram", program);
     return { ok: true, data: program, message: "Successfully created program" };
   } catch (error) {
+    console.error(error);
     return { ok: false, data: null, message: "Error creating program" };
   }
 }

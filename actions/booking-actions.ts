@@ -4,7 +4,7 @@
 import { revalidatePath } from "next/cache";
 import { auth } from "@/auth";
 import { BookingFormData } from "@/schemas/booking-schema";
-import { Booking, Prisma } from "@prisma/client";
+import { Prisma } from "@prisma/client";
 
 import prisma from "@/lib/prisma";
 
@@ -292,7 +292,6 @@ export async function updateBookingStatus(
     // }
     const bookingExists = await prisma.booking.findFirst({
       where: { id },
-
     });
 
     if (!bookingExists) {
@@ -341,8 +340,8 @@ export async function updateBooking(
       id,
       ...(session.user.role !== "admin"
         ? {
-          property: { hostId: session.user.hostId },
-        }
+            property: { hostId: session.user.hostId },
+          }
         : {}),
     };
 
@@ -417,8 +416,8 @@ export async function deleteBooking(id: string): Promise<ActionResponse> {
       id,
       ...(session.user.role !== "admin"
         ? {
-          property: { hostId: session.user.hostId },
-        }
+            property: { hostId: session.user.hostId },
+          }
         : {}),
     };
 

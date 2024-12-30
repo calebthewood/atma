@@ -19,7 +19,9 @@ export default function Page() {
         <TabsContent value="form">
           <CreatePaymentForm />
         </TabsContent>
-        <TabsContent value="list">List Payments here</TabsContent>
+        <TabsContent value="list">
+          See Stripe dashboard for payment details
+        </TabsContent>
       </Tabs>
     </div>
   );

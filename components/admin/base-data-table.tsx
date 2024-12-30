@@ -2,6 +2,7 @@
 "use client";
 
 import React, { useCallback, useEffect, useState } from "react";
+import Link from "next/link";
 import { ChevronDownIcon } from "@radix-ui/react-icons";
 import {
   ColumnFiltersState,
@@ -40,6 +41,7 @@ export function BaseDataTable<TData>({
   searchPlaceholder = "Filter...",
   onRowClick,
   searchField = "name",
+  type = "retreat",
 }: BaseTableProps<TData>) {
   const [data, setData] = useState<TData[]>([]);
   const [sorting, setSorting] = useState<SortingState>([]);
@@ -113,7 +115,7 @@ export function BaseDataTable<TData>({
 
   return (
     <div className="w-full">
-      <div className="flex items-center py-4">
+      <div className="flex items-center gap-x-4 py-4">
         <Input
           placeholder={searchPlaceholder}
           value={
@@ -124,9 +126,12 @@ export function BaseDataTable<TData>({
           }
           className="max-w-sm"
         />
+        <Button asChild className="ml-auto self-end">
+          <Link href={`/admin/${type}/000`}>Create {type}</Link>
+        </Button>
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button variant="outline" className="ml-auto">
+            <Button variant="outline" className="">
               Columns <ChevronDownIcon className="ml-2 size-4" />
             </Button>
           </DropdownMenuTrigger>

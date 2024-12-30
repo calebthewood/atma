@@ -4,7 +4,6 @@ import React from "react";
 
 import { BookingBarCalendar } from "./booking/booking-bar-calendar";
 import { PurposeCombobox } from "./purposes-combobox";
-
 import { GuestCombobox } from "./ui/guest-combobox";
 import { LocationCombobox } from "./ui/location-combobox";
 import SearchButton from "./ui/search-button";

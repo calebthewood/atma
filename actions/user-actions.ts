@@ -10,12 +10,12 @@ import { canViewDashboard } from "@/lib/checks-and-balances";
 import { prisma } from "@/lib/prisma";
 import { uploadToS3 } from "@/lib/s3";
 
+import { getAuthenticatedUser } from "./auth-actions";
 import {
   ActionResponse,
   getPaginationParams,
   PaginatedResponse,
 } from "./shared";
-import { getAuthenticatedUser } from "./auth-actions";
 
 // ============================================================================
 // Shared Query Configurations

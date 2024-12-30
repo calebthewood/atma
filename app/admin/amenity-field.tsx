@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useEffect, useMemo, useState } from "react";
+import { Amenity } from "@prisma/client";
 import { z } from "zod";
 
 import { Checkbox } from "@/components/ui/checkbox";
@@ -14,7 +15,6 @@ import {
   getEntityAmenities,
   updateEntityAmenity,
 } from "../../actions/amenity";
-import { Amenity } from "@prisma/client";
 
 interface AmenityCheckboxesProps {
   entityId: string;

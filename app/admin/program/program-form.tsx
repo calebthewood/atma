@@ -59,7 +59,7 @@ const formSchema = z.object({
   minGuests: z.number().int().min(1),
   maxGuests: z.number().int().min(-1),
   sourceUrl: z.string().optional(),
-  hostId: z.string().min(1, { message: "Host is required." }).nullable(),
+  hostId: z.string().min(1, { message: "Host is required." }),
   propertyId: z.string().min(1, { message: "Property is required." }),
 });
 

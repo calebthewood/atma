@@ -29,4 +29,4 @@ const prettierConfig = {
   importOrderParserPlugins: ["typescript", "jsx", "decorators-legacy"],
 };
 
-export default prettierConfig
+export default prettierConfig;

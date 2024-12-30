@@ -8,6 +8,7 @@ import {
   type InstanceWithRelations,
   type PaginatedInstancesResponse,
 } from "@/actions/program-instance-actions";
+import { PaginatedResponse } from "@/actions/shared";
 import { CaretSortIcon, ChevronDownIcon } from "@radix-ui/react-icons";
 import {
   ColumnDef,
@@ -41,7 +42,6 @@ import {
 import { toast } from "@/components/ui/use-toast";
 
 import { AdminActionMenu } from "../components";
-import { PaginatedResponse } from "@/actions/shared";
 
 interface ProgramInstancesListProps {
   programId: string;

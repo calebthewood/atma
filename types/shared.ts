@@ -35,4 +35,5 @@ export interface BaseTableProps<TData> {
   onRowClick?: (row: TData) => void;
   deleteItem?: (id: string) => Promise<void>;
   searchField?: string;
+  type?: string;
 }

@@ -3,6 +3,7 @@
 import { useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Calendar, Clock, Users } from "lucide-react";
+
 import { formatDate } from "@/lib/utils";
 
 interface RetreatInstance {

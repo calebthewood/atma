@@ -2,7 +2,6 @@
 
 import React, { useEffect, useRef, useState } from "react";
 import { Loader } from "@googlemaps/js-api-loader";
-
 import { Map } from "lucide-react";
 
 import { cn } from "@/lib/utils";

@@ -84,6 +84,7 @@ export function PriceModForm() {
       programId: undefined,
       retreatId: undefined,
       retreatInstanceId: undefined,
+      programInstanceId: undefined,
       propertyId: undefined,
     };
 
@@ -94,6 +95,9 @@ export function PriceModForm() {
         break;
       case "program":
         fields.programId = entityId;
+        if (instanceId) {
+          fields.programInstanceId = instanceId;
+        }
         break;
       case "retreat":
         fields.retreatId = entityId;
@@ -129,6 +133,7 @@ export function PriceModForm() {
       programId: undefined,
       retreatId: undefined,
       retreatInstanceId: undefined,
+      programInstanceId: undefined,
       ...getEntityFields(),
     },
   });
@@ -251,7 +256,7 @@ export function PriceModForm() {
         </CardTitle>
         <CardDescription>
           {instanceId
-            ? `Manage pricing for retreat instance ${instanceId}`
+            ? `Manage pricing for instance ${instanceId}`
             : `Manage pricing for ${entityType.slice(0)} ${entityId}`}
         </CardDescription>
       </CardHeader>
@@ -343,91 +348,92 @@ export function PriceModForm() {
                 </FormItem>
               )}
             />
-
-            <FormField
-              control={form.control}
-              name="currency"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Currency</FormLabel>
-                  <Select
-                    onValueChange={field.onChange}
-                    defaultValue={field.value}
-                    disabled
-                  >
-                    <FormControl>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select currency" />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent>
-                      <SelectItem value="USD">USD</SelectItem>
-                    </SelectContent>
-                  </Select>
-                  <FormMessage />
-                  <FormDescription>
-                    Only USD offered at this time
-                  </FormDescription>
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name="value"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Value</FormLabel>
-                  <FormControl>
-                    <Input
-                      type="number"
-                      min={0}
-                      {...field}
-                      onChange={(e) => field.onChange(Number(e.target.value))}
-                    />
-                  </FormControl>
-                  <FormDescription>
-                    The dollar value of this price item
-                  </FormDescription>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name="unit"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Unit Type</FormLabel>
-                  <FormControl>
-                    <RadioGroup
+            <div className="grid gap-2 md:grid-cols-5">
+              <FormField
+                control={form.control}
+                name="currency"
+                render={({ field }) => (
+                  <FormItem className="cols-start-1">
+                    <FormLabel>Currency</FormLabel>
+                    <Select
                       onValueChange={field.onChange}
                       defaultValue={field.value}
-                      className="flex space-x-4"
+                      disabled
                     >
-                      <FormItem className="flex items-center space-x-3 space-y-0">
-                        <RadioGroupItem value="FIXED" />
-                        <FormLabel className="font-normal">
-                          Fixed Amount
-                        </FormLabel>
-                      </FormItem>
-                      <FormItem className="flex items-center space-x-3 space-y-0">
-                        <RadioGroupItem value="PERCENT" />
-                        <FormLabel className="font-normal">
-                          Percentage
-                        </FormLabel>
-                      </FormItem>
-                    </RadioGroup>
-                  </FormControl>
-                  <FormDescription>
-                    Whether to calculate as a fixed value or a percentage of the
-                    base price + any base modifiers & discounts.
-                  </FormDescription>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+                      <FormControl>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select currency" />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        <SelectItem value="USD">USD</SelectItem>
+                      </SelectContent>
+                    </Select>
+                    <FormMessage />
+                    <FormDescription>
+                      Only USD offered at this time
+                    </FormDescription>
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="value"
+                render={({ field }) => (
+                  <FormItem className="cols-start-2">
+                    <FormLabel>Value</FormLabel>
+                    <FormControl>
+                      <Input
+                        type="number"
+                        min={0}
+                        {...field}
+                        onChange={(e) => field.onChange(Number(e.target.value))}
+                      />
+                    </FormControl>
+                    <FormDescription>
+                      The dollar value of this price item
+                    </FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="unit"
+                render={({ field }) => (
+                  <FormItem className="col-span-3 col-start-3">
+                    <FormLabel>Unit Type</FormLabel>
+                    <FormControl>
+                      <RadioGroup
+                        onValueChange={field.onChange}
+                        defaultValue={field.value}
+                        className="flex space-x-4"
+                      >
+                        <FormItem className="flex items-center space-x-3 space-y-0">
+                          <RadioGroupItem value="FIXED" />
+                          <FormLabel className="font-normal">
+                            Fixed Amount
+                          </FormLabel>
+                        </FormItem>
+                        <FormItem className="flex items-center space-x-3 space-y-0">
+                          <RadioGroupItem value="PERCENT" />
+                          <FormLabel className="font-normal">
+                            Percentage
+                          </FormLabel>
+                        </FormItem>
+                      </RadioGroup>
+                    </FormControl>
+                    <FormDescription>
+                      Whether to calculate as a fixed value or a percentage of
+                      the base price + any base modifiers & discounts.
+                    </FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
             <div className="space-y-4">
               <div className="flex items-center space-x-2">
                 <Checkbox

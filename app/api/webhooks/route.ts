@@ -2,8 +2,8 @@ import { NextResponse } from "next/server";
 import { updateBookingStatus } from "@/actions/booking-actions";
 import type { Stripe } from "stripe";
 
-import { stripe } from "@/lib/stripe";
 import { sendEmail } from "@/lib/sendgrid";
+import { stripe } from "@/lib/stripe";
 import { formatDate, toUSD } from "@/lib/utils";
 
 /* ReadMe

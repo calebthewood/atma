@@ -13,7 +13,6 @@ import {
 } from "@/actions/property-actions";
 import { getRetreat, RetreatWithAllRelations } from "@/actions/retreat-actions";
 import { PriceMod } from "@prisma/client";
-
 import { CirclePlus } from "lucide-react";
 
 import { cn } from "@/lib/utils";

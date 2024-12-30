@@ -1,11 +1,11 @@
 import * as React from "react";
 import { useRouter, useSearchParams } from "next/navigation";
+import { googleSignIn, sendgridSignIn } from "@/actions/auth-actions";
 
 import { cn } from "@/lib/utils";
 
 import { Icons } from "../icons";
 import { Button } from "../ui/button";
-import { googleSignIn, sendgridSignIn } from "@/actions/auth-actions";
 import { Input } from "../ui/input";
 
 export function GoogleSignInButton() {

@@ -1,9 +1,10 @@
 import { PrismaAdapter } from "@auth/prisma-adapter";
 import NextAuth, { DefaultSession } from "next-auth";
 import Google from "next-auth/providers/google";
+import Sendgrid from "next-auth/providers/sendgrid";
 
 import prisma from "./lib/prisma";
-import Sendgrid from "next-auth/providers/sendgrid"
+
 declare module "next-auth" {
   /**
    * Returned by `auth`, `useSession`, `getSession` and received as a prop on the `SessionProvider` React Context
@@ -30,8 +31,8 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
   },
   providers: [
     Google,
-        Sendgrid({
-      from: "no-reply@atmareserve.com"
+    Sendgrid({
+      from: "no-reply@atmareserve.com",
     }),
   ],
   callbacks: {

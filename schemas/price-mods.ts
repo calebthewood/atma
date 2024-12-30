@@ -17,6 +17,7 @@ export const priceModSchema = z.object({
   programId: z.string().nullable().optional(),
   retreatId: z.string().nullable().optional(),
   retreatInstanceId: z.string().nullable().optional(),
+  programInstanceId: z.string().nullable().optional(),
 });
 
 export type PriceModInput = z.infer<typeof priceModSchema>;

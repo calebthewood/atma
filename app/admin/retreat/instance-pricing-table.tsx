@@ -241,7 +241,7 @@ export function PriceModsTable() {
       const response = pathname.includes("retreat")
         ? await getPriceModsByRetreatInstance(instanceId)
         : await getPriceModsByProgramInstance(instanceId);
-
+      console.log("RESPONSE ", response);
       if (response.ok && response.data) {
         setData(response.data);
       } else {
@@ -270,18 +270,6 @@ export function PriceModsTable() {
   const handleRowClick = (priceModId: string) => {
     updateSearchParams({ price: priceModId });
   };
-
-  if (!instanceId) {
-    return (
-      <div className="text-center text-muted-foreground">
-        Select a retreat instance to view price modifications
-      </div>
-    );
-  }
-
-  if (loading && !data.length) {
-    return <div>Loading price modifications...</div>;
-  }
 
   return (
     <div className="space-y-4">
@@ -378,7 +366,11 @@ export function PriceModsTable() {
                   colSpan={columns.length}
                   className="h-24 text-center"
                 >
-                  No price modifications found.
+                  {!instanceId
+                    ? "Select a retreat instance to view price modifications"
+                    : loading && !data.length
+                      ? "Loading price modifications..."
+                      : "No price modifications found."}
                 </TableCell>
               </TableRow>
             )}

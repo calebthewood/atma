@@ -250,8 +250,8 @@ model Retreat {
 model Program {
   id                       String            @id @default(cuid())
   status                   String            @default("draft") // 'published', 'draft', 'archived'
-  bookingType              String? // Flexible: Fixed Start Open End. Fixed: Fixed Start Fixed End. Open: Open Start Open End
-  name                     String?
+  bookingType              String?           @default("Fixed") // Flexible: Fixed Start Open End. Fixed: Fixed Start Fixed End. Open: Open Start Open End
+  name                     String?           @default("New program")
   category                 String            @default("") // Ayurveda, Couples & Relationships, Creative & Artistic, Detox & Cleanse, Detoxification, Emotional Healing, Family & Group Wellness, Fitness & Active, Healthy Aging, Holistic Wellness & Longevity, Hydrotherapy, Luxury Adventure, Medical Wellness, Meditation, Mental Health & Emotional Wellness, Mindfulness, Motherhood, Nutrition & Wellness Coaching, Optimal Weight, Relaxation, Sleep & Restorative Wellness, Spa, Spiritual & Self-Discovery, Traditional Healing, Therapeutic Fasting
   desc                     String            @default("Overview text") // overview
   keyBenefits              String            @default("Key benefits text")

@@ -50,7 +50,7 @@ export default async function SettingsLayout({
           <aside className="-mx-4 lg:w-1/5">
             <ClientSidebarNav items={sidebarNavItems} />
           </aside>
-          <div className="flex-1 lg:max-w-4xl">{children}</div>
+          <div className="min-h-screen flex-1 lg:max-w-4xl">{children}</div>
           <Toaster />
         </div>
       </div>

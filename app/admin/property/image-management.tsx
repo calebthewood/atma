@@ -9,6 +9,7 @@ import {
   updateImageOrder,
   uploadImage,
 } from "@/actions/image-actions";
+import { ImageDirectorySchema } from "@/schemas/image-schema";
 import {
   draggable,
   dropTargetForElements,
@@ -19,7 +20,6 @@ import { X } from "lucide-react";
 import { useDropzone } from "react-dropzone";
 import { z } from "zod";
 
-import { ImageDirectorySchema } from "@/schemas/image-schema";
 import { imageProcessor } from "@/lib/sharp";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
