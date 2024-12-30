@@ -2,12 +2,13 @@
 "use server";
 
 import { auth, signIn } from "@/auth";
+import { AuthErrorCode } from "@/schemas/auth-schema";
 import { User } from "@prisma/client";
 import { z } from "zod";
 
-import { ActionResponse } from "./shared";
 import prisma from "@/lib/prisma";
-import { AuthErrorCode } from "@/schemas/auth-schema";
+
+import { ActionResponse } from "./shared";
 
 /** ToC
  * Types:
@@ -17,6 +18,7 @@ import { AuthErrorCode } from "@/schemas/auth-schema";
  * Authentication Operations:
  *   - googleSignIn(): Promise<ActionResponse>
  *   - getAuthenticatedUser(): Promise<ActionResponse<User>>
+ *   - sendgridSignIn(formData): Void
  */
 
 // ============================================================================
@@ -35,14 +37,45 @@ export type AuthErrorDetails = {
 // ============================================================================
 
 /**
- * Initiates Google OAuth sign-in flow
+ * Initiates Google OAuth sign-in
  */
 export async function googleSignIn() {
-  await signIn("google", {
-    provider: "google",
-    redirectTo: "/",
-    redirect: true,
-  });
+  try {
+    await signIn("google", {
+      redirect: false,
+    });
+    return { success: true };
+  } catch (error) {
+    console.error(error);
+    return { error: "Failed to sign in with Google" };
+  }
+}
+/**
+ * Initiates Sendgrid Magic Link sign-in
+ */
+
+const SignInSchema = z.object({
+  email: z.string().email(),
+});
+
+export async function sendgridSignIn(formData: FormData) {
+  const email = formData.get("email");
+  const result = SignInSchema.safeParse({ email });
+
+  if (!result.success) {
+    return { error: "Invalid email address" };
+  }
+
+  try {
+    await signIn("sendgrid", {
+      email: result.data.email,
+      redirect: false,
+    });
+    return { success: true };
+  } catch (error) {
+    console.error(error);
+    return { error: "Failed to send login email" };
+  }
 }
 
 /**

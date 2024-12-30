@@ -7,10 +7,14 @@ import { sendEmail } from "@/lib/sendgrid";
 import { formatDate, toUSD } from "@/lib/utils";
 
 /* ReadMe
-  to test locally, run "stripe listen --forward-to localhost:3000/api/webhooks" in
-  the terminal, this establishes a 'local listener' connected to your stripe dashboard.
+  to test locally run:
+    stripe listen --forward-to localhost:3000/api/webhooks
+  in the terminal, this establishes a 'local listener' connected to your stripe dashboard.
   you can verify this by checking the local listener STATUS here: https://dashboard.stripe.com/test/webhooks
   otherwise your local dev app wont receive events when going thru the checkout process.
+
+  - Stripe api keys differ for prod,stage.
+  - Stripe Webhook secret differs for prod, stage, local
 */
 export async function POST(req: Request) {
   let event: Stripe.Event;

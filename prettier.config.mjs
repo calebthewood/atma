@@ -1,4 +1,4 @@
-export default {
+const prettierConfig = {
   endOfLine: "lf",
   semi: true,
   singleQuote: false,
@@ -27,8 +27,6 @@ export default {
   ],
   importOrderTypeScriptVersion: "5.5.4",
   importOrderParserPlugins: ["typescript", "jsx", "decorators-legacy"],
-  semi: true,
-  singleQuote: false,
-  tabWidth: 2,
-  plugins: ["prettier-plugin-tailwindcss"],
 };
+
+export default prettierConfig
