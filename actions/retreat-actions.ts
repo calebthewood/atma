@@ -110,9 +110,14 @@ export async function createRetreat(
 export async function getRetreat(
   id: string
 ): ActionResponse<RetreatWithAllRelations> {
+  const statusList = ["published"];
+  const session = await auth();
+  if (session && session.user.role !== "user") {
+    statusList.push("draft");
+  }
   try {
     const retreat = await prisma.retreat.findUnique({
-      where: { id, status: "published" },
+      where: { id, status: { in: statusList } },
       include: RETREAT_INCLUDE_FULL,
     });
 
@@ -143,13 +148,22 @@ export async function updateRetreat(
   partialData: Partial<RetreatFormData>
 ): ActionResponse<Retreat> {
   try {
-    const { hostId, ...restData } = partialData;
+    const { hostId, propertyId, ...restData } = partialData;
+    if (!hostId) {
+      throw new Error("Host ID is required for retreat updates");
+    }
+
+    // const updateData: Prisma.RetreatUpdateInput = {
+    //   ...restData,
+    //   ...(hostId !== undefined
+    //     ? { host: { connect: { id: hostId || "" } } }
+    //     : {}),
+    // };
 
     const updateData: Prisma.RetreatUpdateInput = {
       ...restData,
-      ...(hostId !== undefined
-        ? { host: { connect: { id: hostId || "" } } }
-        : {}),
+      host: { connect: { id: hostId } },
+      property: { connect: { id: propertyId } },
     };
 
     const retreat = await prisma.retreat.update({
@@ -164,12 +178,11 @@ export async function updateRetreat(
       data: retreat,
       message: "Successfully updated retreat",
     };
-  } catch (error) {
-    console.error("Failed to update retreat:", error);
+  } catch {
     return {
       ok: false,
       data: null,
-      message: "Failed to update retreat. Host is required.",
+      message: "Failed to update retreat.",
     };
   }
 }

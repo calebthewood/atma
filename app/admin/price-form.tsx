@@ -1,57 +1,30 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import {
-  useParams,
-  usePathname,
-  useRouter,
-  useSearchParams,
-} from "next/navigation";
-import {
-  createPriceMod,
-  getPriceMod,
-  updatePriceMod,
-} from "@/actions/price-mod-actions";
+import { useParams, usePathname, useRouter, useSearchParams } from "next/navigation";
+import { createPriceMod, getPriceMod, updatePriceMod } from "@/actions/price-mod-actions";
 import { PriceModInput, priceModSchema } from "@/schemas/price-mods";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { format } from "date-fns";
 import { useForm } from "react-hook-form";
 
+
+
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
-import {
-  Form,
-  FormControl,
-  FormDescription,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form";
+import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { toast } from "@/components/ui/use-toast";
+
+
+
+
 
 type EntityType =
   | "host"
@@ -160,7 +133,7 @@ export function PriceModForm() {
       if (!result.ok) {
         throw new Error(result.error || "Failed to save price modification");
       }
-
+      setIsLoading(false);
       toast({
         title: "Success",
         description: `Price modification ${priceModId ? "updated" : "created"} successfully.`,
@@ -180,8 +153,6 @@ export function PriceModForm() {
             : "Failed to save price modification",
         variant: "destructive",
       });
-    } finally {
-      setIsLoading(false);
     }
   }
 

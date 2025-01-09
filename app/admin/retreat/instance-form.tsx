@@ -16,7 +16,7 @@ import {
   instanceFormSchema,
 } from "@/schemas/retreat-instance";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Retreat, RetreatInstance } from "@prisma/client";
+import { RetreatInstance } from "@prisma/client";
 import { addDays, addYears, startOfDay } from "date-fns";
 import { useForm } from "react-hook-form";
 
