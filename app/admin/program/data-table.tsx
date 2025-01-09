@@ -82,7 +82,7 @@ export function ProgramDataTable() {
           return (
             <AdminActionMenu
               editHref={`/admin/program/${program?.id}/general`}
-              publicHref={`/program/${program?.id}`}
+              publicHref={`/programs/${program?.id}`}
               handleDelete={() => handleDelete(program?.id)}
             />
           );
