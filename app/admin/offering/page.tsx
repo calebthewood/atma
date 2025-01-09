@@ -1,10 +1,17 @@
+import { redirect } from "next/navigation";
+import { auth } from "@/auth";
+
 import { Separator } from "@/components/ui/separator";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 import { AmenityForm } from "./amenity-form";
 import { AmenityList } from "./amenity-table";
 
-export default function AmenityPage() {
+export default async function AmenityPage() {
+  const session = await auth();
+  if (!session) redirect("/");
+  if (session.user.role !== "admin") redirect("/");
+
   return (
     <div className="">
       <h3 className="text-lg font-medium">Create New Offering</h3>

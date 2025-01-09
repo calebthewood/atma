@@ -1,16 +1,20 @@
 import React from "react";
 import { Metadata } from "next";
 import { redirect } from "next/navigation";
-import { getUser } from "@/actions/user-actions";
 import { auth } from "@/auth";
+
+
 
 import { canViewDashboard } from "@/lib/checks-and-balances";
 import { cn } from "@/lib/utils";
 import { Separator } from "@/components/ui/separator";
 import { Toaster } from "@/components/ui/toaster";
 
+
+
 import { AdminTitle } from "./components";
 import { ClientSidebarNav } from "./sidebar-nav";
+
 
 export const metadata: Metadata = {
   title: "Forms",
@@ -30,7 +34,7 @@ const adminNavItems = [
 ];
 
 const hostNavItems = [
-  { title: "Users", href: "/admin/user" },
+  { title: "Admin", href: "/admin" },
   { title: "Hosts", href: "/admin/host" },
   { title: "Properties", href: "/admin/property" },
   { title: "Retreats", href: "/admin/retreat" },

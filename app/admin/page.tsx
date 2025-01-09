@@ -1,4 +1,4 @@
-import { getDatabaseCounts } from "@/actions/admin-misc";
+// import { getDatabaseCounts } from "@/actions/admin-misc";
 
 import {
   Card,
@@ -9,50 +9,59 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 
-export default async function Page() {
-  const {
-    userCount,
-    hostCount,
-    propertyCount,
-    verifiedPropertyCount,
-    retreatCount,
-    verifiedRetreatCount,
-    programCount,
-    verifiedProgramCount,
-  } = await getDatabaseCounts();
+export default function AdminHomePage() {
   return (
-    <div className="flex flex-row flex-wrap gap-6">
-      <CountCard
-        title={"User Count"}
-        desc={"Registered users and admins"}
-        count={userCount}
-      />
-      <CountCard
-        title={"Host Count"}
-        desc={"Registered hosts or companies"}
-        count={hostCount}
-      />
-      <CountCard
-        title={"Property Count"}
-        desc={"Registered properties"}
-        count={propertyCount}
-        verifiedCount={verifiedPropertyCount}
-      />
-      <CountCard
-        title={"Retreat Count"}
-        desc={"Registered retreats"}
-        count={retreatCount}
-        verifiedCount={verifiedRetreatCount}
-      />
-      <CountCard
-        title={"Program Count"}
-        desc={"Registered programs"}
-        count={programCount}
-        verifiedCount={verifiedProgramCount}
-      />
+    <div>
+      <h1 className="text-4xl font-normal">Welcome to the ATMA</h1>
+      <p>Use this dashboard to manage your offerings on our platform</p>
     </div>
   );
 }
+
+// export default async function Page() {
+//   const {
+//     userCount,
+//     hostCount,
+//     propertyCount,
+//     verifiedPropertyCount,
+//     retreatCount,
+//     verifiedRetreatCount,
+//     programCount,
+//     verifiedProgramCount,
+//   } = await getDatabaseCounts();
+//   return (
+//     <div className="flex flex-row flex-wrap gap-6">
+//       <CountCard
+//         title={"User Count"}
+//         desc={"Registered users and admins"}
+//         count={userCount}
+//       />
+//       <CountCard
+//         title={"Host Count"}
+//         desc={"Registered hosts or companies"}
+//         count={hostCount}
+//       />
+//       <CountCard
+//         title={"Property Count"}
+//         desc={"Registered properties"}
+//         count={propertyCount}
+//         verifiedCount={verifiedPropertyCount}
+//       />
+//       <CountCard
+//         title={"Retreat Count"}
+//         desc={"Registered retreats"}
+//         count={retreatCount}
+//         verifiedCount={verifiedRetreatCount}
+//       />
+//       <CountCard
+//         title={"Program Count"}
+//         desc={"Registered programs"}
+//         count={programCount}
+//         verifiedCount={verifiedProgramCount}
+//       />
+//     </div>
+//   );
+// }
 interface CountCardProps {
   title: string;
   desc: string;

@@ -1,10 +1,16 @@
+import { redirect } from "next/navigation";
+import { auth } from "@/auth";
+
 import { Separator } from "@/components/ui/separator";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 import { UserDataTable } from "./user-data-table";
 import { UserForm } from "./user-form";
 
-export default function UserPage() {
+export default async function UserPage() {
+  const session = await auth();
+  if (!session) redirect("/");
+  if (session.user.role !== "admin") redirect("/admin/");
   return (
     <div className="container mx-auto py-6">
       <div className="flex items-center justify-between">
