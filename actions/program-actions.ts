@@ -90,7 +90,6 @@ export async function createProgram(
         host: { connect: { id: hostId || "" } },
       },
     });
-    console.log("createProgram", program);
     return { ok: true, data: program, message: "Successfully created program" };
   } catch (error) {
     console.error(error);
@@ -103,7 +102,7 @@ export async function getProgram(
 ): ActionResponse<ProgramWithAllRelations> {
   try {
     const program = await prisma.program.findUnique({
-      where: { id },
+      where: { id, status: "published" },
       include: PROGRAM_INCLUDE_FULL,
     });
 
@@ -192,6 +191,7 @@ export async function getAdminPaginatedPrograms(
     }
 
     const whereClause = {
+      status: { in: ["published", "draft"] },
       ...(searchTerm
         ? {
             OR: [

@@ -63,7 +63,12 @@ export async function getGroupedDestinations(): ActionResponse<
       },
     };
 
-    const properties = await prisma.property.findMany({ include });
+    const properties = await prisma.property.findMany({
+      where: {
+        status: "published",
+      },
+      include,
+    });
     const groupedProperties = properties.reduce(
       (acc: CountryProperties[], property) => {
         if (!property.country) return acc;

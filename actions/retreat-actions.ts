@@ -112,7 +112,7 @@ export async function getRetreat(
 ): ActionResponse<RetreatWithAllRelations> {
   try {
     const retreat = await prisma.retreat.findUnique({
-      where: { id },
+      where: { id, status: "published" },
       include: RETREAT_INCLUDE_FULL,
     });
 
@@ -220,6 +220,7 @@ export async function getAdminPaginatedRetreats(
     ]);
 
     const whereClause = {
+      status: { in: ["published", "draft"] },
       ...searchConditions,
       ...(session.user.role !== "admin" ? { hostId: session.user.hostId } : {}),
     };

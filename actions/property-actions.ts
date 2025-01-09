@@ -170,7 +170,7 @@ export async function getProperty(
 ): ActionResponse<PropertyWithAllRelations> {
   try {
     const property = await prisma.property.findUnique({
-      where: { id },
+      where: { id, status: "published" },
       include: PROPERTY_INCLUDE_FULL,
     });
     if (!property) {
@@ -285,6 +285,9 @@ export async function getAdminPaginatedProperties(
     const searchConditions = buildPropertySearchConditions(searchTerm);
 
     const whereClause = {
+      status: {
+        in: ["draft", "published"],
+      },
       ...searchConditions,
       ...(session.user.role !== "admin" && session.user.hostId
         ? { hostId: session.user.hostId }
