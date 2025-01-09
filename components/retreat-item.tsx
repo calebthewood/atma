@@ -240,9 +240,6 @@ export function LazyRetreatItem({
         : item.country,
   };
 
-  // const isRetreat = (item) => item?.type === 'retreat';
-  // const isProgram = (item) => item?.type === 'program';
-
   return (
     <div
       className={cn(

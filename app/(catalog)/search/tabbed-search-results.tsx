@@ -89,7 +89,8 @@ const TabbedSearchResults = ({ results, error }: TabbedSearchResultsProps) => {
                       height={300}
                     />
                     <div className="mt-2 w-[290px] overflow-hidden text-ellipsis text-sm text-muted-foreground">
-                      {property.address}
+                      <div className="font-medium">{property.name}</div>
+                      <div className="opacity-80">{`${property.city}, ${property.country}`}</div>
                     </div>
                   </div>
                 ))}

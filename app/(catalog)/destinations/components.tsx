@@ -120,7 +120,7 @@ export default function DestinationPage() {
               height={330}
             />
             <div className="mt-2 text-sm text-muted-foreground">
-              {property.address || `${property.city}, ${property.country}`}
+              {`${property.city},,,,,${property.country}`}
             </div>
             {/* {"distance" in property && (
               <div className="text-xs text-muted-foreground">
