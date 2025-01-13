@@ -3,18 +3,13 @@ import { Metadata } from "next";
 import { redirect } from "next/navigation";
 import { auth } from "@/auth";
 
-
-
 import { canViewDashboard } from "@/lib/checks-and-balances";
 import { cn } from "@/lib/utils";
 import { Separator } from "@/components/ui/separator";
 import { Toaster } from "@/components/ui/toaster";
 
-
-
 import { AdminTitle } from "./components";
 import { ClientSidebarNav } from "./sidebar-nav";
-
 
 export const metadata: Metadata = {
   title: "Forms",

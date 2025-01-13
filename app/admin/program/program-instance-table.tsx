@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import {
   deleteInstance,
@@ -202,10 +203,10 @@ export function ProgramInstancesList({
             }
           }
         };
-
+        const editHref = `/admin/program/${programId}/instances/edit?edit=${instance.id}`;
         return (
           <AdminActionMenu
-            editHref={`/admin/program/${programId}/instance?edit=${instance?.id}`}
+            editHref={editHref}
             publicHref={`/program/${programId}/instance/${instance?.id}`}
             handleDelete={handleDelete}
           />
@@ -284,12 +285,15 @@ export function ProgramInstancesList({
       <div className="flex items-center justify-between">
         <div className="flex flex-1 items-center justify-end space-x-2">
           <Button
+            asChild
             variant="default"
             onClick={() => {
               updateSearchParams("edit", null);
             }}
           >
-            Create Instance
+            <Link href={`/admin/program/${programId}/instances/create`}>
+              Create Instance
+            </Link>
           </Button>
           <DropdownMenu>
             <DropdownMenuTrigger asChild>

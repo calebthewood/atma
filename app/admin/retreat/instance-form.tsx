@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
+import Link from "next/link";
 import { useParams, useRouter, useSearchParams } from "next/navigation";
 import {
   getAdminPaginatedRetreats,
@@ -84,7 +85,6 @@ export function RetreatInstanceForm() {
 
   // Load instance data when edit param changes
   useEffect(() => {
-    console.log("INSTANCE FORM ", retreatId);
     async function loadInstanceData() {
       if (!editId) {
         form.reset({
@@ -101,9 +101,7 @@ export function RetreatInstanceForm() {
       }
 
       try {
-        console.log("INSTANCE FORM ", editId);
         const response = await getInstance(editId);
-        console.log("INSTANCE FORM ", response);
         if (response.ok && response.data) {
           const instance = response.data;
           setCurrentInstance(instance);
@@ -179,7 +177,6 @@ export function RetreatInstanceForm() {
           throw new Error(response.message);
         }
       } catch (error) {
-        console.error(`Error updating ${fieldName}:`, error);
         toast({
           title: "Error",
           description: `Failed to update ${fieldName}`,
@@ -199,6 +196,7 @@ export function RetreatInstanceForm() {
     };
     try {
       if (currentInstance) {
+        console.log("Updating");
         const response = await updateInstance(
           currentInstance?.id,
           formattedValues
@@ -248,6 +246,7 @@ export function RetreatInstanceForm() {
       "border-red-500": !isValid && !isSubmitting,
     });
   };
+  console.log(form.formState.errors);
   return (
     <Card>
       <CardHeader>
@@ -508,22 +507,28 @@ export function RetreatInstanceForm() {
                 )}
               />
             </div>
-
-            <Button
-              type="submit"
-              disabled={isLoading}
-              className={cn({
-                "bg-atma-yellow text-black":
-                  isLoading || form.formState.isDirty,
-                "bg-atma-mint text-black": form.formState.isSubmitSuccessful,
-              })}
-            >
-              {isLoading
-                ? "Submitting..."
-                : currentInstance
-                  ? "Update Retreat Instance"
-                  : "Create Retreat Instance"}
-            </Button>
+            <div className="flex">
+              <Link
+                className="w-24"
+                href={`/admin/retreat/${retreatId}/instances`}
+              >
+                Cancel
+              </Link>
+              <Button
+                type="submit"
+                className={cn({
+                  "bg-atma-yellow text-black":
+                    isLoading || form.formState.isDirty,
+                  "bg-atma-mint text-black": form.formState.isSubmitSuccessful,
+                })}
+              >
+                {isLoading
+                  ? "Submitting..."
+                  : currentInstance
+                    ? "Update Retreat Instance"
+                    : "Create Retreat Instance"}
+              </Button>
+            </div>
           </form>
         </Form>
       </CardContent>

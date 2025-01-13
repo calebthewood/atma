@@ -22,7 +22,6 @@ import { PriceModsTable } from "@/app/admin/retreat/instance-pricing-table";
 import { PriceModForm } from "../../../price-form";
 import { ImageManagement } from "../../../property/image-management";
 import { ProgramForm } from "../../program-form";
-import { ProgramInstanceForm } from "../../program-instance-form";
 import { ProgramInstancesList } from "../../program-instance-table";
 
 interface PageProps {
@@ -91,13 +90,10 @@ export default async function Page({ params }: PageProps) {
       label: "Instances",
       href: `/admin/program/${resolvedParams?.id}/instances`,
       component: () => (
-        <>
-          <ProgramInstancesList
-            programId={resolvedParams?.id}
-            initialInstances={instances}
-          />
-          <ProgramInstanceForm />
-        </>
+        <ProgramInstancesList
+          programId={resolvedParams?.id}
+          initialInstances={instances}
+        />
       ),
     },
     {

@@ -1,6 +1,5 @@
 import Link from "next/link";
 import { getRetreat } from "@/actions/retreat-actions";
-import { getPaginatedInstances } from "@/actions/retreat-instance-actions";
 
 import { cn } from "@/lib/utils";
 import {
@@ -23,7 +22,7 @@ import { ImageManagement } from "../../../property/image-management";
 import { RetreatInstanceForm } from "../../instance-form";
 import { PriceModsTable } from "../../instance-pricing-table";
 import { RetreatForm } from "../../retreat-form";
-import { RetreatInstancesList } from "../../retreat-instance-table";
+import { RetreatInstancesList } from "../../retreat-instance-list";
 
 interface PageProps {
   params: Promise<{ id: string; slug: string }>;
@@ -37,21 +36,6 @@ export default async function Page({ params }: PageProps) {
   }
 
   const retreat = result.data;
-
-  // Use new instance actions with proper error handling
-  const instancesResponse = await getPaginatedInstances(
-    1, // Start with first page
-    10, // Page size
-    resolvedParams?.id
-  );
-
-  if (!instancesResponse.data) {
-    console.error("Failed to load instances:", instancesResponse.message);
-    throw new Error(instancesResponse.message);
-  }
-
-  // Safely access data using the new response structure
-  const instances = instancesResponse.data;
 
   const tabs = [
     {
@@ -97,15 +81,7 @@ export default async function Page({ params }: PageProps) {
       value: "instances",
       label: "Instances",
       href: `/admin/retreat/${resolvedParams?.id}/instances`,
-      component: () => (
-        <>
-          <RetreatInstancesList
-            retreatId={resolvedParams?.id}
-            initialInstances={instances}
-          />
-          <RetreatInstanceForm />
-        </>
-      ),
+      component: () => <RetreatInstancesList retreatId={resolvedParams?.id} />,
     },
     {
       value: "prices",
@@ -120,10 +96,7 @@ export default async function Page({ params }: PageProps) {
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <RetreatInstancesList
-              retreatId={resolvedParams?.id}
-              initialInstances={instances}
-            />
+            <RetreatInstancesList retreatId={resolvedParams?.id} />
           </CardContent>
           <CardContent>
             <PriceModsTable />
@@ -172,7 +145,6 @@ export default async function Page({ params }: PageProps) {
             ))}
           </NavigationMenuList>
         </NavigationMenu>
-
         <div className="mt-4">{Output && <Output />}</div>
       </div>
     </div>

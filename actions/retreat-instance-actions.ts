@@ -139,7 +139,10 @@ export async function updateInstance(
 }
 
 export async function createInstance(
-  data: Omit<RetreatInstance, "id" | "createdAt" | "updatedAt">
+  data: Omit<
+    RetreatInstance,
+    "id" | "createdAt" | "updatedAt" | "notes" | "verifiedBy"
+  >
 ): ActionResponse<RetreatInstance> {
   try {
     const validatedData = instanceFormSchema.parse(data);
@@ -147,7 +150,7 @@ export async function createInstance(
     const instance = await prisma.retreatInstance.create({
       data: validatedData,
     });
-
+    revalidatePath(`/admin/retreat/${data.retreatId}/instances`);
     return {
       ok: true,
       message: "Success",

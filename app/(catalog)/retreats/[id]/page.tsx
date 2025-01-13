@@ -74,15 +74,13 @@ export default async function Page(props: { params: Promise<{ id: string }> }) {
             {/* Left Column - spans 8 columns */}
             <div className="col-span-12 space-y-16 lg:col-span-8">
               <section id="offerings">
-                <h2 className="mb-5 text-2xl font-semibold capitalize">
-                  Highlights
-                </h2>
+                <h2 className="mb-5 text-2xl font-semibold">Highlights</h2>
                 <EntityTabs entity={retreat} />
               </section>
 
               {retreat.retreatInstances.length > 0 && (
                 <section id="section2">
-                  <h2 className="mb-5 text-2xl font-semibold capitalize">
+                  <h2 className="mb-5 text-2xl font-semibold">
                     Retreat Options
                   </h2>
                   <EntityInstancesTabs instances={retreat?.retreatInstances} />
@@ -90,7 +88,7 @@ export default async function Page(props: { params: Promise<{ id: string }> }) {
               )}
 
               <section id="practical-information">
-                <h2 className="mb-5 text-2xl font-semibold capitalize">
+                <h2 className="mb-5 text-2xl font-semibold">
                   Practical Information
                 </h2>
                 <PropertyPolicies
@@ -117,10 +115,10 @@ export default async function Page(props: { params: Promise<{ id: string }> }) {
         </div>
 
         <section id="gallery">
-          <h2 className="mb-10 text-center text-3xl font-semibold capitalize">
+          <h2 className="mb-10 text-center text-3xl font-semibold">
             Meet {property?.name}
           </h2>
-          <p className="mx-auto mb-10 max-w-3xl text-center text-sm font-normal capitalize">
+          <p className="mx-auto mb-10 max-w-3xl text-center text-sm font-normal">
             {property?.descShort}
           </p>
           <ThumbnailCarousel slides={imageSlides} />
@@ -129,7 +127,7 @@ export default async function Page(props: { params: Promise<{ id: string }> }) {
         {retreatIds.length > 0 && (
           <section id="upcoming-retreats">
             <QuickLink text="See All Retreats" href="/retreats" />
-            <h2 className="my-12 w-full text-center text-3xl font-semibold capitalize">
+            <h2 className="my-12 w-full text-center text-3xl font-semibold">
               Other Offerings by {property?.name || ""}
             </h2>
             <PropertyLazyCarousel entityIds={retreatIds} entityType="retreat" />

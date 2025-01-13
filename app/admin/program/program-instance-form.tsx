@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Link from "next/link";
 import { useParams, useRouter, useSearchParams } from "next/navigation";
 import { getPrograms } from "@/actions/program-actions";
 import {
@@ -499,22 +500,29 @@ export function ProgramInstanceForm() {
               />
             </div>
 
-            {/* Submit button */}
-            <Button
-              type="submit"
-              disabled={isLoading}
-              className={cn({
-                "bg-atma-yellow text-black":
-                  isLoading || form.formState.isDirty,
-                "bg-atma-mint text-black": form.formState.isSubmitSuccessful,
-              })}
-            >
-              {isLoading
-                ? "Submitting..."
-                : currentInstance
-                  ? "Update Program Instance"
-                  : "Create Program Instance"}
-            </Button>
+            <div className="flex">
+              <Link
+                className="w-24"
+                href={`/admin/program/${programId}/instances`}
+              >
+                Cancel
+              </Link>
+              <Button
+                type="submit"
+                disabled={isLoading}
+                className={cn({
+                  "bg-atma-yellow text-black":
+                    isLoading || form.formState.isDirty,
+                  "bg-atma-mint text-black": form.formState.isSubmitSuccessful,
+                })}
+              >
+                {isLoading
+                  ? "Submitting..."
+                  : currentInstance
+                    ? "Update Program Instance"
+                    : "Create Program Instance"}
+              </Button>
+            </div>
           </form>
         </Form>
       </CardContent>

@@ -77,19 +77,17 @@ export default async function Page(props: { params: Promise<{ id: string }> }) {
       </section>
 
       <section id="gallery">
-        <h2 className="mb-5 text-2xl font-semibold capitalize">Gallery</h2>
+        <h2 className="mb-5 text-2xl font-semibold">Gallery</h2>
         <ThumbnailCarousel slides={slides} />
       </section>
 
       <section id="offerings">
-        <h2 className="mb-5 text-2xl font-semibold capitalize">Offerings</h2>
+        <h2 className="mb-5 text-2xl font-semibold">Offerings</h2>
         <PropertyTabs property={property} />
       </section>
 
       <section id="practical-information">
-        <h2 className="mb-5 text-2xl font-semibold capitalize">
-          Practical Information
-        </h2>
+        <h2 className="mb-5 text-2xl font-semibold">Practical Information</h2>
         <PropertyPolicies
           property={property}
           amenities={parkingAmenities ?? []}
@@ -99,7 +97,7 @@ export default async function Page(props: { params: Promise<{ id: string }> }) {
       {programIds.length > 0 && (
         <section id="upcoming-programs">
           <QuickLink text="See All Programs" href="/programs" />
-          <h2 className="my-12 w-full text-center text-3xl font-semibold capitalize">
+          <h2 className="my-12 w-full text-center text-3xl font-semibold">
             Exclusive Wellness Programs
           </h2>
           <PropertyLazyCarousel entityIds={programIds} entityType="program" />
@@ -109,7 +107,7 @@ export default async function Page(props: { params: Promise<{ id: string }> }) {
       {retreatIds.length > 0 && (
         <section id="upcoming-retreats">
           <QuickLink text="See All Retreats" href="/retreats" />
-          <h2 className="my-12 w-full text-center text-3xl font-semibold capitalize">
+          <h2 className="my-12 w-full text-center text-3xl font-semibold">
             Upcoming Retreats
           </h2>
           <PropertyLazyCarousel entityIds={retreatIds} entityType="retreat" />
@@ -131,16 +129,12 @@ const SpecialtyOverview = ({
   specialtyList: string[];
 }) => (
   <div className="grid grid-cols-2 gap-5">
-    <h2 className="col-start-1 row-start-1 text-2xl font-semibold capitalize">
-      Overview
-    </h2>
-    <p className="col-start-1 row-start-2 text-sm font-normal capitalize">
-      {overview}
-    </p>
-    <h2 className="col-start-2 row-start-1 text-2xl font-semibold capitalize">
+    <h2 className="col-start-1 row-start-1 text-2xl font-semibold">Overview</h2>
+    <p className="col-start-1 row-start-2 text-sm font-normal">{overview}</p>
+    <h2 className="col-start-2 row-start-1 text-2xl font-semibold">
       Specialty
     </h2>
-    <ul className="col-start-2 row-start-2 list-disc text-sm font-normal capitalize">
+    <ul className="col-start-2 row-start-2 list-disc text-sm font-normal">
       {specialtyList.map(
         (line, i) =>
           line && (

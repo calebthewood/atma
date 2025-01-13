@@ -62,6 +62,7 @@ export function AdminActionMenu({
   handleDelete: () => void;
   publicHref?: string;
 }) {
+  console.log("editHref:", editHref);
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
@@ -72,8 +73,8 @@ export function AdminActionMenu({
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">
         <DropdownMenuLabel>Actions</DropdownMenuLabel>
-        <DropdownMenuItem asChild>
-          <Link href={editHref}>Edit</Link>
+        <DropdownMenuItem>
+          <a href={editHref}>Edit</a>
         </DropdownMenuItem>
         <DropdownMenuItem
           onClick={(e) => {
