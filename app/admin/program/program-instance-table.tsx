@@ -7,7 +7,6 @@ import {
   deleteInstance,
   getPaginatedInstances,
   type InstanceWithRelations,
-  type PaginatedInstancesResponse,
 } from "@/actions/program-instance-actions";
 import { PaginatedResponse } from "@/actions/shared";
 import { CaretSortIcon, ChevronDownIcon } from "@radix-ui/react-icons";

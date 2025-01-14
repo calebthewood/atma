@@ -1,5 +1,8 @@
 #!/bin/bash
 
+## I was working on this, but I don't think I actually finished. Feel free to use
+## but is not required. - cw
+
 # Configuration
 HOST="[ip]"
 SSH_ALIAS="[set in /.ssh/config]"
