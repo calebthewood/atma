@@ -108,13 +108,15 @@ export async function createRetreat(
 }
 
 export async function getRetreat(
-  id: string
+  id: string,
+  statusList = ["published"]
 ): ActionResponse<RetreatWithAllRelations> {
-  const statusList = ["published"];
   const session = await auth();
+
   if (session && session.user.role !== "user") {
     statusList.push("draft");
   }
+
   try {
     const retreat = await prisma.retreat.findUnique({
       where: { id, status: { in: statusList } },
@@ -233,7 +235,7 @@ export async function getAdminPaginatedRetreats(
     ]);
 
     const whereClause = {
-      status: { in: ["published", "draft"] },
+      status: { in: ["published", "archived", "draft"] },
       ...searchConditions,
       ...(session.user.role !== "admin" ? { hostId: session.user.hostId } : {}),
     };

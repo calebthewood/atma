@@ -305,10 +305,10 @@ export function ProgramInstancesList({
               {table
                 .getAllColumns()
                 .filter((column) => column.getCanHide())
-                .map((column) => {
+                .map((column, i) => {
                   return (
                     <DropdownMenuCheckboxItem
-                      key={column?.id}
+                      key={i + column?.id}
                       className="capitalize"
                       checked={column.getIsVisible()}
                       onCheckedChange={(value) =>
@@ -327,10 +327,10 @@ export function ProgramInstancesList({
       <div className="rounded-md border">
         <Table>
           <TableHeader>
-            {table.getHeaderGroups().map((headerGroup) => (
-              <TableRow key={headerGroup?.id}>
-                {headerGroup.headers.map((header) => (
-                  <TableHead key={header?.id}>
+            {table.getHeaderGroups().map((headerGroup, i) => (
+              <TableRow key={i + headerGroup?.id}>
+                {headerGroup.headers.map((header, j) => (
+                  <TableHead key={j + header?.id}>
                     {header.isPlaceholder
                       ? null
                       : flexRender(
@@ -344,15 +344,15 @@ export function ProgramInstancesList({
           </TableHeader>
           <TableBody>
             {table.getRowModel().rows?.length ? (
-              table.getRowModel().rows.map((row) => (
+              table.getRowModel().rows.map((row, i) => (
                 <TableRow
-                  key={row?.id}
+                  key={i + row?.id}
                   data-state={row.getIsSelected() && "selected"}
                   className="cursor-pointer hover:bg-muted/50"
                   onClick={() => handleRowClick(row.original?.id)}
                 >
-                  {row.getVisibleCells().map((cell) => (
-                    <TableCell key={cell?.id}>
+                  {row.getVisibleCells().map((cell, i) => (
+                    <TableCell key={i + cell?.id}>
                       {flexRender(
                         cell.column.columnDef.cell,
                         cell.getContext()

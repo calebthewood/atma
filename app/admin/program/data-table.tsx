@@ -38,17 +38,43 @@ export function ProgramDataTable() {
           );
         },
       },
+
+      {
+        accessorKey: "status",
+        header: ({ column }) => {
+          return (
+            <Button
+              variant="ghost"
+              onClick={() =>
+                column.toggleSorting(column.getIsSorted() === "asc")
+              }
+            >
+              Status
+              <CaretSortIcon className="ml-2 size-4" />
+            </Button>
+          );
+        },
+      },
+      {
+        accessorKey: "property",
+        header: ({ column }) => {
+          return (
+            <Button
+              variant="ghost"
+              onClick={() =>
+                column.toggleSorting(column.getIsSorted() === "asc")
+              }
+            >
+              Property
+              <CaretSortIcon className="ml-2 size-4" />
+            </Button>
+          );
+        },
+        cell: ({ row }) => row.original.property?.name ?? "N/A",
+      },
       {
         accessorKey: "duration",
         header: "Duration",
-      },
-      {
-        accessorKey: "priceList",
-        header: "Price List",
-        cell: ({ row }) => {
-          const priceList = row.getValue("priceList") as string | null;
-          return priceList ? priceList.split(",")[0] + "..." : "N/A";
-        },
       },
       {
         accessorKey: "hostId",
@@ -57,10 +83,10 @@ export function ProgramDataTable() {
           const hostId = row.getValue("hostId") as string | null;
           return hostId ? (
             <Link
-              href={`/admin/hosts/${hostId}`}
+              href={`/admin/host/${hostId}/general`}
               className="text-blue-600 hover:underline"
             >
-              View Host
+              {row.original.host.name}
             </Link>
           ) : (
             "N/A"

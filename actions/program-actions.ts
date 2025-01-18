@@ -98,11 +98,12 @@ export async function createProgram(
 }
 
 export async function getProgram(
-  id: string
+  id: string,
+  statusList = ["published"]
 ): ActionResponse<ProgramWithAllRelations> {
   try {
     const program = await prisma.program.findUnique({
-      where: { id, status: "published" },
+      where: { id, status: { in: statusList } },
       include: PROGRAM_INCLUDE_FULL,
     });
 
@@ -191,7 +192,7 @@ export async function getAdminPaginatedPrograms(
     }
 
     const whereClause = {
-      status: { in: ["published", "draft"] },
+      status: { in: ["published", "draft", "archived"] },
       ...(searchTerm
         ? {
             OR: [

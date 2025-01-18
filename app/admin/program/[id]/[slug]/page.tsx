@@ -30,7 +30,11 @@ interface PageProps {
 
 export default async function Page({ params }: PageProps) {
   const resolvedParams = await params;
-  const programResponse = await getProgram(resolvedParams?.id);
+  const programResponse = await getProgram(resolvedParams?.id, [
+    "published",
+    "draft",
+    "archived",
+  ]);
 
   if (!programResponse.ok || !programResponse.data) {
     throw new Error(programResponse.message);

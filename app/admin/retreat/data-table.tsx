@@ -2,6 +2,7 @@
 "use client";
 
 import { useMemo } from "react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import {
   deleteRetreat,
@@ -39,8 +40,37 @@ export function RetreatDataTable() {
         },
       },
       {
-        accessorKey: "bookingType",
-        header: "Booking Type",
+        accessorKey: "status",
+        header: ({ column }) => {
+          return (
+            <Button
+              variant="ghost"
+              onClick={() =>
+                column.toggleSorting(column.getIsSorted() === "asc")
+              }
+            >
+              Status
+              <CaretSortIcon className="ml-2 size-4" />
+            </Button>
+          );
+        },
+      },
+      {
+        accessorKey: "property",
+        header: ({ column }) => {
+          return (
+            <Button
+              variant="ghost"
+              onClick={() =>
+                column.toggleSorting(column.getIsSorted() === "asc")
+              }
+            >
+              Property
+              <CaretSortIcon className="ml-2 size-4" />
+            </Button>
+          );
+        },
+        cell: ({ row }) => row.original.property?.name ?? "N/A",
       },
       {
         accessorKey: "duration",
@@ -64,14 +94,21 @@ export function RetreatDataTable() {
         },
       },
       {
-        accessorKey: "property",
-        header: "Property",
-        cell: ({ row }) => row.original.property?.name ?? "N/A",
-      },
-      {
-        accessorKey: "host",
+        accessorKey: "hostId",
         header: "Host",
-        cell: ({ row }) => row.original.host?.name ?? "N/A",
+        cell: ({ row }) => {
+          const hostId = row.getValue("hostId") as string | null;
+          return hostId ? (
+            <Link
+              href={`/admin/host/${hostId}/general`}
+              className="text-blue-600 hover:underline"
+            >
+              {row.original.host.name}
+            </Link>
+          ) : (
+            "N/A"
+          );
+        },
       },
       {
         accessorKey: "updatedAt",

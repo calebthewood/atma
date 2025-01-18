@@ -30,7 +30,12 @@ interface PageProps {
 
 export default async function Page({ params }: PageProps) {
   const resolvedParams = await params;
-  const result = await getRetreat(resolvedParams?.id);
+  const result = await getRetreat(resolvedParams?.id, [
+    "published",
+    "draft",
+    "archived",
+  ]);
+
   if (!result.data) {
     throw new Error(result.message);
   }

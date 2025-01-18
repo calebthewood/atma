@@ -274,8 +274,8 @@ export function ProgramInstanceForm() {
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
-                      {programs.map((program) => (
-                        <SelectItem key={program?.id} value={program?.id}>
+                      {programs.map((program, i) => (
+                        <SelectItem key={i + program?.id} value={program?.id}>
                           {program.name || "Unnamed Program"}
                         </SelectItem>
                       ))}

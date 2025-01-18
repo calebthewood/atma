@@ -166,11 +166,12 @@ export async function createProperty(
 }
 
 export async function getProperty(
-  id: string
+  id: string,
+  statusList = ["published"]
 ): ActionResponse<PropertyWithAllRelations> {
   try {
     const property = await prisma.property.findUnique({
-      where: { id, status: "published" },
+      where: { id, status: { in: statusList } },
       include: PROPERTY_INCLUDE_FULL,
     });
     if (!property) {

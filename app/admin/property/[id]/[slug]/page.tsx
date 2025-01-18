@@ -35,7 +35,7 @@ export default async function Page(props: {
   params: Promise<{ id: string; slug: string }>;
 }) {
   const params = await props.params;
-  const res = await getProperty(params?.id);
+  const res = await getProperty(params?.id, ["published", "draft", "archived"]);
 
   const tabs = [
     {
