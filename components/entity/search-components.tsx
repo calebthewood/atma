@@ -94,7 +94,7 @@ export default function SearchResultsPage({
   const [currentPage, setCurrentPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
   const pageSize = 10;
-
+  console.log(results);
   const searchParams = useSearchParams();
 
   const handleSearch = useCallback(async () => {
@@ -227,6 +227,7 @@ export default function SearchResultsPage({
       setIsLoading(false);
     }
   }, [searchParams, currentPage, searchFunction]);
+
   useEffect(() => {
     handleSearch();
   }, [searchParams, currentPage]);

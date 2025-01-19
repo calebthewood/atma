@@ -11,7 +11,6 @@ import {
 } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { PriceModForm } from "@/app/admin/price-form";
 
 import { AmenitiesEntityForm } from "../../../amenities-entity-form";
 import { ImageManagement } from "../../image-management";
