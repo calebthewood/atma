@@ -8,7 +8,6 @@ import { getRetreat } from "@/actions/retreat-actions";
 import { auth } from "@/auth";
 
 import ThumbnailCarousel from "@/components/ui/carousel-thumbnail";
-import { toast } from "@/components/ui/use-toast";
 import { FixedBooking } from "@/components/booking/fixed-booking";
 import EntityInstancesTabs from "@/components/entity-instance-tabs";
 import PropertyPolicies from "@/components/property-policies";

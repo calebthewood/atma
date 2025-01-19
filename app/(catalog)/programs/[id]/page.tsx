@@ -8,7 +8,6 @@ import {
 import { auth } from "@/auth";
 
 import ThumbnailCarousel from "@/components/ui/carousel-thumbnail";
-import { toast } from "@/components/ui/use-toast";
 import { FixedBooking } from "@/components/booking/fixed-booking";
 import EntityInstancesTabs from "@/components/entity-instance-tabs";
 import PropertyPolicies from "@/components/property-policies";
@@ -26,17 +25,17 @@ export default async function Page(props: { params: Promise<{ id: string }> }) {
     auth(),
   ]);
 
-  if (!programResponse.ok || !programResponse.data) {
-    console.error("Failed to fetch program:", programResponse.message);
-    notFound();
+  if (!programResponse.data) {
+    throw new Error(programResponse.message);
   }
 
   const program = programResponse.data;
-  const propertyRes = await getProperty(program.propertyId);
 
+  const propertyRes = await getProperty(program.propertyId);
   if (!propertyRes.data) {
     throw new Error(propertyRes.message);
   }
+
   const property = propertyRes.data;
   const images = program?.images || property?.images || [];
   const amenities = await getPropertyAmenities(program.propertyId);
