@@ -49,11 +49,6 @@ export default async function Page(props: {
       href: `/admin/property/${params?.id}/images`,
     },
     {
-      value: "prices",
-      label: "Pricing",
-      href: `/admin/property/${params?.id}/prices`,
-    },
-    {
       value: "amenities",
       label: "Amenities",
       href: `/admin/property/${params?.id}/amenities`,
@@ -74,8 +69,8 @@ export default async function Page(props: {
 
       <Tabs defaultValue={params.slug} className="w-full">
         <TabsList>
-          {tabs.map((tab) => (
-            <TabsTrigger key={tab.value} asChild value={tab.value}>
+          {tabs.map((tab, i) => (
+            <TabsTrigger key={i + tab.value} asChild value={tab.value}>
               <Link href={tab.href} className="relative" scroll={false}>
                 {tab.label}
               </Link>
@@ -114,24 +109,6 @@ export default async function Page(props: {
             </CardContent>
           </Card>
         </TabsContent>
-
-        <TabsContent value="prices">
-          <Card>
-            <CardHeader>
-              <CardTitle>Property Pricing</CardTitle>
-              <CardDescription>
-                Set prices that apply to all retreats or programs at the
-                property
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <TabContentWrapper>
-                <PriceModForm />
-              </TabContentWrapper>
-            </CardContent>
-          </Card>
-        </TabsContent>
-
         <TabsContent value="amenities">
           <Card>
             <CardHeader>

@@ -126,8 +126,8 @@ export default async function Page({ params }: PageProps) {
       <div className="w-full">
         <NavigationMenu>
           <NavigationMenuList className="inline-flex items-center justify-center rounded-lg bg-muted p-1">
-            {tabs.map((tab) => (
-              <NavigationMenuItem key={tab.value}>
+            {tabs.map((tab, i) => (
+              <NavigationMenuItem key={i + tab.value}>
                 <Link
                   href={tab.href}
                   legacyBehavior

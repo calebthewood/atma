@@ -122,17 +122,17 @@ export async function updateProgram(
   partialData: Partial<ProgramFormData>
 ): ActionResponse<Program> {
   try {
-    const { hostId, ...restData } = partialData;
+    let { hostId, propertyId, ...restData } = partialData;
+
+    if (!hostId) {
+      const user = await auth();
+      hostId = user?.user.hostId;
+    }
 
     const updateData: Prisma.ProgramUpdateInput = {
       ...restData,
-      ...(hostId !== undefined
-        ? {
-            host: {
-              connect: { id: hostId || "" }, // If hostId is null, this will throw an error
-            },
-          }
-        : {}),
+      host: { connect: { id: hostId } },
+      property: { connect: { id: propertyId } },
     };
 
     const program = await prisma.program.update({

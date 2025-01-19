@@ -108,8 +108,8 @@ export default function DestinationPage() {
 
     return (
       <div className="flex space-x-4 overflow-x-auto pb-4">
-        {results.map((property) => (
-          <div key={property.id} className="flex flex-col">
+        {results.map((property, i) => (
+          <div key={i + property.id} className="flex flex-col">
             <RetreatItem
               retreat={property}
               imgUrl={property.images?.[0]?.filePath}

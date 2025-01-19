@@ -227,8 +227,8 @@ export function HostForm({ host, userId }: HostFormProps) {
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
-                      {HOST_TYPES.map((type) => (
-                        <SelectItem key={type} value={type}>
+                      {HOST_TYPES.map((type, i) => (
+                        <SelectItem key={i + type} value={type}>
                           {type}
                         </SelectItem>
                       ))}

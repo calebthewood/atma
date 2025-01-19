@@ -222,6 +222,7 @@ export function PriceModForm() {
 
     loadPriceMod();
   }, [priceModId, form]);
+
   const handleDateRangeToggle = (checked: boolean) => {
     setNoDateRange(checked);
     if (checked) {

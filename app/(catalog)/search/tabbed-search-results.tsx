@@ -46,9 +46,9 @@ const TabbedSearchResults = ({ results, error }: TabbedSearchResultsProps) => {
         >
           All
         </TabsTrigger>
-        {countries.map((country) => (
+        {countries.map((country, i) => (
           <TabsTrigger
-            key={country}
+            key={i + country}
             value={country}
             className="min-w-32 bg-transparent text-sm font-semibold uppercase leading-none text-[#494846]/80 data-[state=active]:text-[#841729] data-[state=active]:shadow-none"
           >
@@ -101,8 +101,8 @@ const TabbedSearchResults = ({ results, error }: TabbedSearchResultsProps) => {
       </TabsContent>
 
       {/* Individual Country Tab Contents */}
-      {countries.map((country) => (
-        <TabsContent key={country} value={country} className="min-h-96">
+      {countries.map((country, i) => (
+        <TabsContent key={i + country} value={country} className="min-h-96">
           <div className="flex flex-wrap gap-4">
             {results
               .find((r) => r?.country === country)

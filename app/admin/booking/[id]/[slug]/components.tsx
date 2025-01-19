@@ -123,8 +123,8 @@ export function PaymentDetails({ booking }: DetailProps) {
       <CardContent>
         {booking.payments.length > 0 ? (
           <div className="space-y-4">
-            {booking.payments.map((payment, index) => (
-              <div key={index} className="border-b pb-4 last:border-0">
+            {booking.payments.map((payment, i) => (
+              <div key={i + "payment"} className="border-b pb-4 last:border-0">
                 <div className="grid grid-cols-3 gap-4">
                   <div>
                     <p className="text-sm font-medium">Date</p>

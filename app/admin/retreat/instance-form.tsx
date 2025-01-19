@@ -287,8 +287,8 @@ export function RetreatInstanceForm() {
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
-                      {retreats.map((retreat) => (
-                        <SelectItem key={retreat?.id} value={retreat?.id}>
+                      {retreats.map((retreat, i) => (
+                        <SelectItem key={i + retreat?.id} value={retreat?.id}>
                           {retreat.name || "Unnamed Retreat"}
                         </SelectItem>
                       ))}

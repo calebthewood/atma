@@ -23,6 +23,7 @@ import {
   VisibilityState,
 } from "@tanstack/react-table";
 
+import { cn } from "@/lib/utils";
 import { useUpdateSearchParam } from "@/hooks/use-search-params";
 import { Button } from "@/components/ui/button";
 import {
@@ -346,7 +347,10 @@ export function RetreatInstancesList({ retreatId }: RetreatInstancesListProps) {
                 <TableRow
                   key={row?.id}
                   data-state={row.getIsSelected() && "selected"}
-                  className="cursor-pointer hover:bg-muted/50"
+                  className={cn(
+                    "cursor-pointer hover:bg-muted/50",
+                    searchParams.get("edit") === row.original.id && "bg-muted"
+                  )}
                   onClick={() => handleRowClick(row.original?.id)}
                 >
                   {row.getVisibleCells().map((cell) => (

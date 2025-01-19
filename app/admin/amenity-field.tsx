@@ -158,25 +158,27 @@ export const AmenityCheckboxes = ({
         Amenities can be set on Property, Program, or Retreat
       </Lead>
       <div className="space-y-6">
-        {Array.from(amenitiesByCategory.entries()).map(([category, items]) => (
-          <div key={category} className="space-y-2">
-            <h3 className="font-medium">{category}</h3>
-            <div className="grid grid-cols-2 gap-4 rounded bg-white/20 p-4 backdrop-blur md:grid-cols-2">
-              {items.map((amenity) => (
-                <div key={amenity?.id}>
-                  <label className="flex flex-row items-center space-x-3 space-y-0 text-sm font-normal">
-                    <Checkbox
-                      checked={selectedAmenities.has(amenity?.id)}
-                      onCheckedChange={() => handleToggle(amenity?.id)}
-                      aria-label={`Toggle ${amenity.name}`}
-                    />
-                    <span className="text-nowrap">{amenity.name}</span>
-                  </label>
-                </div>
-              ))}
+        {Array.from(amenitiesByCategory.entries()).map(
+          ([category, items], i) => (
+            <div key={i + category} className="space-y-2">
+              <h3 className="font-medium">{category}</h3>
+              <div className="grid grid-cols-2 gap-4 rounded bg-white/20 p-4 backdrop-blur md:grid-cols-2">
+                {items.map((amenity, i) => (
+                  <div key={i + amenity?.id}>
+                    <label className="flex flex-row items-center space-x-3 space-y-0 text-sm font-normal">
+                      <Checkbox
+                        checked={selectedAmenities.has(amenity?.id)}
+                        onCheckedChange={() => handleToggle(amenity?.id)}
+                        aria-label={`Toggle ${amenity.name}`}
+                      />
+                      <span className="text-nowrap">{amenity.name}</span>
+                    </label>
+                  </div>
+                ))}
+              </div>
             </div>
-          </div>
-        ))}
+          )
+        )}
       </div>
     </>
   );

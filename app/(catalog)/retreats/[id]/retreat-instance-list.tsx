@@ -48,9 +48,9 @@ const RetreatInstances = ({ instances }: RetreatInstancesProps) => {
       </div>
 
       <div className="grid gap-4">
-        {instances.map((instance) => (
+        {instances.map((instance, i) => (
           <div
-            key={instance?.id}
+            key={i + instance?.id}
             onClick={() => handleInstanceClick(instance?.id)}
             className={`cursor-pointer rounded-lg border p-4 transition-all hover:border-richBlack hover:bg-richBlack/30 hover:shadow-md ${
               selectedInstanceId === instance?.id

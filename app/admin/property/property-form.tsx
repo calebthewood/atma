@@ -458,8 +458,8 @@ export function PropertyForm({ property }: PropertyFormProps) {
                   </SelectTrigger>
                 </FormControl>
                 <SelectContent>
-                  {hosts.map((host) => (
-                    <SelectItem key={host?.id} value={host?.id}>
+                  {hosts.map((host, i) => (
+                    <SelectItem key={i + host?.id} value={host?.id}>
                       {host.name}
                     </SelectItem>
                   ))}
@@ -1085,8 +1085,8 @@ const CategoryCheckboxes = ({ value, onChange }: CategoryCheckboxesProps) => {
   return (
     <>
       <div className="grid grid-cols-2 gap-4 rounded bg-white/20 p-4 backdrop-blur md:grid-cols-3 lg:grid-cols-4">
-        {CATEGORY_TAGS.map((category) => (
-          <div key={category?.id} className="">
+        {CATEGORY_TAGS.map((category, i) => (
+          <div key={i + category?.id} className="">
             <label className="flex flex-row items-center space-x-3 space-y-0 text-sm font-normal">
               <Checkbox
                 checked={existingTags.includes(category?.id)}

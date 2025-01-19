@@ -134,14 +134,14 @@ export function AmenitiesEntityForm({
 
   return (
     <div className="space-y-6">
-      {Array.from(amenitiesByCategory.entries()).map(([category, items]) => (
-        <Card key={category}>
+      {Array.from(amenitiesByCategory.entries()).map(([category, items], i) => (
+        <Card key={i + category}>
           <CardContent className="pt-6">
             <div className="space-y-2">
               <h3 className="font-medium">{category}</h3>
               <div className="grid grid-cols-2 gap-4 rounded bg-white/20 p-4 backdrop-blur lg:grid-cols-3">
-                {items.map((amenity) => (
-                  <div key={amenity?.id}>
+                {items.map((amenity, i) => (
+                  <div key={i + amenity?.id}>
                     <label className="flex flex-row items-center space-x-3 space-y-0 text-sm font-normal">
                       <Checkbox
                         checked={connectedAmenityIds.has(amenity?.id)}

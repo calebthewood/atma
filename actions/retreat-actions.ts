@@ -21,6 +21,7 @@ import { z } from "zod";
 
 import prisma from "@/lib/prisma";
 
+import { getCurrentHostUser } from "./host-actions";
 import {
   ActionResponse,
   buildRetreatSearchConditions,
@@ -150,17 +151,12 @@ export async function updateRetreat(
   partialData: Partial<RetreatFormData>
 ): ActionResponse<Retreat> {
   try {
-    const { hostId, propertyId, ...restData } = partialData;
-    if (!hostId) {
-      throw new Error("Host ID is required for retreat updates");
-    }
+    let { hostId, propertyId, ...restData } = partialData;
 
-    // const updateData: Prisma.RetreatUpdateInput = {
-    //   ...restData,
-    //   ...(hostId !== undefined
-    //     ? { host: { connect: { id: hostId || "" } } }
-    //     : {}),
-    // };
+    if (!hostId) {
+      const user = await auth();
+      hostId = user?.user.hostId;
+    }
 
     const updateData: Prisma.RetreatUpdateInput = {
       ...restData,
@@ -180,7 +176,8 @@ export async function updateRetreat(
       data: retreat,
       message: "Successfully updated retreat",
     };
-  } catch {
+  } catch (e) {
+    console.log("updateRetreat", e);
     return {
       ok: false,
       data: null,

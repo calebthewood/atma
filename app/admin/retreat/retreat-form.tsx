@@ -139,10 +139,14 @@ export function RetreatForm({ retreat }: RetreatFormProps) {
 
     try {
       const fieldValue = form.getValues(fieldName);
+      const propertyValue = form.getValues("propertyId");
+
       const response = await updateRetreat(retreat?.id, {
         [fieldName]: fieldValue,
+        propertyId: propertyValue,
       });
 
+      console.log("response", response);
       if (!response.ok) {
         throw new Error(response.message);
       }
@@ -273,9 +277,9 @@ export function RetreatForm({ retreat }: RetreatFormProps) {
                     <SelectValue placeholder="Select status" />
                   </SelectTrigger>
                   <SelectContent>
-                    {Object.entries(statusConfig).map(([value, config]) => (
+                    {Object.entries(statusConfig).map(([value, config], i) => (
                       <SelectItem
-                        key={value}
+                        key={i + value}
                         value={value}
                         className="items-center gap-x-4"
                       >
@@ -372,7 +376,7 @@ export function RetreatForm({ retreat }: RetreatFormProps) {
                     </FormControl>
                     <SelectContent>
                       {properties.map((property) => (
-                        <SelectItem key={property?.id} value={property?.id}>
+                        <SelectItem key={property.id} value={property?.id}>
                           {property.name}
                         </SelectItem>
                       ))}

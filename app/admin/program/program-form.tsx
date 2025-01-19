@@ -19,7 +19,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 
-import { cn } from "@/lib/utils";
+import { cn, isEmpty } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
@@ -156,8 +156,10 @@ export function ProgramForm({ program }: ProgramFormProps) {
 
     try {
       const fieldValue = form.getValues(fieldName);
+      const propertyValue = form.getValues("propertyId");
       const result = await updateProgram(program?.id, {
         [fieldName]: fieldValue,
+        propertyId: propertyValue,
       });
 
       if (!result.ok) {
@@ -199,25 +201,23 @@ export function ProgramForm({ program }: ProgramFormProps) {
   async function onSubmit(values: FormData) {
     setIsLoading(true);
     try {
+      let response;
+
       if (program) {
-        const result = await updateProgram(program?.id, values);
-        if (!result.ok) {
-          throw new Error(result.message);
-        }
-        toast({
-          title: "Success",
-          description: "Program updated successfully.",
-        });
+        response = await updateProgram(program?.id, values);
       } else {
-        const result = await createProgram(values);
-        if (!result.ok) {
-          throw new Error(result.message);
-        }
-        toast({
-          title: "Success",
-          description: "Program created successfully.",
-        });
+        response = await createProgram(values);
       }
+
+      if (!response.ok) {
+        throw new Error(response.message);
+      }
+
+      toast({
+        title: "Success",
+        description: `Program ${program ? "updated" : "created"} successfully.`,
+      });
+
       form.reset(values);
       router.push("/admin/program");
     } catch (error) {
@@ -234,7 +234,7 @@ export function ProgramForm({ program }: ProgramFormProps) {
       setIsLoading(false);
     }
   }
-  console.log(form.formState.errors);
+  console.log(form.getValues());
   // ... render form fields with getFieldStyles and handleFieldBlur
   // Return JSX remains largely the same but add the style and blur handlers
   return (
@@ -294,9 +294,9 @@ export function ProgramForm({ program }: ProgramFormProps) {
                     <SelectValue placeholder="Select status" />
                   </SelectTrigger>
                   <SelectContent>
-                    {Object.entries(statusConfig).map(([value, config]) => (
+                    {Object.entries(statusConfig).map(([value, config], i) => (
                       <SelectItem
-                        key={value}
+                        key={i + value}
                         value={value}
                         className="items-center gap-x-4"
                       >
@@ -360,8 +360,8 @@ export function ProgramForm({ program }: ProgramFormProps) {
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
-                      {hosts.map((host) => (
-                        <SelectItem key={host?.id} value={host?.id}>
+                      {hosts.map((host, i) => (
+                        <SelectItem key={i + host?.id} value={host?.id}>
                           {host.name}
                         </SelectItem>
                       ))}
@@ -392,8 +392,8 @@ export function ProgramForm({ program }: ProgramFormProps) {
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
-                      {properties.map((property) => (
-                        <SelectItem key={property?.id} value={property?.id}>
+                      {properties.map((property, i) => (
+                        <SelectItem key={i + property?.id} value={property?.id}>
                           {property.name}
                         </SelectItem>
                       ))}
@@ -679,7 +679,7 @@ export function ProgramForm({ program }: ProgramFormProps) {
 
         <Button
           type="submit"
-          disabled={isLoading}
+          disabled={isLoading || isEmpty(form.getValues())}
           className={cn({
             "bg-atma-yellow text-black": isLoading || form.formState.isDirty,
             "bg-atma-mint text-black": form.formState.isSubmitSuccessful,
@@ -687,9 +687,11 @@ export function ProgramForm({ program }: ProgramFormProps) {
         >
           {isLoading
             ? "Submitting..."
-            : program
-              ? "Update Program"
-              : "Create Program"}
+            : isEmpty(form.getValues())
+              ? "Program Updated"
+              : program
+                ? "Update Program"
+                : "Create Program"}
         </Button>
       </form>
     </Form>

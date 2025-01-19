@@ -147,8 +147,8 @@ export function HostUserForm({ userId, hostUser }: HostUserFormProps) {
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
-                      {hosts.map((host) => (
-                        <SelectItem key={host.id} value={host.id}>
+                      {hosts.map((host, i) => (
+                        <SelectItem key={i + host.id} value={host.id}>
                           {host.name || "Unnamed Host"}
                         </SelectItem>
                       ))}
@@ -172,8 +172,8 @@ export function HostUserForm({ userId, hostUser }: HostUserFormProps) {
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
-                      {roles.map((role) => (
-                        <SelectItem key={role.value} value={role.value}>
+                      {roles.map((role, i) => (
+                        <SelectItem key={i + role.value} value={role.value}>
                           {role.label}
                         </SelectItem>
                       ))}

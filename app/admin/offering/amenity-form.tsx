@@ -214,8 +214,11 @@ export function AmenityForm({ amenity }: AmenityFormProps) {
                     </SelectTrigger>
                   </FormControl>
                   <SelectContent>
-                    {CATEGORIES[form.watch("type")]?.map((category) => (
-                      <SelectItem key={category.value} value={category.value}>
+                    {CATEGORIES[form.watch("type")]?.map((category, i) => (
+                      <SelectItem
+                        key={i + category.value}
+                        value={category.value}
+                      >
                         {category.name}
                       </SelectItem>
                     ))}

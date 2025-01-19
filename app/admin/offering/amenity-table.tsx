@@ -191,9 +191,9 @@ export function AmenityList() {
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
-            {Object.entries(visibleColumns).map(([key, value]) => (
+            {Object.entries(visibleColumns).map(([key, value], i) => (
               <DropdownMenuCheckboxItem
-                key={key}
+                key={i + key}
                 className="capitalize"
                 checked={value}
                 onCheckedChange={(checked) =>
@@ -257,9 +257,9 @@ export function AmenityList() {
           </TableRow>
         </TableHeader>
         <TableBody>
-          {filteredAmenities.map((amenity) => (
+          {filteredAmenities.map((amenity, i) => (
             <AmenityListItem
-              key={amenity?.id}
+              key={i + amenity?.id}
               amenity={amenity}
               onEdit={handleEdit}
               onDelete={handleDelete}

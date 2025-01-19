@@ -168,7 +168,7 @@ export function NewLazyRetreatItem({ id, segment, className }: LazyCardProps) {
   };
 
   const isProgram = (item: ItemType): item is ProgramWithAllRelations => {
-    return "duration" in item;
+    return "programs" in item;
   };
 
   // Get display data based on item type
@@ -186,7 +186,7 @@ export function NewLazyRetreatItem({ id, segment, className }: LazyCardProps) {
         : item.country,
     priceMods: isRetreat(item) || isProgram(item) ? item?.priceMods : undefined,
   };
-
+  console.log(item);
   return (
     <div className={cn("flex flex-col")}>
       <Link href={`/${segment}/${item?.id}`}>
@@ -244,7 +244,7 @@ export function NewLazyRetreatItem({ id, segment, className }: LazyCardProps) {
           </ContextMenuContent>
         </ContextMenu>
       </Link>
-      <div className="mt-4 flex max-w-[300px] flex-col gap-1 px-px">
+      <div className="mt-4 flex w-60 max-w-[300px] flex-col gap-1 text-wrap px-px md:w-full">
         <h4 className="text-lg font-semibold capitalize leading-[17.16px]">
           {displayData.name}
         </h4>
