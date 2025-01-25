@@ -55,21 +55,28 @@ export function FixedBooking({
     ...mod,
     source: "retreat" as const,
   }));
+
   const router = useRouter();
   const searchParams = useSearchParams();
   const guestCount = parseInt(searchParams.get("guests") || "1");
-  // Get the instance ID from search params
-  const instanceId = searchParams.get("instance");
-  const currentInstance = instances.find((i) => i?.id === instanceId);
 
-  // Initialize maxGuests (fallback to 16 if not specified)
+  const instanceId = searchParams.get("instance");
+
   const maxGuests =
     item?.maxGuests && item?.maxGuests > 0 ? item.maxGuests : 16;
 
-  // Get base price from price mods
-  const basePrice = priceMods.find((mod) => mod.type === "BASE_PRICE");
+  const basePrice = priceMods.find((mod) =>
+    mod.type === "BASE_PRICE" && type === "program"
+      ? mod.programInstanceId === instanceId
+      : mod.retreatInstanceId === instanceId
+  );
 
-  // Initialize date state from URL or defaults
+  const [currentInstance, setCurrentInstance] = useState(() =>
+    instances.find((i) => i?.id === instanceId)
+  );
+
+  console.log(priceMods);
+
   const [date, setDate] = useState<DateRange | undefined>(() => {
     const fromParam = searchParams.get("from");
     const toParam = searchParams.get("to");
@@ -98,6 +105,10 @@ export function FixedBooking({
     }
   }, [date, maxGuests, router, searchParams]);
 
+  useEffect(() => {
+    setCurrentInstance(instances.find((i) => i?.id === instanceId));
+  }, [instanceId, instances]);
+
   const getPriceModsByType = (type: string) => {
     return priceMods.filter((mod) => mod.type === type);
   };
@@ -106,7 +117,13 @@ export function FixedBooking({
     return basePrice ? basePrice.value * guestCount : 0;
   };
 
-  const singlePrice = calculatePriceMods(priceMods);
+  const singlePrice = calculatePriceMods(
+    priceMods.filter((mod) =>
+      type === "program"
+        ? mod.programInstanceId === instanceId
+        : mod.retreatInstanceId === instanceId
+    )
+  );
   const total = singlePrice * guestCount; // refactor when adding more complex pricing.
 
   const renderPriceModGroup = (type: string, label: string) => {
@@ -137,10 +154,6 @@ export function FixedBooking({
       </div>
     );
   };
-
-  // if (isLoading) {
-  //   return <Card className="max-w-md animate-pulse" />;
-  // }
 
   return (
     <Card className="m-1 min-w-fit max-w-md md:p-0">
