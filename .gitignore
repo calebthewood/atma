@@ -41,7 +41,6 @@ yarn-error.log*
 # dev db setup
 ingest/
 # SQLite database files
-dev.db
 *.db
 *.sqlite
 *.sqlite3
