@@ -18,7 +18,7 @@ export const PropertyTabs = ({
   const tabsData = [
     {
       value: "amenity-healing",
-      label: "Spa Services",
+      label: "Spa",
       content: property?.amenityHealing ?? "",
     },
     {
