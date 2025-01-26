@@ -59,7 +59,7 @@ export default async function Page(props: { params: Promise<{ id: string }> }) {
   const specialtyList = specialty.split(specialty.includes(";") ? ";" : ".");
 
   return (
-    <div className="flex h-auto min-h-screen flex-col gap-16 px-2">
+    <div className="flex h-auto min-h-screen flex-col gap-6 md:gap-16 px-2">
       <section id="hero">
         <TitleImageBanner
           name={property?.name}

@@ -52,7 +52,7 @@ export default async function Page(props: { params: Promise<{ id: string }> }) {
   const imageSlides = images.map((img) => img.filePath);
 
   return (
-    <div className="flex h-auto min-h-screen flex-col gap-16 px-2">
+    <div className="flex h-auto min-h-screen flex-col gap-6 px-2 md:gap-16">
       <section id="hero">
         <TitleImageBanner
           name={program?.name ?? ""}

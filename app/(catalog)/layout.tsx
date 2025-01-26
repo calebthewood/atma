@@ -13,7 +13,7 @@ export default function CatalogLayout({ children }: LayoutProps) {
       <Suspense>
         <BookingBar />
       </Suspense>
-      <main className="">{children}</main>
+      <main className="md:container">{children}</main>
     </>
   );
 }

@@ -106,7 +106,7 @@ const TabsComponent: React.FC<{ tabs: TabItem[] }> = ({ tabs }) => (
       <TabsContent
         key={tab.value}
         value={tab.value}
-        className="pt:16 min-h-64 sm:px-2 md:px-10 md:pt-2"
+        className="pt:16 min-h-36 sm:px-2 md:px-10 md:pt-2"
       >
         {tab.content}
       </TabsContent>
