@@ -267,39 +267,6 @@ export function PriceModForm() {
               name="name"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Item</FormLabel>
-                  <FormControl>
-                    <Select>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select Instance" />
-                      </SelectTrigger>
-
-                      <SelectContent>
-                        <SelectItem value="USD">
-                          2 Nights Retreat Blah
-                        </SelectItem>
-                        <SelectItem value="USD">
-                          5 Nights Retreat Blah
-                        </SelectItem>
-                        <SelectItem value="USD">
-                          12 Nights Retreat Blah
-                        </SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </FormControl>
-                  <FormDescription>
-                    Shown in during checkout (except base modifier)
-                  </FormDescription>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name="name"
-              render={({ field }) => (
-                <FormItem>
                   <FormLabel>Name</FormLabel>
                   <FormControl>
                     <Input placeholder="e.g., Early Bird Discount" {...field} />

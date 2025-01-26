@@ -11,6 +11,7 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
+    "start:prod": "next start -p 3010",
     "deploy": "bash deploy-staging.sh",
     "lint": "next lint",
     "lint:fix": "next lint --fix",
