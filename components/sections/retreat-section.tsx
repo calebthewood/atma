@@ -1,8 +1,10 @@
 "use client";
 
+import Link from "next/link";
 import { motion } from "framer-motion";
 
 import { QuickLink } from "../shared";
+import { Button } from "../ui/button";
 import HeroCarousel from "../ui/carousel-hero";
 import { SectionHeader } from "./components";
 
@@ -35,11 +37,6 @@ export default function RetreatSection() {
       id="retreat-section"
       className="my-32 flex flex-col gap-y-8 md:container"
     >
-      <QuickLink
-        text="See All Retreats"
-        href="/retreats"
-        className="self-start"
-      />
       <SectionHeader title="Retreats Collection" subtitle="Handpicked" />
       <motion.div
         className="scrollbar-hide flex w-full justify-center gap-1 lg:flex-nowrap"
@@ -49,6 +46,12 @@ export default function RetreatSection() {
       >
         <HeroCarousel slides={slides} />
       </motion.div>
+      <Button
+        asChild
+        className="mx-auto mt-12 rounded-full bg-[#841729] px-8 py-4 uppercase"
+      >
+        <Link href="/retreats">See All Retreats</Link>
+      </Button>
     </section>
   );
 }

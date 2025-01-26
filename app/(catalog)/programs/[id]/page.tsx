@@ -108,7 +108,7 @@ export default async function Page(props: { params: Promise<{ id: string }> }) {
         </div>
       </div>
       <section id="gallery">
-        <h2 className="mb-10 text-center text-3xl font-semibold">
+        <h2 className="mb-10 text-balance text-center text-2xl font-semibold md:text-3xl">
           Meet {property?.name}
         </h2>
         <p className="mx-auto mb-10 max-w-3xl text-center text-sm font-normal">
@@ -120,8 +120,8 @@ export default async function Page(props: { params: Promise<{ id: string }> }) {
       {programIds.length > 0 && (
         <section id="upcoming-programs">
           <QuickLink text="See All Programs" href="/programs" />
-          <h2 className="my-12 w-full text-center text-3xl font-semibold">
-            Other Offerings by
+          <h2 className="my-12 w-full text-balance text-center text-2xl font-semibold md:text-3xl">
+            {`Other Offerings by ${property.name}`}
           </h2>
           <PropertyLazyCarousel entityIds={programIds} entityType="program" />
         </section>

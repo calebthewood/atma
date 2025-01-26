@@ -123,7 +123,7 @@ export default async function Page(props: { params: Promise<{ id: string }> }) {
         <section id="upcoming-retreats">
           <QuickLink text="See All Retreats" href="/retreats" />
           <h2 className="my-12 w-full text-center text-3xl font-semibold">
-            Other Offerings by {property?.name || ""}
+            {`Other Offerings by ${property.name}`}
           </h2>
           <PropertyLazyCarousel entityIds={retreatIds} entityType="retreat" />
         </section>
