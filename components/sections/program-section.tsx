@@ -5,6 +5,8 @@ import Link from "next/link";
 import { ProgramWithAllRelations } from "@/actions/program-actions";
 import { motion } from "framer-motion";
 
+import { getCountryName } from "@/lib/utils";
+
 import { Button } from "../ui/button";
 import { SectionHeader } from "./components";
 
@@ -99,7 +101,7 @@ const ProgramCard = ({
             {program?.property?.name || "PROPERTY NAME"}
             <br />
             {program?.property?.city && program?.property?.country
-              ? `${program?.property.city}, ${program?.property?.country}`
+              ? `${program?.property.city}, ${getCountryName(program?.property?.country)}`
               : "City, Country"}
           </div>
 

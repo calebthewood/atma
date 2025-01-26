@@ -362,12 +362,17 @@ export const shortNameToContinent = (shortName: string) => {
   return shortName in continentMap ? continentMap[shortName] : "NA";
 };
 
-export const getCountryName = (countryCode: string): string => {
+/** Converts 2 character country code to country name using Intl
+ * - ES -> Spain
+ * - US -> United States
+ * - null -> ""
+ */
+export const getCountryName = (countryCode: string | null): string => {
+  if (!countryCode) return "";
   try {
     const regionNames = new Intl.DisplayNames(["en"], { type: "region" });
     return regionNames.of(countryCode.toUpperCase()) || countryCode;
   } catch (error) {
-    // Fallback in case the API is not supported or errors
     console.warn("Intl.DisplayNames not supported:", error);
     return countryCode;
   }

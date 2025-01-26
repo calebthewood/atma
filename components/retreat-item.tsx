@@ -15,7 +15,7 @@ import { getRetreat, RetreatWithAllRelations } from "@/actions/retreat-actions";
 import { Host, Program, Property, Retreat } from "@prisma/client";
 import { CirclePlus } from "lucide-react";
 
-import { cn } from "@/lib/utils";
+import { cn, getCountryName } from "@/lib/utils";
 import {
   ContextMenu,
   ContextMenuContent,
@@ -275,7 +275,7 @@ export function LazyRetreatItem({
               <div>
                 <p className="text-sm font-medium text-white/80">
                   {displayData.city && displayData.country
-                    ? `${displayData.city}, ${displayData.country}`
+                    ? `${displayData.city}, ${getCountryName(displayData.country)}`
                     : "Location unavailable"}
                 </p>
               </div>

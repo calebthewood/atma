@@ -1,5 +1,7 @@
 import Image from "next/image";
 
+import { getCountryName } from "@/lib/utils";
+
 import { Badge } from "./ui/badge";
 
 export function TitleImageBanner({
@@ -20,7 +22,7 @@ export function TitleImageBanner({
   taglist: string | undefined | null;
 }) {
   const line1 = name;
-  const line2 = country ? `${city}, ${country}` : city;
+  const line2 = country ? `${city}, ${getCountryName(country)}` : city;
   const line3 = nearestAirport ? `${address} / ${nearestAirport}` : address;
   const tags = taglist
     ?.split("|")
@@ -30,12 +32,12 @@ export function TitleImageBanner({
     <div className="mx-auto">
       <div className="mb-8">
         <h1 className="text-3xl font-semibold capitalize">{line1}</h1>
-        <div className="flex flex-col md:flex-row md:items-end justify-between">
+        <div className="flex flex-col justify-between md:flex-row md:items-end">
           <div>
             <p className="uppercase/60 mt-2 text-xs font-medium">{line2}</p>
             <p className="mt-2 text-sm font-medium">{line3}</p>
           </div>
-          <div className="flex flex-row space-x-4 mt-2">
+          <div className="mt-2 flex flex-row space-x-4">
             {tags?.map((t) => (
               <Badge
                 key={t}

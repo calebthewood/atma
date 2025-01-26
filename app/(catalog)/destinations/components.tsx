@@ -14,6 +14,7 @@ import { RetreatItem } from "@/components/retreat-item";
 import { Lead } from "@/components/typography";
 
 import TabbedSearchResults from "../search/tabbed-search-results";
+import { getCountryName } from "@/lib/utils";
 
 type SearchResults = PropertyWithIncludes[] | CountryProperties[];
 
@@ -120,7 +121,7 @@ export default function DestinationPage() {
               height={330}
             />
             <div className="mt-2 text-sm text-muted-foreground">
-              {`${property.city},,,,,${property.country}`}
+              {`${property.city}, ${getCountryName(property.country)}`}
             </div>
             {/* {"distance" in property && (
               <div className="text-xs text-muted-foreground">

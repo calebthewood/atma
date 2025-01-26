@@ -8,6 +8,7 @@ import {
   type PropertyWithIncludes,
 } from "@/actions/location-actions";
 
+import { getCountryName } from "@/lib/utils";
 import { LoadingSpinner } from "@/components/loading-spinner";
 import { RetreatItem } from "@/components/retreat-item";
 import { Lead } from "@/components/typography";
@@ -115,7 +116,8 @@ export default function SearchPage() {
               height={330}
             />
             <div className="mt-2 text-sm text-muted-foreground">
-              {property.address || `${property.city}, ${property.country}`}
+              {property.address ||
+                `${property.city}, ${getCountryName(property.country)}`}
             </div>
           </div>
         ))}
