@@ -174,7 +174,6 @@ export function HostForm({ host, userId }: HostFormProps) {
       setIsLoading(false);
     }
   }
-  console.log("errors", form.formState.errors);
   return (
     <Form {...form}>
       <form

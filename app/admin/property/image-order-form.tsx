@@ -125,8 +125,6 @@ export function ImageGallery({ recordId, recordType }: ImageGalleryProps) {
 
     const cleanup = monitorForElements({
       onDrop: async ({ source, location }) => {
-        console.log("Drop event fired", { source, location });
-
         const dropTarget = location.current.dropTargets[0];
         if (!dropTarget || !source.data.imageId) {
           console.log("No valid drop target or source");

@@ -104,9 +104,9 @@ const ThumbnailCarousel: React.FC<PropType> = (props) => {
 
   return (
     <div className="mx-auto max-w-[90rem]">
-      <div className="lg:flex lg:gap-6">
+      <div className="md:flex md:gap-6">
         {/* Main Carousel */}
-        <div className="lg:w-3/4">
+        <div className="md:w-3/4">
           <Carousel
             setApi={setMainApi}
             opts={{ ...options, loop: true }}
@@ -115,7 +115,7 @@ const ThumbnailCarousel: React.FC<PropType> = (props) => {
             <CarouselContent className="-ml-4 flex">
               {slides.map((img, i) => (
                 <CarouselItem key={i} className="flex-[0_0_100%] pl-4">
-                  <div className="h-[19rem] overflow-hidden rounded lg:h-[30rem]">
+                  <div className="h-[19rem] overflow-hidden rounded md:h-[30rem]">
                     <div
                       ref={(el) => {
                         parallaxLayers.current[i] = el;
@@ -140,10 +140,10 @@ const ThumbnailCarousel: React.FC<PropType> = (props) => {
         </div>
 
         {/* Thumbnails */}
-        <div className="mt-7 lg:mt-0 lg:w-1/4">
-          <div className="lg:h-[30rem] lg:pr-2">
+        <div className="mt-7 md:mt-0 md:w-1/4">
+          <div className="md:h-[30rem] md:pr-2">
             {/* Mobile Carousel */}
-            <div className="lg:hidden">
+            <div className="md:hidden">
               <Carousel
                 setApi={setThumbsApi}
                 opts={{
@@ -170,8 +170,8 @@ const ThumbnailCarousel: React.FC<PropType> = (props) => {
             </div>
 
             {/* Desktop Grid */}
-            <ScrollArea className="h-[480px] w-full overflow-hidden">
-              <div className="hidden lg:grid lg:grid-cols-2 lg:gap-0">
+            <ScrollArea className="hidden h-[480px] w-full overflow-hidden md:block">
+              <div className="hidden md:grid md:grid-cols-1 lg:grid-cols-2 md:gap-0">
                 {slides.map((img, idx) => (
                   <Thumb
                     key={`desktop-thumb-${idx}`}

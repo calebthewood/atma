@@ -186,7 +186,7 @@ export function NewLazyRetreatItem({ id, segment, className }: LazyCardProps) {
         : item.country,
     priceMods: isRetreat(item) || isProgram(item) ? item?.priceMods : undefined,
   };
-  console.log(item);
+
   return (
     <div className={cn("flex flex-col")}>
       <Link href={`/${segment}/${item?.id}`}>

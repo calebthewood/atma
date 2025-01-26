@@ -146,7 +146,6 @@ export function RetreatForm({ retreat }: RetreatFormProps) {
         propertyId: propertyValue,
       });
 
-      console.log("response", response);
       if (!response.ok) {
         throw new Error(response.message);
       }

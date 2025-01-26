@@ -241,7 +241,7 @@ export function PriceModsTable() {
       const response = pathname.includes("retreat")
         ? await getPriceModsByRetreatInstance(instanceId)
         : await getPriceModsByProgramInstance(instanceId);
-      console.log("RESPONSE ", response);
+
       if (response.ok && response.data) {
         setData(response.data);
       } else {

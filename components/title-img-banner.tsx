@@ -30,12 +30,12 @@ export function TitleImageBanner({
     <div className="mx-auto">
       <div className="mb-8">
         <h1 className="text-3xl font-semibold capitalize">{line1}</h1>
-        <div className="flex flex-row items-end justify-between">
+        <div className="flex flex-col md:flex-row md:items-end justify-between">
           <div>
             <p className="uppercase/60 mt-2 text-xs font-medium">{line2}</p>
             <p className="mt-2 text-sm font-medium">{line3}</p>
           </div>
-          <div className="flex flex-row space-x-4">
+          <div className="flex flex-row space-x-4 mt-2">
             {tags?.map((t) => (
               <Badge
                 key={t}

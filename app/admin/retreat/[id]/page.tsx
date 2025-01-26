@@ -27,7 +27,7 @@ export default async function RetreatRedirectPage({ params }: PageProps) {
     where: { hostId: session.user.hostId },
     select: { id: true },
   });
-  console.log("property", property);
+
   if (!property) {
     // Redirect to property creation if no properties exist
     redirect("/admin/property/000?redirectTo=retreat");
@@ -39,7 +39,6 @@ export default async function RetreatRedirectPage({ params }: PageProps) {
     hostId: session.user.hostId,
   });
 
-  console.log("RESULT", result);
   if (!result.ok || !result.data) {
     throw new Error(result.message);
   }

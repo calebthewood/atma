@@ -18,7 +18,7 @@ export default async function Page() {
   return (
     <>
       <BookingBar />
-      <div className="flex flex-col gap-y-6 py-6 md:container">
+      <div className="tracking-wideset flex flex-col font-semibold md:gap-y-6 md:py-6">
         <ProgramSection programs={programs.data?.slice(0, 3) ?? []} />
         <DestinationSection />
         <RetreatSection />

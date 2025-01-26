@@ -90,7 +90,7 @@ export function EntityTabs({ entity }: { entity: Program | Retreat | null }) {
 
 const TabsComponent: React.FC<{ tabs: TabItem[] }> = ({ tabs }) => (
   <Tabs defaultValue={tabs[0].value} className="mx-auto w-full max-w-3xl">
-    <TabsList className="mb-4 w-full flex-wrap justify-evenly bg-transparent">
+    <TabsList className="mb-4 w-full flex-wrap justify-evenly bg-transparent px-0">
       {tabs.map((tab) => (
         <TabsTrigger
           key={tab.value}
@@ -106,7 +106,7 @@ const TabsComponent: React.FC<{ tabs: TabItem[] }> = ({ tabs }) => (
       <TabsContent
         key={tab.value}
         value={tab.value}
-        className="pt:16 min-h-64 px-2 md:px-10 md:pt-2"
+        className="pt:16 min-h-64 sm:px-2 md:px-10 md:pt-2"
       >
         {tab.content}
       </TabsContent>

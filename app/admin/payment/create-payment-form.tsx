@@ -56,7 +56,7 @@ export function CreatePaymentForm() {
         ...values,
         paymentDate: new Date(values.paymentDate),
       });
-      console.log("Payment created:", payment);
+
       form.reset(); // Reset form after successful submission
       // TODO: Add success message or redirect
     } catch (error) {

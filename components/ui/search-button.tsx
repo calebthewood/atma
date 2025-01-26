@@ -32,7 +32,7 @@ export default function SearchButton({
       asChild
       variant={variant}
       className={cn(
-        "w-full rounded-full text-base uppercase text-[#9b1025]",
+        "w-full rounded-full text-base uppercase text-[#9b1025] px-0",
         className
       )}
     >

@@ -94,7 +94,7 @@ export default function SearchResultsPage({
   const [currentPage, setCurrentPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
   const pageSize = 10;
-  console.log(results);
+
   const searchParams = useSearchParams();
 
   const handleSearch = useCallback(async () => {
@@ -102,7 +102,7 @@ export default function SearchResultsPage({
       includeProperty: true,
       includeImages: true,
     };
-    const place = searchParams.get("place");
+    // const place = searchParams.get("place");
     const purpose = searchParams.get("purpose");
     const lat = searchParams.get("lat");
     const lng = searchParams.get("lng");
@@ -140,10 +140,6 @@ export default function SearchResultsPage({
       }
 
       const response = await searchFunction(searchCriteria);
-
-      // if (!response.ok) {
-      //   throw new Error(response.error);
-      // }
 
       // Type guards for response data
       const isEntityArray = (data: any[]): data is EntityWithLocation[] => {
@@ -216,15 +212,15 @@ export default function SearchResultsPage({
         }
         setHasMore(newResults.length === pageSize);
       }
+      setIsLoading(false);
     } catch (err) {
       console.error("Error during search:", err);
+      setIsLoading(false);
       setError(
         err instanceof Error
           ? err.message
           : "An error occurred while searching."
       );
-    } finally {
-      setIsLoading(false);
     }
   }, [searchParams, currentPage, searchFunction]);
 

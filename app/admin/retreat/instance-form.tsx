@@ -196,7 +196,6 @@ export function RetreatInstanceForm() {
     };
     try {
       if (currentInstance) {
-        console.log("Updating");
         const response = await updateInstance(
           currentInstance?.id,
           formattedValues
@@ -246,7 +245,7 @@ export function RetreatInstanceForm() {
       "border-red-500": !isValid && !isSubmitting,
     });
   };
-  console.log(form.formState.errors);
+
   return (
     <Card>
       <CardHeader>

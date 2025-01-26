@@ -22,24 +22,21 @@ export default async function ProgramRedirectPage({ params }: PageProps) {
     throw new Error("No host ID found for user");
   }
 
-  // Get the first property for this host
   const property = await prisma.property.findFirst({
     where: { hostId: session.user.hostId },
     select: { id: true },
   });
-  console.log("property", property);
+
   if (!property) {
     // Redirect to property creation if no properties exist
     redirect("/admin/property/000?redirectTo=program");
   }
-  console.log("HOSTID", session.user.hostId);
-  // Create a new program with just the required propertyId
+
   const result = await createProgram({
     propertyId: property.id,
     hostId: session.user.hostId,
   });
 
-  console.log("RESULT", result);
   if (!result.ok || !result.data) {
     throw new Error(result.message);
   }

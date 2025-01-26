@@ -238,7 +238,6 @@ export function RetreatInstancesList({ retreatId }: RetreatInstancesListProps) {
         retreatId
       );
 
-      console.log("RESULT", result);
       if (result.ok && result.data) {
         setData(result.data.instances);
         setTotalPages(result.data.totalPages);

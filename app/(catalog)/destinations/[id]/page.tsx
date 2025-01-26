@@ -59,7 +59,7 @@ export default async function Page(props: { params: Promise<{ id: string }> }) {
   const specialtyList = specialty.split(specialty.includes(";") ? ";" : ".");
 
   return (
-    <div className="flex h-auto min-h-screen flex-col gap-16">
+    <div className="flex h-auto min-h-screen flex-col gap-16 px-2">
       <section id="hero">
         <TitleImageBanner
           name={property?.name}
@@ -128,21 +128,23 @@ const SpecialtyOverview = ({
   overview: string;
   specialtyList: string[];
 }) => (
-  <div className="grid grid-cols-2 gap-5">
-    <h2 className="col-start-1 row-start-1 text-2xl font-semibold">Overview</h2>
-    <p className="col-start-1 row-start-2 text-sm font-normal">{overview}</p>
-    <h2 className="col-start-2 row-start-1 text-2xl font-semibold">
-      Specialty
-    </h2>
-    <ul className="col-start-2 row-start-2 list-disc text-sm font-normal">
-      {specialtyList.map(
-        (line, i) =>
-          line && (
-            <li key={`line-${i}`} className="my-2 ml-4">
-              {line}
-            </li>
-          )
-      )}
-    </ul>
+  <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
+    <div>
+      <h2 className="text-2xl font-semibold">Overview</h2>
+      <p className="text-sm font-normal">{overview}</p>
+    </div>
+    <div>
+      <h2 className="text-2xl font-semibold">Specialty</h2>
+      <ul className="list-disc text-sm font-normal">
+        {specialtyList.map(
+          (line, i) =>
+            line && (
+              <li key={`line-${i}`} className="my-2 ml-4">
+                {line}
+              </li>
+            )
+        )}
+      </ul>
+    </div>
   </div>
 );

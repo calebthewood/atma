@@ -234,9 +234,7 @@ export function ProgramForm({ program }: ProgramFormProps) {
       setIsLoading(false);
     }
   }
-  console.log(form.getValues());
-  // ... render form fields with getFieldStyles and handleFieldBlur
-  // Return JSX remains largely the same but add the style and blur handlers
+
   return (
     <Form {...form}>
       <form

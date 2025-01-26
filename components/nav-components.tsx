@@ -18,7 +18,7 @@ import { Separator } from "./ui/separator";
 export function HeroTitle() {
   return (
     <Link href="/" className="max-w-xl hover:brightness-200">
-      <h1 className="mb-4 flex w-full justify-between font-broad text-3xl transition-all hover:scale-[97%] sm:px-0">
+      <h1 className="mb-4 flex w-full justify-between font-broad text-3xl transition-all hover:scale-[97%] sm:px-0 sm:text-3xl">
         <span className="ml-1 font-normal tracking-widester">ATMA</span>
         <span className="font-semibold tracking-widester">RESERVE</span>
       </h1>

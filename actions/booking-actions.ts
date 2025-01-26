@@ -173,7 +173,6 @@ type ProgramBookingData = BaseBookingData & {
 async function createBookingWithNotification(
   createData: Prisma.BookingCreateInput
 ): Promise<ActionResponse<BookingWithAllRelations>> {
-  console.log("createData", createData);
 
   const booking = await prisma.booking.create({
     data: createData,
@@ -218,7 +217,7 @@ export async function createRetreatBooking(
     user: { connect: { id: data.userId } },
     retreatInstance: { connect: { id: data.retreatInstanceId } },
   };
-  console.log("data.retreatInstanceId", data.retreatInstanceId);
+  // console.log("data.retreatInstanceId", data.retreatInstanceId);
   return await createBookingWithNotification(createData);
 }
 
