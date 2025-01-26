@@ -34,7 +34,7 @@ export async function SiteHeader() {
       <div className="flex flex-col items-center md:container">
         <div className="flex min-h-24 w-full flex-row items-center justify-between">
           <MainMenu />
-          <ThemeToggle />
+          {/* <ThemeToggle /> */}
         </div>
         <HeroTitle />
         <MainNavigationMenu />

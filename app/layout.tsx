@@ -47,7 +47,7 @@ export default async function RootLayout({ children }: RootLayoutProps) {
             fontTitle.variable
           )}
         >
-          <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+          <ThemeProvider attribute="class" enableSystem={false}>
             <div className="relative flex min-h-screen flex-col">
               <SiteHeader />
               {children}
