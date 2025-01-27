@@ -1,3 +1,9 @@
+import SubscriptionSection from "@/components/sections/subscription-section";
+
 export default function Page() {
-  return <div>Not implemeted</div>;
+  return (
+    <div>
+      <SubscriptionSection />
+    </div>
+  );
 }

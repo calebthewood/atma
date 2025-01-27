@@ -1,7 +1,8 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
+import Confetti from "react-dom-confetti";
 
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/components/ui/use-toast";
@@ -14,6 +15,43 @@ export default function NewsletterSubscribe() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSubscribed, setIsSubscribed] = useState(false);
   const { toast } = useToast();
+
+  // Initialize Flodesk
+  useEffect(() => {
+    // Define Flodesk initialization function
+    const initFlodesk = (w: any, d: any, t: any, h: any, s: any, n: any) => {
+      w.FlodeskObject = n;
+      const fn = function () {
+        (w[n].q = w[n].q || []).push(arguments);
+      };
+      w[n] = w[n] || fn;
+
+      const f = d.getElementsByTagName(t)[0];
+      const v = "?v=" + Math.floor(new Date().getTime() / (120 * 1000)) * 60;
+
+      const sm = d.createElement(t);
+      sm.async = true;
+      sm.type = "module";
+      sm.src = h + s + ".mjs" + v;
+      f.parentNode.insertBefore(sm, f);
+
+      const sn = d.createElement(t);
+      sn.async = true;
+      sn.noModule = true;
+      sn.src = h + s + ".js" + v;
+      f.parentNode.insertBefore(sn, f);
+    };
+
+    // Initialize Flodesk
+    initFlodesk(
+      window,
+      document,
+      "script",
+      "https://assets.flodesk.com",
+      "/universal",
+      "fd"
+    );
+  }, []);
 
   const handleClick = async () => {
     if (!isExpanded) {
@@ -33,18 +71,18 @@ export default function NewsletterSubscribe() {
     setIsSubmitting(true);
 
     try {
-      const result = setTimeout(() => console.log("Add this"), 500);
+      // @ts-ignore Submit to Flodesk
+      window.fd("form:submit", {
+        formId: "66d66e18780dc961677cd3c5",
+        data: { email: email },
+      });
 
-      if (result) {
-        setIsSubscribed(true);
-        setIsExpanded(false);
-        toast({
-          title: "Success!",
-          description: "You've been subscribed to our newsletter.",
-        });
-      } else {
-        throw new Error(result || "Subscription failed");
-      }
+      setIsSubscribed(true);
+      setIsExpanded(false);
+      toast({
+        title: "Success!",
+        description: "You've been subscribed to our newsletter.",
+      });
     } catch (error) {
       toast({
         title: "Error",
@@ -57,8 +95,16 @@ export default function NewsletterSubscribe() {
     }
   };
 
+  const tinyExplodeProps = {
+    force: 0.4,
+    duration: 2000,
+    particleCount: 30,
+    height: 500,
+    width: 300,
+  };
+
   return (
-    <motion.div className="flex justify-center" initial={false}>
+    <motion.div className="relative flex justify-center" initial={false}>
       <motion.div
         className="flex items-center overflow-hidden rounded-[67px] border border-[#841729] bg-[#841729]"
         animate={{
@@ -100,6 +146,11 @@ export default function NewsletterSubscribe() {
           </motion.span>
         </motion.button>
       </motion.div>
+      {
+        <div className="absolute left-1/2 top-1/2 z-10">
+          <Confetti active={isSubscribed} />
+        </div>
+      }
     </motion.div>
   );
 }

@@ -4,7 +4,7 @@ export default function FooterSection() {
   const currentYear = new Date().getFullYear();
 
   return (
-    <footer className="flex flex-col gap-3 border-t sm:px-4 py-6 md:px-8 lg:px-12">
+    <footer className="flex flex-col gap-3 border-t py-6 sm:px-4 md:px-8 lg:px-12">
       <div className="flex flex-col items-center justify-between gap-4 md:flex-row">
         <Link
           href="/"
@@ -65,12 +65,13 @@ export default function FooterSection() {
           >
             Customer Support
           </Link>
-          <Link
-            href="/social"
+          <a
+            target="_blank"
+            href="https://www.instagram.com/atma.reserve/"
             className="text-xs font-medium text-[#44301f] hover:opacity-80"
           >
-            Social Media
-          </Link>
+            Instagram
+          </a>
         </div>
       </div>
 
