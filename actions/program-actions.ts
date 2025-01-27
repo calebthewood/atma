@@ -180,6 +180,18 @@ export async function getPrograms(): ActionResponse<ProgramWithAllRelations[]> {
   }
 }
 
+export async function getSpotlightPrograms(idList: string[]) {
+  const programs = await prisma.program.findMany({
+    where: {
+      id: { in: idList },
+      status: "published",
+    },
+    include: PROGRAM_INCLUDE_FULL,
+  });
+  if (!programs) throw new Error("Spotlight Programs Not Found");
+  return programs;
+}
+
 export async function getAdminPaginatedPrograms(
   page: number = 1,
   pageSize: number = 10,

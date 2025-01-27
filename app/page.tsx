@@ -1,5 +1,5 @@
 import { Metadata } from "next";
-import { getPrograms } from "@/actions/program-actions";
+import { getPrograms, getSpotlightPrograms } from "@/actions/program-actions";
 
 import { BookingBar } from "@/components/booking-bar";
 import DestinationSection from "@/components/sections/destination-section";
@@ -12,14 +12,20 @@ export const metadata: Metadata = {
   description: "Unleash your potential",
 };
 
+const spotlightPrograms = [
+  "cm4to2s5o000psp27s1514k64",
+  "cm4vyrtnt000psps2ukgk0392",
+  "cm4u899n30000spgq24up4v2n",
+];
+
 export default async function Page() {
-  const programs = await getPrograms();
+  const programs = await getSpotlightPrograms(spotlightPrograms);
 
   return (
     <>
       <BookingBar />
       <div className="tracking-wideset flex flex-col font-semibold md:gap-y-6 md:py-6">
-        <ProgramSection programs={programs.data?.slice(0, 3) ?? []} />
+        <ProgramSection programs={programs} />
         <DestinationSection />
         <RetreatSection />
         <SubscriptionSection />

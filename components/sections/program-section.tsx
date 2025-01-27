@@ -81,6 +81,7 @@ const ProgramCard = ({
   program: ProgramWithAllRelations;
   bgImg: string;
 }) => {
+  const imgSrc = program.images[0].filePath;
   return (
     <Link prefetch href={`/programs/${program?.id}`}>
       <motion.div
@@ -88,7 +89,7 @@ const ProgramCard = ({
         variants={cardVariants}
       >
         <Image
-          src={bgImg}
+          src={imgSrc || bgImg}
           alt={program?.name || "Program Image"}
           fill
           className="animate-fade-in object-cover transition-transform duration-500 group-hover:scale-110"
