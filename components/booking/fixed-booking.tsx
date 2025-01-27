@@ -78,20 +78,28 @@ export function FixedBooking({
   console.log(priceMods);
 
   const [date, setDate] = useState<DateRange | undefined>(() => {
-    const fromParam = searchParams.get("from");
-    const toParam = searchParams.get("to");
-
-    if (fromParam && toParam) {
+    if (type === "retreat" && instances.length > 0) {
+      const inst = instances[0];
       return {
-        from: parseISO(fromParam),
-        to: parseISO(toParam),
+        from: inst.startDate,
+        to: inst.endDate,
+      };
+    } else {
+      const fromParam = searchParams.get("from");
+      const toParam = searchParams.get("to");
+
+      if (fromParam && toParam) {
+        return {
+          from: parseISO(fromParam),
+          to: parseISO(toParam),
+        };
+      }
+
+      return {
+        from: today,
+        to: addDays(today, currentInstance?.duration || 1),
       };
     }
-
-    return {
-      from: today,
-      to: addDays(today, currentInstance?.duration || 1),
-    };
   });
 
   // Update URL when date changes
@@ -174,6 +182,7 @@ export function FixedBooking({
             selectedRange={date}
             setSelectedRange={setDate}
             duration={currentInstance?.duration || 1}
+            disabled={type === "retreat"}
           />
         </div>
         <div className="mt-2 flex w-full">

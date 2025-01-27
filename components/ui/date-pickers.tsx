@@ -116,6 +116,7 @@ interface DatePickerFixedRangeProps
   selectedRange: DateRange | undefined;
   setSelectedRange: (date: DateRange | undefined) => void;
   duration: number;
+  disabled?: boolean;
 }
 
 export function DatePickerFixedRange({
@@ -123,6 +124,7 @@ export function DatePickerFixedRange({
   selectedRange,
   setSelectedRange,
   duration,
+  disabled = false,
 }: DatePickerFixedRangeProps) {
   const isInRange = (date: Date) => {
     if (!selectedRange?.to || !selectedRange?.from) return false;
@@ -145,6 +147,7 @@ export function DatePickerFixedRange({
       <Popover>
         <PopoverTrigger asChild>
           <Button
+            disabled={disabled}
             id="selectedRange"
             variant={"outline"}
             className={cn(

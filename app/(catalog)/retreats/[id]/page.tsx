@@ -44,11 +44,11 @@ export default async function Page(props: { params: Promise<{ id: string }> }) {
   const parkingAmenities = amenities.data?.filter(
     (a) => a.amenityId === "parking-transportation"
   );
-  const programIdRes = await getPropertyEntityIds(
+  const retreatIdRes = await getPropertyEntityIds(
     retreat.propertyId,
-    "program"
+    "retreat"
   );
-  const retreatIds = programIdRes.data || [];
+  const retreatIds = retreatIdRes.data || [];
   const coverImage = retreatImages[0]?.filePath || "/img/iStock-1550112895.jpg";
   const imageSlides = propertyImages.map((img) => img.filePath);
 

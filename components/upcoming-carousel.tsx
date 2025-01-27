@@ -13,6 +13,7 @@ import {
 } from "@/actions/property-actions";
 import { getRetreat, RetreatWithAllRelations } from "@/actions/retreat-actions";
 import { PriceMod } from "@prisma/client";
+import { format } from "date-fns";
 import { CirclePlus } from "lucide-react";
 
 import { cn } from "@/lib/utils";
@@ -94,6 +95,7 @@ const formatCurrency = (priceMods: PriceMod[] | undefined) => {
 
 export function NewLazyRetreatItem({ id, segment, className }: LazyCardProps) {
   const [item, setItem] = useState<ItemType | null | undefined>();
+  const [date, setDate] = useState<{ to: Date; from: Date }>();
   const [image, setImage] = useState<string>("");
   const [isLoading, setIsLoading] = useState(true);
 
@@ -115,6 +117,13 @@ export function NewLazyRetreatItem({ id, segment, className }: LazyCardProps) {
               const img = rImgs.length > 0 ? rImgs[0] : pImgs[0];
               setImage(img?.filePath || "/img/iStock-1490140364.jpg");
               setItem(response.data);
+              if (response.data.retreatInstances.length > 0) {
+                const inst = response.data.retreatInstances[0];
+                setDate({
+                  to: inst.endDate,
+                  from: inst.startDate,
+                });
+              }
             }
             break;
           case "destinations":
@@ -186,7 +195,7 @@ export function NewLazyRetreatItem({ id, segment, className }: LazyCardProps) {
         : item.country,
     priceMods: isRetreat(item) || isProgram(item) ? item?.priceMods : undefined,
   };
-
+  console.log("item: ", item);
   return (
     <div className={cn("flex flex-col")}>
       <Link href={`/${segment}/${item?.id}`}>
@@ -255,15 +264,13 @@ export function NewLazyRetreatItem({ id, segment, className }: LazyCardProps) {
               displayData.city ||
               "Location not specified"}
         </div>
-        {/* {(displayData.date || displayData.endDate) && (
+        {date && (
           <div className="text-[10px] font-medium uppercase leading-[15px] opacity-60">
-            {displayData.date &&
-              format(new Date(displayData.date), "MMM d, yyyy")}
-            {displayData.date && displayData.endDate && " → "}
-            {displayData.endDate &&
-              format(new Date(displayData.endDate), "MMM d, yyyy")}
+            {format(date.from, "MMM d, yyyy")}
+            {" → "}
+            {format(date.to, "MMM d, yyyy")}
           </div>
-        )} */}
+        )}
         <div className="text-[10px] font-medium uppercase leading-[15px] opacity-60">
           From {formatCurrency(displayData.priceMods)}
         </div>
