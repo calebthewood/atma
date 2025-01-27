@@ -14,7 +14,7 @@ import {
 
 interface Slide {
   image: string;
-  title: string;
+  title: string | null;
   desc: string;
 }
 
@@ -42,7 +42,7 @@ const HeroCarousel = ({ slides }: { slides: Slide[] }) => {
                 <div className="relative h-[436px] w-80 overflow-hidden rounded-lg md:w-[821px]">
                   <Image
                     src={slide.image}
-                    alt={slide.title}
+                    alt={slide.title || "cover image"}
                     fill
                     className="animate-fade-in object-cover"
                     priority={index === 0}

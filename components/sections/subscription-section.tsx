@@ -1,3 +1,4 @@
+
 import NewsletterSubscribe from "../newsletter-subscribe";
 
 export default function SubscriptionSection() {

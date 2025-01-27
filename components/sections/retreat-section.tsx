@@ -1,9 +1,11 @@
 "use client";
 
 import Link from "next/link";
+import { RetreatWithAllRelations } from "@/actions/retreat-actions";
 import { motion } from "framer-motion";
 
-import { QuickLink } from "../shared";
+import { getCountryName } from "@/lib/utils";
+
 import { Button } from "../ui/button";
 import HeroCarousel from "../ui/carousel-hero";
 import { SectionHeader } from "./components";
@@ -18,20 +20,18 @@ const containerVariants = {
   },
 };
 
-export default function RetreatSection() {
-  const slides = [
-    {
-      image: "/img/iStock-1929812569.jpg",
-      title: "FEATURED RETREAT OR PROGRAM",
-      desc: "10 Days of Yoga and Meditation, leave your boyfriend at home!",
-    },
-    {
-      image: "/img/iStock-1812905796.jpg",
-      title: "UPCOMING RETREAT",
-      desc: "Hopefully they paid us to be featured prominently.",
-    },
-    // Add more slides as needed
-  ];
+export default function RetreatSection({
+  retreats,
+}: {
+  retreats: RetreatWithAllRelations[];
+}) {
+  const slides =
+    retreats?.map((r) => ({
+      image: r.images[0].filePath,
+      title: r.name,
+      desc: r.property.city + ", " + getCountryName(r.property.country),
+    })) || [];
+
   return (
     <section
       id="retreat-section"

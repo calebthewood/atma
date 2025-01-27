@@ -1,5 +1,6 @@
 import { Metadata } from "next";
-import { getPrograms, getSpotlightPrograms } from "@/actions/program-actions";
+import { getSpotlightPrograms } from "@/actions/program-actions";
+import { getSpotlightRetreats } from "@/actions/retreat-actions";
 
 import { BookingBar } from "@/components/booking-bar";
 import DestinationSection from "@/components/sections/destination-section";
@@ -18,8 +19,16 @@ const spotlightPrograms = [
   "cm4u899n30000spgq24up4v2n",
 ];
 
+const spotlightRetreats = [
+  "cm5vsll0h002ispq64cinsj3y",
+  "cm5x3owe200g8spq604ipnaey",
+];
+
 export default async function Page() {
-  const programs = await getSpotlightPrograms(spotlightPrograms);
+  const [programs, retreats] = await Promise.all([
+    getSpotlightPrograms(spotlightPrograms),
+    getSpotlightRetreats(spotlightRetreats),
+  ]);
 
   return (
     <>
@@ -27,7 +36,7 @@ export default async function Page() {
       <div className="tracking-wideset flex flex-col font-semibold md:gap-y-6 md:py-6">
         <ProgramSection programs={programs} />
         <DestinationSection />
-        <RetreatSection />
+        <RetreatSection retreats={retreats} />
         <SubscriptionSection />
       </div>
     </>

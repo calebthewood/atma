@@ -108,6 +108,18 @@ export async function createRetreat(
   }
 }
 
+export async function getSpotlightRetreats(idList: string[]) {
+    const retreat = await prisma.retreat.findMany({
+      where: {
+        id: { in: idList },
+        status: "published",
+      },
+      include: RETREAT_INCLUDE_FULL,
+    });
+    if (!retreat) throw new Error("Spotlight Retreats Not Found");
+    return retreat;
+}
+
 export async function getRetreat(
   id: string,
   statusList = ["published"]
