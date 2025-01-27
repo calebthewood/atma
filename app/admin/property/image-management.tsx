@@ -55,7 +55,7 @@ function useImages(recordId: string, recordType: RecordType) {
 
       setImages(response.data.sort((a, b) => a.order - b.order));
     } catch (error) {
-      console.error("Error fetching images:", error);
+      console.log("Error fetching images:", error);
       toast({
         title: "Error",
         description: "Failed to load images",
@@ -110,7 +110,7 @@ function ModifiedImageUpload({
           }
         );
       } catch (error) {
-        console.error("Image processing error:", error);
+        console.log("Image processing error:", error);
         throw new Error("Failed to process images. Please try again.");
       }
 
@@ -144,7 +144,7 @@ function ModifiedImageUpload({
           uploadedFiles.push(response.data);
           setProgress(50 + ((i + 1) / processedFiles.length) * 50);
         } catch (error) {
-          console.error(`Error uploading ${file.name}:`, error);
+          console.log(`Error uploading ${file.name}:`, error);
           toast({
             title: "Upload Error",
             description:
@@ -171,7 +171,7 @@ function ModifiedImageUpload({
         throw new Error("No files were successfully uploaded");
       }
     } catch (error) {
-      console.error("Upload process failed:", error);
+      console.log("Upload process failed:", error);
       toast({
         title: "Error",
         description:

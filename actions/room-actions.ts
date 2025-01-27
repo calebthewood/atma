@@ -17,7 +17,7 @@ export async function createRoom(data: Room) {
 
     return room;
   } catch (error) {
-    console.error("Error creating room:", error);
+    console.log("Error creating room:", error);
     throw new Error("Failed to create room");
   }
 }
@@ -27,7 +27,7 @@ export async function getRooms() {
     const rooms = await prisma.room.findMany();
     return rooms;
   } catch (error) {
-    console.error("Error fetching rooms:", error);
+    console.log("Error fetching rooms:", error);
     throw new Error("Failed to fetch rooms");
   }
 }
@@ -46,7 +46,7 @@ export async function getRoomById(roomId: string) {
 
     return room;
   } catch (error) {
-    console.error(`Error fetching room with id ${roomId}:`, error);
+    console.log(`Error fetching room with id ${roomId}:`, error);
     throw new Error(`Failed to fetch room with id ${roomId}`);
   }
 }
@@ -75,7 +75,7 @@ export async function updateRoom(
 
     return room;
   } catch (error) {
-    console.error(`Error updating room with id ${roomId}:`, error);
+    console.log(`Error updating room with id ${roomId}:`, error);
     throw new Error(`Failed to update room with id ${roomId}`);
   }
 }
@@ -92,7 +92,7 @@ export async function deleteRoom(roomId: string) {
 
     return room;
   } catch (error) {
-    console.error(`Error deleting room with id ${roomId}:`, error);
+    console.log(`Error deleting room with id ${roomId}:`, error);
     throw new Error(`Failed to delete room with id ${roomId}`);
   }
 }

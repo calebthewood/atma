@@ -292,7 +292,7 @@ async function seedAmenities() {
 
     console.log("Amenities seeded successfully");
   } catch (error) {
-    console.error("Error seeding amenities:", error);
+    console.log("Error seeding amenities:", error);
   } finally {
     await prisma.$disconnect();
   }
@@ -300,6 +300,6 @@ async function seedAmenities() {
 
 // Execute the seeding
 seedAmenities().catch((error) => {
-  console.error(error);
+  console.log(error);
   process.exit(1);
 });

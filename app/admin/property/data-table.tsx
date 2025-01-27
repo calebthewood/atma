@@ -68,7 +68,7 @@ export function PropertyDataTable() {
               try {
                 await deleteProperty(property?.id);
               } catch (error) {
-                console.error("Failed to delete property:", error);
+                console.log("Failed to delete property:", error);
                 alert("Failed to delete property. Please try again.");
               }
             }

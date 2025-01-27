@@ -60,7 +60,7 @@ export function CreatePaymentForm() {
       form.reset(); // Reset form after successful submission
       // TODO: Add success message or redirect
     } catch (error) {
-      console.error("Error creating payment:", error);
+      console.log("Error creating payment:", error);
       // TODO: Add error message
     } finally {
       setIsSubmitting(false);

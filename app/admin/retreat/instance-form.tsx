@@ -122,7 +122,7 @@ export function RetreatInstanceForm() {
           });
         }
       } catch (error) {
-        console.error("Error loading instance:", error);
+        console.log("Error loading instance:", error);
         toast({
           title: "Error",
           description: "Failed to load retreat instance",
@@ -148,7 +148,7 @@ export function RetreatInstanceForm() {
           });
         }
       } catch (error) {
-        console.error("Error fetching retreats:", error);
+        console.log("Error fetching retreats:", error);
         toast({
           title: "Error",
           description: "Failed to load retreats",
@@ -223,7 +223,7 @@ export function RetreatInstanceForm() {
         }
       }
     } catch (error) {
-      console.error("Error submitting retreat instance:", error);
+      console.log("Error submitting retreat instance:", error);
       toast({
         title: "Error",
         description: "Failed to save retreat instance",

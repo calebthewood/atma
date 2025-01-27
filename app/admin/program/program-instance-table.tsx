@@ -194,7 +194,7 @@ export function ProgramInstancesList({
                 throw new Error(response.message || "Failed to delete");
               }
             } catch (error) {
-              console.error("Failed to delete program instance:", error);
+              console.log("Failed to delete program instance:", error);
               toast({
                 title: "Error",
                 description: "Failed to delete program instance",
@@ -256,7 +256,7 @@ export function ProgramInstancesList({
         });
       }
     } catch (error) {
-      console.error("Error fetching program instances:", error);
+      console.log("Error fetching program instances:", error);
       toast({
         title: "Error",
         description: "Failed to load program instances",

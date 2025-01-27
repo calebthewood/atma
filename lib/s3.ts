@@ -97,7 +97,7 @@ export async function uploadToS3(
       message: "Successfully uploaded file",
     };
   } catch (error) {
-    console.error("Error uploading to S3:", error);
+    console.log("Error uploading to S3:", error);
     return {
       ok: false,
       data: null,
@@ -130,7 +130,7 @@ export async function getSignedImageUrl(
       message: "Successfully generated signed URL",
     };
   } catch (error) {
-    console.error("Error generating signed URL:", error);
+    console.log("Error generating signed URL:", error);
     return {
       ok: false,
       data: null,
@@ -168,7 +168,7 @@ export async function deleteFromS3(url: string): Promise<S3Response> {
       message: "Successfully deleted file",
     };
   } catch (error) {
-    console.error("Error deleting from S3:", error);
+    console.log("Error deleting from S3:", error);
     return {
       ok: false,
       data: null,

@@ -71,7 +71,7 @@
 //       });
 //       form.reset();
 //     } catch (error) {
-//       console.error("Error creating user:", error);
+//       console.log("Error creating user:", error);
 //     } finally {
 //       setIsSubmitting(false);
 //     }

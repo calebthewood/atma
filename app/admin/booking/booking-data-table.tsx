@@ -31,7 +31,7 @@ export function BookingsDataTable() {
           description: "Booking deleted successfully",
         });
       } catch (error) {
-        console.error("Failed to delete booking:", error);
+        console.log("Failed to delete booking:", error);
         toast({
           title: "Error",
           description: "Failed to delete booking. Please try again.",

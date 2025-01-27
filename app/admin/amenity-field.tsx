@@ -116,7 +116,7 @@ export const AmenityCheckboxes = ({
         errorMessage = err.message;
       }
 
-      console.error("Error updating amenity:", err);
+      console.log("Error updating amenity:", err);
       toast({
         title: "Error",
         description: errorMessage,

@@ -143,7 +143,7 @@ export function AmenityForm({ amenity }: AmenityFormProps) {
         });
       }
     } catch (error) {
-      console.error("Failed to save amenity:", error);
+      console.log("Failed to save amenity:", error);
       toast({
         title: "Error",
         description: "Failed to save amenity",

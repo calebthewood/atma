@@ -80,7 +80,7 @@ export function HostUserForm({ userId, hostUser }: HostUserFormProps) {
           setHosts(res.data.items);
         }
       } catch (error) {
-        console.error("Failed to load hosts:", error);
+        console.log("Failed to load hosts:", error);
         toast({
           title: "Error",
           description: "Failed to load hosts",

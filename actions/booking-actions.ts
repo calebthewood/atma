@@ -195,7 +195,7 @@ async function createBookingWithNotification(
     message: "Successfully created booking",
   };
 
-  // console.error("Failed to create booking:", error);
+  // console.log("Failed to create booking:", error);
   // return {
   //   ok: false,
   //   data: null,
@@ -271,7 +271,7 @@ export async function getBooking(
       message: "Successfully fetched booking",
     };
   } catch (error) {
-    console.error("Failed to fetch booking:", error);
+    console.log("Failed to fetch booking:", error);
     return {
       ok: false,
       data: null,
@@ -316,7 +316,7 @@ export async function updateBookingStatus(
       message: "Successfully updated booking status",
     };
   } catch (error) {
-    console.error("Error updating booking status:", error);
+    console.log("Error updating booking status:", error);
     return {
       ok: false,
       data: null,
@@ -394,7 +394,7 @@ export async function updateBooking(
       message: "Successfully updated booking",
     };
   } catch (error) {
-    console.error("Failed to update booking:", error);
+    console.log("Failed to update booking:", error);
     return {
       ok: false,
       data: null,
@@ -435,7 +435,7 @@ export async function deleteBooking(id: string): Promise<ActionResponse> {
     revalidatePath("/admin/bookings");
     return { ok: true, data: null, message: "Successfully deleted booking" };
   } catch (error) {
-    console.error("Error deleting booking:", error);
+    console.log("Error deleting booking:", error);
     return { ok: false, data: null, message: "Failed to delete booking" };
   }
 }
@@ -488,7 +488,7 @@ export async function getAdminPaginatedBookings(
       message: "Successfully fetched bookings",
     };
   } catch (error) {
-    console.error("Error fetching paginated bookings:", error);
+    console.log("Error fetching paginated bookings:", error);
     return {
       ok: false,
       data: null,
@@ -522,7 +522,7 @@ export async function getAdminBooking(
 
     return { ok: true, data: booking, message: "Successfully fetched booking" };
   } catch (error) {
-    console.error("Error fetching booking:", error);
+    console.log("Error fetching booking:", error);
     return { ok: false, data: null, message: "Failed to fetch booking" };
   }
 }

@@ -22,7 +22,7 @@ import { prisma } from "@/lib/prisma";
 
 //     return review;
 //   } catch (error) {
-//     console.error("Error creating review:", error);
+//     console.log("Error creating review:", error);
 //     throw new Error("Failed to create review");
 //   }
 // }
@@ -32,7 +32,7 @@ export async function getReviews() {
     const reviews = await prisma.review.findMany();
     return reviews;
   } catch (error) {
-    console.error("Error fetching reviews:", error);
+    console.log("Error fetching reviews:", error);
     throw new Error("Failed to fetch reviews");
   }
 }
@@ -51,7 +51,7 @@ export async function getReviewById(reviewId: string) {
 
     return review;
   } catch (error) {
-    console.error(`Error fetching review with id ${reviewId}:`, error);
+    console.log(`Error fetching review with id ${reviewId}:`, error);
     throw new Error(`Failed to fetch review with id ${reviewId}`);
   }
 }
@@ -76,7 +76,7 @@ export async function updateReview(
 
     return review;
   } catch (error) {
-    console.error(`Error updating review with id ${reviewId}:`, error);
+    console.log(`Error updating review with id ${reviewId}:`, error);
     throw new Error(`Failed to update review with id ${reviewId}`);
   }
 }
@@ -93,7 +93,7 @@ export async function deleteReview(reviewId: string) {
 
     return review;
   } catch (error) {
-    console.error(`Error deleting review with id ${reviewId}:`, error);
+    console.log(`Error deleting review with id ${reviewId}:`, error);
     throw new Error(`Failed to delete review with id ${reviewId}`);
   }
 }

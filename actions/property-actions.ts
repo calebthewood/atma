@@ -156,7 +156,7 @@ export async function createProperty(
       message: "Successfully created property",
     };
   } catch (error) {
-    console.error("Failed to create property:", error);
+    console.log("Failed to create property:", error);
     return {
       ok: false,
       data: null,
@@ -235,7 +235,7 @@ export async function updateProperty(
       message: "Successfully updated property",
     };
   } catch (error) {
-    console.error("Failed to update property:", error);
+    console.log("Failed to update property:", error);
     return {
       ok: false,
       data: null,
@@ -316,7 +316,7 @@ export async function getAdminPaginatedProperties(
       message: "Successfully fetched paginated properties",
     };
   } catch (error) {
-    console.error("Error in getAdminPaginatedProperties:", error);
+    console.log("Error in getAdminPaginatedProperties:", error);
     return {
       ok: false,
       data: null,

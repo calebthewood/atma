@@ -62,7 +62,7 @@ export function usePlacesAutocomplete(): UsePlacesAutocompleteReturn {
         );
         setError(null);
       } catch (error) {
-        console.error("Error loading Google Places library:", error);
+        console.log("Error loading Google Places library:", error);
         setError("Failed to load location search");
       } finally {
         setIsLoading(false);

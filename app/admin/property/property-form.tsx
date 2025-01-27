@@ -123,7 +123,7 @@ export function PropertyForm({ property }: PropertyFormProps) {
       }
       form.reset(values);
     } catch (error) {
-      console.error("Error submitting property:", error);
+      console.log("Error submitting property:", error);
       toast({
         title: "Error",
         description: "Failed to save property. Please try again.",
@@ -142,7 +142,7 @@ export function PropertyForm({ property }: PropertyFormProps) {
           setHosts(fetchedHosts.data.items);
         }
       } catch (error) {
-        console.error("Error fetching data:", error);
+        console.log("Error fetching data:", error);
         toast({
           title: "Error",
           description: "Failed to load form data. Please try again.",
@@ -256,7 +256,7 @@ export function PropertyForm({ property }: PropertyFormProps) {
         try {
           await handleFieldBlur(name as keyof PropertyFormData);
         } catch (error) {
-          console.error(`Error updating ${name}:`, error);
+          console.log(`Error updating ${name}:`, error);
         }
       }
     });
@@ -276,7 +276,7 @@ export function PropertyForm({ property }: PropertyFormProps) {
         description: `${fieldName} has been updated.`,
       });
     } catch (error) {
-      console.error(`Error updating ${fieldName}:`, error);
+      console.log(`Error updating ${fieldName}:`, error);
 
       toast({
         title: "Error",

@@ -36,7 +36,7 @@ export function HostDataTable() {
           description: "Host deleted successfully",
         });
       } catch (error) {
-        console.error("Failed to delete host:", error);
+        console.log("Failed to delete host:", error);
         toast({
           title: "Error",
           description: "Failed to delete host. Please try again.",

@@ -192,7 +192,7 @@ export function PriceModsTable() {
                 throw new Error(response.error || "Failed to delete");
               }
             } catch (error) {
-              console.error("Failed to delete price modification:", error);
+              console.log("Failed to delete price modification:", error);
               toast({
                 title: "Error",
                 description: "Failed to delete price modification",
@@ -252,7 +252,7 @@ export function PriceModsTable() {
         });
       }
     } catch (error) {
-      console.error("Error fetching price modifications:", error);
+      console.log("Error fetching price modifications:", error);
       toast({
         title: "Error",
         description: "Failed to load price modifications",

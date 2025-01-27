@@ -129,7 +129,7 @@
 //         try {
 //           await handleFieldBlur(name as keyof BookingFormData);
 //         } catch (error) {
-//           console.error(`Error updating ${name}:`, error);
+//           console.log(`Error updating ${name}:`, error);
 //         }
 //       }
 //     });
@@ -153,7 +153,7 @@
 //         description: `${fieldName} has been updated.`,
 //       });
 //     } catch (error) {
-//       console.error(`Error updating ${fieldName}:`, error);
+//       console.log(`Error updating ${fieldName}:`, error);
 //       toast({
 //         title: "Error",
 //         description: `Failed to update ${fieldName}. Please try again.`,
@@ -181,7 +181,7 @@
 
 //       router.push("/admin/bookings");
 //     } catch (error) {
-//       console.error("Error submitting booking:", error);
+//       console.log("Error submitting booking:", error);
 //       toast({
 //         title: "Error",
 //         description: error instanceof Error ? error.message : "Failed to save booking",

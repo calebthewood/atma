@@ -31,7 +31,7 @@ const AutoAddressInput = React.forwardRef<
         const places = await google.importLibrary("places");
         setPlacesLibrary(places);
       } catch (error) {
-        console.error("Error loading Google Places library:", error);
+        console.log("Error loading Google Places library:", error);
       }
     };
     loadPlacesLibrary();

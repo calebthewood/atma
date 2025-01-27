@@ -110,7 +110,7 @@ export function AmenitiesEntityForm({
         description: `${action === "connect" ? "Added" : "Removed"} amenity successfully`,
       });
     } catch (err) {
-      console.error("Error updating amenity:", err);
+      console.log("Error updating amenity:", err);
       toast({
         title: "Error",
         description: "Failed to update amenity connection",

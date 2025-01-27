@@ -219,7 +219,7 @@ export async function createHost(
       message: "Successfully created host",
     };
   } catch (error) {
-    console.error("Error creating host:", error);
+    console.log("Error creating host:", error);
     return {
       ok: false,
       data: null,
@@ -251,7 +251,7 @@ export async function getHost(
       message: "Successfully fetched host",
     };
   } catch (error) {
-    console.error("Error fetching host:", error);
+    console.log("Error fetching host:", error);
     return {
       ok: false,
       data: null,
@@ -310,7 +310,7 @@ export async function updateHost(
       message: "Successfully updated host",
     };
   } catch (error) {
-    console.error("Error updating host:", error);
+    console.log("Error updating host:", error);
     return {
       ok: false,
       data: null,
@@ -350,7 +350,7 @@ export async function deleteHost(id: string): Promise<ActionResponse> {
       message: "Successfully deleted host",
     };
   } catch (error) {
-    console.error("Error deleting host:", error);
+    console.log("Error deleting host:", error);
     return {
       ok: false,
       data: null,
@@ -409,7 +409,7 @@ export async function getAdminPaginatedHosts(
       message: "Successfully fetched hosts",
     };
   } catch (error) {
-    console.error("Error fetching paginated hosts:", error);
+    console.log("Error fetching paginated hosts:", error);
     return {
       ok: false,
       data: null,
@@ -445,7 +445,7 @@ export async function getCurrentHostUser(
       message: "Successfully fetched host user",
     };
   } catch (error) {
-    console.error("Error fetching host user:", error);
+    console.log("Error fetching host user:", error);
     return {
       ok: false,
       data: null,
@@ -492,7 +492,7 @@ export async function upsertHostUser(
       message: "Successfully updated host user association",
     };
   } catch (error) {
-    console.error("Error upserting host user:", error);
+    console.log("Error upserting host user:", error);
     if (
       error instanceof Prisma.PrismaClientKnownRequestError &&
       error.code === "P2002"
@@ -539,7 +539,7 @@ export async function removeHostUser(
       message: "Successfully removed host user association",
     };
   } catch (error) {
-    console.error("Error removing host user:", error);
+    console.log("Error removing host user:", error);
     return {
       ok: false,
       data: null,

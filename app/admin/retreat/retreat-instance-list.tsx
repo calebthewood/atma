@@ -187,7 +187,7 @@ export function RetreatInstancesList({ retreatId }: RetreatInstancesListProps) {
                 throw new Error(response.message || "Failed to delete");
               }
             } catch (error) {
-              console.error("Failed to delete retreat instance:", error);
+              console.log("Failed to delete retreat instance:", error);
               toast({
                 title: "Error",
                 description: "Failed to delete retreat instance",
@@ -249,7 +249,7 @@ export function RetreatInstancesList({ retreatId }: RetreatInstancesListProps) {
         });
       }
     } catch (error) {
-      console.error("Error fetching retreat instances:", error);
+      console.log("Error fetching retreat instances:", error);
       toast({
         title: "Error",
         description: "Failed to load retreat instances",

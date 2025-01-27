@@ -171,7 +171,7 @@ export function PriceModForm() {
       params.delete("price");
       router.push(`${pathname}?${params.toString()}`);
     } catch (error) {
-      console.error("Error submitting price mod:", error);
+      console.log("Error submitting price mod:", error);
       toast({
         title: "Error",
         description:
@@ -209,7 +209,7 @@ export function PriceModForm() {
           });
         }
       } catch (error) {
-        console.error("Error loading price mod:", error);
+        console.log("Error loading price mod:", error);
         toast({
           title: "Error",
           description: "Failed to load price modification",

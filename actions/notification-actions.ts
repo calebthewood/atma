@@ -85,7 +85,7 @@ export async function createNotification(
       message: "Successfully created notification",
     };
   } catch (error) {
-    console.error("Failed to create notification:", error);
+    console.log("Failed to create notification:", error);
     return {
       ok: false,
       data: null,
@@ -154,7 +154,7 @@ export async function updateNotification(
       message: "Successfully updated notification",
     };
   } catch (error) {
-    console.error("Failed to update notification:", error);
+    console.log("Failed to update notification:", error);
     return {
       ok: false,
       data: null,
@@ -217,7 +217,7 @@ export async function getPaginatedNotifications(
       message: "Successfully fetched paginated notifications",
     };
   } catch (error) {
-    console.error("Error in getPaginatedNotifications:", error);
+    console.log("Error in getPaginatedNotifications:", error);
     return {
       ok: false,
       data: null,

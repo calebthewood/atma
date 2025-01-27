@@ -74,7 +74,7 @@ export async function getRetreatPriceMods(retreatId: string): Promise<{
       data: priceMods,
     };
   } catch (error) {
-    console.error("Error fetching retreat price mods:", error);
+    console.log("Error fetching retreat price mods:", error);
     return {
       ok: false,
       error: "Failed to fetch price modifications",
@@ -125,7 +125,7 @@ async function getRelatedIds(instanceId: string, type: "retreat" | "program") {
       };
     }
   } catch (error) {
-    console.error("Error getting related IDs:", error);
+    console.log("Error getting related IDs:", error);
     return null;
   }
 }
@@ -177,7 +177,7 @@ async function getPriceModsForEntity(params: {
               : "property",
     }));
   } catch (error) {
-    console.error("Error fetching price mods:", error);
+    console.log("Error fetching price mods:", error);
     return [];
   }
 }
@@ -218,7 +218,7 @@ export async function getAllPriceMods(
       },
     };
   } catch (error) {
-    console.error("Error fetching price modifications:", error);
+    console.log("Error fetching price modifications:", error);
     return {
       ok: false,
       error: "Failed to fetch price modifications",
@@ -315,7 +315,7 @@ export async function createPriceMod(
       data: priceMod,
     };
   } catch (error) {
-    console.error("Error creating price modification:", error);
+    console.log("Error creating price modification:", error);
     return {
       ok: false,
       error:
@@ -354,7 +354,7 @@ export async function getPriceMod(id: string): Promise<PriceModResponse> {
       data: priceMod,
     };
   } catch (error) {
-    console.error("Error fetching price modification:", error);
+    console.log("Error fetching price modification:", error);
     return {
       ok: false,
       error: "Failed to fetch price modification",
@@ -386,7 +386,7 @@ export async function getPriceModsByRetreatInstance(
       data: priceMods,
     };
   } catch (error) {
-    console.error("Error fetching price modifications:", error);
+    console.log("Error fetching price modifications:", error);
     return {
       ok: false,
       error: "Failed to fetch price modifications",
@@ -415,7 +415,7 @@ export async function getPriceModsByProgramInstance(
       data: priceMods,
     };
   } catch (error) {
-    console.error("Error fetching price modifications:", error);
+    console.log("Error fetching price modifications:", error);
     return {
       ok: false,
       error: "Failed to fetch price modifications",
@@ -498,7 +498,7 @@ export async function updatePriceMod(
       data: priceMod,
     };
   } catch (error) {
-    console.error("Error updating price modification:", error);
+    console.log("Error updating price modification:", error);
     return {
       ok: false,
       error:
@@ -524,7 +524,7 @@ export async function deletePriceMod(
       ok: true,
     };
   } catch (error) {
-    console.error("Error deleting price modification:", error);
+    console.log("Error deleting price modification:", error);
     return {
       ok: false,
       error: "Failed to delete price modification",

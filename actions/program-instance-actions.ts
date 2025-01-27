@@ -138,7 +138,7 @@ export async function getInstance(
       data: fullInstance,
     };
   } catch (error) {
-    console.error("Server error in getInstance:", error);
+    console.log("Server error in getInstance:", error);
     return {
       ok: false,
       data: null,
@@ -198,7 +198,7 @@ export async function createInstance(
       data: instance,
     };
   } catch (error) {
-    console.error("Error creating instance:", error);
+    console.log("Error creating instance:", error);
     return { ok: false, data: null, message: "Failed to create instance" };
   }
 }
@@ -246,7 +246,7 @@ export async function updateInstance(
       data: instance,
     };
   } catch (error) {
-    console.error("Failed to update instance:", error);
+    console.log("Failed to update instance:", error);
     return { ok: false, data: null, message: "Failed to update instance" };
   }
 }
@@ -257,7 +257,7 @@ export async function deleteInstance(id: string): ActionResponse {
     revalidatePath("/admin/programs");
     return { ok: true, data: null, message: "Success" };
   } catch (error) {
-    console.error("Error deleting instance:", error);
+    console.log("Error deleting instance:", error);
     return { ok: false, data: null, message: "Failed to delete instance" };
   }
 }
@@ -288,7 +288,7 @@ export async function getInstances(
       data: instances,
     };
   } catch (error) {
-    console.error("Error finding instances:", error);
+    console.log("Error finding instances:", error);
     return { ok: false, data: null, message: "Failed to find instances" };
   }
 }
@@ -352,7 +352,7 @@ export async function getPaginatedInstances(
       },
     };
   } catch (error) {
-    console.error("Error fetching paginated instances:", error);
+    console.log("Error fetching paginated instances:", error);
     return { ok: false, data: null, message: "Failed to fetch instances" };
   }
 }

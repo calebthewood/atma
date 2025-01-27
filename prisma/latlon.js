@@ -51,7 +51,7 @@ async function updatePropertiesWithGeoData() {
 
     console.log("All properties have been updated with geographic data.");
   } catch (error) {
-    console.error("Error updating properties:", error);
+    console.log("Error updating properties:", error);
   } finally {
     await prisma.$disconnect();
   }

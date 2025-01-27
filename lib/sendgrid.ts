@@ -151,7 +151,7 @@ export async function sendEmail({
       console.log("Email sent");
     })
     .catch((error) => {
-      console.error(error);
+      console.log(error);
     });
   return true;
 }

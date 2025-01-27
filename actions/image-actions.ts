@@ -77,7 +77,7 @@ export async function uploadImage(
         });
         newOrder = (currentMaxOrder?.order ?? -1) + 1;
       } catch (error) {
-        console.error("Error getting max order:", error);
+        console.log("Error getting max order:", error);
         // Continue with default order 0
       }
 
@@ -98,7 +98,7 @@ export async function uploadImage(
           message: "Successfully uploaded image",
         };
       } catch (dbError) {
-        console.error("Database creation error:", dbError);
+        console.log("Database creation error:", dbError);
         return {
           ok: false,
           data: null,
@@ -109,7 +109,7 @@ export async function uploadImage(
         };
       }
     } catch (processingError) {
-      console.error("Processing error:", processingError);
+      console.log("Processing error:", processingError);
       return {
         ok: false,
         data: null,
@@ -122,9 +122,9 @@ export async function uploadImage(
   } catch (error) {
     // Safe error logging that won't cause type errors
     if (error instanceof Error) {
-      console.error("Image upload error:", error.message);
+      console.log("Image upload error:", error.message);
     } else {
-      console.error("Unknown image upload error");
+      console.log("Unknown image upload error");
     }
 
     return {
@@ -159,7 +159,7 @@ export async function updateImageOrder(
       message: "Successfully updated image order",
     };
   } catch (error) {
-    console.error("Error updating image order:", error);
+    console.log("Error updating image order:", error);
     return { ok: false, data: null, message: "Failed to update image order" };
   }
 }
@@ -185,7 +185,7 @@ export async function updateImageDescription(
       message: "Successfully updated image description",
     };
   } catch (error) {
-    console.error("Error updating image description:", error);
+    console.log("Error updating image description:", error);
     return {
       ok: false,
       data: null,
@@ -223,7 +223,7 @@ export async function deleteImage(
 
     return { ok: true, data: null, message: "Successfully deleted image" };
   } catch (error) {
-    console.error("Error deleting image:", error);
+    console.log("Error deleting image:", error);
     return { ok: false, data: null, message: "Failed to delete image" };
   }
 }
@@ -244,7 +244,7 @@ export async function fetchImages(
 
     return { ok: true, data: images, message: "Successfully fetched images" };
   } catch (error) {
-    console.error("Error fetching images:", error);
+    console.log("Error fetching images:", error);
     return { ok: false, data: null, message: "Failed to fetch images" };
   }
 }
@@ -274,7 +274,7 @@ export const getRetreatImages = cache(
         message: "Successfully fetched retreat images",
       };
     } catch (error) {
-      console.error("Error fetching retreat images:", error);
+      console.log("Error fetching retreat images:", error);
       return { ok: false, data: [], message: "Failed to fetch retreat images" };
     }
   }
@@ -294,7 +294,7 @@ export const getPropertyImages = cache(
         message: "Successfully fetched property images",
       };
     } catch (error) {
-      console.error("Error fetching property images:", error);
+      console.log("Error fetching property images:", error);
       return {
         ok: false,
         data: [],

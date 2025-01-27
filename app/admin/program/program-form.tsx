@@ -118,7 +118,7 @@ export function ProgramForm({ program }: ProgramFormProps) {
           setHosts(fetchedHosts.data.items);
         }
       } catch (error) {
-        console.error("Error fetching data:", error);
+        console.log("Error fetching data:", error);
         toast({
           title: "Error",
           description: "Failed to load form data. Please try again.",
@@ -143,7 +143,7 @@ export function ProgramForm({ program }: ProgramFormProps) {
         try {
           await handleFieldBlur(name as keyof FormData);
         } catch (error) {
-          console.error(`Error updating ${name}:`, error);
+          console.log(`Error updating ${name}:`, error);
         }
       }
     });
@@ -171,7 +171,7 @@ export function ProgramForm({ program }: ProgramFormProps) {
         description: `${fieldName} has been updated.`,
       });
     } catch (error) {
-      console.error(`Error updating ${fieldName}:`, error);
+      console.log(`Error updating ${fieldName}:`, error);
 
       toast({
         title: "Error",
@@ -221,7 +221,7 @@ export function ProgramForm({ program }: ProgramFormProps) {
       form.reset(values);
       router.push("/admin/program");
     } catch (error) {
-      console.error("Error submitting program:", error);
+      console.log("Error submitting program:", error);
       toast({
         title: "Error",
         description:

@@ -102,7 +102,7 @@ export function UserForm({ userId, initialData }: UserFormProps) {
 
       form.reset();
     } catch (error) {
-      console.error(`Error ${userId ? "updating" : "creating"} user:`, error);
+      console.log(`Error ${userId ? "updating" : "creating"} user:`, error);
     } finally {
       setIsSubmitting(false);
     }

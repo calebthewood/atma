@@ -96,7 +96,7 @@ export async function getGroupedDestinations(): ActionResponse<
       message: "Successfully fetched grouped destinations",
     };
   } catch (error) {
-    console.error("Error in getGroupedDestinations:", error);
+    console.log("Error in getGroupedDestinations:", error);
     return {
       ok: false,
       data: null,
@@ -227,7 +227,7 @@ export async function searchProperties(
       message: "Successfully fetched properties",
     };
   } catch (error) {
-    console.error("Error in searchProperties:", error);
+    console.log("Error in searchProperties:", error);
     return {
       ok: false,
       data: null,

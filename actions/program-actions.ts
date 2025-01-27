@@ -92,7 +92,7 @@ export async function createProgram(
     });
     return { ok: true, data: program, message: "Successfully created program" };
   } catch (error) {
-    console.error(error);
+    console.log(error);
     return { ok: false, data: null, message: "Error creating program" };
   }
 }
@@ -144,7 +144,7 @@ export async function updateProgram(
     revalidatePath(`/admin/program/${id}`);
     return { ok: true, data: program, message: "Succesfully updated program." };
   } catch (error) {
-    console.error("Failed to update program:", error);
+    console.log("Failed to update program:", error);
     return {
       ok: false,
       data: null,
@@ -227,7 +227,7 @@ export async function getAdminPaginatedPrograms(
       message: "Successfully fetched paginated programs",
     };
   } catch (error) {
-    console.error("Error in getAdminPaginatedPrograms:", error);
+    console.log("Error in getAdminPaginatedPrograms:", error);
     return {
       ok: false,
       data: null,

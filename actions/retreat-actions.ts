@@ -99,7 +99,7 @@ export async function createRetreat(
       message: "Successfully created retreat",
     };
   } catch (error) {
-    console.error("Error creating retreat:", error);
+    console.log("Error creating retreat:", error);
     return {
       ok: false,
       data: null,

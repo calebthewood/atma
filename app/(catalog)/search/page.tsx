@@ -80,7 +80,7 @@ export default function SearchPage() {
         );
       }
     } catch (err) {
-      console.error("Error during search:", err);
+      console.log("Error during search:", err);
       setError(
         err instanceof Error
           ? err.message

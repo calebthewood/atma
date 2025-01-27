@@ -44,7 +44,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         });
         return true;
       } catch (error) {
-        console.error("Error in signIn callback:", error);
+        console.log("Error in signIn callback:", error);
         return true; // Still allow sign in even if cleanup fails
       }
     },
@@ -58,7 +58,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         });
 
         if (!dbUser) {
-          console.error(`No database user found for id: ${user.id}`);
+          console.log(`No database user found for id: ${user.id}`);
           return session;
         }
 
@@ -77,7 +77,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
             });
 
             if (!systemHost) {
-              console.error("System host not found");
+              console.log("System host not found");
               throw new Error("System host not found");
             }
 
@@ -90,7 +90,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
 
         return session;
       } catch (error) {
-        console.error("Error in session callback:", error);
+        console.log("Error in session callback:", error);
         // Return session without modifications if there's an error
         return session;
       }

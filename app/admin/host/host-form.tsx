@@ -73,7 +73,7 @@ export function HostForm({ host, userId }: HostFormProps) {
         try {
           await handleFieldBlur(name as keyof HostFormData);
         } catch (error) {
-          console.error(`Error updating ${name}:`, error);
+          console.log(`Error updating ${name}:`, error);
         }
       }
     });
@@ -115,7 +115,7 @@ export function HostForm({ host, userId }: HostFormProps) {
         description: `${fieldName} has been updated.`,
       });
     } catch (error) {
-      console.error(`Error updating ${fieldName}:`, error);
+      console.log(`Error updating ${fieldName}:`, error);
 
       toast({
         title: "Error",
@@ -163,7 +163,7 @@ export function HostForm({ host, userId }: HostFormProps) {
       form.reset(values);
       router.push("/admin/host");
     } catch (error) {
-      console.error("Error submitting host:", error);
+      console.log("Error submitting host:", error);
       toast({
         title: "Error",
         description:

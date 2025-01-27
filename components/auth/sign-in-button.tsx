@@ -38,7 +38,7 @@ export function EmailSignIn({
         onSuccess?.(email);
       }
     } catch (error) {
-      console.error(error);
+      console.log(error);
       onError?.("Something went wrong");
     }
   }

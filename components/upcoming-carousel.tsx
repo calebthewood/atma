@@ -148,7 +148,7 @@ export function NewLazyRetreatItem({ id, segment, className }: LazyCardProps) {
             break;
         }
       } catch (error) {
-        console.error(`Error fetching ${segment}:`, error);
+        console.log(`Error fetching ${segment}:`, error);
       } finally {
         setIsLoading(false);
       }

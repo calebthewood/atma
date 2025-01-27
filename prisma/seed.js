@@ -149,7 +149,7 @@ main()
     await prisma.$disconnect();
   })
   .catch(async (e) => {
-    console.error(e);
+    console.log(e);
     await prisma.$disconnect();
     process.exit(1);
   });

@@ -44,7 +44,7 @@ export function ImageUploadForm() {
       formRef.current?.reset();
     } else {
       // Handle error
-      console.error("Upload failed:", result.message);
+      console.log("Upload failed:", result.message);
     }
   };
 

@@ -69,7 +69,7 @@ export async function sendgridSignIn(formData: FormData) {
     });
     return { success: true };
   } catch (error) {
-    console.error(error);
+    console.log(error);
     return { error: "Failed to send login email" };
   }
 }
@@ -110,7 +110,7 @@ export async function getAuthenticatedUser(): Promise<ActionResponse<User>> {
       message: "User retrieved successfully",
     };
   } catch (error) {
-    console.error("Error getting authenticated user:", error);
+    console.log("Error getting authenticated user:", error);
     return {
       ok: false,
       data: null,
@@ -146,7 +146,7 @@ export async function validateAuth(): Promise<
       message: "User is authenticated",
     };
   } catch (error) {
-    console.error("Error validating authentication:", error);
+    console.log("Error validating authentication:", error);
     return {
       ok: false,
       data: null,
@@ -193,7 +193,7 @@ export async function checkUserRole(
         : "User does not have required role",
     };
   } catch (error) {
-    console.error("Error checking user role:", error);
+    console.log("Error checking user role:", error);
     return {
       ok: false,
       data: false,
@@ -247,7 +247,7 @@ export async function validateHostAccess(
         : "User does not have host access",
     };
   } catch (error) {
-    console.error("Error validating host access:", error);
+    console.log("Error validating host access:", error);
     return {
       ok: false,
       data: false,

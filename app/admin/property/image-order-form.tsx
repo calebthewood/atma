@@ -185,7 +185,7 @@ export function ImageGallery({ recordId, recordType }: ImageGalleryProps) {
       if (fetchedImages.ok && fetchedImages.data) {
         setImages(fetchedImages.data.sort((a, b) => a.order - b.order));
       } else {
-        console.error("Error fetching images:", fetchedImages.message);
+        console.log("Error fetching images:", fetchedImages.message);
         toast({
           title: "Error",
           description: "Failed to load images",
@@ -193,7 +193,7 @@ export function ImageGallery({ recordId, recordType }: ImageGalleryProps) {
         });
       }
     } catch (error) {
-      console.error("Error fetching images:", error);
+      console.log("Error fetching images:", error);
       toast({
         title: "Error",
         description: "Failed to load images",

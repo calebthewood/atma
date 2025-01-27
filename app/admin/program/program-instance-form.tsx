@@ -116,7 +116,7 @@ export function ProgramInstanceForm() {
           });
         }
       } catch (error) {
-        console.error("Error loading instance:", error);
+        console.log("Error loading instance:", error);
         toast({
           title: "Error",
           description: "Failed to load retreat instance",
@@ -142,7 +142,7 @@ export function ProgramInstanceForm() {
           });
         }
       } catch (error) {
-        console.error("Error fetching programs:", error);
+        console.log("Error fetching programs:", error);
         toast({
           title: "Error",
           description: "Failed to load programs",
@@ -171,7 +171,7 @@ export function ProgramInstanceForm() {
           throw new Error(response.message);
         }
       } catch (error) {
-        console.error(`Error updating ${fieldName}:`, error);
+        console.log(`Error updating ${fieldName}:`, error);
         toast({
           title: "Error",
           description: `Failed to update ${fieldName}`,
@@ -210,7 +210,7 @@ export function ProgramInstanceForm() {
         }
       }
     } catch (error) {
-      console.error("Error submitting program instance:", error);
+      console.log("Error submitting program instance:", error);
       toast({
         title: "Error",
         description: "Failed to save program instance",

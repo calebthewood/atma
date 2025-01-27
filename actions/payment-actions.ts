@@ -24,7 +24,7 @@ export async function createPayment(data: {
 
     return payment;
   } catch (error) {
-    console.error("Error creating payment:", error);
+    console.log("Error creating payment:", error);
     throw new Error("Failed to create payment");
   }
 }
@@ -34,7 +34,7 @@ export async function getPayments() {
     const payments = await prisma.payment.findMany();
     return payments;
   } catch (error) {
-    console.error("Error fetching payments:", error);
+    console.log("Error fetching payments:", error);
     throw new Error("Failed to fetch payments");
   }
 }
@@ -53,7 +53,7 @@ export async function getPaymentById(paymentId: string) {
 
     return payment;
   } catch (error) {
-    console.error(`Error fetching payment with id ${paymentId}:`, error);
+    console.log(`Error fetching payment with id ${paymentId}:`, error);
     throw new Error(`Failed to fetch payment with id ${paymentId}`);
   }
 }
@@ -79,7 +79,7 @@ export async function updatePayment(
 
     return payment;
   } catch (error) {
-    console.error(`Error updating payment with id ${paymentId}:`, error);
+    console.log(`Error updating payment with id ${paymentId}:`, error);
     throw new Error(`Failed to update payment with id ${paymentId}`);
   }
 }
@@ -96,7 +96,7 @@ export async function deletePayment(paymentId: string) {
 
     return payment;
   } catch (error) {
-    console.error(`Error deleting payment with id ${paymentId}:`, error);
+    console.log(`Error deleting payment with id ${paymentId}:`, error);
     throw new Error(`Failed to delete payment with id ${paymentId}`);
   }
 }

@@ -214,7 +214,7 @@ export default function SearchResultsPage({
       }
       setIsLoading(false);
     } catch (err) {
-      console.error("Error during search:", err);
+      console.log("Error during search:", err);
       setIsLoading(false);
       setError(
         err instanceof Error
@@ -271,7 +271,7 @@ export default function SearchResultsPage({
 
     // Check if results are in the correct format
     if (!results.every(isCountryGroup)) {
-      console.error("Invalid results format for continent view");
+      console.log("Invalid results format for continent view");
       return null;
     }
 

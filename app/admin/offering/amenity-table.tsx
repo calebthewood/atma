@@ -106,7 +106,7 @@ export function AmenityList() {
       }
       setError(null);
     } catch (error) {
-      console.error("Error fetching amenities:", error);
+      console.log("Error fetching amenities:", error);
       setError("Failed to fetch amenities. Please try again later.");
     } finally {
       setIsLoading(false);
@@ -139,7 +139,7 @@ export function AmenityList() {
       await deleteAmenity(amenity?.id);
       await fetchAmenities();
     } catch (error) {
-      console.error("Error deleting amenity:", error);
+      console.log("Error deleting amenity:", error);
       setError("Failed to delete amenity. Please try again later.");
     }
   };

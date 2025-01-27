@@ -185,7 +185,7 @@ export async function createUser(
       data: user as UserFormData,
     };
   } catch (error) {
-    console.error("Error creating user:", error);
+    console.log("Error creating user:", error);
 
     if (error instanceof Prisma.PrismaClientKnownRequestError) {
       if (error.code === "P2002") {
@@ -238,7 +238,7 @@ export async function getUser(
       data: user,
     };
   } catch (error) {
-    console.error("Error fetching user:", error);
+    console.log("Error fetching user:", error);
     return {
       ok: false,
       message: "Failed to fetch user",
@@ -302,7 +302,7 @@ export async function updateUser(
       data: user,
     };
   } catch (error) {
-    console.error("Error updating user:", error);
+    console.log("Error updating user:", error);
     return {
       ok: false,
       message: "Failed to update user",
@@ -334,7 +334,7 @@ export async function deleteUser(userId: string): Promise<ActionResponse> {
       data: null,
     };
   } catch (error) {
-    console.error("Error deleting user:", error);
+    console.log("Error deleting user:", error);
     return {
       ok: false,
       message: "Failed to delete user",
@@ -415,7 +415,7 @@ export async function getAdminPaginatedUsers(
       },
     };
   } catch (error) {
-    console.error("Error fetching users:", error);
+    console.log("Error fetching users:", error);
     return {
       ok: false,
       message: "Failed to fetch users",
@@ -452,7 +452,7 @@ export async function uploadImage(
       throw new Error("Failed to upload image");
     }
   } catch (error) {
-    console.error("Error uploading image:", error);
+    console.log("Error uploading image:", error);
     return {
       ok: false,
       message: "Failed to upload image",
@@ -493,7 +493,7 @@ export async function getDashboardUser(): Promise<
       data: user,
     };
   } catch (error) {
-    console.error("Error fetching dashboard user:", error);
+    console.log("Error fetching dashboard user:", error);
     return {
       ok: false,
       message: "Failed to fetch user data",

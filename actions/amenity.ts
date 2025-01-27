@@ -74,7 +74,7 @@ export async function createAmenity(
       message: "Successfully created amenity",
     };
   } catch (error) {
-    console.error("Failed to create amenity:", error);
+    console.log("Failed to create amenity:", error);
     return {
       ok: false,
       data: null,
@@ -99,7 +99,7 @@ export async function updateAmenity(
       message: "Successfully updated amenity",
     };
   } catch (error) {
-    console.error("Failed to update amenity:", error);
+    console.log("Failed to update amenity:", error);
     return {
       ok: false,
       data: null,
@@ -120,7 +120,7 @@ export async function deleteAmenity(id: string): ActionResponse {
       message: "Successfully deleted amenity",
     };
   } catch (error) {
-    console.error("Failed to delete amenity:", error);
+    console.log("Failed to delete amenity:", error);
     return {
       ok: false,
       data: null,
@@ -157,7 +157,7 @@ export async function getAmenitiesByType(
         message: `Invalid amenity type: ${type}`,
       };
     }
-    console.error("Failed to fetch amenities:", error);
+    console.log("Failed to fetch amenities:", error);
     return {
       ok: false,
       data: null,
@@ -202,7 +202,7 @@ export async function getAmenitiesByCategory(
         message: `Invalid amenity type: ${type}`,
       };
     }
-    console.error("Failed to fetch amenities by category:", error);
+    console.log("Failed to fetch amenities by category:", error);
     return {
       ok: false,
       data: null,
@@ -282,7 +282,7 @@ export async function updateEntityAmenity(
         message: `Invalid input parameters: ${error.message}`,
       };
     }
-    console.error("Failed to update entity amenity:", error);
+    console.log("Failed to update entity amenity:", error);
     return {
       ok: false,
       data: null,
@@ -330,7 +330,7 @@ export async function getEntityAmenities(
         message: `Invalid input parameters: ${error.message}`,
       };
     }
-    console.error("Failed to fetch entity amenities:", error);
+    console.log("Failed to fetch entity amenities:", error);
     return {
       ok: false,
       data: null,

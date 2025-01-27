@@ -91,7 +91,7 @@ export async function createMessage(
       message: "Successfully created message",
     };
   } catch (error) {
-    console.error("Failed to create message:", error);
+    console.log("Failed to create message:", error);
     return {
       ok: false,
       data: null,
@@ -163,7 +163,7 @@ export async function updateMessage(
       message: "Successfully updated message",
     };
   } catch (error) {
-    console.error("Failed to update message:", error);
+    console.log("Failed to update message:", error);
     return {
       ok: false,
       data: null,
@@ -224,7 +224,7 @@ export async function getPaginatedMessages(
       message: "Successfully fetched paginated messages",
     };
   } catch (error) {
-    console.error("Error in getPaginatedMessages:", error);
+    console.log("Error in getPaginatedMessages:", error);
     return {
       ok: false,
       data: null,

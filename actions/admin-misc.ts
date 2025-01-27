@@ -62,7 +62,7 @@ export async function getDatabaseCounts(): Promise<{
       verifiedProgramCount,
     };
   } catch (error) {
-    console.error("Error fetching database counts:", error);
+    console.log("Error fetching database counts:", error);
     throw new Error("Failed to fetch database counts");
   }
 }

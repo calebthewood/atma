@@ -190,7 +190,7 @@ export function LazyRetreatItem({
             break;
         }
       } catch (error) {
-        console.error(`Error fetching ${segment}:`, error);
+        console.log(`Error fetching ${segment}:`, error);
       } finally {
         setIsLoading(false);
       }

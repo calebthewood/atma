@@ -79,7 +79,7 @@ export function UserBookingsTable({ userId }: UserBookingTableProps) {
       setError(
         error instanceof Error ? error.message : "An unknown error occurred"
       );
-      console.error("Failed to fetch bookings:", error);
+      console.log("Failed to fetch bookings:", error);
     } finally {
       setIsLoading(false);
     }

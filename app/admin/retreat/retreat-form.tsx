@@ -100,7 +100,7 @@ export function RetreatForm({ retreat }: RetreatFormProps) {
           setHosts(fetchedHosts.data.items);
         }
       } catch (error) {
-        console.error("Error fetching data:", error);
+        console.log("Error fetching data:", error);
         toast({
           title: "Error",
           description: "Failed to load form data. Please try again.",
@@ -126,7 +126,7 @@ export function RetreatForm({ retreat }: RetreatFormProps) {
         try {
           await handleFieldBlur(name as keyof RetreatFormData);
         } catch (error) {
-          console.error(`Error updating ${name}:`, error);
+          console.log(`Error updating ${name}:`, error);
         }
       }
     });
@@ -155,7 +155,7 @@ export function RetreatForm({ retreat }: RetreatFormProps) {
         description: `${fieldName} has been updated.`,
       });
     } catch (error) {
-      console.error(`Error updating ${fieldName}:`, error);
+      console.log(`Error updating ${fieldName}:`, error);
 
       toast({
         title: "Error",
@@ -205,7 +205,7 @@ export function RetreatForm({ retreat }: RetreatFormProps) {
       form.reset(values);
       router.push("/admin/retreat");
     } catch (error) {
-      console.error("Error submitting retreat:", error);
+      console.log("Error submitting retreat:", error);
       toast({
         title: "Error",
         description:

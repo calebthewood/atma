@@ -48,7 +48,7 @@ export function ImageUpload({ recordId, recordType }: ImageUploadProps) {
           await uploadImage(formData);
           setProgress(50 + ((i + 1) / processedFiles.length) * 50); // Last 50% for uploading
         } catch (error) {
-          console.error("Upload failed:", error);
+          console.log("Upload failed:", error);
           toast({
             title: "Upload Error",
             description: `Failed to upload ${file.name}. Please try again.`,
@@ -67,7 +67,7 @@ export function ImageUpload({ recordId, recordType }: ImageUploadProps) {
         } uploaded successfully`,
       });
     } catch (error) {
-      console.error("Processing failed:", error);
+      console.log("Processing failed:", error);
       toast({
         title: "Error",
         description: "Failed to process images",

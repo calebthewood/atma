@@ -94,7 +94,7 @@ export async function getInstance(id: string): ActionResponse<RetreatInstance> {
       data: instance,
     };
   } catch (error) {
-    console.error("Error fetching instance:", error);
+    console.log("Error fetching instance:", error);
     return {
       ok: false,
       data: null,
@@ -129,7 +129,7 @@ export async function updateInstance(
       data: instance,
     };
   } catch (error) {
-    console.error("Error updating instance:", error);
+    console.log("Error updating instance:", error);
     return {
       ok: false,
       data: null,
@@ -157,7 +157,7 @@ export async function createInstance(
       data: instance,
     };
   } catch (error) {
-    console.error("Error creating instance:", error);
+    console.log("Error creating instance:", error);
     return {
       ok: false,
       data: null,
@@ -172,7 +172,7 @@ export async function deleteInstance(id: string): ActionResponse {
     revalidatePath("/admin/retreats");
     return { ok: true, data: null, message: "Success" };
   } catch (error) {
-    console.error("Error deleting instance:", error);
+    console.log("Error deleting instance:", error);
     return { ok: false, data: null, message: "Failed to delete instance" };
   }
 }
@@ -199,7 +199,7 @@ export async function getInstances(
     });
     return { ok: true, message: "Success", data: instances };
   } catch (error) {
-    console.error("Error finding instances:", error);
+    console.log("Error finding instances:", error);
     return { ok: false, data: null, message: "Failed to find instances" };
   }
 }
@@ -264,7 +264,7 @@ export async function getPaginatedInstances(
       },
     };
   } catch (error) {
-    console.error("Error fetching paginated instances:", error);
+    console.log("Error fetching paginated instances:", error);
     return { ok: false, data: null, message: "Failed to fetch instances" };
   }
 }

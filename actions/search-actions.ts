@@ -195,7 +195,7 @@ async function executeSearch(
       data: paginateItems(items, options.page || 1, options.pageSize || 10),
     };
   } catch (error) {
-    console.error(`Error searching ${modelName}:`, error);
+    console.log(`Error searching ${modelName}:`, error);
     return {
       ok: false,
       error: `Failed to search ${modelName}`,

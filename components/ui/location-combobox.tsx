@@ -95,7 +95,7 @@ export function LocationCombobox() {
       setOpen(false);
       updateSearchParams(placeDetails);
     } catch (error) {
-      console.error("Failed to get place details:", error);
+      console.log("Failed to get place details:", error);
     }
   };
 
