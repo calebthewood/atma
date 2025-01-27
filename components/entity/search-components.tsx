@@ -174,7 +174,7 @@ export default function SearchResultsPage({
           );
           const propertyLocation = [
             entity.property.city,
-            entity.property.country,
+            getCountryName(entity.property.country),
           ]
             .filter(Boolean)
             .join(", ");

@@ -94,7 +94,7 @@ function groupByCountry(
     if (!item.property?.country) return acc;
 
     const propertyContinent = shortNameToContinent(item.property.country);
-    if (propertyContinent.toLowerCase() !== continent.toLowerCase()) return acc;
+    if (propertyContinent !== continent.toLowerCase()) return acc;
 
     const existingGroup = acc.find((g) => g.country === item.property!.country);
     if (existingGroup) {

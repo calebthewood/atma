@@ -151,7 +151,7 @@ export default function DestinationPage() {
           <p className="text-sm text-muted-foreground">
             {isLocationSearch
               ? "Properties near your selected location"
-              : "Properties by country"}
+              : "Search for properties around the world"}
           </p>
         </div>
       </div>

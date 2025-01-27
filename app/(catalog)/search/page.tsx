@@ -2,18 +2,19 @@
 
 import React, { useCallback, useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
-import {
-  searchProperties,
-  type CountryProperties,
-  type PropertyWithIncludes,
-} from "@/actions/location-actions";
+import { searchProperties, type CountryProperties, type PropertyWithIncludes } from "@/actions/location-actions";
+
+
 
 import { getCountryName } from "@/lib/utils";
 import { LoadingSpinner } from "@/components/loading-spinner";
 import { RetreatItem } from "@/components/retreat-item";
 import { Lead } from "@/components/typography";
 
+
+
 import TabbedSearchResults from "./tabbed-search-results";
+
 
 type SearchMode = "location" | "continent";
 
@@ -143,7 +144,7 @@ export default function SearchPage() {
           <p className="text-sm text-muted-foreground">
             {searchMode === "location"
               ? "Properties within range"
-              : "Properties by country"}
+              : "Search for properties around the world"}
           </p>
         </div>
       </div>

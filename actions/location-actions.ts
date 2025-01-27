@@ -167,7 +167,7 @@ export async function searchProperties(
 
           const propertyContinent = shortNameToContinent(property.country);
 
-          if (propertyContinent.toLowerCase() === continent.toLowerCase()) {
+          if (propertyContinent === continent.toLowerCase()) {
             const existingCountry = acc.find(
               (cp) => cp.country === property.country
             );

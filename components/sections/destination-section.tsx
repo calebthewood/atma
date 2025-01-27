@@ -27,13 +27,13 @@ const CONTINENTS = [
     href: "/destinations?continent=europe",
   },
   {
-    id: "north-america",
+    id: "north america",
     name: "North America",
     icon: NorthAmericaIcon,
     href: "/destinations?continent=north-america",
   },
   {
-    id: "south-america",
+    id: "south america",
     name: "South America",
     icon: SouthAmericaIcon,
     href: "/destinations?continent=south-america",
