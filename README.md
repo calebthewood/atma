@@ -49,6 +49,7 @@ server home file structure & basic linux notes
 ```Bash
 home/
   atma/
+    start-atma.sh # used by unit file to start prod server
     prod/
       # repo running atmareserve.com
       # run by atma.service by systemd
@@ -65,6 +66,14 @@ home/
         # contains ssh my own key for accessing the server
         # generate your own with 'ssh keygen'
 ```
+
+There are some important differences to know about btwn the prod and stage services
+- stage service is running in node/npm
+- prod environment is running with bun
+- stage service is started directly by systemd, see unit file
+- prod service calls a bash script to start the server
+
+These differences exist because I want to run the server with bun, but I wanted to leave the old node setup around in case something comes up and we need to switch back. Also, using the shell script to start it has the added benefit that it's a little easier to add additional steps and commands. Like if you wanted to run the install command. Anyway, either way is fine, feel free to changed them to be more similar.
 
 ### Deploying updates
 
@@ -94,6 +103,8 @@ proper database like postgres or mysql. Database backups have not been setup yet
 create a cronjob that copies the prod database 1x a day or so, and also deletes
 most of the old copies.
 Keep a few staggered dbs, 1 day old, 1 week old, 1 month old.
+
+Note on bun, if we continue using it, we should incorporate bun's built in APIs for thing like s3 and sqlite. I'd be fine replacing prisma with the bun api and some raw sql. I like the prisma schema tool, but otherwise it's not that much better than handwriting the sql.
 
 ### Notes on Database structure.
 
