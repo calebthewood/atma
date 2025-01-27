@@ -127,7 +127,7 @@ const ThumbnailCarousel: React.FC<PropType> = (props) => {
                         alt={`Slide ${i + 1}`}
                         fill
                         sizes="(max-width: 1024px) 100vw, 75vw"
-                        className="object-cover transition-all hover:scale-105"
+                        className="animate-fade-in object-cover transition-all hover:scale-105"
                       />
                     </div>
                   </div>
@@ -171,7 +171,7 @@ const ThumbnailCarousel: React.FC<PropType> = (props) => {
 
             {/* Desktop Grid */}
             <ScrollArea className="hidden h-[480px] w-full overflow-hidden md:block">
-              <div className="hidden md:grid md:grid-cols-1 lg:grid-cols-2 md:gap-0">
+              <div className="hidden md:grid md:grid-cols-1 md:gap-0 lg:grid-cols-2">
                 {slides.map((img, idx) => (
                   <Thumb
                     key={`desktop-thumb-${idx}`}

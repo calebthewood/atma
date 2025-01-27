@@ -119,7 +119,7 @@ export default async function Page(props: { params: Promise<{ id: string }> }) {
 
       {programIds.length > 0 && (
         <section id="upcoming-programs">
-          <QuickLink text="See All Programs" href="/programs" />
+          <QuickLink text="See All Programs" href="/programs#top" />
           <h2 className="my-12 w-full text-balance text-center text-2xl font-semibold md:text-3xl">
             {`Other Offerings by ${property.name}`}
           </h2>

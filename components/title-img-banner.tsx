@@ -51,7 +51,7 @@ export function TitleImageBanner({
         </div>
       </div>
 
-      <div className="relative aspect-[16/9] w-full overflow-hidden rounded-lg md:aspect-[21/9]">
+      <div className="relative aspect-[16/9] w-full animate-fade-in overflow-hidden rounded-lg md:aspect-[21/9]">
         <Image
           priority
           alt={name}

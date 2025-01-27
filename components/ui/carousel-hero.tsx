@@ -44,7 +44,7 @@ const HeroCarousel = ({ slides }: { slides: Slide[] }) => {
                     src={slide.image}
                     alt={slide.title}
                     fill
-                    className="object-cover"
+                    className="animate-fade-in object-cover"
                     priority={index === 0}
                   />
                 </div>

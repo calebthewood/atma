@@ -202,7 +202,10 @@ export function NewLazyRetreatItem({ id, segment, className }: LazyCardProps) {
         <ContextMenu>
           <ContextMenuTrigger>
             <div
-              className={cn("relative overflow-hidden rounded-md", className)}
+              className={cn(
+                "relative animate-fade-in overflow-hidden rounded-md",
+                className
+              )}
             >
               <Image
                 fill

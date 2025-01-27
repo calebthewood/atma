@@ -67,7 +67,7 @@ export default function ProgramSection({
           asChild
           className="mx-auto rounded-full bg-[#841729] px-8 py-4 uppercase"
         >
-          <Link href="/programs">See All Programs</Link>
+          <Link href="/programs#top">See All Programs</Link>
         </Button>
       </div>
     </section>
@@ -91,7 +91,7 @@ const ProgramCard = ({
           src={bgImg}
           alt={program?.name || "Program Image"}
           fill
-          className="object-cover transition-transform duration-500 group-hover:scale-110"
+          className="animate-fade-in object-cover transition-transform duration-500 group-hover:scale-110"
           priority={false}
         />
         <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/50 to-transparent transition-opacity duration-300 group-hover:opacity-90" />

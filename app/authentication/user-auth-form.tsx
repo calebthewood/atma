@@ -38,11 +38,11 @@ export function UserAuthForm() {
           <ArrowLeftCircle className="size-6 stroke-1" />
         </Button>
       )}
-      <div className="relative hidden h-full flex-col bg-muted p-10 text-white dark:border-r lg:flex">
+      <div className="relative hidden h-full animate-fade-in flex-col bg-muted p-10 text-white dark:border-r lg:flex">
         <div className="absolute inset-0 bg-zinc-900" />
         <Image
           alt=""
-          className="object-cover"
+          className="animate-fade-in object-cover"
           src="/stock-images/jared-rice-NTyBbu66_SI-unsplash.jpg"
           fill={true}
         />

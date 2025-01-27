@@ -69,7 +69,7 @@ export function RetreatItem({
       <Link href={`/${segment}/${retreat?.id}`}>
         <ContextMenu>
           <ContextMenuTrigger>
-            <div className="overflow-hidden rounded-md">
+            <div className="animate-fade-in overflow-hidden rounded-md">
               <Image
                 src={imgUrl || imagePaths[rIsx]}
                 alt={retreat.name || "n/a"}
@@ -253,7 +253,7 @@ export function LazyRetreatItem({
         <ContextMenu>
           <ContextMenuTrigger>
             {/* Background Image with Overlay */}
-            <div className="absolute inset-0">
+            <div className="absolute inset-0 animate-fade-in">
               <Image
                 src={image || "/img/iStock-1507078404.jpg"}
                 alt={displayData.name}

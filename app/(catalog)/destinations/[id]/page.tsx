@@ -97,7 +97,7 @@ export default async function Page(props: { params: Promise<{ id: string }> }) {
 
       {programIds.length > 0 && (
         <section id="upcoming-programs">
-          <QuickLink text="See All Programs" href="/programs" />
+          <QuickLink text="See All Programs" href="/programs#top" />
           <h2 className="my-12 w-full text-center text-3xl font-semibold">
             Exclusive Wellness Programs
           </h2>
@@ -107,7 +107,7 @@ export default async function Page(props: { params: Promise<{ id: string }> }) {
 
       {retreatIds.length > 0 && (
         <section id="upcoming-retreats">
-          <QuickLink text="See All Retreats" href="/retreats" />
+          <QuickLink text="See All Retreats" href="/retreats#top" />
           <h2 className="my-12 w-full text-center text-3xl font-semibold">
             Upcoming Retreats
           </h2>

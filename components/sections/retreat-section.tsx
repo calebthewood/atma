@@ -50,7 +50,7 @@ export default function RetreatSection() {
         asChild
         className="mx-auto mt-12 rounded-full bg-[#841729] px-8 py-4 uppercase"
       >
-        <Link href="/retreats">See All Retreats</Link>
+        <Link href="/retreats#top">See All Retreats</Link>
       </Button>
     </section>
   );
