@@ -6,6 +6,7 @@ import { Metadata, Viewport } from "next";
 import { siteConfig } from "@/config/site";
 import { fontSans, fontTitle } from "@/lib/fonts/fonts";
 import { cn } from "@/lib/utils";
+import { HeroVideo } from "@/components/hero-video";
 import FooterSection from "@/components/sections/footer-section";
 import { SiteHeader } from "@/components/site-header";
 import { TailwindIndicator } from "@/components/tailwind-indicator";

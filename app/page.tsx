@@ -3,6 +3,7 @@ import { getSpotlightPrograms } from "@/actions/program-actions";
 import { getSpotlightRetreats } from "@/actions/retreat-actions";
 
 import { BookingBar } from "@/components/booking-bar";
+import { HeroVideo } from "@/components/hero-video";
 import DestinationSection from "@/components/sections/destination-section";
 import ProgramSection from "@/components/sections/program-section";
 import RetreatSection from "@/components/sections/retreat-section";
@@ -34,6 +35,7 @@ export default async function Page() {
     <>
       <BookingBar />
       <div className="tracking-wideset flex flex-col font-semibold md:gap-y-6 md:py-6">
+        <HeroVideo />
         <ProgramSection programs={programs} />
         <DestinationSection />
         <RetreatSection retreats={retreats} />
