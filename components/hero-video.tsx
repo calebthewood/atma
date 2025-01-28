@@ -2,7 +2,7 @@ export function HeroVideo() {
   return (
     <section
       id="program-section"
-      className="flex flex-col gap-y-5 md:container"
+      className="flex animate-fade-in flex-col gap-y-5 md:container"
     >
       <video id="video-background" autoPlay loop muted playsInline>
         <source

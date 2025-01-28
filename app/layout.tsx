@@ -6,7 +6,6 @@ import { Metadata, Viewport } from "next";
 import { siteConfig } from "@/config/site";
 import { fontSans, fontTitle } from "@/lib/fonts/fonts";
 import { cn } from "@/lib/utils";
-import { HeroVideo } from "@/components/hero-video";
 import FooterSection from "@/components/sections/footer-section";
 import { SiteHeader } from "@/components/site-header";
 import { TailwindIndicator } from "@/components/tailwind-indicator";
@@ -38,26 +37,24 @@ interface RootLayoutProps {
 
 export default async function RootLayout({ children }: RootLayoutProps) {
   return (
-    <>
-      <html lang="en" suppressHydrationWarning>
-        <head />
-        <body
-          className={cn(
-            "bg-richBeige font-sans antialiased dark:bg-gradient-dark",
-            fontSans.variable,
-            fontTitle.variable
-          )}
-        >
-          <ThemeProvider attribute="class" enableSystem={false}>
-            <div className="relative flex min-h-screen flex-col">
-              <SiteHeader />
-              {children}
-            </div>
-            <FooterSection />
-            <TailwindIndicator />
-          </ThemeProvider>
-        </body>
-      </html>
-    </>
+    <html lang="en" suppressHydrationWarning>
+      <head />
+      <body
+        className={cn(
+          "bg-richBeige font-sans antialiased dark:bg-gradient-dark",
+          fontSans.variable,
+          fontTitle.variable
+        )}
+      >
+        <ThemeProvider attribute="class" enableSystem={false}>
+          <div className="relative flex min-h-screen flex-col">
+            <SiteHeader />
+            {children}
+          </div>
+          <FooterSection />
+          <TailwindIndicator />
+        </ThemeProvider>
+      </body>
+    </html>
   );
 }

@@ -1,15 +1,19 @@
-export async function floDeskSubscribe({ email }: { email: string }) {
-  /*
-  url:
-    https://api.flodesk.com/v1/subscribers
+"use server";
 
-  payload:
-    "email": "string",
-    "source": "manual",
-
-
-
-  */
-
-  // const res = await fetch();
+export async function flodeskSubmit(
+  formId: string,
+  formState: { firstName: string; lastName: string; email: string }
+) {
+  const response = await fetch(
+    `https://form.flodesk.com/forms/${formId}/submit`,
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(formState),
+    }
+  );
+  console.log("server", response.body);
+  return response.ok;
 }
