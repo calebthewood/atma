@@ -9,12 +9,12 @@ import {
   type PropertyWithIncludes,
 } from "@/actions/location-actions";
 
+import { getCountryName } from "@/lib/utils";
 import { LoadingSpinner } from "@/components/loading-spinner";
 import { RetreatItem } from "@/components/retreat-item";
 import { Lead } from "@/components/typography";
 
 import TabbedSearchResults from "../search/tabbed-search-results";
-import { getCountryName } from "@/lib/utils";
 
 type SearchResults = PropertyWithIncludes[] | CountryProperties[];
 

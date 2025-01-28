@@ -4,6 +4,7 @@ import {
   getPropertyEntityIds,
 } from "@/actions/property-actions";
 
+import { getCountryName } from "@/lib/utils";
 import ThumbnailCarousel from "@/components/ui/carousel-thumbnail";
 import { LoadingSpinner } from "@/components/loading-spinner";
 import PropertyPolicies from "@/components/property-policies";
@@ -12,7 +13,6 @@ import SubscriptionSection from "@/components/sections/subscription-section";
 import { QuickLink } from "@/components/shared";
 import { TitleImageBanner } from "@/components/title-img-banner";
 import PropertyLazyCarousel from "@/components/upcoming-carousel";
-import { getCountryName } from "@/lib/utils";
 
 const DEFAULT_SLIDES = [
   "/img/iStock-1929812569.jpg",
@@ -60,7 +60,7 @@ export default async function Page(props: { params: Promise<{ id: string }> }) {
   const specialtyList = specialty.split(specialty.includes(";") ? ";" : ".");
 
   return (
-    <div className="flex h-auto min-h-screen flex-col gap-6 md:gap-16 px-2">
+    <div className="flex h-auto min-h-screen flex-col gap-6 px-2 md:gap-16">
       <section id="hero">
         <TitleImageBanner
           name={property?.name}

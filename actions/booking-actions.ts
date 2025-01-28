@@ -173,7 +173,6 @@ type ProgramBookingData = BaseBookingData & {
 async function createBookingWithNotification(
   createData: Prisma.BookingCreateInput
 ): Promise<ActionResponse<BookingWithAllRelations>> {
-
   const booking = await prisma.booking.create({
     data: createData,
     include: BOOKING_INCLUDE_FULL,

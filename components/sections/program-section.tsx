@@ -39,7 +39,7 @@ export default function ProgramSection({
   return (
     <section
       id="program-section"
-      className="flex flex-col gap-y-5 md:container mt-10"
+      className="mt-10 flex flex-col gap-y-5 md:container"
     >
       <SectionHeader title="Year Round Programs" subtitle="Tailored" />
       <motion.div

@@ -79,8 +79,8 @@ export const FlodeskStyledForm = ({ formId = "66d66e18780dc961677cd3c5" }) => {
           ) : (
             <div className="flex h-40 items-center justify-center text-lg text-green-800">
               <p className="max-w-lg">
-                Thank you. We're excited to share our curated experiences with
-                you.
+                {`Thank you. We're excited to share our curated experiences with
+                you.`}
               </p>
             </div>
           )}

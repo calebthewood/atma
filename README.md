@@ -68,6 +68,7 @@ home/
 ```
 
 There are some important differences to know about btwn the prod and stage services
+
 - stage service is running in node/npm
 - prod environment is running with bun
 - stage service is started directly by systemd, see unit file
