@@ -33,13 +33,16 @@ export async function appendToCSV(data: {
 
     // Check if file exists, if not create with headers
     try {
-      await access("subscribers.csv");
+      await access("../public/subscribers.csv");
     } catch {
-      await writeFile("subscribers.csv", "firstName,lastName,email\n");
+      await writeFile(
+        "../public/subscribers.csv",
+        "firstName,lastName,email\n"
+      );
     }
 
     // Append the new line
-    await appendFile("subscribers.csv", csvLine);
+    await appendFile("../public/subscribers.csv", csvLine);
 
     console.log("Successfully appended to CSV");
   } catch (error) {
